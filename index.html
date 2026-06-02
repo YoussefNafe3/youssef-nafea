@@ -3,30 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>د. يوسف نافع | Biology & Science</title>
+<title>د. يوسف نافع </title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-<style>
 
-.social-btn{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-width:55px;
-height:55px;
-border-radius:50%;
-background:#1877F2;
-margin:10px;
-transition:.3s;
-}
-
-.social-btn:hover{
-transform:scale(1.1);
-}
-
-</style>
 /* ================= THEME ================= */
 :root{
 --bg:#f6f8fc;
@@ -43,7 +25,7 @@ transform:scale(1.1);
 --text:#ffffff;
 }
 
-/* ================= GLOBAL ================= */
+/* ================= RESET ================= */
 *{
 margin:0;
 padding:0;
@@ -88,50 +70,51 @@ padding:30px;
 /* BIOLOGY BACKGROUND */
 background:
 linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.75)),
-url('https://images.unsplash.com/photo-1532187643603-ba119ca4109e');
+url('https://unsplash.com/photos/a-skeleton-is-shown-in-a-dark-room-L1hj28UNEwM');
 background-size:cover;
 background-position:center;
 }
 
-/* DNA glow overlay */
+/* DNA GLOW EFFECT */
 .hero::before{
 content:"";
 position:absolute;
 inset:0;
 background:
-radial-gradient(circle at 20% 30%, rgba(0,212,255,.15), transparent 40%),
-radial-gradient(circle at 80% 70%, rgba(255,215,0,.12), transparent 40%);
+radial-gradient(circle at 20% 30%, rgba(0,212,255,.18), transparent 45%),
+radial-gradient(circle at 80% 70%, rgba(255,215,0,.12), transparent 45%);
 }
 
 .hero-content{
 position:relative;
-max-width:900px;
 z-index:2;
+max-width:900px;
 }
 
 /* ================= LOGO ================= */
 .logo{
-font-size:45px;
+font-size:48px;
 font-weight:900;
 color:var(--gold);
 text-shadow:0 5px 20px rgba(0,0,0,.6);
 margin-bottom:15px;
 }
 
-/* ================= HERO TEXT ================= */
+/* ================= TEXT ================= */
 .hero p{
 font-size:22px;
 margin-bottom:30px;
 opacity:.95;
 }
 
+/* ================= BUTTON ================= */
 .btn{
 display:inline-block;
 background:var(--gold);
 color:#111;
-padding:14px 38px;
+padding:14px 40px;
 border-radius:50px;
-font-weight:700;
+font-weight:800;
 text-decoration:none;
 transition:.3s;
 }
@@ -140,7 +123,7 @@ transition:.3s;
 transform:scale(1.05);
 }
 
-/* ================= SECTION TITLE ================= */
+/* ================= FEATURES ================= */
 .section-title{
 text-align:center;
 font-size:40px;
@@ -148,7 +131,6 @@ margin:70px 0 30px;
 font-weight:900;
 }
 
-/* ================= FEATURES ================= */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
@@ -169,23 +151,18 @@ transition:.3s;
 transform:translateY(-5px);
 }
 
-/* ================= STATS ================= */
-.stats{
+/* ================= INFO ================= */
+.info{
 background:var(--main);
 color:white;
 padding:70px 20px;
 text-align:center;
 }
 
-.stats h3{
-font-size:28px;
-margin-bottom:10px;
-}
-
-.stats span{
+.info span{
 color:var(--gold);
-font-size:42px;
-font-weight:900;
+font-size:28px;
+font-weight:800;
 }
 
 /* ================= CONTACT ================= */
@@ -232,7 +209,7 @@ height:900px;
 border:none;
 }
 
-/* ================= FLOAT BUTTONS ================= */
+/* ================= WHATSAPP ================= */
 .whatsapp{
 position:fixed;
 bottom:20px;
@@ -262,7 +239,7 @@ margin-top:40px;
 
 /* ================= MOBILE ================= */
 @media(max-width:768px){
-.logo{font-size:32px;}
+.logo{font-size:34px;}
 .hero p{font-size:18px;}
 .section-title{font-size:30px;}
 }
@@ -291,21 +268,20 @@ margin-top:40px;
 </section>
 
 <!-- FEATURES -->
-<h2 class="section-title">🔬 لماذا تختارنا؟</h2>
+<h2 class="section-title">🔬 تحجز معانا ليه؟</h2>
 
 <div class="grid">
 
 <div class="card">🧠 شرح مبسط وسهل</div>
-<div class="card">📚 مراجعات قوية للامتحانات</div>
-<div class="card">🧪 حل وتدريب مستمر </div>
-<div class="card">⚡ متابعة مستمرة للطلاب</div>
+<div class="card">📚 مراجعات قوية</div>
+<div class="card">🧬تدريب وحل مستمر</div>
+<div class="card">⚡ متابعة مستمرة</div>
 
 </div>
 
-<!-- SCIENCE INFO -->
-<section class="stats">
-<h3>🧬 :معانا هتقفل</h3>
-<span>العلوم المتكاملة • الأحياء • الجيولوجيا</span>
+<!-- INFO -->
+<section class="info">
+<span>🔬 الأحياء • العلوم المتكاملة • الجيولوجيا</span>
 </section>
 
 <!-- CONTACT -->
@@ -317,13 +293,8 @@ margin-top:40px;
 💬 واتساب
 </a>
 
-<a href="https://www.facebook.com/share/1HKACt3iYS/" target="_blank" class="social-btn facebook">
-</a>
-  
-<svg width="22" height="22" viewBox="0 0 24 24" fill="white">
-<path d="M22 12a10 10 0 1 0-11.56 9.87v-6.99H7.9V12h2.54V9.8c0-2.51 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.77l-.44 2.88h-2.33v6.99A10 10 0 0 0 22 12z"/>
-</svg>
-
+<a href="https://www.facebook.com/share/1HKACt3iYS/" target="_blank">
+📘 فيسبوك
 </a>
 
 </section>
@@ -342,7 +313,7 @@ margin-top:40px;
 
 <!-- FOOTER -->
 <footer>
-© 2026 Dr Youssef Nafea | All Rights Reserved
+© 2026 Dr Youssef Nafea | Biology Academy
 </footer>
 
 <!-- SCRIPT -->
