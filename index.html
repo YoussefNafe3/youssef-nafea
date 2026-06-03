@@ -283,8 +283,9 @@ transform:scale(1.05);
   
 <br><br>
 
-<a href="physics-surprise.html" class="special-btn">
+<button class="special-btn" onclick="checkCode()">
 🎁 مفاجأة خاصة لطلبة تانية ثانوي
+</button>
 </a>
 </div>
 
@@ -341,11 +342,14 @@ transform:scale(1.05);
 
 <!-- SCRIPT -->
 <script>
-const btn=document.getElementById("themeToggle");
+function checkCode(){
+    let code = prompt("ادخل كود الدخول 👇");
 
-btn.onclick=()=>{
-document.body.classList.toggle("dark");
-btn.textContent=document.body.classList.contains("dark")?"☀️":"🌙";
+    if(code === "DrNafe3"){
+        window.location.href = "physics-surprise.html";
+    }else{
+        alert("❌ الكود غلط");
+    }
 }
 </script>
 
