@@ -261,14 +261,33 @@ box-shadow:0 5px 15px rgba(0,0,0,.15);
 .special-btn:hover{
 transform:scale(1.05);
 }
-  
+body{
+transition: background .4s ease, color .4s ease;
+}
+
+#themeToggle{
+transition:.3s ease;
+}
+
+.dark{
+--bg:#0b1220;
+--card:#1e293b;
+--text:#ffffff;
+}
+
+/* smooth global effect */
+body{
+background:var(--bg);
+color:var(--text);
+transition:.4s ease;
+}  
 </style>
 </head>
 
 <body>
 
 <!-- THEME -->
-<button id="themeToggle">🌙</button>
+<button id="themeToggle" type="button">🌙</button>
 
 <!-- HERO -->
 <section class="hero">
@@ -352,6 +371,25 @@ function checkCode(){
     }
 }
 </script>
+<script>
+const btn = document.getElementById("themeToggle");
 
+// تحميل الوضع المحفوظ
+if(localStorage.getItem("theme") === "dark"){
+    document.body.classList.add("dark");
+    btn.textContent = "☀️";
+}
+
+btn.onclick = function(){
+
+    document.body.classList.toggle("dark");
+
+    let isDark = document.body.classList.contains("dark");
+
+    btn.textContent = isDark ? "☀️" : "🌙";
+
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+}
+</script>
 </body>
 </html>
