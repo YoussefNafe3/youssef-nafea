@@ -71,9 +71,9 @@ background-size:30px 30px;
 
 /* ================= THEME BUTTON ================= */
 #themeToggle{
-position:fixed;
-top:18px;
-left:18px;
+position:relative;
+top:2px;
+margin-left:10px;
 width:55px;
 height:55px;
 border-radius:50%;
@@ -400,6 +400,12 @@ padding:8px 12px;
 color:white;
 font-weight:700;
 }
+
+.auth-buttons{
+display:flex;
+align-items:center;
+gap:10px;
+}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -407,7 +413,11 @@ font-weight:700;
 <body>
 
 <!-- THEME -->
-<button id="themeToggle" type="button">🌙</button>
+<div class="auth-buttons">
+  <button id="themeToggle">🌙</button>
+  <a href="login.html" class="nav-btn">تسجيل الدخول</a>
+  <a href="signup.html" class="nav-btn signup">إنشاء حساب</a>
+</div>
 
 <!-- HERO -->
 <section class="hero">
