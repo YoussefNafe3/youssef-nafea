@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>إنشاء حساب</title>
+</head>
+<body>
+
+<h2>إنشاء حساب طالب</h2>
+
+<input id="name" placeholder="الاسم الكامل">
+<input id="email" placeholder="الإيميل">
+<input id="password" type="password" placeholder="كلمة المرور">
+
+<button onclick="signup()">إنشاء حساب</button>
+
+<script type="module">
+import { supabase } from './supabase.js';
+
+window.signup = async function () {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  await supabase.from('students').insert([
+    {
+      email,
+      full_name: name,
+      activated: false
+    }
+  ]);
+
+  alert("تم إنشاء الحساب بنجاح");
+};
+</script>
+
+</body>
+</html>
