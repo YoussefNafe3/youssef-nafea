@@ -11,7 +11,7 @@
 <div class="top-bar">
   <div class="logo-small">🧬 Dr Youssef</div>
 
-  <div class="auth-buttons">
+  <div id="authArea" class="auth-buttons">
     <a href="login.html" class="nav-btn">تسجيل الدخول</a>
     <a href="signup.html" class="nav-btn signup">إنشاء حساب</a>
   </div>
@@ -394,6 +394,12 @@ background:#FFD700;
 color:#111;
 font-weight:700;
 }
+
+.auth-buttons span{
+padding:8px 12px;
+color:white;
+font-weight:700;
+}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -506,6 +512,31 @@ btn.onclick = function(){
 
     localStorage.setItem("theme", isDark ? "dark" : "light");
 }
+</script>
+<script>
+function checkAuth(){
+  const user = localStorage.getItem("user");
+
+  const authArea = document.getElementById("authArea");
+
+  if(user){
+    const data = JSON.parse(user);
+
+    authArea.innerHTML = `
+      <span style="color:white;font-weight:700">
+        👋 ${data.email}
+      </span>
+      <button onclick="logout()" class="nav-btn signup">خروج</button>
+    `;
+  }
+}
+
+function logout(){
+  localStorage.removeItem("user");
+  location.reload();
+}
+
+checkAuth();
 </script>
 </body>
 </html>
