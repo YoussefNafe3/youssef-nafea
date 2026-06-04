@@ -8,11 +8,14 @@
 </head>
 <body>
 
-<h1>منصة د. يوسف نافع</h1>
+<div class="top-bar">
+  <div class="logo-small">🧬 Dr Youssef</div>
 
-<a href="signup.html">إنشاء حساب</a><br><br>
-<a href="login.html">تسجيل الدخول</a>
-
+  <div class="auth-buttons">
+    <a href="login.html" class="nav-btn">تسجيل الدخول</a>
+    <a href="signup.html" class="nav-btn signup">إنشاء حساب</a>
+  </div>
+</div>
 </body>
 </html>
 <head>
@@ -345,7 +348,52 @@ body{
 background:var(--bg);
 color:var(--text);
 transition:.4s ease;
-}  
+} 
+
+.top-bar{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 20px;
+z-index:9999;
+background:rgba(0,0,0,0.4);
+backdrop-filter:blur(10px);
+}
+
+.logo-small{
+color:white;
+font-weight:800;
+font-size:18px;
+}
+
+.auth-buttons{
+display:flex;
+gap:10px;
+}
+
+.nav-btn{
+text-decoration:none;
+color:white;
+padding:8px 16px;
+border-radius:20px;
+font-size:14px;
+background:rgba(255,255,255,0.15);
+transition:0.3s;
+}
+
+.nav-btn:hover{
+transform:scale(1.05);
+}
+
+.nav-btn.signup{
+background:#FFD700;
+color:#111;
+font-weight:700;
+}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
