@@ -1,76 +1,289 @@
-<script>
-const user = JSON.parse(localStorage.getItem("user"));
-
-if(!user){
-    window.location.href = "login.html";
-}
-</script>
 <!DOCTYPE html>
+
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>لوحة الطالب</title>
-</head>
-<body>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الطالب | د. يوسف نافع</title>
 
-
-</div>
-<h2>أهلاً 👋</h2>
-
-<p>كورساتك:</p>
-<div class="cards">
-
-<a href="videos.html" class="card">
-🎥
-<h3>الفيديوهات</h3>
-<p>مشاهدة جميع المحاضرات</p>
-</a>
-
-<a href="sessions.html" class="card">
-📅
-<h3>الحصص</h3>
-<p>مواعيد الحصص القادمة</p>
-</a>
-
-<button onclick="logout()">تسجيل الخروج</button>
-
-<script>
-function logout(){
-localStorage.removeItem("user");
-window.location.href = "login.html";
-}
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f172a,#111827,#1e293b);
+min-height:100vh;
+color:white;
+padding:20px;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(15px);
+padding:15px 25px;
+border-radius:20px;
+border:1px solid rgba(255,255,255,.1);
+margin-bottom:25px;
+}
+
+.logo{
+font-size:28px;
+font-weight:800;
+color:#FFD700;
+}
+
+.user-name{
+font-size:20px;
+font-weight:700;
+cursor:pointer;
+color:#fff;
+transition:.3s;
+}
+
+.user-name:hover{
+color:#FFD700;
+}
+
+.actions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+border:none;
+padding:12px 18px;
+border-radius:12px;
+cursor:pointer;
+font-weight:700;
+text-decoration:none;
+color:white;
+transition:.3s;
+}
+
+.home-btn{
+background:#2563eb;
+}
+
+.logout-btn{
+background:#ef4444;
+}
+
+.btn:hover{
+transform:translateY(-2px);
+}
+
+.hero{
+position:relative;
+overflow:hidden;
+background:linear-gradient(135deg,#2563eb,#7c3aed);
+padding:60px 20px;
+border-radius:25px;
+text-align:center;
+margin-bottom:30px;
+box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+
+.hero::before{
+content:'';
+position:absolute;
+width:300px;
+height:300px;
+background:rgba(255,255,255,.08);
+border-radius:50%;
+top:-120px;
+left:-120px;
+}
+
+.hero::after{
+content:'';
+position:absolute;
+width:250px;
+height:250px;
+background:rgba(255,255,255,.05);
+border-radius:50%;
+bottom:-120px;
+right:-120px;
+}
+
+.hero h1{
+position:relative;
+font-size:42px;
+margin-bottom:10px;
+z-index:2;
+}
+
+.hero p{
+position:relative;
+z-index:2;
+font-size:18px;
+}
+
 .cards{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-margin-top:40px;
+gap:25px;
 }
 
 .card{
 background:rgba(255,255,255,.08);
-backdrop-filter:blur(15px);
-border-radius:20px;
-padding:30px;
-text-align:center;
+backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,.1);
+border-radius:24px;
+padding:35px;
 text-decoration:none;
 color:white;
-transition:.3s;
-border:1px solid rgba(255,255,255,.1);
+transition:.4s;
 }
 
 .card:hover{
-transform:translateY(-10px);
-box-shadow:0 20px 40px rgba(0,0,0,.3);
+transform:translateY(-8px);
+box-shadow:0 20px 40px rgba(59,130,246,.3);
+}
+
+.icon{
+font-size:52px;
+margin-bottom:15px;
 }
 
 .card h3{
-margin:15px 0;
 font-size:24px;
+margin-bottom:10px;
+}
+
+.card p{
+opacity:.85;
+}
+
+.footer{
+margin-top:40px;
+text-align:center;
+opacity:.7;
+}
+
+@media(max-width:768px){
+
+.topbar{
+flex-direction:column;
+text-align:center;
+}
+
+.hero h1{
+font-size:30px;
+}
+
+.actions{
+justify-content:center;
+}
 }
 </style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+<div class="logo">
+Dr Youssef Nafea
+</div>
+
+<div class="user-name" id="userName" onclick="goDashboard()">
+مرحباً
+</div>
+
+<div class="actions">
+<a href="index.html" class="btn home-btn">
+🏠 الصفحة الرئيسية
+</a>
+
+<button class="btn logout-btn" onclick="logout()">
+🚪 تسجيل الخروج
+</button>
+</div>
+
+</div>
+
+<div class="hero">
+<h1>منصة الفيزياء</h1>
+<p>كل محاضراتك وحصصك وملفاتك التعليمية في مكان واحد</p>
+</div>
+
+<div class="cards">
+
+<a href="#" class="card">
+<div class="icon">🎥</div>
+<h3>الفيديوهات</h3>
+<p>مشاهدة جميع المحاضرات المسجلة</p>
+</a>
+
+<a href="#" class="card">
+<div class="icon">📅</div>
+<h3>الحصص</h3>
+<p>مواعيد الحصص القادمة والبث المباشر</p>
+</a>
+
+<a href="#" class="card">
+<div class="icon">📚</div>
+<h3>الملفات</h3>
+<p>المذكرات والملفات التعليمية</p>
+</a>
+
+<a href="#" class="card">
+<div class="icon">📝</div>
+<h3>الواجبات</h3>
+<p>متابعة الواجبات والتكليفات</p>
+</a>
+
+<a href="#" class="card">
+<div class="icon">🏆</div>
+<h3>النتائج</h3>
+<p>متابعة نتائج الاختبارات والتقييمات</p>
+</a>
+
+<a href="#" class="card">
+<div class="icon">📢</div>
+<h3>الإعلانات</h3>
+<p>آخر الأخبار والتنبيهات المهمة</p>
+</a>
+
+</div>
+
+<div class="footer">
+© 2026 Dr Youssef Nafea
+</div>
+
+<script>
+
+const user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+window.location.href = "login.html";
+}
+
+document.getElementById("userName").innerHTML =
+"👋 " + (user.full_name || user.name || "الطالب");
+
+function logout(){
+localStorage.removeItem("user");
+window.location.href = "index.html";
+}
+
+function goDashboard(){
+window.location.href = "dashboard.html";
+}
+
+</script>
 
 </body>
 </html>
