@@ -68,46 +68,38 @@ msg.innerText = "جاري تسجيل الدخول...";
 
 try{
 
-const { data, error } = await client.auth.signInWithPassword({
-email: phone + "@phone.com",
+const { data, error } = await supabase.auth.signInWithPassword({
+email: phone, // أو الرقم لو بتحوله لإيميل
 password: password
 });
 
-if(error){
-msg.innerText = error.message;
+if(error) {
+
+let msg = error.message;
+
+if(msg.includes("Invalid login credentials")){
+alert("البيانات خطأ");
+}
+
+else if(msg.includes("Email not confirmed") || msg.includes("User not found")){
+alert("الرقم غير مسجل الرجاء إنشاء حساب أولاً ثم العودة لتسجيل الدخول");
+}
+
+else{
+alert("حدث خطأ غير متوقع حاول مرة أخرى");
+}
+
 return;
 }
 
-const { data: student, error: dbError } = await client
-.from("students")
-.select("*")
-.eq("phone", phone)
-.single();
-
-if(dbError || !student){
-msg.innerText = "المستخدم غير موجود";
-return;
-}
-
-if(!student.activated){
-msg.innerText = "الحساب غير مفعل";
-return;
-}
-
-localStorage.setItem("user", JSON.stringify(student));
-
-if(student.role === "admin"){
-window.location.href = "admin.html";
-}else{
+// نجاح تسجيل الدخول
+localStorage.setItem("user", JSON.stringify(data.user));
 window.location.href = "dashboard.html";
+
+} catch (err) {
+alert("حدث خطأ في الاتصال");
 }
 
-}catch(err){
-console.log(err);
-msg.innerText = "حدث خطأ غير متوقع";
-}
-
-}
 </script>
 </body>
 </html>
