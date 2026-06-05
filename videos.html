@@ -10,6 +10,7 @@
 
 <style>
 
+/* ================= BASE ================= */
 *{
 margin:0;
 padding:0;
@@ -30,6 +31,7 @@ width:280px;
 background:#111827;
 padding:20px;
 border-left:1px solid rgba(255,255,255,.08);
+overflow-y:auto;
 }
 
 .logo{
@@ -47,6 +49,7 @@ background:rgba(255,255,255,.05);
 border-radius:12px;
 cursor:pointer;
 transition:.3s;
+position:relative;
 }
 
 .video-item:hover{
@@ -57,6 +60,14 @@ background:#2563eb;
 background:#FFD700;
 color:#111;
 font-weight:800;
+}
+
+.lock{
+position:absolute;
+left:10px;
+top:10px;
+font-size:14px;
+opacity:.7;
 }
 
 /* ================= MAIN ================= */
@@ -97,11 +108,34 @@ border-radius:20px;
 padding:20px;
 margin-bottom:20px;
 box-shadow:0 20px 40px rgba(0,0,0,.3);
+position:relative;
 }
 
 video{
 width:100%;
 border-radius:15px;
+}
+
+/* منع التحميل */
+video::-internal-media-controls-download-button {
+display:none;
+}
+
+/* ================= PROGRESS ================= */
+.progress{
+height:6px;
+width:100%;
+background:rgba(255,255,255,.1);
+border-radius:10px;
+margin-top:10px;
+overflow:hidden;
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:#FFD700;
+transition:.3s;
 }
 
 /* ================= INFO ================= */
@@ -111,19 +145,24 @@ font-size:16px;
 opacity:.9;
 }
 
-/* ================= MOBILE ================= */
-@media(max-width:900px){
-body{
-flex-direction:column;
+/* ================= OVERLAY PROTECTION ================= */
+#antiRecord{
+position:fixed;
+inset:0;
+background:black;
+z-index:9999;
+display:none;
 }
 
+/* ================= MOBILE ================= */
+@media(max-width:900px){
+body{flex-direction:column;}
 .sidebar{
 width:100%;
 display:flex;
 overflow-x:auto;
 gap:10px;
 }
-
 .video-item{
 min-width:150px;
 }
@@ -135,14 +174,14 @@ min-width:150px;
 
 <body>
 
+<div id="antiRecord"></div>
+
 <!-- SIDEBAR -->
 <div class="sidebar">
 
 <div class="logo">🎬 الفيديوهات</div>
 
-<div id="videoList">
-تحميل...
-</div>
+<div id="videoList">تحميل...</div>
 
 </div>
 
@@ -162,9 +201,13 @@ min-width:150px;
 <!-- PLAYER -->
 <div class="player">
 
-<video id="videoPlayer" controls>
+<video id="videoPlayer" controls controlsList="nodownload noplaybackrate">
 <source id="videoSource" src="" type="video/mp4">
 </video>
+
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
 
 <div class="info" id="videoTitle">
 اختر فيديو من القائمة
@@ -180,12 +223,16 @@ min-width:150px;
 <script>
 
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....";
+const SUPABASE_ANON_KEY = "YOUR_KEY_HERE";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let videos = [];
+const user = JSON.parse(localStorage.getItem("user"));
 
+let videos = [];
+let currentVideoId = null;
+
+/* ================= LOAD ================= */
 async function loadVideos(){
 
 const { data, error } = await client
@@ -207,10 +254,18 @@ data.forEach((v,index)=>{
 
 const div = document.createElement("div");
 div.className = "video-item";
-div.innerHTML = "🎥 " + v.title;
+
+div.innerHTML = `🎥 ${v.title}`;
 
 div.onclick = ()=>{
-playVideo(v.url, v.title);
+
+// 🔒 لو فيديو مدفوع
+if(v.is_premium && !user.is_premium){
+alert("هذا الفيديو للمشتركين فقط 🔒");
+return;
+}
+
+playVideo(v.url, v.title, v.id);
 setActive(index);
 };
 
@@ -218,28 +273,69 @@ list.appendChild(div);
 
 });
 
-if(data.length > 0){
-playVideo(data[0].url, data[0].title);
-setActive(0);
+// 🔥 آخر فيديو مشاهدة
+const last = JSON.parse(localStorage.getItem("lastVideo"));
+
+if(last){
+playVideo(last.url,last.title,last.id);
 }
 
 }
 
-function playVideo(url,title){
+/* ================= PLAY ================= */
+function playVideo(url,title,id){
 
 document.getElementById("videoSource").src = url;
 document.getElementById("videoPlayer").load();
 document.getElementById("videoTitle").innerText = title;
 
+currentVideoId = id;
+
+// حفظ آخر فيديو
+localStorage.setItem("lastVideo", JSON.stringify({url,title,id}));
+
 }
 
+/* ================= ACTIVE ================= */
 function setActive(index){
-
 document.querySelectorAll(".video-item").forEach((el,i)=>{
 el.classList.toggle("active", i===index);
 });
-
 }
+
+/* ================= PROGRESS ================= */
+const video = document.getElementById("videoPlayer");
+
+video.ontimeupdate = async function(){
+
+const percent = (video.currentTime / video.duration) * 100;
+
+document.getElementById("progressBar").style.width = percent + "%";
+
+if(currentVideoId){
+await client.from("student_progress").upsert({
+student_id: user.id,
+video_id: currentVideoId,
+progress: percent
+});
+}
+
+};
+
+/* ================= SECURITY ================= */
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.addEventListener("visibilitychange", function(){
+
+const overlay = document.getElementById("antiRecord");
+
+if(document.hidden){
+overlay.style.display = "block";
+}else{
+overlay.style.display = "none";
+}
+
+});
 
 loadVideos();
 
