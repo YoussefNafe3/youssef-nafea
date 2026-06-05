@@ -2,49 +2,126 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>إنشاء حساب</title>
+<title>Sign Up</title>
+
+<style>
+body{
+font-family: Arial;
+background:#0f0f0f;
+color:white;
+text-align:center;
+padding-top:70px;
+}
+
+input{
+display:block;
+margin:10px auto;
+padding:10px;
+width:250px;
+border-radius:8px;
+border:none;
+}
+
+button{
+padding:10px 20px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#00c853;
+font-weight:bold;
+color:white;
+}
+
+button:hover{
+transform:scale(1.05);
+}
+
+#msg{
+margin-top:15px;
+color:#ff4d4d;
+}
+</style>
+
 </head>
+
 <body>
 
-<h2>إنشاء حساب</h2>
+<h2>إنشاء حساب جديد</h2>
 
-<input id="name" placeholder="الاسم">
-<input id="email" placeholder="الإيميل">
-<input id="password" type="password" placeholder="كلمة المرور">
+<input id="name" placeholder="Full Name">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
 
-<button onclick="signup()">إنشاء</button>
+<button onclick="signup()">Create Account</button>
 
-<script type="module">
-import { supabase } from './supabase.js';
+<div id="msg"></div>
 
-window.signup = async function () {
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const name = document.getElementById("name").value;
+<script>
+const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_ANON_KEY = "PUT_YOUR_ANON_KEY_HERE";
 
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password
-  });
+const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+async function signup(){
 
-  // حفظ في جدول الطلاب
-  await supabase.from('students').insert([
-    {
-      email: email,
-      full_name: name,
-      activated: false
-    }
-  ]);
+const name = document.getElementById("name").value;
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
 
-  alert("تم إنشاء الحساب بنجاح");
-  window.location.href = "login.html";
-};
+const msg = document.getElementById("msg");
+
+msg.style.color = "white";
+msg.innerText = "Creating account...";
+
+try {
+
+// 1. create auth user
+const { data, error } = await supabase.auth.signUp({
+email,
+password
+});
+
+if(error){
+msg.style.color = "red";
+msg.innerText = error.message;
+return;
+}
+
+// 2. insert into students table
+const { error: dbError } = await supabase
+.from("students")
+.insert([
+{
+email: email,
+full_name: name,
+activated: false,
+role: "student"
+}
+]);
+
+if(dbError){
+msg.style.color = "red";
+msg.innerText = dbError.message;
+return;
+}
+
+msg.style.color = "#00e676";
+msg.innerText = "Account created successfully";
+
+// redirect to login
+setTimeout(()=>{
+window.location.href = "login.html";
+}, 1500);
+
+} catch(err){
+msg.style.color = "red";
+msg.innerText = "Something went wrong";
+console.log(err);
+}
+
+}
 </script>
 
 </body>
