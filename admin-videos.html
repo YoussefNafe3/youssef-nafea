@@ -1,0 +1,64 @@
+<h2>رفع فيديو جديد</h2>
+
+<input id="title" placeholder="عنوان الفيديو">
+<input type="file" id="videoFile">
+
+<button onclick="uploadVideo()">رفع</button>
+
+<div id="msg"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseUrl = "YOUR_URL";
+const supabaseKey = "YOUR_KEY";
+const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+async function uploadVideo(){
+
+const title = document.getElementById("title").value;
+const file = document.getElementById("videoFile").files[0];
+const msg = document.getElementById("msg");
+
+if(!title || !file){
+msg.innerText = "املأ البيانات";
+return;
+}
+
+msg.innerText = "جاري الرفع...";
+
+// 1 Upload Storage
+const fileName = Date.now() + file.name;
+
+const { data, error } = await client.storage
+.from("videos")
+.upload(fileName, file);
+
+if(error){
+msg.innerText = "خطأ في رفع الفيديو";
+return;
+}
+
+// 2 Get public URL
+const { data: urlData } = client.storage
+.from("videos")
+.getPublicUrl(fileName);
+
+// 3 Insert DB
+const { error: dbError } = await client
+.from("videos")
+.insert([
+{
+title: title,
+url: urlData.publicUrl
+}
+]);
+
+if(dbError){
+msg.innerText = "خطأ في حفظ الفيديو";
+return;
+}
+
+msg.innerText = "تم رفع الفيديو بنجاح";
+}
+</script>
