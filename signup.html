@@ -1,3 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>إنشاء حساب</title>
+
+<style>
+body{
+font-family: Arial;
+background:#111;
+color:white;
+text-align:center;
+padding-top:60px;
+}
+
+input{
+display:block;
+margin:10px auto;
+padding:12px;
+width:250px;
+border-radius:8px;
+border:none;
+text-align:right;
+font-size:14px;
+}
+
+button{
+padding:10px 20px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#00c853;
+color:white;
+font-weight:bold;
+}
+
+button:hover{
+transform:scale(1.05);
+}
+
+#msg{
+margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>إنشاء حساب جديد</h2>
+
+<input id="name" placeholder="الاسم">
+<input id="phone" placeholder="رقم التليفون (11 رقم)">
+<input id="password" type="password" placeholder="كلمة المرور">
+
+<button onclick="signup()">تسجيل</button>
+
+<div id="msg"></div>
+
+<!-- Supabase CDN (صح 100%) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<script>
+const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_ANON_KEY = "PUT_YOUR_ANON_KEY_HERE";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ===============================
+// VALIDATION PHONE
+// ===============================
+function isValidPhone(phone){
+return phone.length === 11 && /^\d+$/.test(phone);
+}
+
+// ===============================
+// SIGNUP FUNCTION (GLOBAL FIX)
+// ===============================
 window.signup = async function () {
 
 const name = document.getElementById("name").value;
@@ -5,22 +82,31 @@ const phone = document.getElementById("phone").value;
 const password = document.getElementById("password").value;
 const msg = document.getElementById("msg");
 
+msg.style.color = "white";
 msg.innerText = "جاري إنشاء الحساب...";
 
 try {
 
-// Supabase Auth
+// check phone
+if(!isValidPhone(phone)){
+msg.style.color = "red";
+msg.innerText = "رقم التليفون لازم يكون 11 رقم";
+return;
+}
+
+// 1. create auth user (phone as fake email)
 const { data, error } = await supabase.auth.signUp({
 email: phone + "@phone.com",
-password
+password: password
 });
 
 if(error){
+msg.style.color = "red";
 msg.innerText = error.message;
 return;
 }
 
-// Database insert
+// 2. insert into database
 const { error: dbError } = await supabase
 .from("students")
 .insert([
@@ -33,11 +119,12 @@ activated: false
 ]);
 
 if(dbError){
+msg.style.color = "red";
 msg.innerText = dbError.message;
 return;
 }
 
-msg.style.color = "green";
+msg.style.color = "#00e676";
 msg.innerText = "تم إنشاء الحساب بنجاح";
 
 setTimeout(()=>{
@@ -46,7 +133,12 @@ window.location.href = "login.html";
 
 } catch(err){
 console.log(err);
-msg.innerText = "حدث خطأ";
+msg.style.color = "red";
+msg.innerText = "حدث خطأ غير متوقع";
 }
 
 }
+</script>
+
+</body>
+</html>
