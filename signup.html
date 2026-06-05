@@ -76,8 +76,21 @@ const msg = document.getElementById("msg");
 
 msg.innerText = "loading...";
 
+// التحقق من الاسم
+if(!name || name.trim().length < 3){
+msg.innerText = "الرجاء إدخال اسم صحيح (3 أحرف على الأقل)";
+return;
+}
+
+// التحقق من رقم التليفون
 if(!validPhone(phone)){
 msg.innerText = "رقم التليفون خطأ";
+return;
+}
+
+// التحقق من كلمة المرور
+if(!pass || pass.length < 6){
+msg.innerText = "كلمة المرور يجب أن تكون 6 أحرف على الأقل";
 return;
 }
 
