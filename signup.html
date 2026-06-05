@@ -65,21 +65,7 @@ const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 function validPhone(p){
 return p.length === 11 && /^\d+$/.test(p);
 }
-if(!name || name.trim() === ""){
-msg.innerText = "من فضلك أدخل الاسم";
-return;
-}
 
-if(!validPhone(phone)){
-msg.innerText = "رقم التليفون غير صحيح";
-return;
-}
-
-if(!pass || pass.length < 6){
-msg.innerText = "كلمة المرور يجب أن تكون 6 أحرف على الأقل";
-return;
-}
-}
 /* ================= SIGNUP ================= */
 window.signup = async function(){
 
