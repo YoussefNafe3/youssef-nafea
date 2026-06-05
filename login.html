@@ -66,30 +66,11 @@ const msg = document.getElementById("msg");
 
 msg.innerText = "جاري تسجيل الدخول...";
 
-try{
+try {
 
-const { data, error } = await client.auth.signInWithPassword({
-email: phone + "@phone.com",
-password: password
-});
-
-if(error){
-
-// 👇 حالة كلمة المرور غلط (الأدق)
-if(
-error.message?.toLowerCase().includes("invalid") ||
-error.message?.toLowerCase().includes("credentials")
-){
-msg.innerText = "تأكد من صحة بياناتك";
-}
-
-else{
-msg.innerText = "حدث خطأ في تسجيل الدخول";
-}
-
-return;
-}
-
+// =========================
+// 1- تحقق هل الرقم موجود
+// =========================
 const { data: student, error: dbError } = await client
 .from("students")
 .select("*")
@@ -97,27 +78,51 @@ const { data: student, error: dbError } = await client
 .single();
 
 if(dbError || !student){
-msg.innerText = "الرقم غير مسجل الرجاء إنشاء حساب أولاً ثم العودة لتسجيل الدخول";
+msg.innerText = "الرقم غير مسجل، يرجى إنشاء حساب أولاً";
 return;
 }
 
+// =========================
+// 2- محاولة تسجيل الدخول
+// =========================
+const { data, error } = await client.auth.signInWithPassword({
+email: phone + "@phone.com",
+password: password
+});
+
+// =========================
+// 3- لو فشل تسجيل الدخول → غالباً كلمة المرور غلط
+// =========================
+if(error){
+msg.innerText = "خطأ في كلمة المرور";
+return;
+}
+
+// =========================
+// 4- التحقق من التفعيل
+// =========================
 if(!student.activated){
 msg.innerText = "الحساب غير مفعل يرجى انتظار التفعيل";
 return;
 }
 
+// =========================
+// 5- حفظ المستخدم
+// =========================
 localStorage.setItem("user", JSON.stringify(student));
 
+// =========================
+// 6- التوجيه حسب الدور
+// =========================
 if(student.role === "admin"){
 window.location.href = "admin.html";
 }else{
 window.location.href = "dashboard.html";
 }
 
-}catch(err){
+} catch(err){
 console.log(err);
 msg.innerText = "حدث خطأ غير متوقع";
-}
 }
 </script>
 </body>
