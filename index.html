@@ -15,6 +15,7 @@
     <a href="login.html" class="nav-btn">تسجيل الدخول</a>
     <a href="signup.html" class="nav-btn signup">إنشاء حساب</a>
   </div>
+<div id="userName" onclick="goDashboard()" style="cursor:pointer"></div>
 </div>
 </body>
 
@@ -544,6 +545,11 @@ function logout(){
 }
 
 checkAuth();
+</script>
+<script>
+function goDashboard(){
+window.location.href = "dashboard.html";
+}
 </script>
 </body>
 </html>
