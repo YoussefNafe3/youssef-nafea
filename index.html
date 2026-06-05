@@ -525,8 +525,7 @@ btn.onclick = function(){
 }
 </script>
 <script>
-function checkAuth(){
-  const user = JSON.parse(localStorage.getItem("user"));
+const user = JSON.parse(localStorage.getItem("user"));
 
 const displayName =
 user?.full_name || user?.name || user?.phone || "طالب";
