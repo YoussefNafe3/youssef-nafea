@@ -1,0 +1,33 @@
+<input id="email" placeholder="الإيميل">
+<input id="code" placeholder="كود التفعيل">
+
+<button onclick="activate()">تفعيل</button>
+
+<script type="module">
+import { supabase } from './supabase.js';
+
+window.activate = async function(){
+
+  const email = document.getElementById("email").value;
+  const code = document.getElementById("code").value;
+
+  const { data: student } = await supabase
+    .from('students')
+    .select('*')
+    .eq('email', email)
+    .eq('activation_code', code)
+    .single();
+
+  if(!student){
+    alert("كود غير صحيح");
+    return;
+  }
+
+  await supabase
+    .from('students')
+    .update({ activated: true })
+    .eq('email', email);
+
+  alert("تم التفعيل بنجاح");
+};
+</script>
