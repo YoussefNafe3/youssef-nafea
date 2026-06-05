@@ -1,100 +1,26 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<title>إنشاء حساب</title>
-<button onclick="alert('JS OK')">TEST</button>
-<style>
-body{
-font-family: Arial;
-background:#111;
-color:white;
-text-align:center;
-padding-top:60px;
-}
-
-input{
-display:block;
-margin:10px auto;
-padding:12px;
-width:250px;
-border-radius:8px;
-border:none;
-text-align:right;
-}
-
-button{
-padding:10px 20px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-background:#00c853;
-color:white;
-font-weight:bold;
-}
-
-#msg{
-margin-top:15px;
-}
-</style>
-</head>
-
-<body>
-
-<h2>إنشاء حساب جديد</h2>
-
-<input id="name" placeholder="الاسم">
-<input id="phone" placeholder="رقم التليفون">
-<input id="password" type="password" placeholder="كلمة المرور">
-
-<button onclick="signup()">تسجيل</button>
-
-<div id="msg"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
-<script>
-const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
-
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-function validatePhone(phone){
-return phone.length === 11 && /^\d+$/.test(phone);
-}
-
-async function signup(){
+window.signup = async function () {
 
 const name = document.getElementById("name").value;
 const phone = document.getElementById("phone").value;
 const password = document.getElementById("password").value;
 const msg = document.getElementById("msg");
 
-// validation
-if(!validatePhone(phone)){
-msg.style.color = "red";
-msg.innerText = "رقم التليفون لازم يكون 11 رقم";
-return;
-}
-
-msg.style.color = "white";
 msg.innerText = "جاري إنشاء الحساب...";
 
 try {
 
-// 1. auth (نستخدم phone كـ email بديل)
+// Supabase Auth
 const { data, error } = await supabase.auth.signUp({
 email: phone + "@phone.com",
 password
 });
 
 if(error){
-msg.style.color = "red";
 msg.innerText = error.message;
 return;
 }
 
-// 2. insert in DB
+// Database insert
 const { error: dbError } = await supabase
 .from("students")
 .insert([
@@ -107,12 +33,11 @@ activated: false
 ]);
 
 if(dbError){
-msg.style.color = "red";
 msg.innerText = dbError.message;
 return;
 }
 
-msg.style.color = "#00e676";
+msg.style.color = "green";
 msg.innerText = "تم إنشاء الحساب بنجاح";
 
 setTimeout(()=>{
@@ -120,13 +45,8 @@ window.location.href = "login.html";
 },1500);
 
 } catch(err){
-msg.style.color = "red";
-msg.innerText = "حدث خطأ";
 console.log(err);
+msg.innerText = "حدث خطأ";
 }
 
 }
-</script>
-
-</body>
-</html>
