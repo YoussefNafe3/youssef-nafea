@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Admin Login</title>
+</head>
+<body>
+
+<h2>Admin Login 🔐</h2>
+
+<input id="pass" type="password" placeholder="Password">
+<button onclick="login()">Enter</button>
+
+<script>
+function login(){
+
+  const pass = document.getElementById("pass").value;
+
+  // غير الباسورد ده براحتك
+  const adminPassword = "1234";
+
+  if(pass === adminPassword){
+    localStorage.setItem("isAdmin", "true");
+    window.location.href = "admin.html";
+  } else {
+    alert("Wrong Password");
+  }
+}
+</script>
+
+</body>
+</html>
