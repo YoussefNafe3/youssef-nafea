@@ -526,16 +526,13 @@ btn.onclick = function(){
 </script>
 <script>
 function checkAuth(){
-  const user = localStorage.getItem("user");
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  const authArea = document.getElementById("authArea");
+const displayName =
+user?.full_name || user?.name || user?.phone || "طالب";
 
-  if(user){
-    const data = JSON.parse(user);
-
-    authArea.innerHTML = `
-      <span style="color:white;font-weight:700">
-        👋 ${data.email}
+document.getElementById("userName").innerHTML =
+"👋 " + displayName;
       </span>
       <button onclick="logout()" class="nav-btn signup">خروج</button>
     `;
