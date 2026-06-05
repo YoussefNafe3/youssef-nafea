@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<h2>أهلاً بك 👋</h2>
+<h2>أهلاً 👋</h2>
 
 <p>كورساتك:</p>
 
@@ -17,9 +17,15 @@
 <button onclick="logout()">تسجيل خروج</button>
 
 <script>
+const user = localStorage.getItem("user");
+
+if(!user){
+  window.location.href = "login.html";
+}
+
 function logout(){
-localStorage.removeItem("user");
-window.location.href="login.html";
+  localStorage.removeItem("user");
+  window.location.href = "login.html";
 }
 </script>
 
