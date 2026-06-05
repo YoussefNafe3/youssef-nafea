@@ -1,112 +1,363 @@
-const user = JSON.parse(localStorage.getItem("user") || "{}");
+<!-- admin.html -->
 
-if(user.role !== "admin"){
-  window.location.href = "login.html";
-}
-<script>
-const isAdmin = localStorage.getItem("isAdmin");
-
-if(isAdmin !== "true"){
-  window.location.href = "admin-login.html";
-}
-<button onclick="logout()">Logout</button>
-
-<script>
-function logout(){
-  localStorage.removeItem("isAdmin");
-  window.location.href = "admin-login.html";
-}
-
-</script>
 <!DOCTYPE html>
+
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>لوحة تحكم الأدمن</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
 <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
+
 body{
-font-family: Arial;
-background:#111;
+background:#0f172a;
 color:white;
+display:flex;
+min-height:100vh;
+}
+
+.sidebar{
+width:280px;
+background:#111827;
+padding:25px;
+border-left:1px solid rgba(255,255,255,.08);
+}
+
+.brand{
+font-size:28px;
+font-weight:800;
+color:#FFD700;
+margin-bottom:30px;
+text-align:center;
+}
+
+.admin-card{
+background:rgba(255,255,255,.05);
 padding:20px;
+border-radius:18px;
+margin-bottom:25px;
+text-align:center;
+}
+
+.admin-name{
+font-size:20px;
+font-weight:700;
+}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.menu a{
+text-decoration:none;
+color:white;
+padding:15px;
+border-radius:12px;
+background:rgba(255,255,255,.05);
+transition:.3s;
+}
+
+.menu a:hover{
+background:#2563eb;
+}
+
+.main{
+flex:1;
+padding:25px;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.logout-btn{
+background:#ef4444;
+border:none;
+padding:12px 18px;
+border-radius:12px;
+color:white;
+cursor:pointer;
+font-weight:700;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-bottom:25px;
+}
+
+.stat{
+background:rgba(255,255,255,.06);
+padding:25px;
+border-radius:20px;
+text-align:center;
+}
+
+.stat-number{
+font-size:34px;
+font-weight:800;
+color:#FFD700;
+}
+
+.section{
+background:rgba(255,255,255,.05);
+padding:25px;
+border-radius:20px;
+margin-bottom:25px;
+}
+
+.section h2{
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-bottom:10px;
+border:none;
+border-radius:10px;
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:700;
+}
+
+.primary{
+background:#2563eb;
+color:white;
+}
+
+.success{
+background:#16a34a;
+color:white;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
-margin-top:20px;
 }
 
 th,td{
-padding:10px;
-border:1px solid #444;
+padding:12px;
 text-align:center;
+border-bottom:1px solid rgba(255,255,255,.08);
 }
 
-button{
-padding:5px 10px;
-cursor:pointer;
+@media(max-width:900px){
+
+body{
+flex-direction:column;
 }
+
+.sidebar{
+width:100%;
+}
+
+}
+
 </style>
+
 </head>
+
 <body>
 
-<h2>🔥 Admin Panel - Students</h2>
+<div class="sidebar">
+
+<div class="brand">
+Dr Youssef Nafea
+</div>
+
+<div class="admin-card">
+<div class="admin-name" id="adminName">
+Admin
+</div>
+</div>
+
+<div class="menu">
+
+<a href="#">🏠 الرئيسية</a>
+
+<a href="#students">
+👨‍🎓 الطلاب
+</a>
+
+<a href="#videos">
+🎥 الفيديوهات
+</a>
+
+<a href="#sessions">
+📅 الحصص
+</a>
+
+<a href="#announcements">
+📢 الإعلانات
+</a>
+
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+
+<h1>لوحة التحكم</h1>
+
+<button class="logout-btn" onclick="logout()">
+تسجيل الخروج
+</button>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+<div class="stat-number" id="studentsCount">0</div>
+<div>إجمالي الطلاب</div>
+</div>
+
+<div class="stat">
+<div class="stat-number">0</div>
+<div>الفيديوهات</div>
+</div>
+
+<div class="stat">
+<div class="stat-number">0</div>
+<div>الحصص</div>
+</div>
+
+<div class="stat">
+<div class="stat-number">0</div>
+<div>الإعلانات</div>
+</div>
+
+</div>
+
+<div class="section" id="students">
+
+<h2>إدارة الطلاب</h2>
+
+<input type="text" placeholder="بحث">
 
 <table>
+
 <thead>
+
 <tr>
-<th>Email</th>
-<th>Name</th>
-<th>Activated</th>
-<th>Action</th>
+<th>الاسم</th>
+<th>الهاتف</th>
+<th>الحالة</th>
+<th>الصلاحية</th>
 </tr>
+
 </thead>
 
-<tbody id="studentsTable"></tbody>
+<tbody id="studentsTable">
+
+</tbody>
+
 </table>
 
-<script type="module">
-import { supabase } from './supabase.js';
+</div>
 
-async function loadStudents(){
+<div class="section" id="videos">
 
-  const { data } = await supabase
-    .from('students')
-    .select('*');
+<h2>إضافة فيديو</h2>
 
-  const table = document.getElementById("studentsTable");
+<input id="videoTitle" placeholder="عنوان الفيديو">
 
-  table.innerHTML = "";
+<input id="videoLink" placeholder="رابط الفيديو">
 
-  data.forEach(student => {
+<button class="primary">
+إضافة فيديو
+</button>
 
-    table.innerHTML += `
-      <tr>
-        <td>${student.email}</td>
-        <td>${student.full_name}</td>
-        <td>${student.activated ? "✅" : "❌"}</td>
-        <td>
-          <button onclick="toggle('${student.email}', ${student.activated})">
-            Toggle
-          </button>
-        </td>
-      </tr>
-    `;
-  });
+</div>
+
+<div class="section" id="sessions">
+
+<h2>إضافة حصة</h2>
+
+<input placeholder="عنوان الحصة">
+
+<input placeholder="موعد الحصة">
+
+<button class="primary">
+إضافة حصة
+</button>
+
+</div>
+
+<div class="section" id="announcements">
+
+<h2>إضافة إعلان</h2>
+
+<input placeholder="عنوان الإعلان">
+
+<button class="success">
+نشر الإعلان
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+window.location.href="login.html";
 }
 
-window.toggle = async function(email, status){
+if(user.role !== "admin"){
+window.location.href="dashboard.html";
+}
 
-  await supabase
-    .from('students')
-    .update({ activated: !status })
-    .eq('email', email);
+document.getElementById("adminName").innerHTML =
+user.full_name || "Admin";
 
-  loadStudents();
-};
+function logout(){
 
-loadStudents();
+localStorage.removeItem("user");
+
+window.location.href="index.html";
+
+}
+
+/*
+ربط Supabase لاحقاً:
+
+studentsCount
+studentsTable
+
+videos table
+sessions table
+announcements table
+
+*/
+
 </script>
 
 </body>
