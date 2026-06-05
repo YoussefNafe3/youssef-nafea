@@ -157,13 +157,57 @@ msg.innerText = "جاري الرفع... ⏳";
 const fileName = Date.now() + "_" + file.name;
 
 // 1️⃣ رفع الفيديو في Storage
+async function uploadVideo(){
+
+const title = document.getElementById("title").value;
+const file = document.getElementById("file").files[0];
+const msg = document.getElementById("msg");
+
+if(!title || !file){
+msg.innerText = "املأ البيانات أولاً";
+return;
+}
+
+msg.innerText = "جاري الرفع... ⏳";
+
+const fileName = Date.now() + "_" + file.name;
+
+/* 1️⃣ رفع الفيديو */
 const { error: uploadError } = await client.storage
 .from("videos")
 .upload(fileName, file);
 
 if(uploadError){
+console.log(uploadError);
 msg.innerText = "فشل رفع الفيديو";
 return;
+}
+
+/* 2️⃣ جلب الرابط الصح */
+const { data } = client.storage
+.from("videos")
+.getPublicUrl(fileName);
+
+const publicUrl = data.publicUrl;
+
+/* 3️⃣ حفظ في الداتابيز */
+const { error: dbError } = await client
+.from("videos")
+.insert([{
+title: title,
+url: publicUrl
+}]);
+
+if(dbError){
+console.log(dbError);
+msg.innerText = "فشل حفظ البيانات";
+return;
+}
+
+msg.innerText = "تم رفع الفيديو بنجاح ✅";
+
+document.getElementById("title").value = "";
+document.getElementById("file").value = "";
 }
 
 // 2️⃣ الحصول على الرابط
