@@ -61,82 +61,48 @@ margin-top:15px;
 
 <script>
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "PUT_YOUR_ANON_KEY_HERE";
+const SUPABASE_ANON_KEY = "YOUR_KEY";
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ===============================
-// VALIDATION PHONE
-// ===============================
 function isValidPhone(phone){
 return phone.length === 11 && /^\d+$/.test(phone);
 }
 
-// ===============================
-// SIGNUP FUNCTION (GLOBAL FIX)
-// ===============================
-window.signup = async function () {
+window.signup = async function(){
 
 const name = document.getElementById("name").value;
 const phone = document.getElementById("phone").value;
 const password = document.getElementById("password").value;
 const msg = document.getElementById("msg");
 
-msg.style.color = "white";
-msg.innerText = "جاري إنشاء الحساب...";
+msg.innerText = "جاري...";
 
-try {
-
-// check phone
 if(!isValidPhone(phone)){
-msg.style.color = "red";
-msg.innerText = "رقم التليفون لازم يكون 11 رقم";
+msg.innerText = "رقم غير صحيح";
 return;
 }
 
-// 1. create auth user (phone as fake email)
-const { data, error } = await supabase.auth.signUp({
+const { error } = await supabase.auth.signUp({
 email: phone + "@phone.com",
-password: password
+password
 });
 
 if(error){
-msg.style.color = "red";
 msg.innerText = error.message;
 return;
 }
 
-// 2. insert into database
 const { error: dbError } = await supabase
 .from("students")
-.insert([
-{
-full_name: name,
-phone: phone,
-role: "student",
-activated: false
-}
-]);
+.insert([{ full_name: name, phone, role:"student", activated:false }]);
 
 if(dbError){
-msg.style.color = "red";
 msg.innerText = dbError.message;
 return;
 }
 
-msg.style.color = "#00e676";
-msg.innerText = "تم إنشاء الحساب بنجاح";
-
-setTimeout(()=>{
-window.location.href = "login.html";
-},1500);
-
-} catch(err){
-console.log(err);
-msg.style.color = "red";
-msg.innerText = "حدث خطأ غير متوقع";
-}
-
+msg.innerText = "تم إنشاء الحساب";
 }
 </script>
 
