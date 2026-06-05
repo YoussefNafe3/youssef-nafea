@@ -2,23 +2,25 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>Login</title>
+<title>تسجيل الدخول</title>
+
 <style>
 body{
 font-family: Arial;
-background:#0f0f0f;
+background:#111;
 color:white;
 text-align:center;
-padding-top:80px;
+padding-top:60px;
 }
 
 input{
 display:block;
 margin:10px auto;
-padding:10px;
+padding:12px;
 width:250px;
 border-radius:8px;
 border:none;
+text-align:right;
 }
 
 button{
@@ -30,13 +32,8 @@ background:#FFD700;
 font-weight:bold;
 }
 
-button:hover{
-transform:scale(1.05);
-}
-
 #msg{
 margin-top:15px;
-color:#ff4d4d;
 }
 </style>
 </head>
@@ -45,10 +42,10 @@ color:#ff4d4d;
 
 <h2>تسجيل الدخول</h2>
 
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
+<input id="phone" placeholder="رقم التليفون">
+<input id="password" type="password" placeholder="كلمة المرور">
 
-<button onclick="login()">Login</button>
+<button onclick="login()">دخول</button>
 
 <div id="msg"></div>
 
@@ -62,63 +59,55 @@ const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function login(){
 
-const email = document.getElementById("email").value;
+const phone = document.getElementById("phone").value;
 const password = document.getElementById("password").value;
 const msg = document.getElementById("msg");
 
-msg.style.color = "white";
-msg.innerText = "Loading...";
+msg.innerText = "جاري الدخول...";
 
 try {
 
-// 1. Auth login
+// 1. auth login
 const { data, error } = await supabase.auth.signInWithPassword({
-email,
+email: phone + "@phone.com",
 password
 });
 
 if(error){
-msg.style.color = "red";
 msg.innerText = error.message;
 return;
 }
 
-// 2. get user data from table
-const { data: student, error: dbError } = await supabase
+// 2. get student
+const { data: student } = await supabase
 .from("students")
 .select("*")
-.eq("email", email)
+.eq("phone", phone)
 .single();
 
-if(dbError || !student){
-msg.style.color = "red";
-msg.innerText = "User not found in database";
+if(!student){
+msg.innerText = "المستخدم غير موجود";
 return;
 }
 
-// 3. check activation
+// 3. activation check
 if(!student.activated){
-msg.style.color = "red";
-msg.innerText = "Account not activated";
+msg.innerText = "الحساب غير مفعل";
 return;
 }
 
-// 4. store session
-localStorage.setItem("user", JSON.stringify({
-email: email,
-role: student.role
-}));
+// 4. save session
+localStorage.setItem("user", JSON.stringify(student));
 
-// 5. redirect based on role
+// 5. redirect
 if(student.role === "admin"){
 window.location.href = "admin.html";
-} else {
+}else{
 window.location.href = "dashboard.html";
 }
 
 } catch(err){
-msg.style.color = "red";
-msg.innerText = "Something went wrong";
+msg.innerText = "حدث خطأ";
 console.log(err);
 }
 
