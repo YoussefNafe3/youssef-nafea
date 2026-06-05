@@ -48,7 +48,30 @@ window.login = async function () {
     alert("الحساب غير مفعل - تواصل معانا");
     return;
   }
+const { data, error } = await supabase.auth.signInWithPassword({
+  email,
+  password
+});
 
+if(error){
+  alert(error.message);
+  return;
+}
+
+// نجيب بيانات المستخدم من الجدول
+const { data: userData } = await supabase
+  .from("students")
+  .select("*")
+  .eq("email", email)
+  .single();
+
+// 🚨 التحقق من الأدمن
+if(userData.role === "admin"){
+  localStorage.setItem("user", JSON.stringify(userData));
+  window.location.href = "admin.html";
+} else {
+  alert("Not admin");
+}
   localStorage.setItem("user", JSON.stringify(data.user));
 
   window.location.href = "dashboard.html";
