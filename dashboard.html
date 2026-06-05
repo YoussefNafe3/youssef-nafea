@@ -18,18 +18,12 @@ if(!user){
 <p>كورساتك:</p>
 
 
-<button onclick="logout()">تسجيل خروج</button>
+<button onclick="logout()">تسجيل الخروج</button>
 
 <script>
-const user = localStorage.getItem("user");
-
-if(!user){
-  window.location.href = "login.html";
-}
-
 function logout(){
-  localStorage.removeItem("user");
-  window.location.href = "login.html";
+localStorage.removeItem("user");
+window.location.href = "login.html";
 }
 </script>
 
