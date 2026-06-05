@@ -1,0 +1,37 @@
+<h2>📚 فيديوهات الكورس</h2>
+
+<div id="videos"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseUrl = "YOUR_URL";
+const supabaseKey = "YOUR_KEY";
+const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+async function loadVideos(){
+
+const { data } = await client
+.from("videos")
+.select("*")
+.order("created_at", { ascending:false });
+
+const container = document.getElementById("videos");
+
+data.forEach(video => {
+
+container.innerHTML += `
+<div style="margin:15px;padding:15px;background:#222;border-radius:12px">
+<h3>${video.title}</h3>
+<video width="100%" controls>
+<source src="${video.url}" type="video/mp4">
+</video>
+</div>
+`;
+
+});
+
+}
+
+loadVideos();
+</script>
