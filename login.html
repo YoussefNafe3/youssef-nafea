@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
-<div class="logo">🧬</div>
 <title>تسجيل الدخول</title>
 
 <style>
@@ -70,7 +70,8 @@ position:relative;
 .eye{
 position:absolute;
 left:15px;
-top:18px;
+top:50%;
+transform:translateY(-50%);
 cursor:pointer;
 font-size:20px;
 user-select:none;
@@ -116,16 +117,28 @@ font-weight:700;
 
 <body>
 
+<div class="container">
+
+<div class="logo">🧬</div>
+
 <h2>تسجيل الدخول</h2>
 
-<input id="phone" placeholder="رقم التليفون">
+<input id="phone" type="tel" inputmode="numeric" placeholder="رقم التليفون">
 <div class="password-box">
 <input id="password" type="password" placeholder="كلمة المرور">
 <span class="eye" onclick="togglePassword()">👁</span>
 </div>
+
 <button onclick="login()">دخول</button>
 
 <div id="msg"></div>
+
+<div class="signup-link">
+ليس لديك حساب؟
+<a href="signup.html">إنشاء حساب</a>
+</div>
+
+</div>
 
 <!-- Supabase CDN (ONE ONLY) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
