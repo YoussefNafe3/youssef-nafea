@@ -1,18 +1,16 @@
-<!-- admin.html -->
-
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>لوحة تحكم الأدمن</title>
+<title>لوحة الفيديوهات | الأدمن</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 
+/* ================= BASE ================= */
 *{
 margin:0;
 padding:0;
@@ -21,122 +19,62 @@ font-family:'Cairo',sans-serif;
 }
 
 body{
-background:#0f172a;
+background:linear-gradient(135deg,#0f172a,#111827,#1e293b);
 color:white;
-display:flex;
 min-height:100vh;
+display:flex;
 }
 
+/* ================= SIDEBAR ================= */
 .sidebar{
 width:280px;
 background:#111827;
-padding:25px;
+padding:20px;
 border-left:1px solid rgba(255,255,255,.08);
+overflow-y:auto;
 }
 
-.brand{
-font-size:28px;
+.logo{
+font-size:22px;
 font-weight:800;
 color:#FFD700;
-margin-bottom:30px;
 text-align:center;
+margin-bottom:20px;
 }
 
-.admin-card{
+.menu-item{
+padding:12px;
+margin-bottom:10px;
 background:rgba(255,255,255,.05);
-padding:20px;
-border-radius:18px;
-margin-bottom:25px;
-text-align:center;
-}
-
-.admin-name{
-font-size:20px;
-font-weight:700;
-}
-
-.menu{
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.menu a{
-text-decoration:none;
-color:white;
-padding:15px;
 border-radius:12px;
-background:rgba(255,255,255,.05);
+cursor:pointer;
 transition:.3s;
 }
 
-.menu a:hover{
+.menu-item:hover{
 background:#2563eb;
 }
 
+/* ================= MAIN ================= */
 .main{
 flex:1;
-padding:25px;
+padding:20px;
 }
 
 .topbar{
 display:flex;
 justify-content:space-between;
 align-items:center;
-margin-bottom:25px;
-}
-
-.logout-btn{
-background:#ef4444;
-border:none;
-padding:12px 18px;
-border-radius:12px;
-color:white;
-cursor:pointer;
-font-weight:700;
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
-margin-bottom:25px;
-}
-
-.stat{
-background:rgba(255,255,255,.06);
-padding:25px;
-border-radius:20px;
-text-align:center;
-}
-
-.stat-number{
-font-size:34px;
-font-weight:800;
-color:#FFD700;
-}
-
-.section{
-background:rgba(255,255,255,.05);
-padding:25px;
-border-radius:20px;
-margin-bottom:25px;
-}
-
-.section h2{
 margin-bottom:20px;
 }
 
-input{
-width:100%;
-padding:12px;
-margin-bottom:10px;
-border:none;
-border-radius:10px;
+.title{
+font-size:22px;
+font-weight:800;
 }
 
-button{
-padding:12px 20px;
+.btn{
+padding:10px 15px;
 border:none;
 border-radius:10px;
 cursor:pointer;
@@ -148,32 +86,46 @@ background:#2563eb;
 color:white;
 }
 
-.success{
-background:#16a34a;
+/* ================= UPLOAD BOX ================= */
+.upload-box{
+background:rgba(255,255,255,.05);
+padding:25px;
+border-radius:20px;
+margin-bottom:20px;
+box-shadow:0 20px 40px rgba(0,0,0,.3);
+}
+
+input, select{
+width:100%;
+padding:12px;
+margin-bottom:12px;
+border:none;
+border-radius:10px;
+outline:none;
+}
+
+.file{
+background:rgba(255,255,255,.08);
 color:white;
 }
 
+/* ================= STATUS ================= */
+#msg{
+margin-top:10px;
+font-weight:700;
+}
+
+/* ================= TABLE ================= */
 table{
 width:100%;
 border-collapse:collapse;
+margin-top:20px;
 }
 
-th,td{
+th, td{
 padding:12px;
 text-align:center;
 border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-@media(max-width:900px){
-
-body{
-flex-direction:column;
-}
-
-.sidebar{
-width:100%;
-}
-
 }
 
 </style>
@@ -182,182 +134,168 @@ width:100%;
 
 <body>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
 
-<div class="brand">
-Dr Youssef Nafea
-</div>
+<div class="logo">🎬 Admin Panel</div>
 
-<div class="admin-card">
-<div class="admin-name" id="adminName">
-Admin
-</div>
-</div>
-
-<div class="menu">
-
-<a href="#">🏠 الرئيسية</a>
-
-<a href="#students">
-👨‍🎓 الطلاب
-</a>
-
-<a href="admin-videos.html">
-🎥 الفيديوهات
-</a>
-  
-<a href="#sessions">
-📅 الحصص
-</a>
-
-<a href="#announcements">
-📢 الإعلانات
-</a>
+<div class="menu-item">📊 Dashboard</div>
+<div class="menu-item">🎥 الفيديوهات</div>
+<div class="menu-item">👨‍🎓 الطلاب</div>
 
 </div>
 
-</div>
-
+<!-- MAIN -->
 <div class="main">
 
 <div class="topbar">
 
-<h1>لوحة التحكم</h1>
+<div class="title">رفع وإدارة الفيديوهات</div>
 
-<button class="logout-btn" onclick="logout()">
-تسجيل الخروج
+<button class="btn primary" onclick="logout()">تسجيل خروج</button>
+
+</div>
+
+<!-- UPLOAD -->
+<div class="upload-box">
+
+<h3>🎥 رفع فيديو جديد</h3>
+
+<input id="title" placeholder="عنوان الفيديو">
+
+<select id="isPremium">
+<option value="false">مجاني</option>
+<option value="true">مدفوع (Premium)</option>
+</select>
+
+<input type="file" id="file" class="file" accept="video/*">
+
+<button class="btn primary" onclick="uploadVideo()">
+رفع الفيديو
 </button>
 
-</div>
-
-<div class="stats">
-
-<div class="stat">
-<div class="stat-number" id="studentsCount">0</div>
-<div>إجمالي الطلاب</div>
-</div>
-
-<div class="stat">
-<div class="stat-number">0</div>
-<div>الفيديوهات</div>
-</div>
-
-<div class="stat">
-<div class="stat-number">0</div>
-<div>الحصص</div>
-</div>
-
-<div class="stat">
-<div class="stat-number">0</div>
-<div>الإعلانات</div>
-</div>
+<div id="msg"></div>
 
 </div>
 
-<div class="section" id="students">
+<!-- LIST -->
+<div class="upload-box">
 
-<h2>إدارة الطلاب</h2>
-
-<input type="text" placeholder="بحث">
+<h3>📂 الفيديوهات الحالية</h3>
 
 <table>
-
 <thead>
-
 <tr>
-<th>الاسم</th>
-<th>الهاتف</th>
-<th>الحالة</th>
-<th>الصلاحية</th>
+<th>العنوان</th>
+<th>النوع</th>
 </tr>
-
 </thead>
-
-<tbody id="studentsTable">
-
-</tbody>
-
+<tbody id="list"></tbody>
 </table>
 
 </div>
 
-<div class="section" id="videos">
-
-<h2>إضافة فيديو</h2>
-
-<input id="videoTitle" placeholder="عنوان الفيديو">
-
-<input id="videoLink" placeholder="رابط الفيديو">
-
-<button class="primary">
-إضافة فيديو
-</button>
-
 </div>
 
-<div class="section" id="sessions">
-
-<h2>إضافة حصة</h2>
-
-<input placeholder="عنوان الحصة">
-
-<input placeholder="موعد الحصة">
-
-<button class="primary">
-إضافة حصة
-</button>
-
-</div>
-
-<div class="section" id="announcements">
-
-<h2>إضافة إعلان</h2>
-
-<input placeholder="عنوان الإعلان">
-
-<button class="success">
-نشر الإعلان
-</button>
-
-</div>
-
-</div>
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <script>
 
-const user = JSON.parse(localStorage.getItem("user"));
+const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_ANON_KEY = "PUT_YOUR_KEY_HERE";
 
-if(!user){
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ================= UPLOAD ================= */
+async function uploadVideo(){
+
+const title = document.getElementById("title").value;
+const file = document.getElementById("file").files[0];
+const isPremium = document.getElementById("isPremium").value === "true";
+const msg = document.getElementById("msg");
+
+if(!title || !file){
+msg.innerText = "ادخل البيانات كاملة";
+return;
+}
+
+msg.innerText = "جاري الرفع... ⏳";
+
+try{
+
+const fileName = Date.now() + "_" + file.name;
+
+/* 1 upload storage */
+const { error: uploadError } = await client
+.storage
+.from("videos")
+.upload(fileName, file);
+
+if(uploadError){
+msg.innerText = "فشل رفع الفيديو";
+return;
+}
+
+/* 2 get URL */
+const { data } = client
+.storage
+.from("videos")
+.getPublicUrl(fileName);
+
+/* 3 save DB */
+const { error: dbError } = await client
+.from("videos")
+.insert([{
+title: title,
+url: data.publicUrl,
+is_premium: isPremium
+}]);
+
+if(dbError){
+msg.innerText = "تم الرفع لكن فشل الحفظ";
+return;
+}
+
+msg.innerText = "تم رفع الفيديو بنجاح ✅";
+
+loadVideos();
+
+}catch(err){
+console.log(err);
+msg.innerText = "حدث خطأ غير متوقع";
+}
+
+}
+
+/* ================= LOAD ================= */
+async function loadVideos(){
+
+const { data } = await client
+.from("videos")
+.select("*")
+.order("created_at",{ascending:false});
+
+const tbody = document.getElementById("list");
+tbody.innerHTML = "";
+
+data.forEach(v=>{
+tbody.innerHTML += `
+<tr>
+<td>${v.title}</td>
+<td>${v.is_premium ? "🔒 مدفوع" : "🆓 مجاني"}</td>
+</tr>
+`;
+});
+
+}
+
+function logout(){
+localStorage.removeItem("user");
 window.location.href="login.html";
 }
 
-if(user.role !== "admin"){
-window.location.href="dashboard.html";
-}
-
-document.getElementById("adminName").innerHTML =
-user.full_name || "Admin";
-
-function logout(){
-
-localStorage.removeItem("user");
-
-window.location.href="index.html";
-
-}
-
-
-/*
-ربط Supabase لاحقاً:
-
-studentsCount
-studentsTable
-
-videos table
-sessions table
-announcements table
-
-*/
+loadVideos();
 
 </script>
 
