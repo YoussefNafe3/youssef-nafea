@@ -74,11 +74,19 @@ password: password
 });
 
 if(error){
-if(error?.message?.includes("Invalid")){
-msg.innerText = "البيانات خطأ";
-}else{
+
+// 👇 حالة كلمة المرور غلط (الأدق)
+if(
+error.message?.toLowerCase().includes("invalid") ||
+error.message?.toLowerCase().includes("credentials")
+){
+msg.innerText = "كلمة المرور خطأ";
+}
+
+else{
 msg.innerText = "حدث خطأ في تسجيل الدخول";
 }
+
 return;
 }
 
