@@ -4,6 +4,13 @@ const isAdmin = localStorage.getItem("isAdmin");
 if(isAdmin !== "true"){
   window.location.href = "admin-login.html";
 }
+<button onclick="logout()">Logout</button>
+
+<script>
+function logout(){
+  localStorage.removeItem("isAdmin");
+  window.location.href = "admin-login.html";
+}
 
 </script>
 <!DOCTYPE html>
