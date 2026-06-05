@@ -27,16 +27,30 @@ window.login = async function () {
   });
 
   if (error) {
-    alert("خطأ: " + error.message);
+    alert(error.message);
     return;
   }
 
-  // حفظ المستخدم في الجلسة
+  // نجيب بيانات الطالب من الجدول
+  const { data: student } = await supabase
+    .from('students')
+    .select('*')
+    .eq('email', email)
+    .single();
+
+  if (!student) {
+    alert("مفيش بيانات طالب");
+    return;
+  }
+
+  // 🚨 التحقق من التفعيل
+  if (!student.activated) {
+    alert("الحساب غير مفعل - تواصل معانا");
+    return;
+  }
+
   localStorage.setItem("user", JSON.stringify(data.user));
 
-  alert("تم تسجيل الدخول بنجاح");
-
-  // روح للداشبورد
   window.location.href = "dashboard.html";
 };
 </script>
