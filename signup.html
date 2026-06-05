@@ -2,35 +2,134 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>إنشاء حساب</title>
+<body>
 
+<div class="container">
+
+<div class="logo">🧬</div>
+
+<h2>إنشاء حساب</h2>
+
+<input id="name" placeholder="الاسم">
+
+<input id="phone" placeholder="رقم التليفون">
+
+<div class="password-box">
+<input id="password" type="password" placeholder="كلمة المرور">
+<span class="eye" onclick="togglePassword()">👁</span>
+</div>
+
+<button onclick="signup()">إنشاء الحساب</button>
+
+<div id="msg"></div>
+
+<div class="login-link">
+لديك حساب؟ <a href="login.html">تسجيل الدخول</a>
+</div>
+
+</div>
 <style>
 body{
-font-family: Arial;
-background:#111;
+margin:0;
+padding:0;
+font-family:'Cairo',Arial,sans-serif;
+background:linear-gradient(135deg,#0f172a,#111827,#020617);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
 color:white;
+}
+
+.container{
+width:92%;
+max-width:420px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,.12);
+border-radius:28px;
+padding:35px 25px;
+box-shadow:0 20px 60px rgba(0,0,0,.45);
+}
+
+.logo{
+font-size:55px;
+margin-bottom:10px;
 text-align:center;
-padding-top:60px;
+}
+
+h2{
+text-align:center;
+margin-bottom:25px;
+font-size:28px;
+font-weight:800;
 }
 
 input{
-display:block;
-margin:10px auto;
-padding:12px;
-width:260px;
-border-radius:8px;
+width:100%;
+padding:16px;
+margin-bottom:15px;
 border:none;
-text-align:right;
+outline:none;
+border-radius:16px;
+background:rgba(255,255,255,.08);
+color:white;
+font-size:15px;
+box-sizing:border-box;
+}
+
+input::placeholder{
+color:#cbd5e1;
+}
+
+.password-box{
+position:relative;
+}
+
+.eye{
+position:absolute;
+left:15px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+font-size:20px;
+user-select:none;
 }
 
 button{
-padding:10px 20px;
+width:100%;
+padding:16px;
 border:none;
-border-radius:8px;
+border-radius:16px;
+background:linear-gradient(135deg,#FFD700,#ffb300);
+color:#111;
+font-size:17px;
+font-weight:800;
 cursor:pointer;
-background:#00c853;
-color:white;
-font-weight:bold;
+transition:.3s;
+margin-top:8px;
+}
+
+button:hover{
+transform:translateY(-2px);
+}
+
+#msg{
+margin-top:18px;
+text-align:center;
+font-weight:700;
+min-height:24px;
+}
+
+.login-link{
+text-align:center;
+margin-top:18px;
+}
+
+.login-link a{
+color:#FFD700;
+text-decoration:none;
+font-weight:700;
 }
 
 #msg{
@@ -45,8 +144,10 @@ margin-top:15px;
 
 <input id="name" placeholder="الاسم">
 <input id="phone" placeholder="رقم التليفون">
-<input id="password" type="password" placeholder="كلمة المرور">
-
+<div class="password-box">
+    <input id="password" type="password" placeholder="كلمة المرور">
+    <span class="eye" onclick="togglePassword()">👁</span>
+</div>
 <button onclick="signup()">تسجيل</button>
 
 <div id="msg"></div>
@@ -132,6 +233,15 @@ return;
 
 msg.innerText = "تم إنشاء الحساب بنجاح";
 
+}
+function togglePassword(){
+const pass = document.getElementById("password");
+
+if(pass.type === "password"){
+pass.type = "text";
+}else{
+pass.type = "password";
+}
 }
 </script>
 
