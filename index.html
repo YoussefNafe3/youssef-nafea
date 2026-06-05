@@ -9,14 +9,13 @@
 <body>
 
 <div class="top-bar">
+
   <div class="logo-small">🧬</div>
 
-  <div id="authArea" class="auth-buttons">
-    <a href="login.html" class="nav-btn">تسجيل الدخول</a>
-    <a href="signup.html" class="nav-btn signup">إنشاء حساب</a>
-  </div>
-<div class="top-left" id="authArea"></div>
-<div id="userName" onclick="goDashboard()" style="cursor:pointer"></div>
+  <!-- هنا هنبدل المحتوى حسب تسجيل الدخول -->
+  <div id="authArea" class="auth-area"></div>
+
+</div>
 </div>
 </body>
 
@@ -373,9 +372,10 @@ font-weight:800;
 font-size:18px;
 }
 
-.auth-buttons{
+.auth-area{
 display:flex;
 gap:10px;
+align-items:center;
 }
 
 .nav-btn{
@@ -386,6 +386,8 @@ border-radius:20px;
 font-size:14px;
 background:rgba(255,255,255,0.15);
 transition:0.3s;
+cursor:pointer;
+border:none;
 }
 
 .nav-btn:hover{
@@ -396,52 +398,6 @@ transform:scale(1.05);
 background:#FFD700;
 color:#111;
 font-weight:700;
-}
-
-.auth-buttons span{
-padding:8px 12px;
-color:white;
-font-weight:700;
-}
-
-.auth-buttons{
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-.top-left{
-position:fixed;
-top:15px;
-left:15px;
-display:flex;
-gap:10px;
-align-items:center;
-z-index:999;
-}
-
-.user-btn{
-background:rgba(255,255,255,0.1);
-padding:10px 15px;
-border-radius:12px;
-color:white;
-cursor:pointer;
-backdrop-filter:blur(10px);
-border:1px solid rgba(255,255,255,0.2);
-transition:0.3s;
-}
-
-.user-btn:hover{
-transform:scale(1.05);
-}
-
-.logout-btn{
-background:#ef4444;
-padding:10px 15px;
-border-radius:12px;
-color:white;
-cursor:pointer;
-border:none;
 }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -542,32 +498,29 @@ function checkCode(){
 </script>
 <script>
 const user = JSON.parse(localStorage.getItem("user"));
-
 const authArea = document.getElementById("authArea");
 
 if(user){
 
-// لو مسجل دخول → الاسم + خروج
 authArea.innerHTML = `
-<div class="user-btn" onclick="goDashboard()">
+<div class="nav-btn" onclick="goDashboard()">
 👋 ${user.full_name || user.name || user.phone}
 </div>
 
-<button class="logout-btn" onclick="logout()">
+<button class="nav-btn" onclick="logout()" style="background:#ef4444">
 تسجيل خروج
 </button>
 `;
 
 }else{
 
-// لو مش مسجل → تسجيل + إنشاء حساب
 authArea.innerHTML = `
-<a class="user-btn" href="login.html">تسجيل دخول</a>
-<a class="user-btn" href="signup.html">إنشاء حساب</a>
+<a href="login.html" class="nav-btn">تسجيل الدخول</a>
+<a href="signup.html" class="nav-btn signup">إنشاء حساب</a>
 `;
 }
 
-  function goDashboard(){
+function goDashboard(){
 window.location.href = "dashboard.html";
 }
 
