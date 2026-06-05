@@ -116,11 +116,6 @@ width:100%;
 border-radius:15px;
 }
 
-/* منع التحميل */
-video::-internal-media-controls-download-button {
-display:none;
-}
-
 /* ================= PROGRESS ================= */
 .progress{
 height:6px;
@@ -150,7 +145,7 @@ opacity:.9;
 position:fixed;
 inset:0;
 background:black;
-z-index:9999;
+z-index:99999;
 display:none;
 }
 
@@ -223,7 +218,7 @@ min-width:150px;
 <script>
 
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_KEY_HERE";
+const SUPABASE_ANON_KEY = "PUT_YOUR_KEY_HERE";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -246,7 +241,6 @@ return;
 }
 
 videos = data;
-
 const list = document.getElementById("videoList");
 list.innerHTML = "";
 
@@ -255,29 +249,38 @@ data.forEach((v,index)=>{
 const div = document.createElement("div");
 div.className = "video-item";
 
-div.innerHTML = `🎥 ${v.title}`;
+div.innerHTML = v.is_premium ? `🎥 ${v.title} <span class="lock">🔒</span>` : `🎥 ${v.title}`;
 
 div.onclick = ()=>{
 
-// 🔒 لو فيديو مدفوع
-if(v.is_premium && !user.is_premium){
+if(v.is_premium && !user?.is_premium){
 alert("هذا الفيديو للمشتركين فقط 🔒");
 return;
 }
 
 playVideo(v.url, v.title, v.id);
 setActive(index);
+
 };
 
 list.appendChild(div);
 
 });
 
-// 🔥 آخر فيديو مشاهدة
-const last = JSON.parse(localStorage.getItem("lastVideo"));
+/* 🔥 آخر فيديو شاهدته من السيرفر */
+const { data: lastWatched } = await client
+.from("student_progress")
+.select("*")
+.eq("student_id", user.id)
+.order("updated_at",{ascending:false})
+.limit(1)
+.single();
 
-if(last){
-playVideo(last.url,last.title,last.id);
+if(lastWatched){
+const lastVideo = videos.find(v => v.id === lastWatched.video_id);
+if(lastVideo){
+playVideo(lastVideo.url, lastVideo.title, lastVideo.id);
+}
 }
 
 }
@@ -291,8 +294,13 @@ document.getElementById("videoTitle").innerText = title;
 
 currentVideoId = id;
 
-// حفظ آخر فيديو
-localStorage.setItem("lastVideo", JSON.stringify({url,title,id}));
+/* حفظ آخر مشاهدة في DB */
+client.from("student_progress").upsert({
+student_id: user.id,
+video_id: id,
+progress: 0,
+updated_at: new Date()
+});
 
 }
 
@@ -308,6 +316,8 @@ const video = document.getElementById("videoPlayer");
 
 video.ontimeupdate = async function(){
 
+if(!video.duration) return;
+
 const percent = (video.currentTime / video.duration) * 100;
 
 document.getElementById("progressBar").style.width = percent + "%";
@@ -316,7 +326,8 @@ if(currentVideoId){
 await client.from("student_progress").upsert({
 student_id: user.id,
 video_id: currentVideoId,
-progress: percent
+progress: percent,
+updated_at: new Date()
 });
 }
 
