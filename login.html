@@ -74,7 +74,11 @@ password: password
 });
 
 if(error){
-msg.innerText = error.message;
+if(error?.message?.includes("Invalid")){
+msg.innerText = "البيانات خطأ";
+}else{
+msg.innerText = "حدث خطأ في تسجيل الدخول";
+}
 return;
 }
 
@@ -85,12 +89,12 @@ const { data: student, error: dbError } = await client
 .single();
 
 if(dbError || !student){
-msg.innerText = "المستخدم غير موجود";
+msg.innerText = "الرقم غير مسجل الرجاء إنشاء حساب أولاً ثم العودة لتسجيل الدخول";
 return;
 }
 
 if(!student.activated){
-msg.innerText = "الحساب غير مفعل";
+msg.innerText = "الحساب غير مفعل يرجى انتظار التفعيل";
 return;
 }
 
