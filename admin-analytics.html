@@ -716,7 +716,7 @@ function videoAggregate(videoId) {
 
 function statusBadge(percent, exists) {
   if (!exists) return `<span class="badge empty">لم يشاهد</span>`;
-  if (percent >= 90) return `<span class="badge good">مكتمل</span>`;
+  if (percent >= 95) return `<span class="badge good">مكتمل</span>`;
   if (percent >= 40) return `<span class="badge mid">جاري</span>`;
   return `<span class="badge bad">ضعيف</span>`;
 }
@@ -859,9 +859,32 @@ async function loadVideos() {
 }
 
 async function loadSessions() {
-  const { data, error } = await client.from("video_sessions").select("*").order("updated_at", { ascending: false });
-  if (error) throw error;
+  const { data, error } = await client
+    .from("video_sessions")
+    .select(`
+      *,
+      students(name, class_group)
+    `)
+    .order("updated_at", { ascending: false });
+
+  if (error) {
+    console.log("LOAD ERROR:", error);
+    state.sessions = [];
+    return;
+  }
+
+  // نخزن كل البيانات
   state.sessions = data || [];
+
+  // فلترة حسب الصف الحالي
+  const user = JSON.parse(localStorage.getItem("user"));
+  const classGroup = user?.class_group;
+
+  state.sessions = state.sessions.filter(
+    s => s.students?.class_group === classGroup
+  );
+
+  console.log("SESSIONS LOADED:", state.sessions);
 }
 
 async function loadStudents() {
