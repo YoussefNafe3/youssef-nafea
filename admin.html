@@ -10,7 +10,6 @@
 
 <style>
 
-/* ================= BASE ================= */
 *{
 margin:0;
 padding:0;
@@ -31,7 +30,6 @@ width:280px;
 background:#111827;
 padding:20px;
 border-left:1px solid rgba(255,255,255,.08);
-overflow-y:auto;
 }
 
 .logo{
@@ -86,13 +84,12 @@ background:#2563eb;
 color:white;
 }
 
-/* ================= UPLOAD BOX ================= */
+/* ================= UPLOAD ================= */
 .upload-box{
 background:rgba(255,255,255,.05);
 padding:25px;
 border-radius:20px;
 margin-bottom:20px;
-box-shadow:0 20px 40px rgba(0,0,0,.3);
 }
 
 input, select{
@@ -102,17 +99,6 @@ margin-bottom:12px;
 border:none;
 border-radius:10px;
 outline:none;
-}
-
-.file{
-background:rgba(255,255,255,.08);
-color:white;
-}
-
-/* ================= STATUS ================= */
-#msg{
-margin-top:10px;
-font-weight:700;
 }
 
 /* ================= TABLE ================= */
@@ -128,6 +114,24 @@ text-align:center;
 border-bottom:1px solid rgba(255,255,255,.08);
 }
 
+.delete{
+background:#ef4444;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.delete:hover{
+background:#dc2626;
+}
+
+#msg{
+margin-top:10px;
+font-weight:700;
+}
+
 </style>
 
 </head>
@@ -139,7 +143,8 @@ border-bottom:1px solid rgba(255,255,255,.08);
 
 <div class="logo">🎬 Admin Panel</div>
 
-<div class="menu-item">📊 Dashboard</div>
+<div class="menu-item" onclick="goDashboard()">📊 Dashboard</div>
+<div class="menu-item" onclick="goAnalytics()">📈 التحليلات</div>
 <div class="menu-item">🎥 الفيديوهات</div>
 <div class="menu-item">👨‍🎓 الطلاب</div>
 
@@ -154,150 +159,4 @@ border-bottom:1px solid rgba(255,255,255,.08);
 
 <button class="btn primary" onclick="logout()">تسجيل خروج</button>
 
-</div>
-
-<!-- UPLOAD -->
-<div class="upload-box">
-
-<h3>🎥 رفع فيديو جديد</h3>
-
-<input id="title" placeholder="عنوان الفيديو">
-
-<select id="isPremium">
-<option value="false">مجاني</option>
-<option value="true">مدفوع (Premium)</option>
-</select>
-
-<input type="file" id="file" class="file" accept="video/*">
-
-<button class="btn primary" onclick="uploadVideo()">
-رفع الفيديو
-</button>
-
-<div id="msg"></div>
-
-</div>
-
-<!-- LIST -->
-<div class="upload-box">
-
-<h3>📂 الفيديوهات الحالية</h3>
-
-<table>
-<thead>
-<tr>
-<th>العنوان</th>
-<th>النوع</th>
-</tr>
-</thead>
-<tbody id="list"></tbody>
-</table>
-
-</div>
-
-</div>
-
-<!-- SUPABASE -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
-<script>
-
-const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
-
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-/* ================= UPLOAD ================= */
-async function uploadVideo(){
-
-const title = document.getElementById("title").value;
-const file = document.getElementById("file").files[0];
-const isPremium = document.getElementById("isPremium").value === "true";
-const msg = document.getElementById("msg");
-
-if(!title || !file){
-msg.innerText = "ادخل البيانات كاملة";
-return;
-}
-
-msg.innerText = "جاري الرفع... ⏳";
-
-try{
-
-const fileName = Date.now() + "_" + file.name;
-
-/* 1 upload storage */
-const { error: uploadError } = await client
-.storage
-.from("videos")
-.upload(fileName, file);
-
-if(uploadError){
-msg.innerText = "فشل رفع الفيديو";
-return;
-}
-
-/* 2 get URL */
-const { data } = client
-.storage
-.from("videos")
-.getPublicUrl(fileName);
-
-/* 3 save DB */
-const { error: dbError } = await client
-.from("videos")
-.insert([{
-title: title,
-url: data.publicUrl,
-is_premium: isPremium
-}]);
-
-if(dbError){
-msg.innerText = "تم الرفع لكن فشل الحفظ";
-return;
-}
-
-msg.innerText = "تم رفع الفيديو بنجاح ✅";
-
-loadVideos();
-
-}catch(err){
-console.log(err);
-msg.innerText = "حدث خطأ غير متوقع";
-}
-
-}
-
-/* ================= LOAD ================= */
-async function loadVideos(){
-
-const { data } = await client
-.from("videos")
-.select("*")
-.order("created_at",{ascending:false});
-
-const tbody = document.getElementById("list");
-tbody.innerHTML = "";
-
-data.forEach(v=>{
-tbody.innerHTML += `
-<tr>
-<td>${v.title}</td>
-<td>${v.is_premium ? "🔒 مدفوع" : "🆓 مجاني"}</td>
-</tr>
-`;
-});
-
-}
-
-function logout(){
-localStorage.removeItem("user");
-window.location.href="login.html";
-}
-
-loadVideos();
-
-</script>
-
-</body>
-</html>
+</
