@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+<button onclick="goFull()">Fullscreen</button>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -377,7 +378,15 @@ document.addEventListener("contextmenu", e => e.preventDefault());
 
 /* ================= INIT ================= */
 loadVideos();
+document.querySelector(".player").requestFullscreen();
 
+function goFull(){
+const player = document.querySelector(".player");
+
+if (player.requestFullscreen) {
+  player.requestFullscreen();
+}
+}
 </script>
 
 </body>
