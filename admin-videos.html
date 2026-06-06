@@ -161,17 +161,21 @@ const btn = document.getElementById("uploadBtn");
 
 /* ================= ADMIN CHECK ================= */
 (async () => {
+
 const user = JSON.parse(localStorage.getItem("user"));
 
-// لو مفيش يوزر → رجّعه تسجيل الدخول
+// ❌ مفيش يوزر
 if (!user) {
   window.location.href = "admin-login.html";
+  return; // 🔥 مهم جدًا
 }
 
-// لو مش أدمن → رجّعه لصفحة الطالب
+// ❌ مش أدمن
 if (user.role !== "admin") {
   window.location.href = "dashboard.html";
+  return; // 🔥 مهم جدًا
 }
+
 })();
 
 /* ================= UPLOAD ================= */
