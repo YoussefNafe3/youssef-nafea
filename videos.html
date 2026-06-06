@@ -235,9 +235,12 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const user = JSON.parse(localStorage.getItem("user")) || {
-  name: "Student",
-  id: "000"
+const savedUser = JSON.parse(localStorage.getItem("user"));
+
+const user = {
+  name: savedUser?.name || "Student",
+  id: savedUser?.id || "000",
+  is_premium: savedUser?.is_premium || false
 };
 
 let currentVideoId = null;
@@ -269,7 +272,13 @@ const { data, error } = await client
 .order("created_at",{ascending:false});
 
 if(error){
-document.getElementById("videoList").innerHTML = "خطأ في التحميل";
+console.error(error);
+document.getElementById("videoList").innerHTML = "خطأ في تحميل الفيديوهات";
+return;
+}
+
+if(!data){
+document.getElementById("videoList").innerHTML = "لا توجد فيديوهات";
 return;
 }
 
