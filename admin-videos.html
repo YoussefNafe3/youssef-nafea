@@ -167,9 +167,6 @@ if (user.role !== "admin" || user.ip !== ip) {
   return;
 }
 
-// 👇 بعد ما التحقق ينجح فقط
-document.getElementById("adminName").innerText =
-user.full_name || user.name || "Admin";
 
 })();
 /* ================= SUPABASE ================= */
@@ -269,8 +266,6 @@ msg.innerText = "❌ خطأ في الاتصال";
 btn.disabled = false;
 };
 
-const formData = new FormData();
-formData.append("file", file);
 
 xhr.send(file);
 
