@@ -257,10 +257,14 @@ async function loadVideos(){
 const list = document.getElementById("videoList");
 list.innerHTML = "جاري التحميل...";
 
-const { data, error } = await client.from("videos").select("*");
+try{
+
+const { data, error } = await client
+.from("videos")
+.select("*");
 
 if(error){
-console.log(error);
+console.log("Supabase Error:", error);
 list.innerHTML = "❌ خطأ في قاعدة البيانات";
 return;
 }
@@ -272,13 +276,13 @@ return;
 
 list.innerHTML = "";
 
-data.forEach(v=>{
+data.forEach(v => {
 
 const div = document.createElement("div");
 div.className = "video-item";
 div.innerText = v.title;
 
-div.onclick = ()=>{
+div.onclick = () => {
 
 video.src = v.url;
 video.load();
@@ -295,11 +299,9 @@ document.getElementById("videoTitle").innerText = v.title;
 list.appendChild(div);
 });
 
-}
-
 }catch(err){
-console.log(err);
-list.innerHTML = "❌ فشل الاتصال بقاعدة البيانات";
+console.log("JS Error:", err);
+list.innerHTML = "❌ فشل الاتصال";
 }
 
 }
