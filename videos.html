@@ -500,7 +500,10 @@ document.getElementById("antiRecord").style.display = "flex";
 
 /* ================= INIT ================= */
 loadVideos();
-
+console.log("Saving session...", {
+  student_id: user.id,
+  video_id: state.currentVideoId
+});
 </script>
 
 </body>
