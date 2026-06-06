@@ -157,7 +157,7 @@ let allData = [];
 async function loadData(){
 
 const { data, error } = await client
-.from("video_analytics")
+.from("video_sessions")
 .select("*")
 .order("updated_at",{ascending:false});
 
