@@ -4,299 +4,918 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Analytics Dashboard</title>
+<title>لوحة التحليلات | د. يوسف نافع</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Cairo',sans-serif;
+}
+
+:root{
+  --bg:#0b1220;
+  --panel:#111827;
+  --panel-2:#0f172a;
+  --line:rgba(255,255,255,.08);
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+  --gold:#FFD700;
+  --blue:#2563eb;
+  --green:#22c55e;
+  --red:#ef4444;
+  --amber:#f59e0b;
+}
+
 body{
-margin:0;
-font-family:'Cairo';
-background:#0b1220;
-color:white;
-display:flex;
-height:100vh;
-overflow:hidden;
+  background:
+    radial-gradient(circle at top left, rgba(37,99,235,.20), transparent 30%),
+    radial-gradient(circle at top right, rgba(245,158,11,.14), transparent 28%),
+    linear-gradient(135deg,#0b1220,#0f172a 45%,#111827);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  overflow:hidden;
 }
 
 /* SIDEBAR */
 .sidebar{
-width:260px;
-background:#0f172a;
-border-left:1px solid #1f2937;
-padding:10px;
-overflow-y:auto;
+  width:360px;
+  background:rgba(17,24,39,.92);
+  border-left:1px solid var(--line);
+  padding:18px;
+  overflow-y:auto;
+  backdrop-filter: blur(16px);
 }
 
-.student{
-padding:10px;
-margin-bottom:8px;
-border-radius:10px;
-background:rgba(255,255,255,0.04);
-cursor:pointer;
-transition:0.2s;
+.brand{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:16px;
 }
 
-.student:hover{
-background:#2563eb;
+.brand h1{
+  font-size:20px;
+  margin:0;
+  color:var(--gold);
+  line-height:1.2;
 }
 
-.student.active{
-background:#2563eb;
+.brand .sub{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:4px;
 }
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.summary-card{
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.18);
+}
+
+.summary-card .label{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+.summary-card .value{
+  font-size:22px;
+  font-weight:800;
+  color:#fff;
+  line-height:1;
+}
+
+.summary-card .value.gold{ color:var(--gold); }
+.summary-card .value.blue{ color:#60a5fa; }
+.summary-card .value.green{ color:var(--green); }
+.summary-card .value.amber{ color:var(--amber); }
+
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin:8px 0 10px;
+}
+
+.section-title h2{
+  font-size:14px;
+  margin:0;
+  color:#fff;
+}
+
+.section-title span{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.video-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.video-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  cursor:pointer;
+  transition:.25s ease;
+}
+
+.video-card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(37,99,235,.55);
+  background:rgba(37,99,235,.14);
+}
+
+.video-card.active{
+  background:linear-gradient(135deg, rgba(37,99,235,.26), rgba(245,158,11,.12));
+  border-color:rgba(255,215,0,.42);
+}
+
+.video-card .top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.video-card .title{
+  font-size:14px;
+  font-weight:700;
+  line-height:1.5;
+  margin-bottom:8px;
+}
+
+.video-card .meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border-radius:999px;
+  padding:5px 10px;
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--line);
+  white-space:nowrap;
+}
+
+.pill.good{ color:#86efac; }
+.pill.mid{ color:#fbbf24; }
+.pill.bad{ color:#fca5a5; }
 
 /* MAIN */
 .main{
-flex:1;
-display:flex;
-flex-direction:column;
-overflow:hidden;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
 }
 
-/* TOP BAR */
-.top{
-padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-background:#0f172a;
-border-bottom:1px solid #1f2937;
+.topbar{
+  padding:18px 20px;
+  border-bottom:1px solid var(--line);
+  background:rgba(15,23,42,.72);
+  backdrop-filter: blur(16px);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
 }
 
-.title{
-color:#FFD700;
-font-weight:700;
+.topbar .title{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
 }
 
-/* CONTENT */
+.topbar h2{
+  margin:0;
+  font-size:20px;
+  color:var(--gold);
+}
+
+.topbar p{
+  margin:0;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.topbar .actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  border:none;
+  border-radius:12px;
+  padding:10px 14px;
+  font-weight:700;
+  cursor:pointer;
+  color:#fff;
+  background:linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow:0 10px 25px rgba(37,99,235,.24);
+}
+
+.btn.secondary{
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--line);
+  box-shadow:none;
+}
+
 .content{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:15px;
-padding:15px;
-overflow:auto;
+  padding:18px 20px 20px;
+  overflow:auto;
 }
 
-/* CARD */
-.card{
-background:rgba(255,255,255,0.04);
-border:1px solid rgba(255,255,255,0.08);
-border-radius:14px;
-padding:12px;
+/* SELECTED VIDEO PANEL */
+.hero{
+  background:
+    radial-gradient(circle at top right, rgba(255,215,0,.10), transparent 26%),
+    linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:18px;
+  margin-bottom:16px;
+  box-shadow:0 16px 50px rgba(0,0,0,.18);
 }
 
-.card h3{
-margin:0 0 10px 0;
-color:#FFD700;
+.hero-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
 }
 
-/* VIDEO ITEM */
-.video{
-margin-bottom:10px;
-padding:10px;
-border-radius:10px;
-background:rgba(255,255,255,0.03);
+.hero h3{
+  margin:0;
+  font-size:22px;
+  line-height:1.4;
 }
 
-.bar{
-height:8px;
-background:#1f2937;
-border-radius:20px;
-overflow:hidden;
-margin-top:5px;
+.hero .hint{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:6px;
 }
 
-.fill{
-height:100%;
-background:linear-gradient(90deg,#2563eb,#22c55e);
-width:0%;
+.hero-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
 }
 
-/* STATS */
-.stats{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:10px;
-padding:15px;
+.mini-card{
+  background:rgba(15,23,42,.65);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px;
 }
 
-.box{
-background:rgba(255,255,255,0.04);
-padding:10px;
-border-radius:10px;
-text-align:center;
+.mini-card .k{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px;
 }
 
-.box h2{
-margin:0;
-color:#FFD700;
+.mini-card .v{
+  font-size:20px;
+  font-weight:800;
+  color:#fff;
+}
+
+.mini-card .v.gold{ color:var(--gold); }
+.mini-card .v.blue{ color:#60a5fa; }
+.mini-card .v.green{ color:var(--green); }
+.mini-card .v.amber{ color:var(--amber); }
+
+.progress-wrap{
+  margin-top:10px;
+}
+
+.progress-bar{
+  height:10px;
+  background:#1f2937;
+  border-radius:999px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);
+}
+
+.progress-fill{
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg, #2563eb, #22c55e);
+  transition:.25s ease;
+}
+
+/* TABLE */
+.table-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:16px;
+  box-shadow:0 16px 50px rgba(0,0,0,.14);
+}
+
+.table-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+
+.table-head h3{
+  margin:0;
+  font-size:18px;
+}
+
+.table-head .small{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.table-wrap{
+  overflow:auto;
+  border-radius:18px;
+  border:1px solid var(--line);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:980px;
+  background:rgba(15,23,42,.82);
+}
+
+th, td{
+  padding:12px 14px;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+th{
+  position:sticky;
+  top:0;
+  background:#111827;
+  color:var(--gold);
+  font-size:13px;
+  z-index:1;
+}
+
+td{
+  font-size:13px;
+}
+
+.row-name{
+  text-align:right;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:5px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.badge.good{ background:rgba(34,197,94,.14); color:#86efac; }
+.badge.mid{ background:rgba(245,158,11,.14); color:#fbbf24; }
+.badge.bad{ background:rgba(239,68,68,.14); color:#fca5a5; }
+.badge.empty{ background:rgba(148,163,184,.12); color:#cbd5e1; }
+
+.mini-muted{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.empty-state{
+  padding:24px;
+  text-align:center;
+  color:var(--muted);
+  border:1px dashed rgba(255,255,255,.12);
+  border-radius:16px;
+  background:rgba(255,255,255,.03);
+}
+
+/* MOBILE */
+@media (max-width: 1100px){
+  body{
+    flex-direction:column;
+    overflow:auto;
+  }
+
+  .sidebar{
+    width:100%;
+    border-left:none;
+    border-bottom:1px solid var(--line);
+  }
+
+  .video-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  }
+
+  .main{
+    overflow:visible;
+  }
+
+  .content{
+    overflow:visible;
+  }
+
+  .hero-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  table{
+    min-width:780px;
+  }
+}
+
+@media (max-width: 640px){
+  .summary-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .hero-grid{
+    grid-template-columns:1fr;
+  }
+
+  .topbar{
+    padding:14px;
+  }
+
+  .content{
+    padding:14px;
+  }
+
+  .mini-card .v{
+    font-size:18px;
+  }
+
+  th, td{
+    padding:10px 12px;
+  }
+
+  .video-card .title{
+    font-size:13px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar" id="studentsList"></div>
+<div class="sidebar">
+  <div class="brand">
+    <div>
+      <h1>📊 التحليلات</h1>
+      <div class="sub">اختار فيديو وشوف كل الطلبة</div>
+    </div>
+  </div>
 
-<!-- MAIN -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="label">الطلاب</div>
+      <div class="value gold" id="totalStudents">0</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">الفيديوهات</div>
+      <div class="value blue" id="totalVideos">0</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">الجلسات</div>
+      <div class="value green" id="totalSessions">0</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">متوسط عام</div>
+      <div class="value amber" id="globalAvg">0%</div>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <h2>الفيديوهات</h2>
+    <span id="selectedVideoHint">جاري التحميل...</span>
+  </div>
+
+  <div class="video-list" id="videosList"></div>
+</div>
+
 <div class="main">
+  <div class="topbar">
+    <div class="title">
+      <h2 id="pageTitle">لوحة تحليل الفيديو</h2>
+      <p id="pageSubTitle">اضغط على أي فيديو لعرض بيانات الطلبة الخاصة به</p>
+    </div>
 
-<div class="top">
-<div class="title">📊 Analytics Dashboard</div>
-</div>
+    <div class="actions">
+      <button class="btn secondary" onclick="window.location.reload()">تحديث</button>
+      <button class="btn" onclick="window.location.href='admin.html'">الرجوع للوحة الأدمن</button>
+    </div>
+  </div>
 
-<!-- STATS -->
-<div class="stats">
-<div class="box"><h2 id="totalStudents">0</h2><p>Students</p></div>
-<div class="box"><h2 id="totalSessions">0</h2><p>Sessions</p></div>
-<div class="box"><h2 id="avgPercent">0%</h2><p>Avg Watch</p></div>
-</div>
+  <div class="content">
 
-<!-- CONTENT -->
-<div class="content">
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <h3 id="selectedVideoTitle">لم يتم اختيار فيديو بعد</h3>
+          <div class="hint" id="selectedVideoMeta">اختر فيديو من القائمة على اليسار لعرض التفاصيل</div>
+        </div>
+        <div class="mini-muted" id="selectedVideoStudentsCount">0 طالب</div>
+      </div>
 
-<div class="card">
-<h3>👤 Student Details</h3>
-<div id="studentInfo">اختر طالب</div>
-</div>
+      <div class="hero-grid">
+        <div class="mini-card">
+          <div class="k">المشاهدات</div>
+          <div class="v gold" id="selectedViews">0</div>
+        </div>
+        <div class="mini-card">
+          <div class="k">المكتمل</div>
+          <div class="v green" id="selectedCompleted">0</div>
+        </div>
+        <div class="mini-card">
+          <div class="k">متوسط المشاهدة</div>
+          <div class="v blue" id="selectedAvgPercent">0%</div>
+        </div>
+        <div class="mini-card">
+          <div class="k">متوسط الوقت</div>
+          <div class="v amber" id="selectedAvgTime">0s</div>
+        </div>
+      </div>
+    </div>
 
-<div class="card">
-<h3>🎬 Videos Progress</h3>
-<div id="videoProgress">---</div>
-</div>
+    <div class="table-card">
+      <div class="table-head">
+        <div>
+          <h3>تفاصيل الطلبة</h3>
+          <div class="small" id="tableHint">كل طالب، وسمع قد إيه من الفيديو، وهل أكمل أم لا</div>
+        </div>
+        <div class="mini-muted" id="tableCount">0 صف</div>
+      </div>
 
-</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>الطالب</th>
+              <th>الفيديو</th>
+              <th>سمع</th>
+              <th>النسبة</th>
+              <th>الحالة</th>
+              <th>آخر تحديث</th>
+            </tr>
+          </thead>
+          <tbody id="studentsTableBody"></tbody>
+        </table>
+      </div>
 
+      <div id="emptyState" class="empty-state" style="display:none;">
+        لا توجد بيانات لهذا الفيديو حتى الآن.
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script>
+const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo"; // ضع anon key الصحيح هنا
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const supabase = window.supabase.createClient(
-"https://nhdowqzecpwmkunczodl.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo"
-);
+const state = {
+  videos: [],
+  sessions: [],
+  students: [],
+  selectedVideoId: null,
+  selectedVideo: null,
+  loading: true
+};
 
-let sessions = [];
-let selectedStudent = null;
-
-/* LOAD DATA */
-async function load(){
-
-const { data } = await supabase
-.from("video_sessions")
-.select("*");
-
-sessions = data || [];
-
-renderStudents();
-renderStats();
-
-if(!selectedStudent && sessions.length){
-selectStudent(sessions[0].student_id);
-}
+function toText(v, fallback = "-") {
+  return (v === null || v === undefined || String(v).trim() === "") ? fallback : String(v);
 }
 
-/* GROUP BY STUDENT */
-function getStudents(){
-const map = {};
-
-sessions.forEach(s=>{
-if(!map[s.student_id]) map[s.student_id] = [];
-map[s.student_id].push(s);
-});
-
-return map;
+function safeNumber(v, fallback = 0) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
 }
 
-/* SIDEBAR */
-function renderStudents(){
-
-const students = getStudents();
-const el = document.getElementById("studentsList");
-
-el.innerHTML = Object.keys(students).map(id=>`
-<div class="student ${id===selectedStudent?'active':''}" onclick="selectStudent('${id}')">
-👤 ${id}
-</div>
-`).join("");
-
+function formatTime(seconds) {
+  const s = Math.max(0, Math.floor(safeNumber(seconds, 0)));
+  if (s < 60) return `${s}ث`;
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  if (m < 60) return `${m}د ${r}ث`;
+  const h = Math.floor(m / 60);
+  const mm = m % 60;
+  return `${h}س ${mm}د`;
 }
 
-/* SELECT STUDENT */
-window.selectStudent = function(id){
-selectedStudent = id;
-renderStudents();
-renderStudentData();
+function formatDate(value) {
+  if (!value) return "-";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "-";
+  return d.toLocaleString("ar-EG");
 }
 
-/* STUDENT DATA */
-function renderStudentData(){
-
-const data = sessions.filter(s=>s.student_id===selectedStudent);
-
-document.getElementById("studentInfo").innerHTML = `
-<b>ID:</b> ${selectedStudent}<br>
-<b>Sessions:</b> ${data.length}<br>
-`;
-
-/* group videos */
-const videos = {};
-
-data.forEach(s=>{
-if(!videos[s.video_id]){
-videos[s.video_id] = {total:0,count:0,skips:0};
-}
-videos[s.video_id].total += s.percent;
-videos[s.video_id].count++;
-videos[s.video_id].skips += (s.skips||0);
-});
-
-document.getElementById("videoProgress").innerHTML =
-Object.keys(videos).map(v=>{
-
-const d = videos[v];
-const avg = d.total / d.count;
-
-return `
-<div class="video">
-<div>🎬 ${v}</div>
-
-<div class="bar">
-<div class="fill" style="width:${avg}%"></div>
-</div>
-
-<small>
-📊 ${avg.toFixed(1)}% | ⏩ ${d.skips}
-</small>
-</div>
-`;
-
-}).join("");
-
+function getStudentDisplayName(studentId) {
+  const student = state.students.find(s => String(s.id) === String(studentId));
+  if (!student) return `طالب #${studentId}`;
+  return student.full_name || student.name || student.phone || `طالب #${studentId}`;
 }
 
-/* STATS */
-function renderStats(){
+function getAllStudentIds() {
+  const ids = new Set();
 
-document.getElementById("totalSessions").innerText = sessions.length;
+  state.students.forEach(s => {
+    if (s?.id !== undefined && s?.id !== null) ids.add(String(s.id));
+  });
 
-const students = new Set(sessions.map(s=>s.student_id));
-document.getElementById("totalStudents").innerText = students.size;
+  state.sessions.forEach(s => {
+    if (s?.student_id !== undefined && s?.student_id !== null) ids.add(String(s.student_id));
+  });
 
-let avg = 0;
-if(sessions.length){
-avg = sessions.reduce((a,b)=>a+(b.percent||0),0)/sessions.length;
+  return [...ids];
 }
 
-document.getElementById("avgPercent").innerText = avg.toFixed(1)+"%";
+function latestSessionByStudentForVideo(videoId) {
+  const relevant = state.sessions.filter(s => String(s.video_id) === String(videoId));
+
+  const map = {};
+  relevant.forEach(s => {
+    const sid = String(s.student_id);
+    const current = map[sid];
+    const currentDate = current ? new Date(current.updated_at || current.created_at || 0).getTime() : -1;
+    const newDate = new Date(s.updated_at || s.created_at || 0).getTime();
+
+    const currentPercent = safeNumber(current?.percent, -1);
+    const newPercent = safeNumber(s.percent, -1);
+
+    if (
+      !current ||
+      newPercent > currentPercent ||
+      (newPercent === currentPercent && newDate > currentDate)
+    ) {
+      map[sid] = s;
+    }
+  });
+
+  return map;
 }
 
-load();
-setInterval(load,15000);
+function videoAggregate(videoId) {
+  const byStudent = latestSessionByStudentForVideo(videoId);
+  const rows = Object.values(byStudent);
 
+  const watchedStudents = rows.length;
+  const completedStudents = rows.filter(r => r.completed === true || safeNumber(r.percent) >= 90).length;
+  const avgPercent = rows.length
+    ? rows.reduce((sum, r) => sum + safeNumber(r.percent), 0) / rows.length
+    : 0;
+  const avgTime = rows.length
+    ? rows.reduce((sum, r) => sum + safeNumber(r.watched_seconds), 0) / rows.length
+    : 0;
+  const totalSkips = rows.reduce((sum, r) => sum + safeNumber(r.skips), 0);
+
+  return { watchedStudents, completedStudents, avgPercent, avgTime, totalSkips, rows };
+}
+
+function statusBadge(percent, exists) {
+  if (!exists) return `<span class="badge empty">لم يشاهد</span>`;
+  if (percent >= 90) return `<span class="badge good">مكتمل</span>`;
+  if (percent >= 40) return `<span class="badge mid">جاري</span>`;
+  return `<span class="badge bad">ضعيف</span>`;
+}
+
+function renderVideoCards() {
+  const container = document.getElementById("videosList");
+  if (!state.videos.length) {
+    container.innerHTML = `<div class="empty-state">لا توجد فيديوهات.</div>`;
+    return;
+  }
+
+  container.innerHTML = state.videos.map(v => {
+    const agg = videoAggregate(v.id);
+    const isActive = String(v.id) === String(state.selectedVideoId);
+
+    return `
+      <div class="video-card ${isActive ? 'active' : ''}" onclick="selectVideo('${String(v.id)}')">
+        <div class="top">
+          <div class="title">${toText(v.title, "فيديو بدون عنوان")}</div>
+          <div class="pill ${agg.avgPercent >= 90 ? 'good' : agg.avgPercent >= 40 ? 'mid' : 'bad'}">
+            ${agg.avgPercent.toFixed(0)}%
+          </div>
+        </div>
+        <div class="meta">
+          <span class="pill">👤 ${agg.watchedStudents} طالب</span>
+          <span class="pill">✅ ${agg.completedStudents} مكتمل</span>
+          <span class="pill">⏱ ${formatTime(agg.avgTime)}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderSelectedVideo() {
+  const titleEl = document.getElementById("selectedVideoTitle");
+  const metaEl = document.getElementById("selectedVideoMeta");
+  const studentsCountEl = document.getElementById("selectedVideoStudentsCount");
+
+  if (!state.selectedVideo) {
+    titleEl.innerText = "لم يتم اختيار فيديو بعد";
+    metaEl.innerText = "اختر فيديو من القائمة على اليسار لعرض التفاصيل";
+    studentsCountEl.innerText = "0 طالب";
+    document.getElementById("selectedViews").innerText = "0";
+    document.getElementById("selectedCompleted").innerText = "0";
+    document.getElementById("selectedAvgPercent").innerText = "0%";
+    document.getElementById("selectedAvgTime").innerText = "0s";
+    document.getElementById("studentsTableBody").innerHTML = "";
+    document.getElementById("emptyState").style.display = "none";
+    document.getElementById("tableCount").innerText = "0 صف";
+    return;
+  }
+
+  const agg = videoAggregate(state.selectedVideo.id);
+
+  titleEl.innerText = toText(state.selectedVideo.title, "فيديو بدون عنوان");
+  metaEl.innerText = `الفيديو #${state.selectedVideo.id} — ${agg.watchedStudents} طالب شاهدوه`;
+  studentsCountEl.innerText = `${agg.watchedStudents} طالب`;
+
+  document.getElementById("selectedViews").innerText = agg.watchedStudents;
+  document.getElementById("selectedCompleted").innerText = agg.completedStudents;
+  document.getElementById("selectedAvgPercent").innerText = `${agg.avgPercent.toFixed(1)}%`;
+  document.getElementById("selectedAvgTime").innerText = formatTime(agg.avgTime);
+
+  const latestMap = latestSessionByStudentForVideo(state.selectedVideo.id);
+  const allIds = getAllStudentIds();
+
+  const rows = allIds.map(id => {
+    const record = latestMap[String(id)];
+    const name = getStudentDisplayName(id);
+
+    if (!record) {
+      return `
+        <tr>
+          <td class="row-name">
+            <div><strong>${name}</strong></div>
+            <div class="mini-muted">ID: ${id}</div>
+          </td>
+          <td>${toText(state.selectedVideo.title)}</td>
+          <td>0s / ${formatTime(state.selectedVideo.duration || 0)}</td>
+          <td>0%</td>
+          <td>${statusBadge(0, false)}</td>
+          <td class="mini-muted">لم يشاهد</td>
+        </tr>
+      `;
+    }
+
+    const percent = safeNumber(record.percent);
+    const watched = safeNumber(record.watched_seconds);
+    const duration = safeNumber(record.duration);
+    const completed = record.completed === true || percent >= 90;
+
+    return `
+      <tr>
+        <td class="row-name">
+          <div><strong>${name}</strong></div>
+          <div class="mini-muted">ID: ${id}</div>
+        </td>
+        <td>${toText(state.selectedVideo.title)}</td>
+        <td>
+          <div>${formatTime(watched)} / ${formatTime(duration)}</div>
+        </td>
+        <td>${percent.toFixed(1)}%</td>
+        <td>${statusBadge(percent, true)}</td>
+        <td class="mini-muted">${formatDate(record.updated_at || record.created_at)}</td>
+      </tr>
+    `;
+  });
+
+  const tbody = document.getElementById("studentsTableBody");
+  tbody.innerHTML = rows.join("");
+  document.getElementById("tableCount").innerText = `${rows.length} صف`;
+
+  const noData = rows.length === 0;
+  document.getElementById("emptyState").style.display = noData ? "block" : "none";
+}
+
+function renderGlobalStats() {
+  const allStudentIds = getAllStudentIds();
+  const avgGlobal = state.sessions.length
+    ? state.sessions.reduce((sum, s) => sum + safeNumber(s.percent), 0) / state.sessions.length
+    : 0;
+
+  document.getElementById("totalStudents").innerText = allStudentIds.length;
+  document.getElementById("totalVideos").innerText = state.videos.length;
+  document.getElementById("totalSessions").innerText = state.sessions.length;
+  document.getElementById("globalAvg").innerText = `${avgGlobal.toFixed(1)}%`;
+}
+
+window.selectVideo = function(videoId) {
+  state.selectedVideoId = String(videoId);
+  state.selectedVideo = state.videos.find(v => String(v.id) === String(videoId)) || null;
+  renderVideoCards();
+  renderSelectedVideo();
+};
+
+async function loadVideos() {
+  const { data, error } = await client.from("videos").select("*").order("created_at", { ascending: false });
+  if (error) throw error;
+  state.videos = data || [];
+}
+
+async function loadSessions() {
+  const { data, error } = await client.from("video_sessions").select("*").order("updated_at", { ascending: false });
+  if (error) throw error;
+  state.sessions = data || [];
+}
+
+async function loadStudents() {
+  try {
+    const { data, error } = await client.from("students").select("*");
+    if (!error && Array.isArray(data)) {
+      state.students = data;
+      return;
+    }
+  } catch (e) {}
+  state.students = [];
+}
+
+async function init() {
+  try {
+    document.getElementById("selectedVideoHint").innerText = "جاري التحميل...";
+    await Promise.all([
+      loadVideos(),
+      loadSessions(),
+      loadStudents()
+    ]);
+
+    renderGlobalStats();
+
+    if (state.videos.length) {
+      state.selectedVideoId = String(state.videos[0].id);
+      state.selectedVideo = state.videos[0];
+    }
+
+    renderVideoCards();
+    renderSelectedVideo();
+
+    document.getElementById("selectedVideoHint").innerText = state.selectedVideo
+      ? "تم التحميل"
+      : "لا توجد فيديوهات";
+
+  } catch (err) {
+    console.log("INIT ERROR:", err);
+    document.getElementById("selectedVideoHint").innerText = "خطأ في التحميل";
+    document.getElementById("videosList").innerHTML = `<div class="empty-state">تعذر تحميل البيانات. تأكد من الجداول والصلاحيات.</div>`;
+  }
+}
+
+init();
+setInterval(async () => {
+  try {
+    await loadSessions();
+    renderGlobalStats();
+    renderVideoCards();
+    renderSelectedVideo();
+  } catch (e) {
+    console.log("REFRESH ERROR:", e);
+  }
+}, 20000);
 </script>
 
 </body>
