@@ -12,19 +12,23 @@
 <button onclick="login()">Enter</button>
 
 <script>
-function login(){
+async function login(){
 
   const pass = document.getElementById("pass").value;
-
   const adminPassword = "youssef2003";
 
   if(pass === adminPassword){
+
+    const ip = await fetch("https://api.ipify.org?format=json")
+      .then(r => r.json())
+      .then(d => d.ip);
 
     const adminUser = {
       id: "admin",
       name: "Admin",
       role: "admin",
-      is_admin: true
+      loginTime: Date.now(),
+      ip: ip
     };
 
     localStorage.setItem("user", JSON.stringify(adminUser));
