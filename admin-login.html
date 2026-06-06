@@ -16,12 +16,21 @@ function login(){
 
   const pass = document.getElementById("pass").value;
 
-  // غير الباسورد ده براحتك
   const adminPassword = "youssef2003";
 
   if(pass === adminPassword){
-    localStorage.setItem("isAdmin", "true");
+
+    const adminUser = {
+      id: "admin",
+      name: "Admin",
+      role: "admin",
+      is_admin: true
+    };
+
+    localStorage.setItem("user", JSON.stringify(adminUser));
+
     window.location.href = "admin.html";
+
   } else {
     alert("Wrong Password");
   }
