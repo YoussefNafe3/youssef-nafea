@@ -27,10 +27,9 @@ align-items:center;
 padding:20px;
 }
 
-/* CARD */
 .container{
 width:100%;
-max-width:500px;
+max-width:520px;
 background:rgba(255,255,255,.06);
 backdrop-filter:blur(20px);
 border:1px solid rgba(255,255,255,.1);
@@ -46,7 +45,6 @@ font-size:24px;
 font-weight:800;
 }
 
-/* INPUTS */
 input{
 width:100%;
 padding:14px;
@@ -59,17 +57,6 @@ font-size:15px;
 outline:none;
 }
 
-input::placeholder{
-color:#cbd5e1;
-}
-
-/* FILE */
-input[type="file"]{
-padding:10px;
-background:transparent;
-}
-
-/* BUTTON */
 button{
 width:100%;
 padding:14px;
@@ -82,11 +69,11 @@ color:#111;
 transition:.3s;
 }
 
-button:hover{
-transform:scale(1.03);
+button:disabled{
+opacity:0.6;
+cursor:not-allowed;
 }
 
-/* MSG */
 #msg{
 margin-top:15px;
 text-align:center;
@@ -94,29 +81,29 @@ font-weight:700;
 min-height:20px;
 }
 
-/* PROGRESS BAR */
-.progress-box{
-margin-top:15px;
-background:#1e293b;
-border-radius:10px;
-overflow:hidden;
+.progress-container{
+width:100%;
 height:12px;
+background:rgba(255,255,255,.1);
+border-radius:20px;
+overflow:hidden;
+margin-top:15px;
 }
 
 .progress-bar{
 height:100%;
 width:0%;
-background:#FFD700;
-transition:0.2s;
+background:linear-gradient(90deg,#22c55e,#16a34a);
+transition:0.1s;
 }
 
-#percent{
+.progress-text{
 text-align:center;
 margin-top:8px;
 font-weight:700;
+color:#FFD700;
 }
 
-/* BACK */
 .back{
 margin-top:15px;
 display:block;
@@ -131,7 +118,6 @@ color:#FFD700;
 }
 
 </style>
-
 </head>
 
 <body>
@@ -143,13 +129,13 @@ color:#FFD700;
 <input id="title" placeholder="عنوان الفيديو">
 <input type="file" id="file" accept="video/*">
 
-<button onclick="uploadVideo()">رفع الفيديو</button>
+<button id="uploadBtn" onclick="uploadVideo()">رفع الفيديو</button>
 
-<!-- PROGRESS -->
-<div class="progress-box">
+<div class="progress-container">
 <div class="progress-bar" id="bar"></div>
 </div>
-<div id="percent">0%</div>
+
+<div class="progress-text" id="percent">0%</div>
 
 <div id="msg"></div>
 
@@ -157,7 +143,6 @@ color:#FFD700;
 
 </div>
 
-<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -167,80 +152,103 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+const bar = document.getElementById("bar");
+const percentText = document.getElementById("percent");
+const msg = document.getElementById("msg");
+const btn = document.getElementById("uploadBtn");
+
+function uploadWithProgress(file, fileName){
+
+return new Promise((resolve, reject)=>{
+
+const xhr = new XMLHttpRequest();
+
+xhr.open("POST",
+`${SUPABASE_URL}/storage/v1/object/videos/${fileName}`
+);
+
+xhr.setRequestHeader("Authorization", `Bearer ${SUPABASE_ANON_KEY}`);
+xhr.setRequestHeader("x-upsert", "false");
+
+xhr.upload.onprogress = (e)=>{
+if(e.lengthComputable){
+const percent = Math.round((e.loaded / e.total) * 100);
+bar.style.width = percent + "%";
+percentText.innerText = percent + "%";
+}
+};
+
+xhr.onload = ()=>{
+if(xhr.status === 200){
+resolve();
+}else{
+reject(xhr.responseText);
+}
+};
+
+xhr.onerror = ()=> reject("upload error");
+
+const formData = new FormData();
+formData.append("file", file);
+
+xhr.send(file);
+
+});
+}
+
 async function uploadVideo(){
 
 const title = document.getElementById("title").value;
 const file = document.getElementById("file").files[0];
 
-const msg = document.getElementById("msg");
-const bar = document.getElementById("bar");
-const percentText = document.getElementById("percent");
-
 if(!title || !file){
-msg.innerText = "املأ البيانات أولاً";
+msg.innerText = "⚠️ املأ البيانات أولاً";
 return;
 }
 
-msg.innerText = "جاري الرفع... ⏳";
+btn.disabled = true;
+msg.innerText = "جاري الرفع...";
 
 const fileName = Date.now() + "_" + file.name;
 
-try {
+try{
 
-/* PROGRESS SIMULATION (Reliable) */
-let fakeProgress = 0;
-const interval = setInterval(()=>{
-fakeProgress += Math.random()*10;
-if(fakeProgress >= 95) fakeProgress = 95;
+await uploadWithProgress(file, fileName);
 
-bar.style.width = fakeProgress + "%";
-percentText.innerText = Math.floor(fakeProgress) + "%";
-},200);
-
-/* UPLOAD */
-const { error: uploadError } = await client.storage
-.from("videos")
-.upload(fileName, file);
-
-clearInterval(interval);
-
-if(uploadError){
-msg.innerText = "فشل رفع الفيديو";
-return;
-}
-
-bar.style.width = "100%";
-percentText.innerText = "100%";
-
-/* GET URL */
-const { data: urlData } = client.storage
+/* get url */
+const { data } = client.storage
 .from("videos")
 .getPublicUrl(fileName);
 
-const publicUrl = urlData.publicUrl;
-
-/* SAVE DB */
-const { error: dbError } = await client
+/* save DB */
+const { error } = await client
 .from("videos")
 .insert([{
-title: title,
-url: publicUrl,
-is_premium: false
+title,
+url: data.publicUrl,
+is_premium: false,
+created_at: new Date()
 }]);
 
-if(dbError){
-msg.innerText = "فشل حفظ البيانات";
+if(error){
+msg.innerText = "⚠️ تم الرفع لكن فشل الحفظ";
 return;
 }
 
-msg.innerText = "تم رفع الفيديو بنجاح ✅";
+msg.innerText = "✅ تم الرفع بنجاح";
 
+setTimeout(()=>{
+bar.style.width = "0%";
+percentText.innerText = "0%";
+btn.disabled = false;
 document.getElementById("title").value = "";
 document.getElementById("file").value = "";
+},1500);
 
-} catch(err){
+}catch(err){
 console.log(err);
-msg.innerText = "حدث خطأ غير متوقع";
+msg.innerText = "❌ حدث خطأ أثناء الرفع";
+btn.disabled = false;
 }
 
 }
