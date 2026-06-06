@@ -62,12 +62,16 @@ opacity:0.8;
 }
 
 /* ================= TABLE ================= */
+.table-wrap{
+overflow:auto;
+border-radius:12px;
+}
+
 table{
 width:100%;
 border-collapse:collapse;
 background:#111827;
-border-radius:12px;
-overflow:hidden;
+min-width:900px;
 }
 
 th,td{
@@ -103,8 +107,6 @@ opacity:0.7;
 
 <h1>📊 Video Analytics Dashboard</h1>
 
-<input id="search" placeholder="🔍 Search by Student ID or Video ID">
-
 <div class="stats">
 <div class="card">
 <h2 id="totalStudents">0</h2>
@@ -122,6 +124,7 @@ opacity:0.7;
 </div>
 </div>
 
+<div class="table-wrap">
 <table>
 <thead>
 <tr>
@@ -133,8 +136,10 @@ opacity:0.7;
 <th>Status</th>
 </tr>
 </thead>
+
 <tbody id="tableBody"></tbody>
 </table>
+</div>
 
 <!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -146,14 +151,6 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* ================= ADMIN CHECK ================= */
-const admin = JSON.parse(localStorage.getItem("user"));
-
-if(!admin || (admin.role !== "admin" && !admin.is_admin)){
-window.location.href = "login.html";
-}
-
-/* ================= DATA ================= */
 let allData = [];
 
 /* ================= LOAD ================= */
@@ -175,16 +172,20 @@ render(allData);
 updateStats(allData);
 }
 
-/* ================= RENDER TABLE ================= */
+/* ================= RENDER ================= */
 function render(data){
 
 const tbody = document.getElementById("tableBody");
 tbody.innerHTML = "";
 
-data.forEach(row => {
+/* ترتيب حسب الأعلى مشاهدة */
+data.sort((a,b)=>(b.percent||0)-(a.percent||0));
+
+data.forEach(row=>{
 
 const percent = Number(row.percent || 0);
 const skips = Number(row.skips || 0);
+const time = Number(row.watched_seconds || 0);
 
 let status = "mid";
 let label = "In Progress";
@@ -192,11 +193,9 @@ let label = "In Progress";
 if(percent >= 90){
 status = "good";
 label = "Completed";
-}
-
-if(percent < 30){
+}else if(percent < 30){
 status = "bad";
-label = "Weak Progress";
+label = "Low Engagement";
 }
 
 if(skips > 5){
@@ -206,10 +205,10 @@ label = "Suspicious Activity";
 
 tbody.innerHTML += `
 <tr>
-<td>${row.student_id}</td>
-<td>${row.video_id}</td>
+<td>${row.student_id || "-"}</td>
+<td>${row.video_id || "-"}</td>
 <td>${percent.toFixed(1)}%</td>
-<td>${row.watched_seconds || 0}s</td>
+<td>${time}s</td>
 <td>${skips}</td>
 <td class="${status}">${label}</td>
 </tr>
@@ -230,22 +229,7 @@ const avg = data.length
 document.getElementById("totalStudents").innerText = students;
 document.getElementById("avgProgress").innerText = avg.toFixed(1) + "%";
 document.getElementById("totalViews").innerText = data.length;
-
 }
-
-/* ================= SEARCH ================= */
-document.getElementById("search").addEventListener("input", (e)=>{
-
-const val = e.target.value.toLowerCase();
-
-const filtered = allData.filter(d =>
-String(d.student_id).toLowerCase().includes(val) ||
-String(d.video_id).toLowerCase().includes(val)
-);
-
-render(filtered);
-updateStats(filtered);
-});
 
 /* ================= INIT ================= */
 loadData();
