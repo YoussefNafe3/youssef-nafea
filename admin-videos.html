@@ -146,83 +146,35 @@ color:#FFD700;
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-(async () => {
-  const { data: { user } } = await supabase.auth.getUser();
 
-  if(!user){
-    window.location.href = "login.html";
-  }
-
-  const role = user?.user_metadata?.role;
-
-  if(role !== "admin"){
-    window.location.href = "dashboard.html";
-  }
-})();
-  
-(async () => {
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if(!user){
-    window.location.href = "login.html";
-  }
-
-  const role = user?.user_metadata?.role;
-
-  if(role !== "admin"){
-    window.location.href = "dashboard.html";
-  }
-})();
-  
+/* ================= SUPABASE ================= */
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+/* ================= ELEMENTS ================= */
 const bar = document.getElementById("bar");
 const percentText = document.getElementById("percent");
 const msg = document.getElementById("msg");
 const btn = document.getElementById("uploadBtn");
 
-function uploadWithProgress(file, fileName){
+/* ================= ADMIN CHECK ================= */
+(async () => {
+  const { data: { user } } = await client.auth.getUser();
 
-return new Promise((resolve, reject)=>{
+  if(!user){
+    window.location.href = "login.html";
+  }
 
-const xhr = new XMLHttpRequest();
+  const role = user?.user_metadata?.role;
 
-xhr.open("POST",
-`${SUPABASE_URL}/storage/v1/object/videos/${fileName}`
-);
+  if(role !== "admin"){
+    window.location.href = "dashboard.html";
+  }
+})();
 
-xhr.setRequestHeader("Authorization", `Bearer ${SUPABASE_ANON_KEY}`);
-xhr.setRequestHeader("x-upsert", "false");
-
-xhr.upload.onprogress = (e)=>{
-if(e.lengthComputable){
-const percent = Math.round((e.loaded / e.total) * 100);
-bar.style.width = percent + "%";
-percentText.innerText = percent + "%";
-}
-};
-
-xhr.onload = ()=>{
-if(xhr.status === 200){
-resolve();
-}else{
-reject(xhr.responseText);
-}
-};
-
-xhr.onerror = ()=> reject("upload error");
-
-const formData = new FormData();
-formData.append("file", file);
-
-xhr.send(file);
-
-});
-}
-
+/* ================= UPLOAD ================= */
 async function uploadVideo(){
 
 const title = document.getElementById("title").value;
@@ -240,29 +192,54 @@ const fileName = Date.now() + "_" + file.name;
 
 try{
 
-await uploadWithProgress(file, fileName);
+/* ================= REAL UPLOAD ================= */
+const xhr = new XMLHttpRequest();
 
-/* get url */
+xhr.open("POST",
+`${SUPABASE_URL}/storage/v1/object/videos/${fileName}`
+);
+
+xhr.setRequestHeader("Authorization", `Bearer ${SUPABASE_ANON_KEY}`);
+xhr.setRequestHeader("x-upsert", "false");
+
+xhr.upload.onprogress = (e)=>{
+if(e.lengthComputable){
+const percent = Math.round((e.loaded / e.total) * 100);
+bar.style.width = percent + "%";
+percentText.innerText = percent + "%";
+}
+};
+
+xhr.onload = async () => {
+
+if(xhr.status !== 200){
+msg.innerText = "❌ فشل رفع الفيديو";
+btn.disabled = false;
+return;
+}
+
+/* get public url */
 const { data } = client.storage
 .from("videos")
 .getPublicUrl(fileName);
 
-/* save DB */
+/* save in DB */
 const { error } = await client
 .from("videos")
 .insert([{
 title,
 url: data.publicUrl,
 is_premium: false,
-created_at: new Date()
+created_at: new Date().toISOString()
 }]);
 
 if(error){
 msg.innerText = "⚠️ تم الرفع لكن فشل الحفظ";
+btn.disabled = false;
 return;
 }
 
-msg.innerText = "✅ تم الرفع بنجاح";
+msg.innerText = "✅ تم رفع الفيديو بنجاح";
 
 setTimeout(()=>{
 bar.style.width = "0%";
@@ -270,11 +247,23 @@ percentText.innerText = "0%";
 btn.disabled = false;
 document.getElementById("title").value = "";
 document.getElementById("file").value = "";
-},1500);
+},1200);
+
+};
+
+xhr.onerror = () => {
+msg.innerText = "❌ خطأ في الاتصال";
+btn.disabled = false;
+};
+
+const formData = new FormData();
+formData.append("file", file);
+
+xhr.send(file);
 
 }catch(err){
 console.log(err);
-msg.innerText = "❌ حدث خطأ أثناء الرفع";
+msg.innerText = "❌ حدث خطأ غير متوقع";
 btn.disabled = false;
 }
 
