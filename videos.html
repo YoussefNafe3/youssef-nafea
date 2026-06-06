@@ -3,18 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>الفيديوهات | د. يوسف نافع</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Cairo',sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif;}
 
 body{
 background:linear-gradient(135deg,#0f172a,#111827,#1e293b);
@@ -47,11 +41,11 @@ background:rgba(255,255,255,.05);
 border-radius:12px;
 cursor:pointer;
 transition:.3s;
+position:relative;
 }
 
 .video-item:hover{background:#2563eb;}
 
-/* MAIN */
 .main{flex:1;padding:20px;}
 
 .topbar{
@@ -76,6 +70,8 @@ color:white;
 background:rgba(255,255,255,.05);
 padding:20px;
 border-radius:20px;
+position:relative;
+overflow:hidden;
 }
 
 video{
@@ -83,28 +79,76 @@ width:100%;
 border-radius:15px;
 }
 
-.progress-bar{
-height:6px;
-background:#FFD700;
-width:0%;
-border-radius:10px;
+/* WATERMARK */
+#watermark{
+position:absolute;
+top:15px;
+left:15px;
+font-size:12px;
+opacity:.25;
+white-space:pre-line;
 }
 
-.percentBox{
+/* PROGRESS */
+.progress{
+height:6px;
+background:#333;
+border-radius:10px;
 margin-top:10px;
-font-weight:800;
-color:#22c55e;
+overflow:hidden;
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:#FFD700;
+transition:.2s;
+}
+
+/* ANTI RECORD */
+#antiRecord{
+position:fixed;
+inset:0;
+display:none;
+background:black;
+color:red;
+justify-content:center;
+align-items:center;
+z-index:9999;
+font-size:20px;
+text-align:center;
+padding:20px;
+}
+
+/* SPEED */
+.speedBox{
+margin-bottom:10px;
+}
+
+.speedBtn{
+padding:6px 10px;
+margin:2px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#2563eb;
+color:white;
+font-weight:700;
 }
 </style>
 </head>
 
 <body>
 
+<div id="antiRecord">⚠️ تم إيقاف العرض بسبب نشاط غير طبيعي</div>
+
+<!-- SIDEBAR -->
 <div class="sidebar">
 <div class="logo">🎬 الفيديوهات</div>
 <div id="videoList">Loading...</div>
 </div>
 
+<!-- MAIN -->
 <div class="main">
 
 <div class="topbar">
@@ -112,130 +156,154 @@ color:#22c55e;
 <button class="btn" onclick="window.location.href='dashboard.html'">رجوع</button>
 </div>
 
+<!-- SPEED -->
+<div class="speedBox">
+<button class="speedBtn" onclick="setSpeed(1)">1x</button>
+<button class="speedBtn" onclick="setSpeed(1.5)">1.5x</button>
+<button class="speedBtn" onclick="setSpeed(2)">2x</button>
+</div>
+
+<!-- PLAYER -->
 <div class="player">
 
-<video id="videoPlayer" controls></video>
+<video id="videoPlayer" controls controlsList="nodownload"></video>
+
+<div id="watermark"></div>
 
 <div style="margin-top:10px">
 <div id="videoTitle">اختر فيديو</div>
+<div id="percentBox">0%</div>
 
-<div style="height:6px;background:#333;border-radius:10px;margin-top:10px;">
+<div class="progress">
 <div class="progress-bar" id="progressBar"></div>
 </div>
-
-<div class="percentBox" id="percentBox">0%</div>
 </div>
 
 </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <script>
 
-const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
-
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+/* ================= SUPABASE ================= */
+const SUPABASE_URL="https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_ANON_KEY="YOUR_KEY";
+const client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
 /* ================= USER ================= */
-const savedUser = JSON.parse(localStorage.getItem("user")) || {};
+const savedUser=JSON.parse(localStorage.getItem("user"))||{};
 
-const user = {
-  id: savedUser.id || "000",
-  name: savedUser.name || "Student"
+const user={
+id:savedUser.id||"000",
+name:savedUser.name||"Student",
+email:savedUser.email||"unknown",
+ip:"loading..."
 };
 
-/* ================= STATE ================= */
-let currentVideoId = null;
-let watchSeconds = 0;
-let lastTime = 0;
-let skips = 0;
+fetch("https://api.ipify.org?format=json")
+.then(r=>r.json())
+.then(d=>user.ip=d.ip);
 
-const video = document.getElementById("videoPlayer");
+/* ================= VIDEO ================= */
+const video=document.getElementById("videoPlayer");
+
+/* ================= STATE (ONE SOURCE ONLY) ================= */
+let currentVideoId=null;
+let watchSeconds=0;
+let lastTime=0;
+let skips=0;
+
+/* ================= SPEED ================= */
+function setSpeed(r){
+video.playbackRate=r;
+}
+
+/* ================= WATERMARK ================= */
+const watermark=document.getElementById("watermark");
+
+function updateWatermark(){
+const t=new Date().toLocaleTimeString();
+
+watermark.innerText=
+`${user.name}
+ID: ${user.id}
+Email: ${user.email}
+IP: ${user.ip}
+${t}`;
+}
+
+setInterval(updateWatermark,2000);
+updateWatermark();
 
 /* ================= LOAD VIDEOS ================= */
 async function loadVideos(){
+const {data}=await client.from("videos").select("*");
 
-const { data } = await client.from("videos").select("*").order("created_at",{ascending:false});
+const list=document.getElementById("videoList");
+list.innerHTML="";
 
-const list = document.getElementById("videoList");
-list.innerHTML = "";
+data.forEach(v=>{
+const div=document.createElement("div");
+div.className="video-item";
+div.innerText=v.title;
 
-if(!data || data.length === 0){
-list.innerHTML = "لا يوجد فيديوهات";
-return;
-}
+div.onclick=()=>{
 
-data.forEach(v => {
-
-const div = document.createElement("div");
-div.className = "video-item";
-div.innerText = v.title;
-
-div.onclick = () => {
-
-document.getElementById("videoTitle").innerText = v.title;
-
-video.src = v.url;
+document.getElementById("videoTitle").innerText=v.title;
+video.src=v.url;
 video.load();
 
-currentVideoId = v.id;
-watchSeconds = 0;
-skips = 0;
-lastTime = 0;
-
+currentVideoId=v.id;
+watchSeconds=0;
+skips=0;
+lastTime=0;
 };
 
 list.appendChild(div);
 });
-
 }
 
-/* ================= ANALYTICS (FIXED + CLEAN) ================= */
-setInterval(async () => {
+/* ================= ANALYTICS (ONE SYSTEM ONLY) ================= */
+setInterval(async ()=>{
 
-if(!video.duration || video.paused || !currentVideoId) return;
+if(!video.duration || video.paused) return;
 
-let current = video.currentTime;
+let current=video.currentTime;
 
-/* skip detection */
-if(current - lastTime > 2){
-skips++;
-}
+if(current-lastTime>2) skips++;
 
 watchSeconds++;
-lastTime = current;
+lastTime=current;
 
-const percent = Math.min((current / video.duration) * 100, 100);
+let percent=Math.min((current/video.duration)*100,100);
 
-document.getElementById("percentBox").innerText =
-`📊 ${percent.toFixed(1)}%`;
+document.getElementById("percentBox").innerText=
+"📊 "+percent.toFixed(1)+"%";
 
-document.getElementById("progressBar").style.width = percent + "%";
+document.getElementById("progressBar").style.width=percent+"%";
 
-/* SAVE ANALYTICS */
+/* SAVE */
+if(currentVideoId){
 await client.from("video_analytics").upsert({
-student_id: user.id,
-video_id: currentVideoId,
-watched_seconds: watchSeconds,
-percent: percent,
-skips: skips,
-updated_at: new Date()
+student_id:user.id,
+video_id:currentVideoId,
+watched_seconds:watchSeconds,
+percent:percent,
+skips:skips,
+updated_at:new Date()
 });
-
-}, 1000);
-
-/* ================= SECURITY ================= */
-document.addEventListener("visibilitychange", ()=>{
-if(document.hidden){
-console.log("tab hidden");
 }
+
+},1000);
+
+/* ================= ANTI RECORD ================= */
+document.addEventListener("visibilitychange",()=>{
+document.getElementById("antiRecord").style.display=document.hidden?"flex":"none";
 });
 
-window.addEventListener("blur", ()=>{
-console.log("window blurred");
+window.addEventListener("blur",()=>{
+document.getElementById("antiRecord").style.display="flex";
 });
 
 /* ================= INIT ================= */
