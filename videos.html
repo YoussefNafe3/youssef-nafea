@@ -333,7 +333,6 @@ padding:8px;
 
 </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <script>
@@ -341,46 +340,46 @@ padding:8px;
 /* ================= SUPABASE ================= */
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ================= USER ================= */
 const savedUser = JSON.parse(localStorage.getItem("user")) || {};
 
 const user = {
-id: savedUser.id || "000",
-name: savedUser.name || "Student",
-email: savedUser.email || "unknown",
-ip: "loading..."
+  id: savedUser.id || "000",
+  name: savedUser.name || "Student",
+  email: savedUser.email || "unknown",
+  ip: "loading..."
 };
 
 fetch("https://api.ipify.org?format=json")
-.then(r => r.json())
-.then(d => user.ip = d.ip);
+  .then(r => r.json())
+  .then(d => user.ip = d.ip);
 
 /* ================= VIDEO ================= */
 const video = document.getElementById("videoPlayer");
 
-/* ================= STATE (ONE SOURCE ONLY) ================= */
+/* ================= STATE ================= */
 let state = {
-currentVideoId: null,
-watchSeconds: 0,
-lastTime: 0,
-skips: 0,
-lastSave: 0
+  currentVideoId: null,
+  lastTime: 0,
+  skips: 0,
+  lastSave: 0
 };
 
 /* ================= SPEED ================= */
 function setSpeed(r){
-video.playbackRate = r;
+  video.playbackRate = r;
 }
 
 /* ================= WATERMARK ================= */
 const watermark = document.getElementById("watermark");
 
 function updateWatermark(){
-const t = new Date().toLocaleTimeString();
+  const t = new Date().toLocaleTimeString();
 
-watermark.innerText =
+  watermark.innerText =
 `${user.name}
 ID: ${user.id}
 Email: ${user.email}
@@ -394,118 +393,116 @@ updateWatermark();
 /* ================= LOAD VIDEOS ================= */
 async function loadVideos(){
 
-const list = document.getElementById("videoList");
-list.innerHTML = "جاري التحميل...";
+  const list = document.getElementById("videoList");
+  list.innerHTML = "جاري التحميل...";
 
-try{
+  try{
 
-const { data, error } = await client
-.from("videos")
-.select("*");
+    const { data, error } = await client
+      .from("videos")
+      .select("*");
 
-if(error){
-console.log("Supabase Error:", error);
-list.innerHTML = "❌ خطأ في قاعدة البيانات";
-return;
+    console.log("VIDEOS:", data, error);
+
+    if(error){
+      list.innerHTML = "❌ خطأ في قاعدة البيانات";
+      return;
+    }
+
+    if(!data || data.length === 0){
+      list.innerHTML = "📭 لا يوجد فيديوهات";
+      return;
+    }
+
+    list.innerHTML = "";
+
+    data.forEach(v => {
+
+      const div = document.createElement("div");
+      div.className = "video-item";
+      div.innerText = v.title;
+
+      div.onclick = () => {
+
+        video.src = v.url;
+        video.load();
+
+        state.currentVideoId = v.id;
+        state.lastTime = 0;
+        state.skips = 0;
+        state.lastSave = 0;
+
+        document.getElementById("videoTitle").innerText = v.title;
+      };
+
+      list.appendChild(div);
+    });
+
+  }catch(err){
+    console.log("JS ERROR:", err);
+    list.innerHTML = "❌ فشل الاتصال";
+  }
 }
 
-if(!data || data.length === 0){
-list.innerHTML = "📭 لا يوجد فيديوهات";
-return;
-}
-
-list.innerHTML = "";
-
-data.forEach(v => {
-
-const div = document.createElement("div");
-div.className = "video-item";
-div.innerText = v.title;
-
-div.onclick = () => {
-
-video.src = v.url;
-video.load();
-
-state.currentVideoId = v.id;
-state.watchSeconds = 0;
-state.skips = 0;
-state.lastTime = 0;
-state.lastSave = 0;
-
-document.getElementById("videoTitle").innerText = v.title;
-};
-
-list.appendChild(div);
-});
-
-}catch(err){
-console.log("JS Error:", err);
-list.innerHTML = "❌ فشل الاتصال";
-}
-
-}
-
-/* ================= ANALYTICS (CLEAN SYSTEM) ================= */
+/* ================= ANALYTICS ================= */
 setInterval(async ()=>{
 
-if(!video.duration || video.paused || !state.currentVideoId) return;
+  if(!video.duration || video.paused || !state.currentVideoId) return;
 
-const duration = video.duration || 0;
-const current = video.currentTime || 0;
+  const duration = video.duration || 0;
+  const current = video.currentTime || 0;
 
-const percent = duration
-  ? Math.min((current / duration) * 100, 100)
-  : 0;
+  const percent = duration
+    ? Math.min((current / duration) * 100, 100)
+    : 0;
 
-/* skip detection */
-if(current - state.lastTime > 2){
-state.skips++;
-}
+  /* skip detection */
+  if(current - state.lastTime > 2){
+    state.skips++;
+  }
 
-state.lastTime = current;
+  state.lastTime = current;
 
-document.getElementById("percentBox").innerText =
-`📊 ${percent.toFixed(1)}%`;
+  document.getElementById("percentBox").innerText =
+    `📊 ${percent.toFixed(1)}%`;
 
-document.getElementById("progressBar").style.width = percent + "%";
+  document.getElementById("progressBar").style.width = percent + "%";
 
-const now = Date.now();
+  const now = Date.now();
 
-if(now - state.lastSave > 5000){
+  if(now - state.lastSave > 5000){
 
-state.lastSave = now;
+    state.lastSave = now;
 
-if (!state.currentVideoId || !user.id || !duration) return;
+    if(!user.id || !state.currentVideoId) return;
 
-await client.from("video_sessions").upsert({
-student_id: user.id,
-video_id: state.currentVideoId,
-watched_seconds: Math.floor(current),
-duration: Math.floor(duration),
-percent: Number(percent.toFixed(2)),
-completed: percent >= 90,
-skips: state.skips || 0,
-updated_at: new Date().toISOString()
-});
-
-}
+    await client.from("video_sessions").upsert({
+      student_id: user.id,
+      video_id: state.currentVideoId,
+      watched_seconds: Math.floor(current),
+      duration: Math.floor(duration),
+      percent: Number(percent.toFixed(2)),
+      completed: percent >= 90,
+      skips: state.skips || 0,
+      updated_at: new Date().toISOString()
+    });
+  }
 
 },1000);
 
 /* ================= ANTI RECORD ================= */
 document.addEventListener("visibilitychange",()=>{
-document.getElementById("antiRecord").style.display =
-document.hidden ? "flex" : "none";
+  document.getElementById("antiRecord").style.display =
+    document.hidden ? "flex" : "none";
 });
 
 window.addEventListener("blur",()=>{
-document.getElementById("antiRecord").style.display = "flex";
+  document.getElementById("antiRecord").style.display = "flex";
 });
 
 /* ================= INIT ================= */
+loadVideos();
 
 </script>
-
 </body>
 </html>
