@@ -13,7 +13,7 @@
 body{
 margin:0;
 font-family:'Cairo',sans-serif;
-background:#0f172a;
+background:linear-gradient(135deg,#0f172a,#111827,#1e293b);
 color:white;
 padding:20px;
 }
@@ -26,17 +26,18 @@ margin-bottom:20px;
 
 input{
 width:100%;
-padding:10px;
-border-radius:10px;
+padding:12px;
+border-radius:12px;
 border:none;
 margin-bottom:15px;
 font-size:16px;
+outline:none;
 }
 
 /* ================= STATS ================= */
 .stats{
 display:flex;
-gap:10px;
+gap:12px;
 flex-wrap:wrap;
 margin-bottom:20px;
 }
@@ -45,17 +46,19 @@ margin-bottom:20px;
 flex:1;
 background:#111827;
 padding:15px;
-border-radius:12px;
+border-radius:14px;
 text-align:center;
 }
 
 .card h2{
 margin:0;
 color:#FFD700;
+font-size:26px;
 }
 
 .card p{
 margin:5px 0 0;
+opacity:0.8;
 }
 
 /* ================= TABLE ================= */
@@ -76,6 +79,8 @@ border-bottom:1px solid rgba(255,255,255,0.1);
 th{
 background:#1e293b;
 color:#FFD700;
+position:sticky;
+top:0;
 }
 
 tr:hover{
@@ -86,6 +91,11 @@ background:#1e293b;
 .good{color:#22c55e;font-weight:bold;}
 .mid{color:#facc15;font-weight:bold;}
 
+.small{
+font-size:12px;
+opacity:0.7;
+}
+
 </style>
 </head>
 
@@ -93,7 +103,7 @@ background:#1e293b;
 
 <h1>📊 Video Analytics Dashboard</h1>
 
-<input id="search" placeholder="🔍 Search by student ID or video ID">
+<input id="search" placeholder="🔍 Search by Student ID or Video ID">
 
 <div class="stats">
 <div class="card">
@@ -115,10 +125,10 @@ background:#1e293b;
 <table>
 <thead>
 <tr>
-<th>Student ID</th>
-<th>Video ID</th>
-<th>Watched %</th>
-<th>Watched Time</th>
+<th>Student</th>
+<th>Video</th>
+<th>Progress</th>
+<th>Watch Time</th>
 <th>Skips</th>
 <th>Status</th>
 </tr>
@@ -131,72 +141,81 @@ background:#1e293b;
 
 <script>
 
-/* ================= SECURITY ================= */
-const admin = JSON.parse(localStorage.getItem("user"));
-
-if(!admin || !admin.is_admin){
-  window.location.href = "login.html";
-}
-
-/* ================= SUPABASE ================= */
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const SUPABASE_ANON_KEY = "PUT_YOUR_KEY_HERE";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* ================= DATA ================= */
-let analyticsData = [];
+/* ================= ADMIN CHECK ================= */
+const admin = JSON.parse(localStorage.getItem("user"));
 
-/* ================= LOAD DATA ================= */
+if(!admin || (admin.role !== "admin" && !admin.is_admin)){
+window.location.href = "login.html";
+}
+
+/* ================= DATA ================= */
+let allData = [];
+
+/* ================= LOAD ================= */
 async function loadData(){
 
 const { data, error } = await client
 .from("video_analytics")
 .select("*")
-.order("updated_at", {ascending:false});
+.order("updated_at",{ascending:false});
 
 if(error){
-console.error(error);
+console.log(error);
 return;
 }
 
-analyticsData = data;
-renderTable(data);
-updateStats(data);
+allData = data || [];
+
+render(allData);
+updateStats(allData);
 }
 
-/* ================= TABLE ================= */
-function renderTable(data){
+/* ================= RENDER TABLE ================= */
+function render(data){
 
 const tbody = document.getElementById("tableBody");
 tbody.innerHTML = "";
 
 data.forEach(row => {
 
-let status = "mid";
-let text = "In Progress";
+const percent = Number(row.percent || 0);
+const skips = Number(row.skips || 0);
 
-if(row.percent >= 90){
+let status = "mid";
+let label = "In Progress";
+
+if(percent >= 90){
 status = "good";
-text = "Completed";
+label = "Completed";
 }
-if(row.skips > 5){
+
+if(percent < 30){
 status = "bad";
-text = "Suspicious";
+label = "Weak Progress";
+}
+
+if(skips > 5){
+status = "bad";
+label = "Suspicious Activity";
 }
 
 tbody.innerHTML += `
 <tr>
 <td>${row.student_id}</td>
 <td>${row.video_id}</td>
-<td>${row.percent.toFixed(1)}%</td>
+<td>${percent.toFixed(1)}%</td>
 <td>${row.watched_seconds || 0}s</td>
-<td>${row.skips || 0}</td>
-<td class="${status}">${text}</td>
+<td>${skips}</td>
+<td class="${status}">${label}</td>
 </tr>
 `;
-
 });
+
 }
 
 /* ================= STATS ================= */
@@ -204,7 +223,9 @@ function updateStats(data){
 
 const students = new Set(data.map(d => d.student_id)).size;
 
-const avg = data.reduce((sum,d)=>sum + (d.percent || 0),0) / (data.length || 1);
+const avg = data.length
+? data.reduce((a,b)=>a + (b.percent || 0),0) / data.length
+: 0;
 
 document.getElementById("totalStudents").innerText = students;
 document.getElementById("avgProgress").innerText = avg.toFixed(1) + "%";
@@ -213,16 +234,16 @@ document.getElementById("totalViews").innerText = data.length;
 }
 
 /* ================= SEARCH ================= */
-document.getElementById("search").addEventListener("input", function(){
+document.getElementById("search").addEventListener("input", (e)=>{
 
-let val = this.value.toLowerCase();
+const val = e.target.value.toLowerCase();
 
-let filtered = analyticsData.filter(d =>
-(String(d.student_id).includes(val) ||
-String(d.video_id).includes(val))
+const filtered = allData.filter(d =>
+String(d.student_id).toLowerCase().includes(val) ||
+String(d.video_id).toLowerCase().includes(val)
 );
 
-renderTable(filtered);
+render(filtered);
 updateStats(filtered);
 });
 
