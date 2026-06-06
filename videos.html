@@ -9,8 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-
-/* ================= BASE ================= */
 *{
 margin:0;
 padding:0;
@@ -25,7 +23,7 @@ min-height:100vh;
 display:flex;
 }
 
-/* ================= SIDEBAR ================= */
+/* SIDEBAR */
 .sidebar{
 width:280px;
 background:#111827;
@@ -49,25 +47,12 @@ background:rgba(255,255,255,.05);
 border-radius:12px;
 cursor:pointer;
 transition:.3s;
-position:relative;
 }
 
 .video-item:hover{background:#2563eb;}
-.video-item.active{background:#FFD700;color:#111;font-weight:800;}
 
-.lock{
-position:absolute;
-left:10px;
-top:10px;
-font-size:14px;
-opacity:.7;
-}
-
-/* ================= MAIN ================= */
-.main{
-flex:1;
-padding:20px;
-}
+/* MAIN */
+.main{flex:1;padding:20px;}
 
 .topbar{
 display:flex;
@@ -76,27 +61,21 @@ align-items:center;
 margin-bottom:20px;
 }
 
-.title{font-size:22px;font-weight:800;}
-
 .btn{
 padding:10px 15px;
 border:none;
 border-radius:10px;
 cursor:pointer;
 font-weight:700;
+background:#2563eb;
+color:white;
 }
 
-.home{background:#2563eb;color:white;}
-
-/* ================= PLAYER ================= */
+/* PLAYER */
 .player{
 background:rgba(255,255,255,.05);
-border-radius:20px;
 padding:20px;
-margin-bottom:20px;
-box-shadow:0 20px 40px rgba(0,0,0,.3);
-position:relative;
-overflow:hidden;
+border-radius:20px;
 }
 
 video{
@@ -104,264 +83,109 @@ width:100%;
 border-radius:15px;
 }
 
-/* ================= WATERMARK ================= */
-#watermark{
-position:absolute;
-top:20px;
-left:20px;
-color:white;
-font-size:13px;
-opacity:0.25;
-z-index:999999;
-pointer-events:none;
-background:rgba(0,0,0,0.25);
-padding:6px 10px;
-border-radius:8px;
-white-space:pre-line;
-}
-
-/* ================= PROGRESS ================= */
-.progress{
-height:6px;
-width:100%;
-background:rgba(255,255,255,.1);
-border-radius:10px;
-margin-top:10px;
-overflow:hidden;
-}
-
 .progress-bar{
-height:100%;
-width:0%;
+height:6px;
 background:#FFD700;
-transition:.3s;
+width:0%;
+border-radius:10px;
 }
 
-/* ================= INFO ================= */
-.info{
-margin-top:10px;
-font-size:16px;
-opacity:.9;
-}
-
-/* ================= PERCENT DISPLAY ================= */
 .percentBox{
 margin-top:10px;
-font-size:18px;
 font-weight:800;
 color:#22c55e;
 }
-
-/* ================= OVERLAY ================= */
-#antiRecord{
-position:fixed;
-inset:0;
-background:black;
-color:red;
-display:none;
-justify-content:center;
-align-items:center;
-font-size:22px;
-z-index:999999;
-text-align:center;
-padding:20px;
-}
-
-/* ================= SPEED ================= */
-.speedBox{
-margin-bottom:10px;
-}
-
-.speedBtn{
-padding:6px 10px;
-margin:2px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-background:#2563eb;
-color:white;
-font-weight:700;
-}
-
-/* ================= MOBILE ================= */
-@media(max-width:900px){
-body{flex-direction:column;}
-.sidebar{
-width:100%;
-display:flex;
-overflow-x:auto;
-gap:10px;
-}
-.video-item{min-width:150px;}
-}
-
 </style>
 </head>
 
 <body>
 
-<div id="antiRecord">⚠️ تم إيقاف التشغيل بسبب نشاط غير طبيعي</div>
-
-<!-- SIDEBAR -->
 <div class="sidebar">
 <div class="logo">🎬 الفيديوهات</div>
-<div id="videoList">تحميل...</div>
+<div id="videoList">Loading...</div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
 <div class="topbar">
-<div class="title">📚 محتوى الكورس</div>
-
-<button class="btn home" onclick="window.location.href='dashboard.html'">
-🏠 الرجوع
-</button>
+<div>📚 المحتوى</div>
+<button class="btn" onclick="window.location.href='dashboard.html'">رجوع</button>
 </div>
 
-<!-- SPEED -->
-<div class="speedBox">
-<button class="speedBtn" onclick="setSpeed(1)">1x</button>
-<button class="speedBtn" onclick="setSpeed(1.5)">1.5x</button>
-<button class="speedBtn" onclick="setSpeed(2)">2x</button>
-</div>
-
-<!-- PLAYER -->
 <div class="player">
 
-<video id="videoPlayer" controls controlsList="nodownload noplaybackrate"></video>
+<video id="videoPlayer" controls></video>
 
-<div id="watermark">Loading...</div>
+<div style="margin-top:10px">
+<div id="videoTitle">اختر فيديو</div>
 
-<div class="progress">
+<div style="height:6px;background:#333;border-radius:10px;margin-top:10px;">
 <div class="progress-bar" id="progressBar"></div>
 </div>
 
-<div class="info" id="videoTitle">اختر فيديو من القائمة</div>
-
 <div class="percentBox" id="percentBox">0%</div>
-
 </div>
 
 </div>
 
-<!-- SUPABASE -->
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <script>
 
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const SUPABASE_ANON_KEY = "YOUR_KEY";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const savedUser = JSON.parse(localStorage.getItem("user"));
+/* ================= USER ================= */
+const savedUser = JSON.parse(localStorage.getItem("user")) || {};
 
 const user = {
-  name: savedUser?.name || "Student",
-  id: savedUser?.id || "000",
-  email: savedUser?.email || "unknown",
-  is_premium: savedUser?.is_premium || false,
-  ip: "loading..."
+  id: savedUser.id || "000",
+  name: savedUser.name || "Student"
 };
 
-fetch("https://api.ipify.org?format=json")
-  .then(r => r.json())
-  .then(d => user.ip = d.ip);
-
-/* ================= VIDEO ================= */
-const video = document.getElementById("videoPlayer");
-
-/* ================= SPEED ================= */
-function setSpeed(r){
-video.playbackRate = r;
-}
-
-/* ================= WATERMARK ================= */
-const watermark = document.getElementById("watermark");
-
-function updateWatermark(){
-const t = new Date().toLocaleTimeString();
-
-watermark.innerText =
-`${user.name}
-ID: ${user.id}
-Email: ${user.email}
-IP: ${user.ip}
-${t}`;
-}
-
-setInterval(updateWatermark, 2000);
-updateWatermark();
-
-/* ================= ANALYTICS ================= */
-let lastTime = 0;
-let watchedSeconds = 0;
-let skips = 0;
+/* ================= STATE ================= */
 let currentVideoId = null;
+let watchSeconds = 0;
+let lastTime = 0;
+let skips = 0;
 
-setInterval(async () => {
-
-if(!video.duration || video.paused) return;
-
-let current = video.currentTime;
-
-// detect skip
-if(current - lastTime > 2){
-skips++;
-}
-
-watchedSeconds++;
-
-lastTime = current;
-
-let percent = (watchedSeconds / video.duration) * 100;
-
-if(percent > 100) percent = 100;
-
-document.getElementById("percentBox").innerText =
-"📊 Watched: " + percent.toFixed(1) + "%";
-
-/* save to DB */
-if(currentVideoId){
-await client.from("video_analytics").upsert({
-student_id: user.id,
-video_id: currentVideoId,
-watched_seconds: watchedSeconds,
-percent: percent,
-skips: skips,
-updated_at: new Date()
-});
-}
-
-}, 1000);
+const video = document.getElementById("videoPlayer");
 
 /* ================= LOAD VIDEOS ================= */
 async function loadVideos(){
 
-const { data } = await client.from("videos").select("*");
+const { data } = await client.from("videos").select("*").order("created_at",{ascending:false});
 
 const list = document.getElementById("videoList");
 list.innerHTML = "";
 
-data.forEach((v,i)=>{
+if(!data || data.length === 0){
+list.innerHTML = "لا يوجد فيديوهات";
+return;
+}
 
-let div = document.createElement("div");
+data.forEach(v => {
+
+const div = document.createElement("div");
 div.className = "video-item";
+div.innerText = v.title;
 
-div.innerHTML = v.title;
-
-div.onclick = ()=>{
+div.onclick = () => {
 
 document.getElementById("videoTitle").innerText = v.title;
+
 video.src = v.url;
 video.load();
 
 currentVideoId = v.id;
-
-watchedSeconds = 0;
+watchSeconds = 0;
 skips = 0;
 lastTime = 0;
+
 };
 
 list.appendChild(div);
@@ -369,71 +193,53 @@ list.appendChild(div);
 
 }
 
+/* ================= ANALYTICS (FIXED + CLEAN) ================= */
+setInterval(async () => {
+
+if(!video.duration || video.paused || !currentVideoId) return;
+
+let current = video.currentTime;
+
+/* skip detection */
+if(current - lastTime > 2){
+skips++;
+}
+
+watchSeconds++;
+lastTime = current;
+
+const percent = Math.min((current / video.duration) * 100, 100);
+
+document.getElementById("percentBox").innerText =
+`📊 ${percent.toFixed(1)}%`;
+
+document.getElementById("progressBar").style.width = percent + "%";
+
+/* SAVE ANALYTICS */
+await client.from("video_analytics").upsert({
+student_id: user.id,
+video_id: currentVideoId,
+watched_seconds: watchSeconds,
+percent: percent,
+skips: skips,
+updated_at: new Date()
+});
+
+}, 1000);
+
 /* ================= SECURITY ================= */
 document.addEventListener("visibilitychange", ()=>{
 if(document.hidden){
-document.getElementById("antiRecord").style.display="flex";
-}else{
-document.getElementById("antiRecord").style.display="none";
+console.log("tab hidden");
 }
 });
 
 window.addEventListener("blur", ()=>{
-document.getElementById("antiRecord").style.display="flex";
+console.log("window blurred");
 });
 
 /* ================= INIT ================= */
 loadVideos();
-
-let startTime = 0;
-let currentVideoId = null;
-let videoDuration = 0;
-let watchSeconds = 0;
-let lastTime = 0;
-let skipCount = 0;
-
-/* عند تشغيل الفيديو */
-video.onplay = () => {
-  startTime = Date.now();
-  videoDuration = video.duration;
-};
-
-/* حساب المشاهدة الحقيقي */
-video.ontimeupdate = async function () {
-
-if (!video.duration) return;
-
-currentVideoId = document.getElementById("videoSource").src;
-
-let currentTime = video.currentTime;
-
-/* حساب التخطي */
-if (currentTime - lastTime > 5) {
-skipCount++;
-}
-
-watchSeconds = currentTime;
-
-lastTime = currentTime;
-
-/* النسبة */
-const percent = (currentTime / video.duration) * 100;
-
-const completed = percent >= 90;
-
-/* حفظ في قاعدة البيانات */
-await client.from("video_sessions").upsert({
-student_id: user.id,
-video_id: currentVideoId,
-watched_seconds: Math.floor(watchSeconds),
-duration: Math.floor(video.duration),
-percent: percent,
-completed: completed,
-updated_at: new Date(),
-skips: skipCount
-});
-
-};
 
 </script>
 
