@@ -3,12 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>الفيديوهات | د. يوسف نافع</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif;}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
 
 body{
 background:linear-gradient(135deg,#0f172a,#111827,#1e293b);
@@ -41,12 +47,17 @@ background:rgba(255,255,255,.05);
 border-radius:12px;
 cursor:pointer;
 transition:.3s;
-position:relative;
 }
 
-.video-item:hover{background:#2563eb;}
+.video-item:hover{
+background:#2563eb;
+}
 
-.main{flex:1;padding:20px;}
+/* MAIN */
+.main{
+flex:1;
+padding:20px;
+}
 
 .topbar{
 display:flex;
@@ -82,8 +93,8 @@ border-radius:15px;
 /* WATERMARK */
 #watermark{
 position:absolute;
-top:15px;
-left:15px;
+top:12px;
+left:12px;
 font-size:12px;
 opacity:.25;
 white-space:pre-line;
@@ -145,7 +156,7 @@ font-weight:700;
 <!-- SIDEBAR -->
 <div class="sidebar">
 <div class="logo">🎬 الفيديوهات</div>
-<div id="videoList">Loading...</div>
+<div id="videoList">جاري التحميل...</div>
 </div>
 
 <!-- MAIN -->
@@ -187,45 +198,48 @@ font-weight:700;
 <script>
 
 /* ================= SUPABASE ================= */
-const SUPABASE_URL="https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY="YOUR_KEY";
-const client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_KEY";
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ================= USER ================= */
-const savedUser=JSON.parse(localStorage.getItem("user"))||{};
+const savedUser = JSON.parse(localStorage.getItem("user")) || {};
 
-const user={
-id:savedUser.id||"000",
-name:savedUser.name||"Student",
-email:savedUser.email||"unknown",
-ip:"loading..."
+const user = {
+id: savedUser.id || "000",
+name: savedUser.name || "Student",
+email: savedUser.email || "unknown",
+ip: "loading..."
 };
 
 fetch("https://api.ipify.org?format=json")
-.then(r=>r.json())
-.then(d=>user.ip=d.ip);
+.then(r => r.json())
+.then(d => user.ip = d.ip);
 
 /* ================= VIDEO ================= */
-const video=document.getElementById("videoPlayer");
+const video = document.getElementById("videoPlayer");
 
-/* ================= STATE (ONE SOURCE ONLY) ================= */
-let currentVideoId=null;
-let watchSeconds=0;
-let lastTime=0;
-let skips=0;
+/* ================= STATE (NO DUPLICATION) ================= */
+let state = {
+currentVideoId: null,
+watchSeconds: 0,
+lastTime: 0,
+skips: 0,
+lastSave: 0
+};
 
 /* ================= SPEED ================= */
 function setSpeed(r){
-video.playbackRate=r;
+video.playbackRate = r;
 }
 
 /* ================= WATERMARK ================= */
-const watermark=document.getElementById("watermark");
+const watermark = document.getElementById("watermark");
 
 function updateWatermark(){
-const t=new Date().toLocaleTimeString();
+const t = new Date().toLocaleTimeString();
 
-watermark.innerText=
+watermark.innerText =
 `${user.name}
 ID: ${user.id}
 Email: ${user.email}
@@ -233,83 +247,75 @@ IP: ${user.ip}
 ${t}`;
 }
 
-setInterval(updateWatermark,2000);
+setInterval(updateWatermark, 2000);
 updateWatermark();
 
 /* ================= LOAD VIDEOS ================= */
 async function loadVideos(){
-const {data}=await client.from("videos").select("*");
 
-const list=document.getElementById("videoList");
-list.innerHTML="";
+const { data } = await client.from("videos").select("*");
 
-data.forEach(v=>{
-const div=document.createElement("div");
-div.className="video-item";
-div.innerText=v.title;
+const list = document.getElementById("videoList");
+list.innerHTML = "";
 
-div.onclick=()=>{
+if(!data || data.length === 0){
+list.innerHTML = "لا يوجد فيديوهات";
+return;
+}
 
-document.getElementById("videoTitle").innerText=v.title;
-video.src=v.url;
+data.forEach(v => {
+
+const div = document.createElement("div");
+div.className = "video-item";
+div.innerText = v.title;
+
+div.onclick = () => {
+
+document.getElementById("videoTitle").innerText = v.title;
+
+video.src = v.url;
 video.load();
 
-currentVideoId=v.id;
-watchSeconds=0;
-skips=0;
-lastTime=0;
+state.currentVideoId = v.id;
+state.watchSeconds = 0;
+state.skips = 0;
+state.lastTime = 0;
+state.lastSave = 0;
+
 };
 
 list.appendChild(div);
 });
 }
 
-/* ================= ANALYTICS (ONE SYSTEM ONLY) ================= */
-setInterval(async ()=>{
+/* ================= ANALYTICS (OPTIMIZED) ================= */
+setInterval(async () => {
 
 if(!video.duration || video.paused) return;
 
-let current=video.currentTime;
+const current = video.currentTime;
 
-if(current-lastTime>2) skips++;
-
-watchSeconds++;
-lastTime=current;
-
-let percent=Math.min((current/video.duration)*100,100);
-
-document.getElementById("percentBox").innerText=
-"📊 "+percent.toFixed(1)+"%";
-
-document.getElementById("progressBar").style.width=percent+"%";
-
-/* SAVE */
-if(currentVideoId){
-await client.from("video_analytics").upsert({
-student_id:user.id,
-video_id:currentVideoId,
-watched_seconds:watchSeconds,
-percent:percent,
-skips:skips,
-updated_at:new Date()
-});
+/* skip detection */
+if(current - state.lastTime > 2){
+state.skips++;
 }
 
-},1000);
+state.watchSeconds++;
+state.lastTime = current;
 
-/* ================= ANTI RECORD ================= */
-document.addEventListener("visibilitychange",()=>{
-document.getElementById("antiRecord").style.display=document.hidden?"flex":"none";
-});
+const percent = Math.min((current / video.duration) * 100, 100);
 
-window.addEventListener("blur",()=>{
-document.getElementById("antiRecord").style.display="flex";
-});
+/* UI */
+document.getElementById("percentBox").innerText =
+`📊 ${percent.toFixed(1)}%`;
 
-/* ================= INIT ================= */
-loadVideos();
+document.getElementById("progressBar").style.width =
+percent + "%";
 
-</script>
+/* SAVE every 5 seconds only (important optimization) */
+const now = Date.now();
+if(state.currentVideoId && now - state.lastSave > 5000){
 
-</body>
-</html>
+state.lastSave = now;
+
+await client.from("video_analytics
