@@ -33,44 +33,7 @@ margin-bottom:15px;
 font-size:16px;
 }
 
-table{
-width:100%;
-border-collapse:collapse;
-background:#111827;
-border-radius:12px;
-overflow:hidden;
-}
-
-th,td{
-padding:12px;
-text-align:center;
-border-bottom:1px solid rgba(255,255,255,0.1);
-}
-
-th{
-background:#1e293b;
-color:#FFD700;
-}
-
-tr:hover{
-background:#1e293b;
-}
-
-.bad{
-color:#ff4d4d;
-font-weight:bold;
-}
-
-.good{
-color:#22c55e;
-font-weight:bold;
-}
-
-.mid{
-color:#facc15;
-font-weight:bold;
-}
-
+/* ================= STATS ================= */
 .stats{
 display:flex;
 gap:10px;
@@ -95,6 +58,34 @@ color:#FFD700;
 margin:5px 0 0;
 }
 
+/* ================= TABLE ================= */
+table{
+width:100%;
+border-collapse:collapse;
+background:#111827;
+border-radius:12px;
+overflow:hidden;
+}
+
+th,td{
+padding:12px;
+text-align:center;
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+th{
+background:#1e293b;
+color:#FFD700;
+}
+
+tr:hover{
+background:#1e293b;
+}
+
+.bad{color:#ff4d4d;font-weight:bold;}
+.good{color:#22c55e;font-weight:bold;}
+.mid{color:#facc15;font-weight:bold;}
+
 </style>
 </head>
 
@@ -113,3 +104,132 @@ margin:5px 0 0;
 <div class="card">
 <h2 id="avgProgress">0%</h2>
 <p>Avg Progress</p>
+</div>
+
+<div class="card">
+<h2 id="totalViews">0</h2>
+<p>Total Records</p>
+</div>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Student ID</th>
+<th>Video ID</th>
+<th>Watched %</th>
+<th>Watched Time</th>
+<th>Skips</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<script>
+
+/* ================= SECURITY ================= */
+const admin = JSON.parse(localStorage.getItem("user"));
+
+if(!admin || !admin.is_admin){
+  window.location.href = "login.html";
+}
+
+/* ================= SUPABASE ================= */
+const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ================= DATA ================= */
+let analyticsData = [];
+
+/* ================= LOAD DATA ================= */
+async function loadData(){
+
+const { data, error } = await client
+.from("video_analytics")
+.select("*")
+.order("updated_at", {ascending:false});
+
+if(error){
+console.error(error);
+return;
+}
+
+analyticsData = data;
+renderTable(data);
+updateStats(data);
+}
+
+/* ================= TABLE ================= */
+function renderTable(data){
+
+const tbody = document.getElementById("tableBody");
+tbody.innerHTML = "";
+
+data.forEach(row => {
+
+let status = "mid";
+let text = "In Progress";
+
+if(row.percent >= 90){
+status = "good";
+text = "Completed";
+}
+if(row.skips > 5){
+status = "bad";
+text = "Suspicious";
+}
+
+tbody.innerHTML += `
+<tr>
+<td>${row.student_id}</td>
+<td>${row.video_id}</td>
+<td>${row.percent.toFixed(1)}%</td>
+<td>${row.watched_seconds || 0}s</td>
+<td>${row.skips || 0}</td>
+<td class="${status}">${text}</td>
+</tr>
+`;
+
+});
+}
+
+/* ================= STATS ================= */
+function updateStats(data){
+
+const students = new Set(data.map(d => d.student_id)).size;
+
+const avg = data.reduce((sum,d)=>sum + (d.percent || 0),0) / (data.length || 1);
+
+document.getElementById("totalStudents").innerText = students;
+document.getElementById("avgProgress").innerText = avg.toFixed(1) + "%";
+document.getElementById("totalViews").innerText = data.length;
+
+}
+
+/* ================= SEARCH ================= */
+document.getElementById("search").addEventListener("input", function(){
+
+let val = this.value.toLowerCase();
+
+let filtered = analyticsData.filter(d =>
+(String(d.student_id).includes(val) ||
+String(d.video_id).includes(val))
+);
+
+renderTable(filtered);
+updateStats(filtered);
+});
+
+/* ================= INIT ================= */
+loadData();
+
+</script>
+
+</body>
+</html>
