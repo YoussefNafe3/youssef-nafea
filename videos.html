@@ -406,8 +406,9 @@ async function loadVideos(){
 
     const { data, error } = await client
       .from("videos")
-      .select("*");
-
+.select("*")
+.eq("class_group", user.class_group)
+    
     console.log("VIDEOS:", data, error);
 
     if(error){
