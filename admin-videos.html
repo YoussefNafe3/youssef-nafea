@@ -177,9 +177,10 @@ const publicUrl = urlData.publicUrl;
 // 3️⃣ حفظ في قاعدة البيانات
 const { error: dbError } = await client
 .from("videos")
-.insert([{
+await client.from("videos").insert([{
 title: title,
-url: publicUrl
+url: publicUrl,
+is_premium: false
 }]);
 
 if(dbError){
