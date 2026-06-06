@@ -272,7 +272,7 @@ window.location.href = "login.html";
 }
 
 document.getElementById("userName").innerHTML =
-"👋 " + (user.full_name || user.name || "الطالب");
+"👋 " + (user.full_name || user.name);
 
 function logout(){
 localStorage.removeItem("user");
