@@ -234,6 +234,10 @@ document.getElementById("totalViews").innerText = data.length;
 /* ================= INIT ================= */
 loadData();
 
+if (row.completed) {
+status = "good";
+label = "Fully Watched";
+}
 </script>
 
 </body>
