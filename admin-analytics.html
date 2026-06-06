@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Analytics Pro Max</title>
+<title>Analytics Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -14,126 +14,163 @@
 body{
 margin:0;
 font-family:'Cairo';
-background:radial-gradient(circle at top,#0b1220,#0f172a,#111827);
+background:#0b1220;
 color:white;
+display:flex;
+height:100vh;
+overflow:hidden;
 }
 
-/* HEADER */
-.header{
-padding:20px;
+/* SIDEBAR */
+.sidebar{
+width:260px;
+background:#0f172a;
+border-left:1px solid #1f2937;
+padding:10px;
+overflow-y:auto;
+}
+
+.student{
+padding:10px;
+margin-bottom:8px;
+border-radius:10px;
+background:rgba(255,255,255,0.04);
+cursor:pointer;
+transition:0.2s;
+}
+
+.student:hover{
+background:#2563eb;
+}
+
+.student.active{
+background:#2563eb;
+}
+
+/* MAIN */
+.main{
+flex:1;
+display:flex;
+flex-direction:column;
+overflow:hidden;
+}
+
+/* TOP BAR */
+.top{
+padding:15px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-flex-wrap:wrap;
-gap:10px;
+background:#0f172a;
+border-bottom:1px solid #1f2937;
 }
 
-.header h1{
-margin:0;
+.title{
 color:#FFD700;
-font-size:22px;
+font-weight:700;
 }
 
-input{
-padding:10px;
-border-radius:10px;
-border:none;
-width:260px;
-outline:none;
-}
-
-/* GRID */
-.grid{
+/* CONTENT */
+.content{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+grid-template-columns:1fr 1fr;
 gap:15px;
-padding:20px;
+padding:15px;
+overflow:auto;
 }
 
 /* CARD */
 .card{
-background:rgba(255,255,255,0.05);
+background:rgba(255,255,255,0.04);
 border:1px solid rgba(255,255,255,0.08);
-border-radius:18px;
-padding:15px;
-backdrop-filter: blur(12px);
-transition:0.3s;
+border-radius:14px;
+padding:12px;
 }
 
-.card:hover{
-transform:translateY(-5px);
-border-color:#2563eb;
-}
-
-.name{
-font-size:18px;
-font-weight:700;
+.card h3{
+margin:0 0 10px 0;
 color:#FFD700;
-margin-bottom:10px;
 }
 
-/* VIDEO BLOCK */
+/* VIDEO ITEM */
 .video{
-margin-bottom:12px;
+margin-bottom:10px;
 padding:10px;
-border-radius:12px;
+border-radius:10px;
 background:rgba(255,255,255,0.03);
 }
 
 .bar{
-height:10px;
+height:8px;
 background:#1f2937;
 border-radius:20px;
 overflow:hidden;
-margin:6px 0;
+margin-top:5px;
 }
 
 .fill{
 height:100%;
 background:linear-gradient(90deg,#2563eb,#22c55e);
 width:0%;
-transition:0.3s;
 }
 
-.small{
-font-size:12px;
-opacity:0.8;
+/* STATS */
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+padding:15px;
 }
 
-/* BADGES */
-.badge{
-display:inline-block;
-padding:4px 8px;
-border-radius:8px;
-font-size:11px;
-margin-top:5px;
+.box{
+background:rgba(255,255,255,0.04);
+padding:10px;
+border-radius:10px;
+text-align:center;
 }
 
-.good{background:#16a34a;}
-.mid{background:#f59e0b;}
-.bad{background:#ef4444;}
-
-.topbar{
-padding:10px 20px;
-display:flex;
-justify-content:space-between;
-align-items:center;
+.box h2{
+margin:0;
+color:#FFD700;
 }
-
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-<h1>📊 Analytics Pro Max</h1>
+<!-- SIDEBAR -->
+<div class="sidebar" id="studentsList"></div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="top">
+<div class="title">📊 Analytics Dashboard</div>
 </div>
 
-<div class="header">
-<input id="search" placeholder="ابحث عن طالب..." />
+<!-- STATS -->
+<div class="stats">
+<div class="box"><h2 id="totalStudents">0</h2><p>Students</p></div>
+<div class="box"><h2 id="totalSessions">0</h2><p>Sessions</p></div>
+<div class="box"><h2 id="avgPercent">0%</h2><p>Avg Watch</p></div>
 </div>
 
-<div class="grid" id="grid"></div>
+<!-- CONTENT -->
+<div class="content">
+
+<div class="card">
+<h3>👤 Student Details</h3>
+<div id="studentInfo">اختر طالب</div>
+</div>
+
+<div class="card">
+<h3>🎬 Videos Progress</h3>
+<div id="videoProgress">---</div>
+</div>
+
+</div>
+
+</div>
 
 <script>
 
@@ -143,7 +180,9 @@ const supabase = window.supabase.createClient(
 );
 
 let sessions = [];
+let selectedStudent = null;
 
+/* LOAD DATA */
 async function load(){
 
 const { data } = await supabase
@@ -151,94 +190,109 @@ const { data } = await supabase
 .select("*");
 
 sessions = data || [];
-render();
+
+renderStudents();
+renderStats();
+
+if(!selectedStudent && sessions.length){
+selectStudent(sessions[0].student_id);
+}
 }
 
-function groupData(){
-
+/* GROUP BY STUDENT */
+function getStudents(){
 const map = {};
 
 sessions.forEach(s=>{
-
-const student = s.student_id;
-const video = s.video_id;
-
-if(!map[student]){
-map[student] = {};
-}
-
-if(!map[student][video]){
-map[student][video] = {
-total:0,
-count:0,
-skips:0
-};
-}
-
-map[student][video].total += s.percent || 0;
-map[student][video].count += 1;
-map[student][video].skips += (s.skips || 0);
-
+if(!map[s.student_id]) map[s.student_id] = [];
+map[s.student_id].push(s);
 });
 
 return map;
 }
 
-function render(){
+/* SIDEBAR */
+function renderStudents(){
 
-const search = document.getElementById("search").value.toLowerCase();
+const students = getStudents();
+const el = document.getElementById("studentsList");
 
-const data = groupData();
+el.innerHTML = Object.keys(students).map(id=>`
+<div class="student ${id===selectedStudent?'active':''}" onclick="selectStudent('${id}')">
+👤 ${id}
+</div>
+`).join("");
 
-let html = "";
+}
 
-Object.keys(data).forEach(student=>{
+/* SELECT STUDENT */
+window.selectStudent = function(id){
+selectedStudent = id;
+renderStudents();
+renderStudentData();
+}
 
-if(search && !student.toLowerCase().includes(search)) return;
+/* STUDENT DATA */
+function renderStudentData(){
 
-let videosHTML = "";
+const data = sessions.filter(s=>s.student_id===selectedStudent);
 
-Object.keys(data[student]).forEach(v=>{
+document.getElementById("studentInfo").innerHTML = `
+<b>ID:</b> ${selectedStudent}<br>
+<b>Sessions:</b> ${data.length}<br>
+`;
 
-const d = data[student][v];
+/* group videos */
+const videos = {};
 
+data.forEach(s=>{
+if(!videos[s.video_id]){
+videos[s.video_id] = {total:0,count:0,skips:0};
+}
+videos[s.video_id].total += s.percent;
+videos[s.video_id].count++;
+videos[s.video_id].skips += (s.skips||0);
+});
+
+document.getElementById("videoProgress").innerHTML =
+Object.keys(videos).map(v=>{
+
+const d = videos[v];
 const avg = d.total / d.count;
 
-let status = "good";
-if(avg < 70) status = "mid";
-if(avg < 40) status = "bad";
-
-videosHTML += `
+return `
 <div class="video">
-<div class="small">🎬 ${v}</div>
+<div>🎬 ${v}</div>
 
 <div class="bar">
 <div class="fill" style="width:${avg}%"></div>
 </div>
 
-<div class="small">
-📊 ${avg.toFixed(1)}% | ⏩ Skips: ${d.skips}
-</div>
-
-<span class="badge ${status}">
-${avg > 80 ? "ممتاز" : avg > 50 ? "متوسط" : "ضعيف"}
-</span>
+<small>
+📊 ${avg.toFixed(1)}% | ⏩ ${d.skips}
+</small>
 </div>
 `;
-});
 
-html += `
-<div class="card">
-<div class="name">👤 ${student}</div>
-${videosHTML}
-</div>
-`;
-});
+}).join("");
 
-document.getElementById("grid").innerHTML = html;
 }
 
-document.getElementById("search").addEventListener("input",render);
+/* STATS */
+function renderStats(){
+
+document.getElementById("totalSessions").innerText = sessions.length;
+
+const students = new Set(sessions.map(s=>s.student_id));
+document.getElementById("totalStudents").innerText = students.size;
+
+let avg = 0;
+if(sessions.length){
+avg = sessions.reduce((a,b)=>a+(b.percent||0),0)/sessions.length;
+}
+
+document.getElementById("avgPercent").innerText = avg.toFixed(1)+"%";
+}
 
 load();
 setInterval(load,15000);
