@@ -9,7 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-
 body{
 margin:0;
 font-family:'Cairo',sans-serif;
@@ -24,17 +23,6 @@ color:#FFD700;
 margin-bottom:20px;
 }
 
-input{
-width:100%;
-padding:12px;
-border-radius:12px;
-border:none;
-margin-bottom:15px;
-font-size:16px;
-outline:none;
-}
-
-/* ================= STATS ================= */
 .stats{
 display:flex;
 gap:12px;
@@ -53,15 +41,8 @@ text-align:center;
 .card h2{
 margin:0;
 color:#FFD700;
-font-size:26px;
 }
 
-.card p{
-margin:5px 0 0;
-opacity:0.8;
-}
-
-/* ================= TABLE ================= */
 .table-wrap{
 overflow:auto;
 border-radius:12px;
@@ -87,18 +68,11 @@ position:sticky;
 top:0;
 }
 
-tr:hover{
-background:#1e293b;
-}
+tr:hover{background:#1e293b;}
 
 .bad{color:#ff4d4d;font-weight:bold;}
 .good{color:#22c55e;font-weight:bold;}
 .mid{color:#facc15;font-weight:bold;}
-
-.small{
-font-size:12px;
-opacity:0.7;
-}
 
 </style>
 </head>
@@ -141,28 +115,21 @@ opacity:0.7;
 </table>
 </div>
 
-<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <script>
-(async () => {
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if(!user){
-    window.location.href = "login.html";
-  }
-
-  const role = user?.user_metadata?.role;
-
-  if(role !== "admin"){
-    window.location.href = "dashboard.html";
-  }
-})();
 
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey...";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ================= LOCAL USER CHECK ================= */
+const admin = JSON.parse(localStorage.getItem("user"));
+
+if(!admin || admin.role !== "admin"){
+window.location.href = "login.html";
+}
 
 let allData = [];
 
@@ -191,10 +158,9 @@ function render(data){
 const tbody = document.getElementById("tableBody");
 tbody.innerHTML = "";
 
-/* ترتيب حسب الأعلى مشاهدة */
-data.sort((a,b)=>(b.percent||0)-(a.percent||0));
+const sorted = [...data].sort((a,b)=>(b.percent||0)-(a.percent||0));
 
-data.forEach(row=>{
+sorted.forEach(row=>{
 
 const percent = Number(row.percent || 0);
 const skips = Number(row.skips || 0);
@@ -227,7 +193,6 @@ tbody.innerHTML += `
 </tr>
 `;
 });
-
 }
 
 /* ================= STATS ================= */
@@ -244,13 +209,9 @@ document.getElementById("avgProgress").innerText = avg.toFixed(1) + "%";
 document.getElementById("totalViews").innerText = data.length;
 }
 
-/* ================= INIT ================= */
+/* INIT */
 loadData();
 
-if (row.completed) {
-status = "good";
-label = "Fully Watched";
-}
 </script>
 
 </body>
