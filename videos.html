@@ -339,7 +339,7 @@ padding:8px;
 
 /* ================= SUPABASE ================= */
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplcWZwbWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -364,8 +364,14 @@ const video = document.getElementById("videoPlayer");
 let state = {
   currentVideoId: null,
   lastTime: 0,
+  sessionSaved: false
+};
+
+/* ================= ANALYTICS SESSION ================= */
+let session = {
   skips: 0,
-  lastSave: 0
+  lastTime: 0,
+  startTime: Date.now()
 };
 
 /* ================= SPEED ================= */
@@ -429,8 +435,13 @@ async function loadVideos(){
 
         state.currentVideoId = v.id;
         state.lastTime = 0;
-        state.skips = 0;
-        state.lastSave = 0;
+        state.sessionSaved = false;
+
+        session = {
+          skips: 0,
+          lastTime: 0,
+          startTime: Date.now()
+        };
 
         document.getElementById("videoTitle").innerText = v.title;
       };
@@ -439,56 +450,64 @@ async function loadVideos(){
     });
 
   }catch(err){
-    console.log("JS ERROR:", err);
+    console.log(err);
     list.innerHTML = "❌ فشل الاتصال";
   }
 }
 
-/* ================= ANALYTICS ================= */
-setInterval(async ()=>{
+/* ================= PROGRESS + SKIP TRACKING ================= */
+video.addEventListener("timeupdate", () => {
 
-  if(!video.duration || video.paused || !state.currentVideoId) return;
+  if (!video.duration) return;
 
-  const duration = video.duration || 0;
-  const current = video.currentTime || 0;
-
-  const percent = duration
-    ? Math.min((current / duration) * 100, 100)
-    : 0;
-
-  /* skip detection */
-  if(current - state.lastTime > 2){
-    state.skips++;
-  }
-
-  state.lastTime = current;
+  const current = video.currentTime;
+  const percent = (current / video.duration) * 100;
 
   document.getElementById("percentBox").innerText =
     `📊 ${percent.toFixed(1)}%`;
 
   document.getElementById("progressBar").style.width = percent + "%";
 
-  const now = Date.now();
-
-  if(now - state.lastSave > 5000){
-
-    state.lastSave = now;
-
-    if(!user.id || !state.currentVideoId) return;
-
-    await client.from("video_sessions").insert({
-      student_id: user.id,
-      video_id: state.currentVideoId,
-      watched_seconds: Math.floor(current),
-      duration: Math.floor(duration),
-      percent: Number(percent.toFixed(2)),
-      completed: percent >= 90,
-      skips: state.skips || 0,
-      updated_at: new Date().toISOString()
-    });
+  /* skip detection */
+  if (current - session.lastTime > 2) {
+    session.skips++;
   }
 
-},1000);
+  session.lastTime = current;
+});
+
+/* ================= SAVE FUNCTION (ONCE ONLY) ================= */
+async function saveSession(){
+
+  if (state.sessionSaved) return;
+  if (!state.currentVideoId || !video.duration) return;
+
+  const percent = (video.currentTime / video.duration) * 100;
+
+  try{
+
+    await client.from("video_sessions").insert([{
+      student_id: user.id,
+      video_id: state.currentVideoId,
+      watched_seconds: Math.floor(video.currentTime),
+      duration: Math.floor(video.duration),
+      percent: Number(percent.toFixed(2)),
+      completed: percent >= 90,
+      skips: session.skips,
+      updated_at: new Date().toISOString()
+    }]);
+
+    state.sessionSaved = true;
+    console.log("SESSION SAVED");
+
+  }catch(err){
+    console.log("SAVE ERROR:", err);
+  }
+}
+
+/* ================= TRIGGERS ================= */
+video.addEventListener("ended", saveSession);
+window.addEventListener("beforeunload", saveSession);
 
 /* ================= ANTI RECORD ================= */
 document.addEventListener("visibilitychange",()=>{
