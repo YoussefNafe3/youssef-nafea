@@ -117,7 +117,6 @@ pointer-events:none;
 background:rgba(0,0,0,0.25);
 padding:6px 10px;
 border-radius:8px;
-transition:0.4s;
 white-space:pre-line;
 }
 
@@ -140,9 +139,17 @@ transition:.3s;
 
 /* ================= INFO ================= */
 .info{
-margin-top:15px;
+margin-top:10px;
 font-size:16px;
 opacity:.9;
+}
+
+/* ================= PERCENT DISPLAY ================= */
+.percentBox{
+margin-top:10px;
+font-size:18px;
+font-weight:800;
+color:#22c55e;
 }
 
 /* ================= OVERLAY ================= */
@@ -160,7 +167,7 @@ text-align:center;
 padding:20px;
 }
 
-/* ================= SPEED CONTROL ================= */
+/* ================= SPEED ================= */
 .speedBox{
 margin-bottom:10px;
 }
@@ -174,10 +181,6 @@ cursor:pointer;
 background:#2563eb;
 color:white;
 font-weight:700;
-}
-
-.speedBtn:hover{
-background:#1d4ed8;
 }
 
 /* ================= MOBILE ================= */
@@ -226,9 +229,7 @@ gap:10px;
 <!-- PLAYER -->
 <div class="player">
 
-<video id="videoPlayer" controls controlsList="nodownload noplaybackrate">
-<source id="videoSource" src="" type="video/mp4">
-</video>
+<video id="videoPlayer" controls controlsList="nodownload noplaybackrate"></video>
 
 <div id="watermark">Loading...</div>
 
@@ -237,6 +238,8 @@ gap:10px;
 </div>
 
 <div class="info" id="videoTitle">اختر فيديو من القائمة</div>
+
+<div class="percentBox" id="percentBox">0%</div>
 
 </div>
 
@@ -262,135 +265,122 @@ const user = {
   ip: "loading..."
 };
 
-/* ================= GET IP ================= */
 fetch("https://api.ipify.org?format=json")
-  .then(res => res.json())
-  .then(data => user.ip = data.ip);
+  .then(r => r.json())
+  .then(d => user.ip = d.ip);
 
 /* ================= VIDEO ================= */
 const video = document.getElementById("videoPlayer");
 
 /* ================= SPEED ================= */
-function setSpeed(rate){
-video.playbackRate = rate;
+function setSpeed(r){
+video.playbackRate = r;
 }
 
 /* ================= WATERMARK ================= */
 const watermark = document.getElementById("watermark");
 
 function updateWatermark(){
-const time = new Date().toLocaleTimeString();
+const t = new Date().toLocaleTimeString();
 
 watermark.innerText =
 `${user.name}
 ID: ${user.id}
 Email: ${user.email}
 IP: ${user.ip}
-${time}`;
-
-const x = Math.random() * 60 + 10;
-const y = Math.random() * 60 + 10;
-
-watermark.style.left = x + "%";
-watermark.style.top = y + "%";
+${t}`;
 }
 
-setInterval(updateWatermark, 2500);
+setInterval(updateWatermark, 2000);
 updateWatermark();
 
-/* ================= FULLSCREEN ================= */
-function goFull(){
-document.querySelector(".player").requestFullscreen();
+/* ================= ANALYTICS ================= */
+let lastTime = 0;
+let watchedSeconds = 0;
+let skips = 0;
+let currentVideoId = null;
+
+setInterval(async () => {
+
+if(!video.duration || video.paused) return;
+
+let current = video.currentTime;
+
+// detect skip
+if(current - lastTime > 2){
+skips++;
 }
 
-/* ================= LOAD VIDEOS ================= */
-async function loadVideos(){
+watchedSeconds++;
 
-const { data, error } = await client
-.from("videos")
-.select("*")
-.order("created_at",{ascending:false});
+lastTime = current;
 
-if(error){
-console.error(error);
-document.getElementById("videoList").innerHTML = "خطأ في التحميل";
-return;
-}
+let percent = (watchedSeconds / video.duration) * 100;
 
-const list = document.getElementById("videoList");
-list.innerHTML = "";
+if(percent > 100) percent = 100;
 
-data.forEach((v,index)=>{
+document.getElementById("percentBox").innerText =
+"📊 Watched: " + percent.toFixed(1) + "%";
 
-const div = document.createElement("div");
-div.className = "video-item";
-
-div.innerHTML = v.is_premium 
-? `🎥 ${v.title} <span class="lock">🔒</span>` 
-: `🎥 ${v.title}`;
-
-div.onclick = ()=>{
-
-if(v.is_premium && !user.is_premium){
-alert("هذا الفيديو للمشتركين فقط 🔒");
-return;
-}
-
-document.getElementById("videoSource").src = v.url;
-video.load();
-document.getElementById("videoTitle").innerText = v.title;
-
-setActive(index);
-};
-
-list.appendChild(div);
-
-});
-
-}
-
-/* ================= ACTIVE ================= */
-function setActive(index){
-document.querySelectorAll(".video-item").forEach((el,i)=>{
-el.classList.toggle("active", i===index);
-});
-}
-
-/* ================= PROGRESS ================= */
-video.ontimeupdate = async function(){
-
-if(!video.duration) return;
-
-const percent = (video.currentTime / video.duration) * 100;
-
-document.getElementById("progressBar").style.width = percent + "%";
-
+/* save to DB */
 if(currentVideoId){
-await client.from("student_progress").upsert({
+await client.from("video_analytics").upsert({
 student_id: user.id,
 video_id: currentVideoId,
-progress: percent,
+watched_seconds: watchedSeconds,
+percent: percent,
+skips: skips,
 updated_at: new Date()
 });
 }
 
+}, 1000);
+
+/* ================= LOAD VIDEOS ================= */
+async function loadVideos(){
+
+const { data } = await client.from("videos").select("*");
+
+const list = document.getElementById("videoList");
+list.innerHTML = "";
+
+data.forEach((v,i)=>{
+
+let div = document.createElement("div");
+div.className = "video-item";
+
+div.innerHTML = v.title;
+
+div.onclick = ()=>{
+
+document.getElementById("videoTitle").innerText = v.title;
+video.src = v.url;
+video.load();
+
+currentVideoId = v.id;
+
+watchedSeconds = 0;
+skips = 0;
+lastTime = 0;
 };
 
-/* ================= SECURITY ================= */
-const overlay = document.getElementById("antiRecord");
-
-function showOverlay(){
-overlay.style.display = "flex";
-setTimeout(()=>overlay.style.display="none",2000);
-}
-
-document.addEventListener("visibilitychange", ()=>{
-if(document.hidden) showOverlay();
+list.appendChild(div);
 });
 
-window.addEventListener("blur", showOverlay);
+}
 
-document.addEventListener("contextmenu", e => e.preventDefault());
+/* ================= SECURITY ================= */
+document.addEventListener("visibilitychange", ()=>{
+if(document.hidden){
+document.getElementById("antiRecord").style.display="flex";
+}else{
+document.getElementById("antiRecord").style.display="none";
+}
+});
+
+window.addEventListener("blur", ()=>{
+document.getElementById("antiRecord").style.display="flex";
+});
 
 /* ================= INIT ================= */
 loadVideos();
