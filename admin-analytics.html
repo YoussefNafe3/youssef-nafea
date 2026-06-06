@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Analytics Pro | د. يوسف نافع</title>
+<title>Analytics Pro Max</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
 
 <style>
 body{
 margin:0;
 font-family:'Cairo';
-background:linear-gradient(135deg,#0b1220,#0f172a,#111827);
+background:radial-gradient(circle at top,#0b1220,#0f172a,#111827);
 color:white;
 }
 
@@ -24,24 +24,28 @@ padding:20px;
 display:flex;
 justify-content:space-between;
 align-items:center;
+flex-wrap:wrap;
+gap:10px;
 }
 
 .header h1{
-color:#FFD700;
 margin:0;
+color:#FFD700;
+font-size:22px;
 }
 
-.search{
+input{
 padding:10px;
 border-radius:10px;
 border:none;
-width:250px;
+width:260px;
+outline:none;
 }
 
 /* GRID */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
 gap:15px;
 padding:20px;
 }
@@ -50,68 +54,89 @@ padding:20px;
 .card{
 background:rgba(255,255,255,0.05);
 border:1px solid rgba(255,255,255,0.08);
-border-radius:16px;
+border-radius:18px;
 padding:15px;
-backdrop-filter: blur(10px);
+backdrop-filter: blur(12px);
 transition:0.3s;
 }
 
 .card:hover{
-transform:scale(1.02);
-background:rgba(37,99,235,0.15);
+transform:translateY(-5px);
+border-color:#2563eb;
 }
 
-.card h3{
-margin:0;
+.name{
+font-size:18px;
+font-weight:700;
 color:#FFD700;
+margin-bottom:10px;
 }
 
-.small{
-font-size:12px;
-opacity:0.7;
+/* VIDEO BLOCK */
+.video{
+margin-bottom:12px;
+padding:10px;
+border-radius:12px;
+background:rgba(255,255,255,0.03);
 }
 
-/* PROGRESS */
 .bar{
 height:10px;
 background:#1f2937;
 border-radius:20px;
 overflow:hidden;
-margin-top:10px;
+margin:6px 0;
 }
 
 .fill{
 height:100%;
 background:linear-gradient(90deg,#2563eb,#22c55e);
 width:0%;
+transition:0.3s;
 }
 
-/* SKIP BADGE */
+.small{
+font-size:12px;
+opacity:0.8;
+}
+
+/* BADGES */
 .badge{
 display:inline-block;
 padding:4px 8px;
 border-radius:8px;
-font-size:12px;
-margin-top:8px;
+font-size:11px;
+margin-top:5px;
 }
 
-.badge.good{background:#16a34a;}
-.badge.warn{background:#f59e0b;}
-.badge.bad{background:#ef4444;}
+.good{background:#16a34a;}
+.mid{background:#f59e0b;}
+.bad{background:#ef4444;}
+
+.topbar{
+padding:10px 20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
 
 </style>
 </head>
 
 <body>
 
+<div class="topbar">
+<h1>📊 Analytics Pro Max</h1>
+</div>
+
 <div class="header">
-<h1>📊 Analytics Pro</h1>
-<input class="search" id="search" placeholder="ابحث عن طالب..." />
+<input id="search" placeholder="ابحث عن طالب..." />
 </div>
 
 <div class="grid" id="grid"></div>
 
 <script>
+
 const supabase = window.supabase.createClient(
 "https://nhdowqzecpwmkunczodl.supabase.co",
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo"
@@ -129,54 +154,62 @@ sessions = data || [];
 render();
 }
 
-function render(){
+function groupData(){
 
-const search = document.getElementById("search").value || "";
+const map = {};
 
-const grouped = {};
-
-// grouping per student + video
 sessions.forEach(s=>{
 
-if(!grouped[s.student_id]){
-grouped[s.student_id] = {};
+const student = s.student_id;
+const video = s.video_id;
+
+if(!map[student]){
+map[student] = {};
 }
 
-if(!grouped[s.student_id][s.video_id]){
-grouped[s.student_id][s.video_id] = {
+if(!map[student][video]){
+map[student][video] = {
 total:0,
 count:0,
 skips:0
 };
 }
 
-grouped[s.student_id][s.video_id].total += s.percent;
-grouped[s.student_id][s.video_id].count++;
-grouped[s.student_id][s.video_id].skips += (s.skips || 0);
+map[student][video].total += s.percent || 0;
+map[student][video].count += 1;
+map[student][video].skips += (s.skips || 0);
 
 });
 
+return map;
+}
+
+function render(){
+
+const search = document.getElementById("search").value.toLowerCase();
+
+const data = groupData();
+
 let html = "";
 
-Object.keys(grouped).forEach(student=>{
+Object.keys(data).forEach(student=>{
 
-if(search && !student.includes(search)) return;
+if(search && !student.toLowerCase().includes(search)) return;
 
-const videos = grouped[student];
+let videosHTML = "";
 
-let videoHTML = "";
+Object.keys(data[student]).forEach(v=>{
 
-Object.keys(videos).forEach(v=>{
+const d = data[student][v];
 
-const d = videos[v];
 const avg = d.total / d.count;
 
-let color = "good";
-if(avg < 70) color = "warn";
-if(avg < 40) color = "bad";
+let status = "good";
+if(avg < 70) status = "mid";
+if(avg < 40) status = "bad";
 
-videoHTML += `
-<div style="margin-top:10px">
+videosHTML += `
+<div class="video">
 <div class="small">🎬 ${v}</div>
 
 <div class="bar">
@@ -187,7 +220,7 @@ videoHTML += `
 📊 ${avg.toFixed(1)}% | ⏩ Skips: ${d.skips}
 </div>
 
-<span class="badge ${color}">
+<span class="badge ${status}">
 ${avg > 80 ? "ممتاز" : avg > 50 ? "متوسط" : "ضعيف"}
 </span>
 </div>
@@ -196,8 +229,8 @@ ${avg > 80 ? "ممتاز" : avg > 50 ? "متوسط" : "ضعيف"}
 
 html += `
 <div class="card">
-<h3>👤 ${student}</h3>
-${videoHTML}
+<div class="name">👤 ${student}</div>
+${videosHTML}
 </div>
 `;
 });
@@ -209,6 +242,7 @@ document.getElementById("search").addEventListener("input",render);
 
 load();
 setInterval(load,15000);
+
 </script>
 
 </body>
