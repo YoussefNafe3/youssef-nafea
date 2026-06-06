@@ -338,7 +338,7 @@ if(state.currentVideoId && now - state.lastSave > 5000){
 
 state.lastSave = now;
 
-await client.from("video_analytics").upsert({
+await client.from("video_sessions").upsert({
 student_id: user.id,
 video_id: state.currentVideoId,
 watched_seconds: state.watchSeconds,
