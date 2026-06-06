@@ -52,15 +52,8 @@ transition:.3s;
 position:relative;
 }
 
-.video-item:hover{
-background:#2563eb;
-}
-
-.video-item.active{
-background:#FFD700;
-color:#111;
-font-weight:800;
-}
+.video-item:hover{background:#2563eb;}
+.video-item.active{background:#FFD700;color:#111;font-weight:800;}
 
 .lock{
 position:absolute;
@@ -83,10 +76,7 @@ align-items:center;
 margin-bottom:20px;
 }
 
-.title{
-font-size:22px;
-font-weight:800;
-}
+.title{font-size:22px;font-weight:800;}
 
 .btn{
 padding:10px 15px;
@@ -96,10 +86,7 @@ cursor:pointer;
 font-weight:700;
 }
 
-.home{
-background:#2563eb;
-color:white;
-}
+.home{background:#2563eb;color:white;}
 
 /* ================= PLAYER ================= */
 .player{
@@ -109,6 +96,7 @@ padding:20px;
 margin-bottom:20px;
 box-shadow:0 20px 40px rgba(0,0,0,.3);
 position:relative;
+overflow:hidden;
 }
 
 video{
@@ -140,13 +128,35 @@ font-size:16px;
 opacity:.9;
 }
 
+/* ================= WATERMARK ================= */
+#watermark{
+position:absolute;
+top:20px;
+left:20px;
+color:white;
+font-size:14px;
+opacity:0.25;
+z-index:999;
+pointer-events:none;
+background:rgba(0,0,0,0.2);
+padding:6px 10px;
+border-radius:8px;
+transition:0.5s;
+}
+
 /* ================= OVERLAY PROTECTION ================= */
 #antiRecord{
 position:fixed;
 inset:0;
-background:black;
-z-index:99999;
+background:rgba(0,0,0,0.95);
+color:red;
 display:none;
+justify-content:center;
+align-items:center;
+font-size:22px;
+z-index:99999;
+text-align:center;
+padding:20px;
 }
 
 /* ================= MOBILE ================= */
@@ -158,9 +168,7 @@ display:flex;
 overflow-x:auto;
 gap:10px;
 }
-.video-item{
-min-width:150px;
-}
+.video-item{min-width:150px;}
 }
 
 </style>
@@ -169,7 +177,9 @@ min-width:150px;
 
 <body>
 
-<div id="antiRecord"></div>
+<div id="antiRecord">
+⚠️ تم إيقاف التشغيل مؤقتًا بسبب نشاط غير طبيعي
+</div>
 
 <!-- SIDEBAR -->
 <div class="sidebar">
@@ -200,6 +210,9 @@ min-width:150px;
 <source id="videoSource" src="" type="video/mp4">
 </video>
 
+<!-- WATERMARK -->
+<div id="watermark">Loading...</div>
+
 <div class="progress">
 <div class="progress-bar" id="progressBar"></div>
 </div>
@@ -218,16 +231,36 @@ min-width:150px;
 <script>
 
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const user = JSON.parse(localStorage.getItem("user"));
+const user = JSON.parse(localStorage.getItem("user")) || {
+  name: "Student",
+  id: "000"
+};
 
-let videos = [];
 let currentVideoId = null;
 
-/* ================= LOAD ================= */
+/* ================= WATERMARK ================= */
+const watermark = document.getElementById("watermark");
+
+function updateWatermark(){
+  const time = new Date().toLocaleTimeString();
+
+  watermark.innerText = `${user.name} | ID: ${user.id} | ${time}`;
+
+  const x = Math.random() * 60 + 10;
+  const y = Math.random() * 60 + 10;
+
+  watermark.style.left = x + "%";
+  watermark.style.top = y + "%";
+}
+
+setInterval(updateWatermark, 2500);
+updateWatermark();
+
+/* ================= LOAD VIDEOS ================= */
 async function loadVideos(){
 
 const { data, error } = await client
@@ -236,11 +269,10 @@ const { data, error } = await client
 .order("created_at",{ascending:false});
 
 if(error){
-document.getElementById("videoList").innerHTML = "خطأ في تحميل الفيديوهات";
+document.getElementById("videoList").innerHTML = "خطأ في التحميل";
 return;
 }
 
-videos = data;
 const list = document.getElementById("videoList");
 list.innerHTML = "";
 
@@ -249,7 +281,9 @@ data.forEach((v,index)=>{
 const div = document.createElement("div");
 div.className = "video-item";
 
-div.innerHTML = v.is_premium ? `🎥 ${v.title} <span class="lock">🔒</span>` : `🎥 ${v.title}`;
+div.innerHTML = v.is_premium 
+? `🎥 ${v.title} <span class="lock">🔒</span>` 
+: `🎥 ${v.title}`;
 
 div.onclick = ()=>{
 
@@ -267,25 +301,9 @@ list.appendChild(div);
 
 });
 
-/* 🔥 آخر فيديو شاهدته من السيرفر */
-const { data: lastWatched } = await client
-.from("student_progress")
-.select("*")
-.eq("student_id", user.id)
-.order("updated_at",{ascending:false})
-.limit(1)
-.single();
-
-if(lastWatched){
-const lastVideo = videos.find(v => v.id === lastWatched.video_id);
-if(lastVideo){
-playVideo(lastVideo.url, lastVideo.title, lastVideo.id);
-}
 }
 
-}
-
-/* ================= PLAY ================= */
+/* ================= PLAY VIDEO ================= */
 function playVideo(url,title,id){
 
 document.getElementById("videoSource").src = url;
@@ -294,7 +312,6 @@ document.getElementById("videoTitle").innerText = title;
 
 currentVideoId = id;
 
-/* حفظ آخر مشاهدة في DB */
 client.from("student_progress").upsert({
 student_id: user.id,
 video_id: id,
@@ -333,21 +350,23 @@ updated_at: new Date()
 
 };
 
-/* ================= SECURITY ================= */
-document.addEventListener("contextmenu", e => e.preventDefault());
-
-document.addEventListener("visibilitychange", function(){
-
+/* ================= SECURITY LAYER ================= */
 const overlay = document.getElementById("antiRecord");
 
-if(document.hidden){
-overlay.style.display = "block";
-}else{
-overlay.style.display = "none";
+function showOverlay(){
+overlay.style.display = "flex";
+setTimeout(()=>overlay.style.display="none",2500);
 }
 
+document.addEventListener("visibilitychange", ()=>{
+if(document.hidden) showOverlay();
 });
 
+window.addEventListener("blur", showOverlay);
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+/* ================= INIT ================= */
 loadVideos();
 
 </script>
