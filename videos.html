@@ -104,6 +104,22 @@ width:100%;
 border-radius:15px;
 }
 
+/* ================= WATERMARK ================= */
+#watermark{
+position:absolute;
+top:20px;
+left:20px;
+color:white;
+font-size:14px;
+opacity:0.25;
+z-index:999999;
+pointer-events:none;
+background:rgba(0,0,0,0.2);
+padding:6px 10px;
+border-radius:8px;
+transition:0.4s;
+}
+
 /* ================= PROGRESS ================= */
 .progress{
 height:6px;
@@ -128,23 +144,7 @@ font-size:16px;
 opacity:.9;
 }
 
-/* ================= WATERMARK ================= */
-#watermark{
-position:absolute;
-top:20px;
-left:20px;
-color:white;
-font-size:14px;
-opacity:0.25;
-z-index:999;
-pointer-events:none;
-background:rgba(0,0,0,0.2);
-padding:6px 10px;
-border-radius:8px;
-transition:0.5s;
-}
-
-/* ================= OVERLAY PROTECTION ================= */
+/* ================= OVERLAY ================= */
 #antiRecord{
 position:fixed;
 inset:0;
@@ -157,6 +157,26 @@ font-size:22px;
 z-index:99999;
 text-align:center;
 padding:20px;
+}
+
+/* ================= SPEED CONTROL ================= */
+.speedBox{
+margin-bottom:10px;
+}
+
+.speedBtn{
+padding:6px 10px;
+margin:2px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#2563eb;
+color:white;
+font-weight:700;
+}
+
+.speedBtn:hover{
+background:#1d4ed8;
 }
 
 /* ================= MOBILE ================= */
@@ -172,8 +192,6 @@ gap:10px;
 }
 
 </style>
-<button onclick="goFull()">Fullscreen</button>
-
 </head>
 
 <body>
@@ -184,24 +202,27 @@ gap:10px;
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-
 <div class="logo">🎬 الفيديوهات</div>
-
 <div id="videoList">تحميل...</div>
-
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
 <div class="topbar">
-
 <div class="title">📚 محتوى الكورس</div>
 
 <button class="btn home" onclick="window.location.href='dashboard.html'">
 🏠 الرجوع
 </button>
 
+</div>
+
+<!-- SPEED CONTROL -->
+<div class="speedBox">
+<button class="speedBtn" onclick="setSpeed(1)">1x</button>
+<button class="speedBtn" onclick="setSpeed(1.5)">1.5x</button>
+<button class="speedBtn" onclick="setSpeed(2)">2x</button>
 </div>
 
 <!-- PLAYER -->
@@ -211,18 +232,18 @@ gap:10px;
 <source id="videoSource" src="" type="video/mp4">
 </video>
 
-<!-- WATERMARK -->
 <div id="watermark">Loading...</div>
 
 <div class="progress">
 <div class="progress-bar" id="progressBar"></div>
 </div>
 
-<div class="info" id="videoTitle">
-اختر فيديو من القائمة
-</div>
+<div class="info" id="videoTitle">اختر فيديو من القائمة</div>
 
 </div>
+
+<!-- FULLSCREEN BUTTON -->
+<button class="btn home" onclick="goFull()">Fullscreen</button>
 
 </div>
 
@@ -232,7 +253,7 @@ gap:10px;
 <script>
 
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const SUPABASE_ANON_KEY = "YOUR_KEY";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -246,23 +267,37 @@ const user = {
 
 let currentVideoId = null;
 
+/* ================= VIDEO ================= */
+const video = document.getElementById("videoPlayer");
+
+/* ================= SPEED ================= */
+function setSpeed(rate){
+video.playbackRate = rate;
+}
+
 /* ================= WATERMARK ================= */
 const watermark = document.getElementById("watermark");
 
 function updateWatermark(){
-  const time = new Date().toLocaleTimeString();
+const time = new Date().toLocaleTimeString();
 
-  watermark.innerText = `${user.name} | ID: ${user.id} | ${time}`;
+watermark.innerText = `${user.name} | ID: ${user.id} | ${time}`;
 
-  const x = Math.random() * 60 + 10;
-  const y = Math.random() * 60 + 10;
+const x = Math.random() * 60 + 10;
+const y = Math.random() * 60 + 10;
 
-  watermark.style.left = x + "%";
-  watermark.style.top = y + "%";
+watermark.style.left = x + "%";
+watermark.style.top = y + "%";
 }
 
 setInterval(updateWatermark, 2500);
 updateWatermark();
+
+/* ================= FULLSCREEN ================= */
+function goFull(){
+const player = document.querySelector(".player");
+player.requestFullscreen();
+}
 
 /* ================= LOAD VIDEOS ================= */
 async function loadVideos(){
@@ -274,12 +309,7 @@ const { data, error } = await client
 
 if(error){
 console.error(error);
-document.getElementById("videoList").innerHTML = "خطأ في تحميل الفيديوهات";
-return;
-}
-
-if(!data){
-document.getElementById("videoList").innerHTML = "لا توجد فيديوهات";
+document.getElementById("videoList").innerHTML = "خطأ في التحميل";
 return;
 }
 
@@ -302,31 +332,18 @@ alert("هذا الفيديو للمشتركين فقط 🔒");
 return;
 }
 
-playVideo(v.url, v.title, v.id);
+document.getElementById("videoSource").src = v.url;
+video.load();
+document.getElementById("videoTitle").innerText = v.title;
+
+currentVideoId = v.id;
+
 setActive(index);
 
 };
 
 list.appendChild(div);
 
-});
-
-}
-
-/* ================= PLAY VIDEO ================= */
-function playVideo(url,title,id){
-
-document.getElementById("videoSource").src = url;
-document.getElementById("videoPlayer").load();
-document.getElementById("videoTitle").innerText = title;
-
-currentVideoId = id;
-
-client.from("student_progress").upsert({
-student_id: user.id,
-video_id: id,
-progress: 0,
-updated_at: new Date()
 });
 
 }
@@ -339,8 +356,6 @@ el.classList.toggle("active", i===index);
 }
 
 /* ================= PROGRESS ================= */
-const video = document.getElementById("videoPlayer");
-
 video.ontimeupdate = async function(){
 
 if(!video.duration) return;
@@ -360,12 +375,12 @@ updated_at: new Date()
 
 };
 
-/* ================= SECURITY LAYER ================= */
+/* ================= SECURITY ================= */
 const overlay = document.getElementById("antiRecord");
 
 function showOverlay(){
 overlay.style.display = "flex";
-setTimeout(()=>overlay.style.display="none",2500);
+setTimeout(()=>overlay.style.display="none",2000);
 }
 
 document.addEventListener("visibilitychange", ()=>{
@@ -378,15 +393,7 @@ document.addEventListener("contextmenu", e => e.preventDefault());
 
 /* ================= INIT ================= */
 loadVideos();
-document.querySelector(".player").requestFullscreen();
 
-function goFull(){
-const player = document.querySelector(".player");
-
-if (player.requestFullscreen) {
-  player.requestFullscreen();
-}
-}
 </script>
 
 </body>
