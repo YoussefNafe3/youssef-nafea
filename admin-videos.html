@@ -94,6 +94,28 @@ font-weight:700;
 min-height:20px;
 }
 
+/* PROGRESS BAR */
+.progress-box{
+margin-top:15px;
+background:#1e293b;
+border-radius:10px;
+overflow:hidden;
+height:12px;
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:#FFD700;
+transition:0.2s;
+}
+
+#percent{
+text-align:center;
+margin-top:8px;
+font-weight:700;
+}
+
 /* BACK */
 .back{
 margin-top:15px;
@@ -123,6 +145,12 @@ color:#FFD700;
 
 <button onclick="uploadVideo()">رفع الفيديو</button>
 
+<!-- PROGRESS -->
+<div class="progress-box">
+<div class="progress-bar" id="bar"></div>
+</div>
+<div id="percent">0%</div>
+
 <div id="msg"></div>
 
 <a class="back" href="admin.html">⬅ الرجوع للوحة التحكم</a>
@@ -143,7 +171,10 @@ async function uploadVideo(){
 
 const title = document.getElementById("title").value;
 const file = document.getElementById("file").files[0];
+
 const msg = document.getElementById("msg");
+const bar = document.getElementById("bar");
+const percentText = document.getElementById("percent");
 
 if(!title || !file){
 msg.innerText = "املأ البيانات أولاً";
@@ -156,42 +187,54 @@ const fileName = Date.now() + "_" + file.name;
 
 try {
 
-// 1️⃣ رفع الفيديو في Storage
+/* PROGRESS SIMULATION (Reliable) */
+let fakeProgress = 0;
+const interval = setInterval(()=>{
+fakeProgress += Math.random()*10;
+if(fakeProgress >= 95) fakeProgress = 95;
+
+bar.style.width = fakeProgress + "%";
+percentText.innerText = Math.floor(fakeProgress) + "%";
+},200);
+
+/* UPLOAD */
 const { error: uploadError } = await client.storage
 .from("videos")
 .upload(fileName, file);
 
+clearInterval(interval);
+
 if(uploadError){
-console.log(uploadError);
 msg.innerText = "فشل رفع الفيديو";
 return;
 }
 
-// 2️⃣ الحصول على الرابط
+bar.style.width = "100%";
+percentText.innerText = "100%";
+
+/* GET URL */
 const { data: urlData } = client.storage
 .from("videos")
 .getPublicUrl(fileName);
 
 const publicUrl = urlData.publicUrl;
 
-// 3️⃣ حفظ في قاعدة البيانات
+/* SAVE DB */
 const { error: dbError } = await client
 .from("videos")
-await client.from("videos").insert([{
+.insert([{
 title: title,
 url: publicUrl,
 is_premium: false
 }]);
 
 if(dbError){
-console.log(dbError);
 msg.innerText = "فشل حفظ البيانات";
 return;
 }
 
 msg.innerText = "تم رفع الفيديو بنجاح ✅";
 
-// reset
 document.getElementById("title").value = "";
 document.getElementById("file").value = "";
 
