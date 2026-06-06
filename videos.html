@@ -451,7 +451,12 @@ setInterval(async ()=>{
 
 if(!video.duration || video.paused || !state.currentVideoId) return;
 
-const current = video.currentTime;
+const duration = video.duration || 0;
+const current = video.currentTime || 0;
+
+const percent = duration
+  ? Math.min((current / duration) * 100, 100)
+  : 0;
 
 /* skip detection */
 if(current - state.lastTime > 2){
@@ -459,8 +464,6 @@ state.skips++;
 }
 
 state.lastTime = current;
-
-const percent = Math.min((current / video.duration) * 100, 100);
 
 document.getElementById("percentBox").innerText =
 `📊 ${percent.toFixed(1)}%`;
@@ -473,14 +476,16 @@ if(now - state.lastSave > 5000){
 
 state.lastSave = now;
 
+if (!state.currentVideoId || !user.id || !duration) return;
+
 await client.from("video_sessions").upsert({
 student_id: user.id,
 video_id: state.currentVideoId,
 watched_seconds: Math.floor(current),
-duration: Math.floor(video.duration),
-percent: percent,
+duration: Math.floor(duration),
+percent: Number(percent.toFixed(2)),
 completed: percent >= 90,
-skips: state.skips,
+skips: state.skips || 0,
 updated_at: new Date().toISOString()
 });
 
