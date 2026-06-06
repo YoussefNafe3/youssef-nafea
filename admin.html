@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>لوحة الفيديوهات | الأدمن</title>
+<title>لوحة التحكم | الأدمن</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
@@ -32,7 +32,7 @@ padding:20px;
 border-left:1px solid rgba(255,255,255,.08);
 }
 
-.logo{
+.brand{
 font-size:22px;
 font-weight:800;
 color:#FFD700;
@@ -40,16 +40,26 @@ text-align:center;
 margin-bottom:20px;
 }
 
-.menu-item{
+.admin-card{
+background:rgba(255,255,255,.05);
+padding:15px;
+border-radius:12px;
+text-align:center;
+margin-bottom:20px;
+}
+
+.menu a{
+display:block;
 padding:12px;
 margin-bottom:10px;
 background:rgba(255,255,255,.05);
-border-radius:12px;
-cursor:pointer;
+border-radius:10px;
+color:white;
+text-decoration:none;
 transition:.3s;
 }
 
-.menu-item:hover{
+.menu a:hover{
 background:#2563eb;
 }
 
@@ -66,74 +76,64 @@ align-items:center;
 margin-bottom:20px;
 }
 
-.title{
-font-size:22px;
-font-weight:800;
-}
-
-.btn{
-padding:10px 15px;
+.logout-btn{
+background:#ef4444;
 border:none;
+padding:10px 15px;
 border-radius:10px;
-cursor:pointer;
-font-weight:700;
-}
-
-.primary{
-background:#2563eb;
 color:white;
+cursor:pointer;
 }
 
-/* ================= UPLOAD ================= */
-.upload-box{
-background:rgba(255,255,255,.05);
-padding:25px;
-border-radius:20px;
+/* ================= STATS ================= */
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
 margin-bottom:20px;
 }
 
-input, select{
-width:100%;
-padding:12px;
-margin-bottom:12px;
-border:none;
-border-radius:10px;
-outline:none;
+.stat{
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:15px;
+text-align:center;
+}
+
+.stat-number{
+font-size:28px;
+font-weight:800;
+color:#FFD700;
 }
 
 /* ================= TABLE ================= */
+.section{
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
 table{
 width:100%;
 border-collapse:collapse;
-margin-top:20px;
+margin-top:10px;
 }
 
-th, td{
-padding:12px;
+th,td{
+padding:10px;
 text-align:center;
-border-bottom:1px solid rgba(255,255,255,.08);
+border-bottom:1px solid rgba(255,255,255,.1);
 }
 
-.delete{
-background:#ef4444;
-color:white;
-border:none;
+button{
 padding:6px 10px;
+border:none;
 border-radius:8px;
 cursor:pointer;
 }
 
-.delete:hover{
-background:#dc2626;
-}
-
-#msg{
-margin-top:10px;
-font-weight:700;
-}
-
 </style>
-
 </head>
 
 <body>
@@ -141,12 +141,22 @@ font-weight:700;
 <!-- SIDEBAR -->
 <div class="sidebar">
 
-<div class="logo">🎬 Admin Panel</div>
+<div class="brand">Dr Youssef Nafea</div>
 
-<div class="menu-item" onclick="goDashboard()">📊 Dashboard</div>
-<div class="menu-item" onclick="goAnalytics()">📈 التحليلات</div>
-<div class="menu-item">🎥 الفيديوهات</div>
-<div class="menu-item">👨‍🎓 الطلاب</div>
+<div class="admin-card">
+<div id="adminName">Admin</div>
+</div>
+
+<div class="menu">
+
+<a href="admin.html">🏠 الرئيسية</a>
+<a href="#students">👨‍🎓 الطلاب</a>
+<a href="admin-videos.html">🎥 الفيديوهات</a>
+<a href="admin-analytics.html">📈 التحليلات</a>
+<a href="#sessions">📅 الحصص</a>
+<a href="#announcements">📢 الإعلانات</a>
+
+</div>
 
 </div>
 
@@ -154,9 +164,152 @@ font-weight:700;
 <div class="main">
 
 <div class="topbar">
+<h2>لوحة التحكم</h2>
+<button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+</div>
 
-<div class="title">رفع وإدارة الفيديوهات</div>
+<!-- STATS -->
+<div class="stats">
 
-<button class="btn primary" onclick="logout()">تسجيل خروج</button>
+<div class="stat">
+<div class="stat-number" id="studentsCount">0</div>
+<div>الطلاب</div>
+</div>
 
-</
+<div class="stat">
+<div class="stat-number" id="videosCount">0</div>
+<div>الفيديوهات</div>
+</div>
+
+<div class="stat">
+<div class="stat-number" id="viewsCount">0%</div>
+<div>متوسط المشاهدة</div>
+</div>
+
+</div>
+
+<!-- STUDENTS -->
+<div class="section" id="students">
+<h3>الطلاب</h3>
+
+<table>
+<thead>
+<tr>
+<th>الاسم</th>
+<th>الهاتف</th>
+<th>Premium</th>
+<th>الحالة</th>
+</tr>
+</thead>
+
+<tbody id="studentsTable"></tbody>
+</table>
+</div>
+
+</div>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_ANON_KEY = "PUT_YOUR_KEY_HERE";
+
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ================= AUTH ================= */
+const user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+window.location.href="login.html";
+}
+
+if(user.role !== "admin"){
+window.location.href="dashboard.html";
+}
+
+document.getElementById("adminName").innerText =
+user.full_name || user.name || "Admin";
+
+/* ================= LOAD STUDENTS ================= */
+async function loadStudents(){
+
+const { data } = await client.from("students").select("*");
+
+document.getElementById("studentsCount").innerText = data?.length || 0;
+
+const table = document.getElementById("studentsTable");
+table.innerHTML = "";
+
+data?.forEach(s=>{
+
+table.innerHTML += `
+<tr>
+<td>${s.full_name || "-"}</td>
+<td>${s.phone || "-"}</td>
+
+<td>
+${s.is_premium
+? "⭐ نعم"
+: "—"}
+</td>
+
+<td>
+${s.activated
+? "✅ مفعل"
+: "❌ غير مفعل"}
+</td>
+</tr>
+`;
+
+});
+
+}
+
+/* ================= LOAD VIDEOS ================= */
+async function loadVideos(){
+
+const { count } = await client
+.from("videos")
+.select("*",{count:"exact",head:true});
+
+document.getElementById("videosCount").innerText = count || 0;
+
+}
+
+/* ================= ANALYTICS ================= */
+async function loadAnalytics(){
+
+const { data } = await client
+.from("student_progress")
+.select("*");
+
+let total = 0;
+
+data?.forEach(d=>{
+total += d.progress || 0;
+});
+
+let avg = data?.length ? total / data.length : 0;
+
+document.getElementById("viewsCount").innerText =
+avg.toFixed(1) + "%";
+
+}
+
+/* ================= LOGOUT ================= */
+function logout(){
+localStorage.removeItem("user");
+window.location.href="login.html";
+}
+
+/* ================= INIT ================= */
+loadStudents();
+loadVideos();
+loadAnalytics();
+
+</script>
+
+</body>
+</html>
