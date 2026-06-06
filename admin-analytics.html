@@ -138,12 +138,8 @@ if (user.role !== "admin" || user.ip !== ip) {
   window.location.href = "admin-login.html";
   return;
 }
-console.log(document.getElementById("totalStudents"));
-console.log(document.getElementById("avgProgress"));
-console.log(document.getElementById("totalViews"));
-// 👇 بعد ما التحقق ينجح فقط
-document.getElementById("adminName").innerText =
-user.full_name || user.name || "Admin";
+
+
 
 })();
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
@@ -166,7 +162,7 @@ if(error){
 console.log(error);
 return;
 }
-
+let allData = [];
 allData = data || [];
 
 render(allData);
