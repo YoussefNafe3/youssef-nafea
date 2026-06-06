@@ -476,7 +476,7 @@ setInterval(async ()=>{
 
     if(!user.id || !state.currentVideoId) return;
 
-    await client.from("video_sessions").upsert({
+    await client.from("video_sessions").insert({
       student_id: user.id,
       video_id: state.currentVideoId,
       watched_seconds: Math.floor(current),
