@@ -132,7 +132,11 @@ font-weight:700;
 <input id="password" type="password" placeholder="كلمة المرور">
 <span class="eye" onclick="togglePassword()">👁</span>
 </div>
-
+<select id="class_group">
+  <option value="first_science">أولى ثانوي (علوم متكاملة)</option>
+  <option value="third_biology">تالتة ثانوي (أحياء)</option>
+  <option value="third_geology">تالتة ثانوي (جيولوجيا)</option>
+</select>
 <button onclick="login()">دخول</button>
 
 <div id="msg"></div>
@@ -241,7 +245,16 @@ pass.type = "text";
 pass.type = "password";
 }
 }
+const class_group = document.getElementById("class_group").value;
 
+const user = {
+  id: generatedId,
+  name: nameInput.value,
+  email: emailInput.value,
+  class_group: class_group
+};
+
+localStorage.setItem("user", JSON.stringify(user));
 </script>
 
 </body>
