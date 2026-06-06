@@ -157,7 +157,26 @@ cursor:pointer;
 <a href="#announcements">📢 الإعلانات</a>
 
 </div>
+<div style="background:#111827;padding:20px;border-radius:15px;margin-bottom:20px">
 
+  <h2>رفع فيديو جديد</h2>
+
+  <input id="title" placeholder="عنوان الفيديو" style="width:100%;padding:10px;margin:5px 0">
+
+  <input id="url" placeholder="رابط الفيديو" style="width:100%;padding:10px;margin:5px 0">
+
+  <!-- 👇 اختيار الصف -->
+  <select id="class_group" style="width:100%;padding:10px;margin:5px 0">
+    <option value="first_science">أولى ثانوي (علوم متكاملة)</option>
+    <option value="third_biology">تالتة ثانوي (أحياء)</option>
+    <option value="third_geology">تالتة ثانوي (جيولوجيا)</option>
+  </select>
+
+  <button onclick="addVideo()" style="width:100%;padding:10px;background:#2563eb;color:white;border:none">
+    رفع الفيديو
+  </button>
+
+</div>
 </div>
 
 <!-- MAIN -->
@@ -318,7 +337,31 @@ window.location.href="login.html";
 loadStudents();
 loadVideos();
 loadAnalytics();
+async function addVideo() {
 
+  const title = document.getElementById("title").value;
+  const url = document.getElementById("url").value;
+  const class_group = document.getElementById("class_group").value;
+
+  if (!title || !url) {
+    alert("املأ البيانات");
+    return;
+  }
+
+  const { data, error } = await client.from("videos").insert([{
+    title,
+    url,
+    class_group
+  }]);
+
+  if (error) {
+    console.log(error);
+    alert("حصل خطأ");
+  } else {
+    alert("تم رفع الفيديو بنجاح");
+    loadVideos(); // تحديث القائمة فورًا
+  }
+}
 </script>
 
 </body>
