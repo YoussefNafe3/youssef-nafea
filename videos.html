@@ -479,32 +479,47 @@ video.addEventListener("timeupdate", () => {
 /* ================= SAVE FUNCTION (ONCE ONLY) ================= */
 async function saveSession(){
 
-  if (state.sessionSaved) return;
-  if (!state.currentVideoId || !video.duration) return;
+  console.log("SAVE SESSION CALLED");
 
-  const percent = (video.currentTime / video.duration) * 100;
+  if (!state.currentVideoId) {
+    console.log("NO VIDEO ID");
+    return;
+  }
 
-  try{
+  if (!video.duration) {
+    console.log("NO DURATION");
+    return;
+  }
 
-    await client.from("video_sessions").insert([{
-      student_id: user.id,
-      video_id: state.currentVideoId,
-      watched_seconds: Math.floor(video.currentTime),
-      duration: Math.floor(video.duration),
-      percent: Number(percent.toFixed(2)),
-      completed: percent >= 90,
-      skips: session.skips,
-      updated_at: new Date().toISOString()
-    }]);
+  const percent =
+    (video.currentTime / video.duration) * 100;
 
+  const payload = {
+    student_id: String(user.id),
+    video_id: state.currentVideoId,
+    watched_seconds: Math.floor(video.currentTime),
+    duration: Math.floor(video.duration),
+    percent: Number(percent.toFixed(2)),
+    completed: percent >= 90,
+    skips: session.skips || 0,
+    updated_at: new Date().toISOString()
+  };
+
+  console.log("PAYLOAD:", payload);
+
+  const { data, error } = await client
+    .from("video_sessions")
+    .insert([payload])
+    .select();
+
+  console.log("SAVE DATA:", data);
+  console.log("SAVE ERROR:", error);
+
+  if (!error) {
     state.sessionSaved = true;
     console.log("SESSION SAVED");
-
-  }catch(err){
-    console.log("SAVE ERROR:", err);
   }
 }
-
 /* ================= TRIGGERS ================= */
 video.addEventListener("ended", saveSession);
 window.addEventListener("beforeunload", saveSession);
@@ -520,8 +535,12 @@ window.addEventListener("blur",()=>{
 });
 
 /* ================= INIT ================= */
+
+
+/* ================= INIT ================= */
 loadVideos();
 
+setInterval(saveSession, 30000);
 </script>
 </body>
 </html>
