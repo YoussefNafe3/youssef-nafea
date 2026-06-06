@@ -118,20 +118,39 @@ tr:hover{background:#1e293b;}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <script>
+(async () => {
 
+const user = JSON.parse(localStorage.getItem("user"));
+
+// ❌ مفيش user
+if (!user) {
+  window.location.href = "admin-login.html";
+  return;
+}
+
+// 🌍 جلب IP الحالي
+const ip = await fetch("https://api.ipify.org?format=json")
+.then(r => r.json())
+.then(d => d.ip);
+
+// ❌ مش admin أو IP مختلف
+if (user.role !== "admin" || user.ip !== ip) {
+  window.location.href = "admin-login.html";
+  return;
+}
+
+// 👇 بعد ما التحقق ينجح فقط
+document.getElementById("adminName").innerText =
+user.full_name || user.name || "Admin";
+
+})();
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ================= LOCAL USER CHECK ================= */
-const admin = JSON.parse(localStorage.getItem("user"));
 
-if(!admin || admin.role !== "admin"){
-window.location.href = "login.html";
-}
-
-let allData = [];
 
 /* ================= LOAD ================= */
 async function loadData(){
