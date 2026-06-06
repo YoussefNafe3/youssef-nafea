@@ -385,6 +385,56 @@ document.getElementById("antiRecord").style.display="flex";
 /* ================= INIT ================= */
 loadVideos();
 
+let startTime = 0;
+let currentVideoId = null;
+let videoDuration = 0;
+let watchSeconds = 0;
+let lastTime = 0;
+let skipCount = 0;
+
+/* عند تشغيل الفيديو */
+video.onplay = () => {
+  startTime = Date.now();
+  videoDuration = video.duration;
+};
+
+/* حساب المشاهدة الحقيقي */
+video.ontimeupdate = async function () {
+
+if (!video.duration) return;
+
+currentVideoId = document.getElementById("videoSource").src;
+
+let currentTime = video.currentTime;
+
+/* حساب التخطي */
+if (currentTime - lastTime > 5) {
+skipCount++;
+}
+
+watchSeconds = currentTime;
+
+lastTime = currentTime;
+
+/* النسبة */
+const percent = (currentTime / video.duration) * 100;
+
+const completed = percent >= 90;
+
+/* حفظ في قاعدة البيانات */
+await client.from("video_sessions").upsert({
+student_id: user.id,
+video_id: currentVideoId,
+watched_seconds: Math.floor(watchSeconds),
+duration: Math.floor(video.duration),
+percent: percent,
+completed: completed,
+updated_at: new Date(),
+skips: skipCount
+});
+
+};
+
 </script>
 
 </body>
