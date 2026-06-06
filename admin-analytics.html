@@ -4,231 +4,253 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Admin Analytics | Dr Youssef Nafea</title>
+<title>لوحة التحليلات | د. يوسف نافع</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 body{
 margin:0;
-font-family:'Cairo',sans-serif;
-background:linear-gradient(135deg,#0f172a,#111827,#1e293b);
+font-family:Cairo;
+background:#0f172a;
 color:white;
+}
+
+.container{
 padding:20px;
 }
 
-h1{
-text-align:center;
-color:#FFD700;
-margin-bottom:20px;
-}
-
-.stats{
-display:flex;
-gap:12px;
-flex-wrap:wrap;
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
 margin-bottom:20px;
 }
 
 .card{
-flex:1;
 background:#111827;
 padding:15px;
-border-radius:14px;
+border-radius:12px;
 text-align:center;
 }
 
 .card h2{
 margin:0;
+font-size:20px;
 color:#FFD700;
 }
 
-.table-wrap{
-overflow:auto;
-border-radius:12px;
+.card p{
+font-size:18px;
+margin-top:10px;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
 background:#111827;
-min-width:900px;
+border-radius:12px;
+overflow:hidden;
 }
 
 th,td{
 padding:12px;
+border-bottom:1px solid #222;
 text-align:center;
-border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
 th{
-background:#1e293b;
+background:#1f2937;
 color:#FFD700;
-position:sticky;
-top:0;
 }
 
-tr:hover{background:#1e293b;}
+.section{
+margin-top:25px;
+}
 
-.bad{color:#ff4d4d;font-weight:bold;}
-.good{color:#22c55e;font-weight:bold;}
-.mid{color:#facc15;font-weight:bold;}
-
+h3{
+margin-bottom:10px;
+}
 </style>
 </head>
 
 <body>
 
-<h1>📊 Video Analytics Dashboard</h1>
+<div class="container">
 
-<div class="stats">
-<div class="card">
-<h2 id="totalStudents">0</h2>
-<p>Students</p>
-</div>
+<h1>📊 لوحة التحليلات</h1>
+
+<div class="cards">
 
 <div class="card">
-<h2 id="avgProgress">0%</h2>
-<p>Avg Progress</p>
+<h2 id="students">0</h2>
+<p>الطلاب</p>
 </div>
 
 <div class="card">
-<h2 id="totalViews">0</h2>
-<p>Total Records</p>
-</div>
+<h2 id="views">0</h2>
+<p>المشاهدات</p>
 </div>
 
-<div class="table-wrap">
+<div class="card">
+<h2 id="videos">0</h2>
+<p>الفيديوهات</p>
+</div>
+
+<div class="card">
+<h2 id="avg">0%</h2>
+<p>متوسط الإكمال</p>
+</div>
+
+</div>
+
+<!-- TOP STUDENTS -->
+<div class="section">
+<h3>🏆 أفضل الطلاب</h3>
 <table>
 <thead>
 <tr>
-<th>Student</th>
-<th>Video</th>
-<th>Progress</th>
-<th>Watch Time</th>
-<th>Skips</th>
-<th>Status</th>
+<th>الطالب</th>
+<th>الفيديوهات</th>
+<th>متوسط %</th>
 </tr>
 </thead>
-
-<tbody id="tableBody"></tbody>
+<tbody id="topStudents"></tbody>
 </table>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<!-- VIDEO STATS -->
+<div class="section">
+<h3>🎬 الفيديوهات</h3>
+<table>
+<thead>
+<tr>
+<th>الفيديو</th>
+<th>المشاهدات</th>
+<th>متوسط الإكمال</th>
+</tr>
+</thead>
+<tbody id="videoStats"></tbody>
+</table>
+</div>
+
+<!-- SESSIONS -->
+<div class="section">
+<h3>📋 آخر الجلسات</h3>
+<table>
+<thead>
+<tr>
+<th>الطالب</th>
+<th>الفيديو</th>
+<th>%</th>
+<th>الوقت</th>
+</tr>
+</thead>
+<tbody id="sessions"></tbody>
+</table>
+</div>
+
+</div>
 
 <script>
-(async () => {
+const supabase = window.supabase.createClient(
+"https://nhdowqzecpwmkunczodl.supabase.co",
+"YOUR_ANON_KEY"
+);
 
-const user = JSON.parse(localStorage.getItem("user"));
+/* ================= LOAD DATA ================= */
+async function load(){
 
-// ❌ مفيش user
-if (!user) {
-  window.location.href = "admin-login.html";
-  return;
-}
-
-// 🌍 جلب IP الحالي
-const ip = await fetch("https://api.ipify.org?format=json")
-.then(r => r.json())
-.then(d => d.ip);
-
-// ❌ مش admin أو IP مختلف
-if (user.role !== "admin" || user.ip !== ip) {
-  window.location.href = "admin-login.html";
-  return;
-}
-
-
-
-})();
-const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
-
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-/* ================= LOCAL USER CHECK ================= */
-
-
-/* ================= LOAD ================= */
-async function loadData(){
-
-const { data, error } = await client
+// sessions
+const { data: sessions } = await supabase
 .from("video_sessions")
 .select("*")
-.order("updated_at",{ascending:false});
+.order("id", { ascending:false })
+.limit(50);
 
-if(error){
-console.log(error);
-return;
+// videos
+const { data: videos } = await supabase
+.from("videos")
+.select("*");
+
+// 1️⃣ COUNTS
+document.getElementById("videos").innerText = videos?.length || 0;
+document.getElementById("views").innerText = sessions?.length || 0;
+
+// students unique
+const students = new Set(sessions?.map(s => s.student_id));
+document.getElementById("students").innerText = students.size;
+
+// avg completion
+let avg = 0;
+if(sessions?.length){
+avg = sessions.reduce((a,b)=>a+b.percent,0)/sessions.length;
 }
-let allData = [];
-allData = data || [];
+document.getElementById("avg").innerText = avg.toFixed(1)+"%";
 
-render(allData);
-updateStats(allData);
+/* ================= TOP STUDENTS ================= */
+const studentMap = {};
+
+sessions.forEach(s=>{
+if(!studentMap[s.student_id]){
+studentMap[s.student_id] = {count:0,total:0};
 }
-
-/* ================= RENDER ================= */
-function render(data){
-
-const tbody = document.getElementById("tableBody");
-tbody.innerHTML = "";
-
-const sorted = [...data].sort((a,b)=>(b.percent||0)-(a.percent||0));
-
-sorted.forEach(row=>{
-
-const percent = Number(row.percent || 0);
-const skips = Number(row.skips || 0);
-const time = Number(row.watched_seconds || 0);
-
-let status = "mid";
-let label = "In Progress";
-
-if(percent >= 90){
-status = "good";
-label = "Completed";
-}else if(percent < 30){
-status = "bad";
-label = "Low Engagement";
-}
-
-if(skips > 5){
-status = "bad";
-label = "Suspicious Activity";
-}
-
-tbody.innerHTML += `
-<tr>
-<td>${row.student_id || "-"}</td>
-<td>${row.video_id || "-"}</td>
-<td>${percent.toFixed(1)}%</td>
-<td>${time}s</td>
-<td>${skips}</td>
-<td class="${status}">${label}</td>
-</tr>
-`;
+studentMap[s.student_id].count++;
+studentMap[s.student_id].total += s.percent;
 });
+
+const top = Object.entries(studentMap)
+.map(([id,val])=>({
+id,
+avg: val.total/val.count,
+count: val.count
+}))
+.sort((a,b)=>b.avg-a.avg);
+
+document.getElementById("topStudents").innerHTML =
+top.map(s=>`
+<tr>
+<td>${s.id}</td>
+<td>${s.count}</td>
+<td>${s.avg.toFixed(1)}%</td>
+</tr>
+`).join("");
+
+/* ================= VIDEO STATS ================= */
+const videoMap = {};
+
+sessions.forEach(s=>{
+if(!videoMap[s.video_id]){
+videoMap[s.video_id] = {count:0,total:0};
+}
+videoMap[s.video_id].count++;
+videoMap[s.video_id].total += s.percent;
+});
+
+document.getElementById("videoStats").innerHTML =
+Object.entries(videoMap).map(([id,v])=>`
+<tr>
+<td>${id}</td>
+<td>${v.count}</td>
+<td>${(v.total/v.count).toFixed(1)}%</td>
+</tr>
+`).join("");
+
+/* ================= SESSIONS ================= */
+document.getElementById("sessions").innerHTML =
+sessions.map(s=>`
+<tr>
+<td>${s.student_id}</td>
+<td>${s.video_id}</td>
+<td>${s.percent.toFixed(1)}%</td>
+<td>${new Date(s.updated_at).toLocaleString()}</td>
+</tr>
+`).join("");
+
 }
 
-/* ================= STATS ================= */
-function updateStats(data){
-
-const students = new Set(data.map(d => d.student_id)).size;
-
-const avg = data.length
-? data.reduce((a,b)=>a + (b.percent || 0),0) / data.length
-: 0;
-
-document.getElementById("totalStudents").innerText = students;
-document.getElementById("avgProgress").innerText = avg.toFixed(1) + "%";
-document.getElementById("totalViews").innerText = data.length;
-}
-
-/* INIT */
-loadData();
-
+load();
+setInterval(load,20000);
 </script>
 
 </body>
