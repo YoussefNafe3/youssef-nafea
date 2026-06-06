@@ -257,15 +257,11 @@ async function loadVideos(){
 const list = document.getElementById("videoList");
 list.innerHTML = "جاري التحميل...";
 
-try{
-
-const { data, error } = await client
-.from("videos")
-.select("*");
+const { data, error } = await client.from("videos").select("*");
 
 if(error){
 console.log(error);
-list.innerHTML = "❌ خطأ في تحميل الفيديوهات";
+list.innerHTML = "❌ خطأ في قاعدة البيانات";
 return;
 }
 
@@ -284,8 +280,6 @@ div.innerText = v.title;
 
 div.onclick = ()=>{
 
-document.getElementById("videoTitle").innerText = v.title;
-
 video.src = v.url;
 video.load();
 
@@ -295,10 +289,13 @@ state.skips = 0;
 state.lastTime = 0;
 state.lastSave = 0;
 
+document.getElementById("videoTitle").innerText = v.title;
 };
 
 list.appendChild(div);
 });
+
+}
 
 }catch(err){
 console.log(err);
@@ -310,7 +307,7 @@ list.innerHTML = "❌ فشل الاتصال بقاعدة البيانات";
 /* ================= ANALYTICS (CLEAN SYSTEM) ================= */
 setInterval(async ()=>{
 
-if(!video.duration || video.paused) return;
+if(!video.duration || video.paused || !state.currentVideoId) return;
 
 const current = video.currentTime;
 
@@ -319,32 +316,30 @@ if(current - state.lastTime > 2){
 state.skips++;
 }
 
-state.watchSeconds++;
 state.lastTime = current;
 
 const percent = Math.min((current / video.duration) * 100, 100);
 
-/* UI */
 document.getElementById("percentBox").innerText =
 `📊 ${percent.toFixed(1)}%`;
 
-document.getElementById("progressBar").style.width =
-percent + "%";
+document.getElementById("progressBar").style.width = percent + "%";
 
-/* SAVE every 5 sec */
 const now = Date.now();
 
-if(state.currentVideoId && now - state.lastSave > 5000){
+if(now - state.lastSave > 5000){
 
 state.lastSave = now;
 
 await client.from("video_sessions").upsert({
 student_id: user.id,
 video_id: state.currentVideoId,
-watched_seconds: state.watchSeconds,
+watched_seconds: Math.floor(current),
+duration: Math.floor(video.duration),
 percent: percent,
+completed: percent >= 90,
 skips: state.skips,
-updated_at: new Date()
+updated_at: new Date().toISOString()
 });
 
 }
