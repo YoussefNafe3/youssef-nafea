@@ -98,6 +98,7 @@ left:12px;
 font-size:12px;
 opacity:.25;
 white-space:pre-line;
+pointer-events:none;
 }
 
 /* PROGRESS */
@@ -219,7 +220,7 @@ fetch("https://api.ipify.org?format=json")
 /* ================= VIDEO ================= */
 const video = document.getElementById("videoPlayer");
 
-/* ================= STATE (NO DUPLICATION) ================= */
+/* ================= STATE (ONE SOURCE ONLY) ================= */
 let state = {
 currentVideoId: null,
 watchSeconds: 0,
@@ -253,23 +254,35 @@ updateWatermark();
 /* ================= LOAD VIDEOS ================= */
 async function loadVideos(){
 
-const { data } = await client.from("videos").select("*");
-
 const list = document.getElementById("videoList");
-list.innerHTML = "";
+list.innerHTML = "جاري التحميل...";
 
-if(!data || data.length === 0){
-list.innerHTML = "لا يوجد فيديوهات";
+try{
+
+const { data, error } = await client
+.from("videos")
+.select("*");
+
+if(error){
+console.log(error);
+list.innerHTML = "❌ خطأ في تحميل الفيديوهات";
 return;
 }
 
-data.forEach(v => {
+if(!data || data.length === 0){
+list.innerHTML = "📭 لا يوجد فيديوهات";
+return;
+}
+
+list.innerHTML = "";
+
+data.forEach(v=>{
 
 const div = document.createElement("div");
 div.className = "video-item";
 div.innerText = v.title;
 
-div.onclick = () => {
+div.onclick = ()=>{
 
 document.getElementById("videoTitle").innerText = v.title;
 
@@ -286,10 +299,16 @@ state.lastSave = 0;
 
 list.appendChild(div);
 });
+
+}catch(err){
+console.log(err);
+list.innerHTML = "❌ فشل الاتصال بقاعدة البيانات";
 }
 
-/* ================= ANALYTICS (OPTIMIZED) ================= */
-setInterval(async () => {
+}
+
+/* ================= ANALYTICS (CLEAN SYSTEM) ================= */
+setInterval(async ()=>{
 
 if(!video.duration || video.paused) return;
 
@@ -312,10 +331,40 @@ document.getElementById("percentBox").innerText =
 document.getElementById("progressBar").style.width =
 percent + "%";
 
-/* SAVE every 5 seconds only (important optimization) */
+/* SAVE every 5 sec */
 const now = Date.now();
+
 if(state.currentVideoId && now - state.lastSave > 5000){
 
 state.lastSave = now;
 
-await client.from("video_analytics
+await client.from("video_analytics").upsert({
+student_id: user.id,
+video_id: state.currentVideoId,
+watched_seconds: state.watchSeconds,
+percent: percent,
+skips: state.skips,
+updated_at: new Date()
+});
+
+}
+
+},1000);
+
+/* ================= ANTI RECORD ================= */
+document.addEventListener("visibilitychange",()=>{
+document.getElementById("antiRecord").style.display =
+document.hidden ? "flex" : "none";
+});
+
+window.addEventListener("blur",()=>{
+document.getElementById("antiRecord").style.display = "flex";
+});
+
+/* ================= INIT ================= */
+loadVideos();
+
+</script>
+
+</body>
+</html>
