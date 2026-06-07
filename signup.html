@@ -211,7 +211,6 @@ if(error){
 const userId = data?.user?.id;
 
 const { error: dbErr } = await client.from("students").insert([{
-  id: userId,
   full_name: name,
   phone: phone,
   class_group: class_group,  // 🔥 أهم إضافة
