@@ -195,12 +195,14 @@ window.login = async function () {
     }
 
     // 4️⃣ save session
-    localStorage.setItem("user", JSON.stringify({
-      id: student.id,
-      name: student.full_name,
-      phone: student.phone,
-      email: phone + "@phone.com",
-      role: student.role
+   localStorage.setItem("user", JSON.stringify({
+  id: student.id,
+  name: student.full_name,
+  phone: student.phone,
+  email: phone + "@phone.com",
+  role: student.role,
+  class_group: student.class_group
+}));
     }));
 
     // 5️⃣ redirect
