@@ -133,7 +133,11 @@ font-weight:700;
 <input id="password" type="password" placeholder="كلمة المرور">
 <span class="eye" onclick="togglePassword()">👁</span>
 </div>
-
+<select id="class_group">
+  <option value="first_science">أولى ثانوي (علوم متكاملة)</option>
+  <option value="third_biology">تالتة ثانوي (أحياء)</option>
+  <option value="third_geology">تالتة ثانوي (جيولوجيا)</option>
+</select>
 <button onclick="signup()">إنشاء الحساب</button>
 
 <div id="msg"></div>
@@ -230,7 +234,12 @@ return;
 msg.innerText = "تم إنشاء الحساب بنجاح 🎉";
 
 };
-
+await client.from("students").insert([{
+  name: name,
+  email: email,
+  password: password,
+  class_group: document.getElementById("class_group").value
+}]);
 </script>
 
 </body>
