@@ -170,6 +170,15 @@ font-weight:700;
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+  if(localStorage.getItem("user")){
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if(user.role === "admin"){
+    window.location.replace("admin.html");
+  }else{
+    window.location.replace("dashboard.html");
+  }
+}
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
@@ -229,12 +238,11 @@ window.login = async function () {
   
 
     // 5️⃣ redirect
-    if (student.role === "admin") {
-      window.location.href = "admin.html";
-    } else {
-      window.location.href = "dashboard.html";
-    }
-
+   if (student.role === "admin") {
+  window.location.replace("admin.html");
+} else {
+  window.location.replace("dashboard.html");
+}
   } catch (err) {
     console.log(err);
     msg.innerText = "حدث خطأ غير متوقع";
