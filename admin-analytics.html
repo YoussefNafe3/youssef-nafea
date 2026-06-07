@@ -873,7 +873,7 @@ async function loadSessions() {
       .from("video_sessions")
       .select(`
         *,
-        students(name, class_group)
+        students(class_group, name)
       `)
       .order("updated_at", { ascending: false });
 
@@ -883,15 +883,18 @@ async function loadSessions() {
       return;
     }
 
+    const allSessions = data || [];
 
-    // 👇 هات الصف من localStorage
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const classGroup = user?.class_group;
 
-    // 👇 فلترة حسب الصف
-    state.sessions = allSessions.filter(s =>
-      s?.students?.class_group === classGroup
-    );
+    if (classGroup && classGroup !== "all") {
+      state.sessions = allSessions.filter(s =>
+        s?.students?.class_group === classGroup
+      );
+    } else {
+      state.sessions = allSessions;
+    }
 
     console.log("SESSIONS LOADED:", state.sessions);
 
@@ -900,21 +903,8 @@ async function loadSessions() {
     state.sessions = [];
   }
 }
-
     // تخزين كل البيانات
-    const allSessions = data || [];
 
-    // جلب الصف الحالي من localStorage
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const classGroup = user?.class_group;
-
-    // فلترة آمنة (مهم جدًا)
-    const filtered = allSessions.filter(s => {
-      return s?.students?.class_group === classGroup;
-    });
-
-    // حفظ النتيجة النهائية
-    state.sessions = filtered;
 
     console.log("SESSIONS LOADED:", state.sessions);
 
