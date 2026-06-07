@@ -193,7 +193,7 @@ window.login = async function () {
       msg.innerText = "الحساب غير مفعل";
       return;
     }
-
+console.log("STUDENT DATA =", student);
     // 4️⃣ save session
    localStorage.setItem("user", JSON.stringify({
   id: student.id,
