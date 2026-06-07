@@ -128,7 +128,11 @@ color:#FFD700;
 
 <input id="title" placeholder="عنوان الفيديو">
 <input type="file" id="file" accept="video/*">
-
+<select id="class_group">
+  <option value="first_science">أولى ثانوي (علوم متكاملة)</option>
+  <option value="third_biology">تالتة ثانوي (أحياء)</option>
+  <option value="third_geology">تالتة ثانوي (جيولوجيا)</option>
+</select>
 <button id="uploadBtn" onclick="uploadVideo()">رفع الفيديو</button>
 
 <div class="progress-container">
@@ -189,7 +193,8 @@ async function uploadVideo(){
 
 const title = document.getElementById("title").value;
 const file = document.getElementById("file").files[0];
-
+const class_group =
+document.getElementById("class_group").value;
 if(!title || !file){
 msg.innerText = "⚠️ املأ البيانات أولاً";
 return;
@@ -239,8 +244,8 @@ const { error } = await client
 .insert([{
 title,
 url: data.publicUrl,
-is_premium: false,
-created_at: new Date().toISOString()
+class_group: class_group,
+is_premium: false
 }]);
 
 if(error){
