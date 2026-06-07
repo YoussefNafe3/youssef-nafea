@@ -868,6 +868,7 @@ async function loadVideos() {
 
 async function loadSessions() {
   try {
+
     const { data, error } = await client
       .from("video_sessions")
       .select(`
@@ -881,6 +882,25 @@ async function loadSessions() {
       state.sessions = [];
       return;
     }
+
+    const allSessions = data || [];
+
+    // 👇 هات الصف من localStorage
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const classGroup = user?.class_group;
+
+    // 👇 فلترة حسب الصف
+    state.sessions = allSessions.filter(s =>
+      s?.students?.class_group === classGroup
+    );
+
+    console.log("SESSIONS LOADED:", state.sessions);
+
+  } catch (err) {
+    console.log("FATAL ERROR:", err);
+    state.sessions = [];
+  }
+}
 
     // تخزين كل البيانات
     const allSessions = data || [];
