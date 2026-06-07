@@ -146,117 +146,80 @@ font-weight:700;
 
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
 <script>
-
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
-window.login = async function(){
+window.login = async function () {
 
-const phone = document.getElementById("phone").value;
-const password = document.getElementById("password").value;
-const msg = document.getElementById("msg");
+  const phone = document.getElementById("phone").value.trim();
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("msg");
 
-msg.innerText = "جاري تسجيل الدخول...";
+  msg.innerText = "جاري تسجيل الدخول...";
 
-try {
+  try {
 
-// ================= الطلاب =================
-const { data: student, error: dbError } = await client
-.from("students")
-.select("*")
-.eq("phone", phone)
-.single();
+    // 1️⃣ هات الطالب من الجدول
+    const { data: student, error: dbError } = await client
+      .from("students")
+      .select("*")
+      .eq("phone", phone)
+      .single();
 
-if(dbError || !student){
-msg.innerText = "الرقم غير مسجل";
-return;
-}
+    if (dbError || !student) {
+      msg.innerText = "الرقم غير مسجل";
+      return;
+    }
 
-// ================= تسجيل الدخول =================
-const { error } = await client.auth.signInWithPassword({
-email: phone + "@phone.com",
-password: password
-});
+    // 2️⃣ تسجيل دخول Supabase Auth
+    const { error } = await client.auth.signInWithPassword({
+      email: phone + "@phone.com",
+      password: password
+    });
 
-if(error){
-msg.innerText = "خطأ في كلمة المرور";
-return;
-}
+    if (error) {
+      msg.innerText = "كلمة المرور خطأ";
+      return;
+    }
 
-// ================= التفعيل =================
-if(!student.activated){
-msg.innerText = "الحساب غير مفعل";
-return;
-}
+    // 3️⃣ check activation
+    if (!student.activated) {
+      msg.innerText = "الحساب غير مفعل";
+      return;
+    }
 
-// ================= حفظ user =================
-const userSession = {
-id: student.id,
-name: student.full_name,
-phone: student.phone,
-email: phone + "@phone.com",
-role: student.role,
-is_admin: student.role === "admin",
-login_time: new Date().toISOString()
+    // 4️⃣ save session
+    localStorage.setItem("user", JSON.stringify({
+      id: student.id,
+      name: student.full_name,
+      phone: student.phone,
+      email: phone + "@phone.com",
+      role: student.role
+    }));
+
+    // 5️⃣ redirect
+    if (student.role === "admin") {
+      window.location.href = "admin.html";
+    } else {
+      window.location.href = "dashboard.html";
+    }
+
+  } catch (err) {
+    console.log(err);
+    msg.innerText = "حدث خطأ غير متوقع";
+  }
 };
 
-localStorage.setItem("user", JSON.stringify(userSession));
-
-/* ================= ANALYTICS START LOG ================= */
-await client
-.from("analytics_sessions")
-.insert({
-student_id: student.id,
-event: "login",
-timestamp: new Date(),
-meta: {
-phone: phone,
-role: student.role
+function togglePassword() {
+  const pass = document.getElementById("password");
+  pass.type = pass.type === "password" ? "text" : "password";
 }
-});
-
-/* ================= ROUTING ================= */
-if(student.role === "admin"){
-window.location.href = "admin.html";
-}else{
-window.location.href = "dashboard.html";
-}
-
-} catch(err){
-console.log(err);
-msg.innerText = "حدث خطأ غير متوقع";
-}
-}
-
-function togglePassword(){
-const pass = document.getElementById("password");
-
-if(pass.type === "password"){
-pass.type = "text";
-}else{
-pass.type = "password";
-}
-}
-const class_group = document.getElementById("class_group").value;
-
-const user = {
-  id: generatedId,
-  name: nameInput.value,
-  email: emailInput.value,
-};
-
-localStorage.setItem("user", JSON.stringify(user));
-  const { data } = await client
-  .from("students")
-  .select("*")
-  .eq("email", email)
-  .single();
-
-localStorage.setItem("user", JSON.stringify(data));
 </script>
 
 </body>
