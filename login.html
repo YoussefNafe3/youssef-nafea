@@ -235,7 +235,7 @@ window.login = async function () {
   role: student.role,
   class_group: student.class_group
 }));
-  
+  history.replaceState(null, "", location.href);
 
     // 5️⃣ redirect
    if (student.role === "admin") {
