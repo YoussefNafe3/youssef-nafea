@@ -155,17 +155,15 @@ font-weight:700;
 <script>
 
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplcWZwbWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* ===== password toggle ===== */
 function togglePassword(){
   const pass = document.getElementById("password");
   pass.type = pass.type === "password" ? "text" : "password";
 }
 
-/* ===== signup ===== */
 window.signup = async function(){
 
 const name = document.getElementById("name").value.trim();
@@ -193,33 +191,37 @@ return;
 
 try {
 
-/* 1 - SIGNUP AUTH */
+/* 🔥 1 - AUTH (زي القديم بدون تغيير كبير) */
 const { data, error } = await client.auth.signUp({
-  email: phone + "@temp.com",
+  email: "user" + phone + "@gmail.com",  // أهم تعديل هنا
   password: pass
 });
 
 if(error){
   console.log(error);
-  msg.innerText = "فشل إنشاء الحساب (راجع Supabase Auth)";
+  msg.innerText = "فشل إنشاء الحساب";
   return;
 }
 
-/* 2 - INSERT STUDENT */
+/* 🔥 2 - SAVE STUDENT (آمن) */
 const userId = data?.user?.id;
 
 const { error: dbErr } = await client.from("students").insert([{
   id: userId,
   full_name: name,
   phone: phone,
-  class_group: class_group,
   role: "student",
+
+  // 🔥 مهم: لو العمود مش موجود هيكسر الدنيا
+  class_group: class_group || "first_science",
+
   created_at: new Date().toISOString()
 }]);
 
 if(dbErr){
   console.log(dbErr);
-  msg.innerText = "تم إنشاء الحساب لكن فشل حفظ البيانات (RLS)";
+
+  msg.innerText = "تم إنشاء الحساب لكن فشل حفظ البيانات (راجع الجدول)";
   return;
 }
 
