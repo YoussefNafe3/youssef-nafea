@@ -155,7 +155,7 @@ font-weight:700;
 <script>
 
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplcWZwbWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -191,40 +191,41 @@ msg.innerText = "كلمة المرور ضعيفة";
 return;
 }
 
-try{
+try {
 
+/* 1 - SIGNUP AUTH */
 const { data, error } = await client.auth.signUp({
-email: phone + "@phone.com",
-password: pass
+  email: phone + "@temp.com",
+  password: pass
 });
 
 if(error){
-msg.innerText = error.message.includes("already")
-? "الرقم مستخدم بالفعل"
-: "حدث خطأ";
-return;
+  console.log(error);
+  msg.innerText = "فشل إنشاء الحساب (راجع Supabase Auth)";
+  return;
 }
 
+/* 2 - INSERT STUDENT */
 const userId = data?.user?.id;
 
 const { error: dbErr } = await client.from("students").insert([{
-id: userId,
-full_name: name,
-phone: phone,
-class_group: class_group,
-role: "student",
-created_at: new Date().toISOString()
+  id: userId,
+  full_name: name,
+  phone: phone,
+  class_group: class_group,
+  role: "student",
+  created_at: new Date().toISOString()
 }]);
 
 if(dbErr){
-msg.innerText = "خطأ في حفظ البيانات";
-console.log(dbErr);
-return;
+  console.log(dbErr);
+  msg.innerText = "تم إنشاء الحساب لكن فشل حفظ البيانات (RLS)";
+  return;
 }
 
 msg.innerText = "تم إنشاء الحساب بنجاح 🎉";
 
-}catch(err){
+} catch(err){
 console.log(err);
 msg.innerText = "حدث خطأ غير متوقع";
 }
