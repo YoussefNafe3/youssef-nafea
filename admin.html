@@ -367,10 +367,16 @@ const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* AUTH */
 function logout(){
-localStorage.removeItem("user");
-window.location.href="login.html";
-}
 
+  localStorage.clear();
+
+  client.auth.signOut();
+
+  history.pushState(null, "", location.href);
+
+  window.location.replace("login.html");
+
+}
 /* LOAD STUDENTS */
 async function loadStudents(){
 
