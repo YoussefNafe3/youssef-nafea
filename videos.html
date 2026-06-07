@@ -350,7 +350,7 @@ const user = {
   id: savedUser.id || "000",
   name: savedUser.name || "Student",
   email: savedUser.email || "unknown",
-  class_group: savedUser.class_group || null,
+  class_group: savedUser.class_group || "unknown",
   ip: "loading..."
 };
 
@@ -496,16 +496,17 @@ async function saveSession(){
   const percent =
     (video.currentTime / video.duration) * 100;
 
-  const payload = {
-    student_id: String(user.id),
-    video_id: state.currentVideoId,
-    watched_seconds: Math.floor(video.currentTime),
-    duration: Math.floor(video.duration),
-    percent: Number(percent.toFixed(2)),
-    completed: percent >= 90,
-    skips: session.skips || 0,
-    updated_at: new Date().toISOString()
-  };
+const payload = {
+  student_id: String(user.id),
+  video_id: state.currentVideoId,
+  class_group: user.class_group,   // ⭐ مهم جدًا
+  watched_seconds: Math.floor(video.currentTime),
+  duration: Math.floor(video.duration),
+  percent: Number(percent.toFixed(2)),
+  completed: percent >= 90,
+  skips: session.skips || 0,
+  updated_at: new Date().toISOString()
+};
 
   console.log("PAYLOAD:", payload);
 
