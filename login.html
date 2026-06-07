@@ -251,10 +251,16 @@ const user = {
   id: generatedId,
   name: nameInput.value,
   email: emailInput.value,
-  class_group: class_group
 };
 
 localStorage.setItem("user", JSON.stringify(user));
+  const { data } = await client
+  .from("students")
+  .select("*")
+  .eq("email", email)
+  .single();
+
+localStorage.setItem("user", JSON.stringify(data));
 </script>
 
 </body>
