@@ -113,6 +113,26 @@ color:#FFD700;
 text-decoration:none;
 font-weight:700;
 }
+
+.home-float{
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg,#2563eb,#1d4ed8);
+  color: white;
+  text-decoration: none;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(37,99,235,.35);
+  transition: .3s;
+  z-index: 999;
+}
+
+.home-float:hover{
+  transform: scale(1.05);
+}
 </style>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -121,7 +141,9 @@ font-weight:700;
 <body>
 
 <div class="container">
-
+<a href="index.html" class="home-float">
+  🏠 الرئيسية
+</a>
 <div class="logo">🧬</div>
 
 <h2>تسجيل الدخول</h2>
@@ -222,6 +244,7 @@ function togglePassword() {
   const pass = document.getElementById("password");
   pass.type = pass.type === "password" ? "text" : "password";
 }
+
 </script>
 
 </body>
