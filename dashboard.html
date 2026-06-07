@@ -264,11 +264,6 @@ Dr Youssef Nafea
 </div>
 
 <script>
-<script>
-if (!localStorage.getItem("user")) {
-  window.location.replace("login.html");
-}
-</script>
 const user = JSON.parse(localStorage.getItem("user"));
 
 if(!user){
@@ -279,8 +274,15 @@ document.getElementById("userName").innerHTML =
 "👋 " + (user.full_name || user.name);
 
 function logout(){
-localStorage.removeItem("user");
-window.location.href = "index.html";
+
+  localStorage.clear();
+
+  client.auth.signOut();
+
+  history.pushState(null, "", location.href);
+
+  window.location.replace("login.html");
+
 }
 
 function goDashboard(){
