@@ -50,7 +50,7 @@ font-size:28px;
 font-weight:800;
 }
 
-input, select{
+input{
 width:100%;
 padding:15px;
 border:none;
@@ -62,8 +62,8 @@ font-size:15px;
 margin-bottom:15px;
 }
 
-select option{
-color:black;
+input::placeholder{
+color:#cbd5e1;
 }
 
 .password-box{
@@ -132,162 +132,17 @@ font-weight:700;
 <span class="eye" onclick="togglePassword()">👁</span>
 </div>
 
-<!-- 🔥 إضافة الصفوف بدون تغيير الشكل الأساسي -->
-<select id="class_group">
-  <option value="first_science">أولى ثانوي (علوم متكاملة)</option>
-  <option value="third_biology">تالتة ثانوي (أحياء)</option>
-  <option value="third_geology">تالتة ثانوي (جيولوجيا)</option>
-</select>
-
-<button onclick="signup()">إنشاء الحساب</button>
-
-<div id="msg"></div>
-
-<div class="login-link">
-لديك حساب بالفعل؟
-<a href="login.html">تسجيل الدخول</a>
-</div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>إنشاء حساب</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Cairo',sans-serif;
-}
-
-body{
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:linear-gradient(135deg,#0f172a,#111827,#020617);
-padding:20px;
-color:white;
-}
-
-.container{
-width:100%;
-max-width:420px;
-background:rgba(255,255,255,.08);
-backdrop-filter:blur(20px);
-border:1px solid rgba(255,255,255,.12);
-border-radius:28px;
-padding:30px 24px;
-box-shadow:0 20px 60px rgba(0,0,0,.45);
-}
-
-.logo{
-text-align:center;
-font-size:60px;
-margin-bottom:10px;
-}
-
-h2{
-text-align:center;
-margin-bottom:25px;
-font-size:28px;
-font-weight:800;
-}
-
-input, select{
+<!-- 🔥 الصفوف (إضافة بدون تغيير الأساس) -->
+<select id="class_group" style="
 width:100%;
 padding:15px;
+border-radius:16px;
+margin-bottom:15px;
+background:rgba(255,255,255,.08);
+color:white;
 border:none;
 outline:none;
-border-radius:16px;
-background:rgba(255,255,255,.08);
-color:white;
-font-size:15px;
-margin-bottom:15px;
-}
-
-select option{
-color:black;
-}
-
-.password-box{
-position:relative;
-}
-
-.eye{
-position:absolute;
-left:15px;
-top:18px;
-cursor:pointer;
-font-size:20px;
-}
-
-button{
-width:100%;
-padding:15px;
-border:none;
-border-radius:16px;
-background:linear-gradient(135deg,#FFD700,#ffb300);
-color:#111;
-font-size:17px;
-font-weight:800;
-cursor:pointer;
-transition:.3s;
-}
-
-button:hover{
-transform:translateY(-2px);
-}
-
-#msg{
-margin-top:15px;
-text-align:center;
-font-weight:700;
-min-height:24px;
-}
-
-.login-link{
-text-align:center;
-margin-top:20px;
-}
-
-.login-link a{
-color:#FFD700;
-text-decoration:none;
-font-weight:700;
-}
-</style>
-
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="logo">🧬</div>
-
-<h2>إنشاء حساب</h2>
-
-<input id="name" placeholder="الاسم">
-<input id="phone" placeholder="رقم التليفون">
-
-<div class="password-box">
-<input id="password" type="password" placeholder="كلمة المرور">
-<span class="eye" onclick="togglePassword()">👁</span>
-</div>
-
-<!-- 🔥 إضافة الصفوف بدون تغيير الشكل الأساسي -->
-<select id="class_group">
+">
   <option value="first_science">أولى ثانوي (علوم متكاملة)</option>
   <option value="third_biology">تالتة ثانوي (أحياء)</option>
   <option value="third_geology">تالتة ثانوي (جيولوجيا)</option>
@@ -332,6 +187,9 @@ const msg = document.getElementById("msg");
 
 msg.innerText = "جاري إنشاء الحساب...";
 
+try {
+
+/* 1 - VALIDATION */
 if(name.length < 3){
 msg.innerText = "اسم غير صحيح";
 return;
@@ -347,35 +205,31 @@ msg.innerText = "كلمة المرور ضعيفة";
 return;
 }
 
-try {
-
-/* ===== AUTH ===== */
+/* 2 - AUTH */
 const { data, error } = await client.auth.signUp({
-  email: "user" + phone + "@gmail.com",
-  password: pass
+email: phone + "@phone.com",
+password: pass
 });
 
 if(error){
-  console.log(error);
-  msg.innerText = "فشل إنشاء الحساب";
-  return;
+console.log(error);
+msg.innerText = "فشل إنشاء الحساب";
+return;
 }
 
-/* ===== SAVE STUDENT ===== */
-const userId = data?.user?.id;
-
+/* 3 - SAVE DATABASE (بدون id نهائياً) */
 const { error: dbErr } = await client.from("students").insert([{
-  full_name: name,
-  phone: phone,
-  class_group: class_group,  // 🔥 أهم إضافة
-  role: "student",
-  created_at: new Date().toISOString()
+full_name: name,
+phone: phone,
+class_group: class_group,
+role: "student",
+activated: false
 }]);
 
 if(dbErr){
-  console.log(dbErr);
-  msg.innerText = "تم إنشاء الحساب لكن فشل حفظ البيانات";
-  return;
+console.log(dbErr);
+msg.innerText = "تم إنشاء الحساب لكن فشل حفظ البيانات";
+return;
 }
 
 msg.innerText = "تم إنشاء الحساب بنجاح 🎉";
@@ -388,9 +242,6 @@ msg.innerText = "حدث خطأ غير متوقع";
 };
 
 </script>
-
-</body>
-</html>
 
 </body>
 </html>
