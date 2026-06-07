@@ -621,7 +621,7 @@ td{
 
 <script>
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo"; // ضع anon key الصحيح هنا
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const state = {
@@ -717,9 +717,8 @@ function videoAggregate(videoId) {
   const avgTime = rows.length
     ? rows.reduce((sum, r) => sum + safeNumber(r.watched_seconds), 0) / rows.length
     : 0;
-  const totalSkips = rows.reduce((sum, r) => sum + safeNumber(r.skips), 0);
 
-  return { watchedStudents, completedStudents, avgPercent, avgTime, totalSkips, rows };
+  return { watchedStudents, completedStudents, avgPercent, avgTime, rows };
 }
 
 function statusBadge(percent, exists) {
@@ -741,12 +740,10 @@ function renderVideoCards() {
     const isActive = String(v.id) === String(state.selectedVideoId);
 
     return `
-      <div class="video-card ${isActive ? 'active' : ''}" onclick="selectVideo('${String(v.id)}')">
+      <div class="video-card ${isActive ? 'active' : ''}" onclick="selectVideo('${v.id}')">
         <div class="top">
-          <div class="title">${toText(v.title, "فيديو بدون عنوان")}</div>
-          <div class="pill ${agg.avgPercent >= 90 ? 'good' : agg.avgPercent >= 40 ? 'mid' : 'bad'}">
-            ${agg.avgPercent.toFixed(0)}%
-          </div>
+          <div class="title">${toText(v.title)}</div>
+          <div class="pill">${agg.avgPercent.toFixed(0)}%</div>
         </div>
         <div class="meta">
           <span class="pill">👤 ${agg.watchedStudents} طالب</span>
@@ -760,28 +757,15 @@ function renderVideoCards() {
 
 function renderSelectedVideo() {
   const titleEl = document.getElementById("selectedVideoTitle");
-  const metaEl = document.getElementById("selectedVideoMeta");
-  const studentsCountEl = document.getElementById("selectedVideoStudentsCount");
 
   if (!state.selectedVideo) {
     titleEl.innerText = "لم يتم اختيار فيديو بعد";
-    metaEl.innerText = "اختر فيديو من القائمة على اليسار لعرض التفاصيل";
-    studentsCountEl.innerText = "0 طالب";
-    document.getElementById("selectedViews").innerText = "0";
-    document.getElementById("selectedCompleted").innerText = "0";
-    document.getElementById("selectedAvgPercent").innerText = "0%";
-    document.getElementById("selectedAvgTime").innerText = "0s";
-    document.getElementById("studentsTableBody").innerHTML = "";
-    document.getElementById("emptyState").style.display = "none";
-    document.getElementById("tableCount").innerText = "0 صف";
     return;
   }
 
   const agg = videoAggregate(state.selectedVideo.id);
 
-  titleEl.innerText = toText(state.selectedVideo.title, "فيديو بدون عنوان");
-  metaEl.innerText = `الفيديو #${state.selectedVideo.id} — ${agg.watchedStudents} طالب شاهدوه`;
-  studentsCountEl.innerText = `${agg.watchedStudents} طالب`;
+  titleEl.innerText = toText(state.selectedVideo.title);
 
   document.getElementById("selectedViews").innerText = agg.watchedStudents;
   document.getElementById("selectedCompleted").innerText = agg.completedStudents;
@@ -798,56 +782,39 @@ function renderSelectedVideo() {
     if (!record) {
       return `
         <tr>
-          <td class="row-name">
-            <div><strong>${name}</strong></div>
-            <div class="mini-muted">ID: ${id}</div>
-          </td>
+          <td>${name}</td>
           <td>${toText(state.selectedVideo.title)}</td>
-          <td>0s / ${formatTime(state.selectedVideo.duration || 0)}</td>
+          <td>0s</td>
           <td>0%</td>
           <td>${statusBadge(0, false)}</td>
-          <td class="mini-muted">لم يشاهد</td>
+          <td>-</td>
         </tr>
       `;
     }
 
     const percent = safeNumber(record.percent);
-    const watched = safeNumber(record.watched_seconds);
-    const duration = safeNumber(record.duration);
-    const completed = record.completed === true || percent >= 90;
 
     return `
       <tr>
-        <td class="row-name">
-          <div><strong>${name}</strong></div>
-          <div class="mini-muted">ID: ${id}</div>
-        </td>
+        <td>${name}</td>
         <td>${toText(state.selectedVideo.title)}</td>
-        <td>
-          <div>${formatTime(watched)} / ${formatTime(duration)}</div>
-        </td>
+        <td>${formatTime(record.watched_seconds)}</td>
         <td>${percent.toFixed(1)}%</td>
         <td>${statusBadge(percent, true)}</td>
-        <td class="mini-muted">${formatDate(record.updated_at || record.created_at)}</td>
+        <td>${formatDate(record.updated_at || record.created_at)}</td>
       </tr>
     `;
   });
 
-  const tbody = document.getElementById("studentsTableBody");
-  tbody.innerHTML = rows.join("");
-  document.getElementById("tableCount").innerText = `${rows.length} صف`;
-
-  const noData = rows.length === 0;
-  document.getElementById("emptyState").style.display = noData ? "block" : "none";
+  document.getElementById("studentsTableBody").innerHTML = rows.join("");
 }
 
 function renderGlobalStats() {
-  const allStudentIds = getAllStudentIds();
   const avgGlobal = state.sessions.length
     ? state.sessions.reduce((sum, s) => sum + safeNumber(s.percent), 0) / state.sessions.length
     : 0;
 
-  document.getElementById("totalStudents").innerText = allStudentIds.length;
+  document.getElementById("totalStudents").innerText = getAllStudentIds().length;
   document.getElementById("totalVideos").innerText = state.videos.length;
   document.getElementById("totalSessions").innerText = state.sessions.length;
   document.getElementById("globalAvg").innerText = `${avgGlobal.toFixed(1)}%`;
@@ -856,57 +823,34 @@ function renderGlobalStats() {
 window.selectVideo = function(videoId) {
   state.selectedVideoId = String(videoId);
   state.selectedVideo = state.videos.find(v => String(v.id) === String(videoId)) || null;
+
   renderVideoCards();
   renderSelectedVideo();
 };
 
 async function loadVideos() {
-  const { data, error } = await client.from("videos").select("*").order("created_at", { ascending: false });
+  const { data, error } = await client.from("videos").select("*");
   if (error) throw error;
   state.videos = data || [];
 }
 
 async function loadSessions() {
   try {
-
     const { data, error } = await client
       .from("video_sessions")
-      .select(`
-        *,
-        students(class_group, name)
-      `)
+      .select(`*, students(class_group, name)`)
       .order("updated_at", { ascending: false });
 
-    if (error) {
-      console.log("LOAD ERROR:", error);
-      state.sessions = [];
-      return;
-    }
+    if (error) throw error;
 
-    const allSessions = data || [];
+    const all = data || [];
 
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const classGroup = user?.class_group;
+    const classGroup = document.getElementById("classFilter")?.value;
 
-    if (classGroup && classGroup !== "all") {
-      state.sessions = allSessions.filter(s =>
-        s?.students?.class_group === classGroup
-      );
-    } else {
-      state.sessions = allSessions;
-    }
-
-    console.log("SESSIONS LOADED:", state.sessions);
-
-  } catch (err) {
-    console.log("FATAL ERROR:", err);
-    state.sessions = [];
-  }
-}
-    // تخزين كل البيانات
-
-
-    console.log("SESSIONS LOADED:", state.sessions);
+    state.sessions =
+      classGroup && classGroup !== "all"
+        ? all.filter(s => s?.students?.class_group === classGroup)
+        : all;
 
   } catch (err) {
     console.log("FATAL ERROR:", err);
@@ -915,56 +859,30 @@ async function loadSessions() {
 }
 
 async function loadStudents() {
-  try {
-    const { data, error } = await client.from("students").select("*");
-    if (!error && Array.isArray(data)) {
-      state.students = data;
-      return;
-    }
-  } catch (e) {}
-  state.students = [];
+  const { data } = await client.from("students").select("*");
+  state.students = data || [];
 }
 
 async function init() {
-  try {
-    document.getElementById("selectedVideoHint").innerText = "جاري التحميل...";
-    await Promise.all([
-      loadVideos(),
-      loadSessions(),
-      loadStudents()
-    ]);
+  await Promise.all([loadVideos(), loadSessions(), loadStudents()]);
 
-    renderGlobalStats();
-
-    if (state.videos.length) {
-      state.selectedVideoId = String(state.videos[0].id);
-      state.selectedVideo = state.videos[0];
-    }
-
-    renderVideoCards();
-    renderSelectedVideo();
-
-    document.getElementById("selectedVideoHint").innerText = state.selectedVideo
-      ? "تم التحميل"
-      : "لا توجد فيديوهات";
-
-  } catch (err) {
-    console.log("INIT ERROR:", err);
-    document.getElementById("selectedVideoHint").innerText = "خطأ في التحميل";
-    document.getElementById("videosList").innerHTML = `<div class="empty-state">تعذر تحميل البيانات. تأكد من الجداول والصلاحيات.</div>`;
+  if (state.videos.length) {
+    state.selectedVideoId = String(state.videos[0].id);
+    state.selectedVideo = state.videos[0];
   }
+
+  renderGlobalStats();
+  renderVideoCards();
+  renderSelectedVideo();
 }
 
 init();
+
 setInterval(async () => {
-  try {
-    await loadSessions();
-    renderGlobalStats();
-    renderVideoCards();
-    renderSelectedVideo();
-  } catch (e) {
-    console.log("REFRESH ERROR:", e);
-  }
+  await loadSessions();
+  renderGlobalStats();
+  renderVideoCards();
+  renderSelectedVideo();
 }, 20000);
 </script>
 
