@@ -264,9 +264,11 @@ Dr Youssef Nafea
 </div>
 
 <script>
+<script>
 if (!localStorage.getItem("user")) {
   window.location.replace("login.html");
 }
+</script>
 const user = JSON.parse(localStorage.getItem("user"));
 
 if(!user){
