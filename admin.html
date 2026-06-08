@@ -3,278 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>لوحة التحكم | Dr Youssef Nafea</title>
+<title>لوحة التحكم | د. يوسف نافع</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 
-:root{
-  --bg:#0b1220;
-  --panel:#111827;
-  --panel2:#0f172a;
-  --text:#e5e7eb;
-  --muted:#94a3b8;
-  --gold:#FFD700;
-  --blue:#3b82f6;
-  --green:#22c55e;
-  --red:#ef4444;
-  --border:rgba(255,255,255,.08);
-}
-
+/* ================= BASE ================= */
 *{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Cairo',sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
 }
 
 body{
-  background:radial-gradient(circle at top,#111827,#0b1220);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
+background:linear-gradient(135deg,#0b1220,#0f172a,#111827);
+color:white;
+min-height:100vh;
+display:flex;
+overflow-x:hidden;
 }
 
 /* ================= SIDEBAR ================= */
 .sidebar{
-  width:290px;
-  background:rgba(17,24,39,.95);
-  border-left:1px solid var(--border);
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  gap:15px;
+width:260px;
+background:rgba(255,255,255,0.04);
+backdrop-filter:blur(20px);
+border-left:1px solid rgba(255,255,255,0.08);
+padding:20px;
+position:sticky;
+top:0;
+height:100vh;
 }
 
 .brand{
-  font-size:20px;
-  font-weight:800;
-  color:var(--gold);
-  text-align:center;
-  padding:10px;
+font-size:20px;
+font-weight:800;
+text-align:center;
+color:#FFD700;
+margin-bottom:20px;
 }
 
 .admin-card{
-  background:rgba(255,255,255,.05);
-  padding:12px;
-  border-radius:12px;
-  text-align:center;
-  font-weight:700;
+background:rgba(255,255,255,0.06);
+padding:15px;
+border-radius:14px;
+text-align:center;
+margin-bottom:20px;
 }
 
 .menu a{
-  display:block;
-  padding:12px;
-  margin-bottom:8px;
-  border-radius:10px;
-  text-decoration:none;
-  color:var(--text);
-  background:rgba(255,255,255,.04);
-  transition:.3s;
-  font-weight:600;
+display:block;
+padding:12px;
+margin-bottom:10px;
+background:rgba(255,255,255,0.05);
+border-radius:10px;
+color:white;
+text-decoration:none;
+transition:.3s;
 }
 
 .menu a:hover{
-  background:var(--blue);
-  transform:translateX(-3px);
+background:#2563eb;
+transform:translateX(-4px);
 }
 
 /* ================= MAIN ================= */
 .main{
-  flex:1;
-  padding:20px;
-  overflow:auto;
+flex:1;
+padding:20px;
 }
 
+/* ================= TOPBAR ================= */
 .topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
 }
 
 .logout-btn{
-  background:var(--red);
-  border:none;
-  padding:10px 15px;
-  border-radius:10px;
-  color:white;
-  cursor:pointer;
+background:#ef4444;
+border:none;
+padding:10px 15px;
+border-radius:10px;
+color:white;
+cursor:pointer;
+font-weight:700;
 }
 
 /* ================= STATS ================= */
 .stats{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:15px;
-  margin-bottom:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-bottom:20px;
 }
 
 .stat{
-  background:rgba(255,255,255,.04);
-  border:1px solid var(--border);
-  padding:18px;
-  border-radius:16px;
-  text-align:center;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
+padding:20px;
+border-radius:16px;
+text-align:center;
+border:1px solid rgba(255,255,255,0.08);
+transition:.3s;
+}
+
+.stat:hover{
+transform:translateY(-5px);
 }
 
 .stat-number{
-  font-size:28px;
-  font-weight:800;
-  color:var(--gold);
+font-size:26px;
+font-weight:800;
+color:#FFD700;
 }
 
-/* ================= SECTION ================= */
+/* ================= TABLE ================= */
 .section{
-  background:rgba(255,255,255,.03);
-  border:1px solid var(--border);
-  padding:18px;
-  border-radius:16px;
-  margin-bottom:20px;
+background:rgba(255,255,255,0.04);
+padding:20px;
+border-radius:16px;
+border:1px solid rgba(255,255,255,0.08);
 }
 
 table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:10px;
-  overflow:hidden;
-  border-radius:12px;
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th,td{
+padding:12px;
+text-align:center;
+border-bottom:1px solid rgba(255,255,255,0.08);
 }
 
 th{
-  background:rgba(255,255,255,.05);
-  padding:12px;
-  color:var(--gold);
+color:#FFD700;
 }
 
-td{
-  padding:12px;
-  text-align:center;
-  border-bottom:1px solid var(--border);
+/* ================= MOBILE ================= */
+@media(max-width:900px){
+body{
+flex-direction:column;
 }
 
-tr:hover{
-  background:rgba(255,255,255,.03);
+.sidebar{
+width:100%;
+height:auto;
+position:relative;
 }
-
-/* ================= CARDS ================= */
-.quick{
-  margin-bottom:20px;
-  background:rgba(255,255,255,.03);
-  border:1px solid var(--border);
-  padding:15px;
-  border-radius:16px;
-}
-
-.quick a{
-  display:block;
-  padding:12px;
-  margin-top:10px;
-  border-radius:10px;
-  text-align:center;
-  text-decoration:none;
-  color:white;
-  font-weight:700;
-  background:var(--blue);
-  transition:.3s;
-}
-
-.quick a:hover{
-  transform:scale(1.03);
-}
-
-.quick a.green{ background:var(--green); }
-
-/* ===================== RESPONSIVE FIX (MOBILE PRO) ===================== */
-
-@media (max-width: 768px) {
-
-  body {
-    flex-direction: column;
-    overflow-y: auto !important;
-    height: auto !important;
-  }
-
-  /* SIDEBAR تتحول لتوب */
-  .sidebar {
-    width: 100%;
-    border-left: none;
-    border-bottom: 1px solid rgba(255,255,255,.08);
-    position: relative;
-  }
-
-  .menu {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-
-  .menu a {
-    text-align: center;
-    font-size: 13px;
-    padding: 10px;
-  }
-
-  /* MAIN */
-  .main {
-    padding: 12px;
-  }
-
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  /* STATS */
-  .stats {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .stat-number {
-    font-size: 22px;
-  }
-
-  /* TABLE FIX */
-  .section {
-    overflow-x: auto;
-  }
-
-  table {
-    min-width: 600px;
-    font-size: 12px;
-  }
-
-  th, td {
-    padding: 8px;
-  }
 
 }
 
-/* ================= VERY SMALL PHONES ================= */
-
-@media (max-width: 480px) {
-
-  .brand {
-    font-size: 18px;
-  }
-
-  .stats {
-    grid-template-columns: 1fr;
-  }
-
-  .menu {
-    grid-template-columns: 1fr;
-  }
-
-  .logout-btn {
-    width: 100%;
-  }
+/* ================= BUTTONS ================= */
+button{
+padding:8px 12px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+transition:.3s;
 }
+
+button:hover{
+transform:scale(1.05);
+}
+
 </style>
 </head>
 
@@ -283,30 +180,17 @@ tr:hover{
 <!-- SIDEBAR -->
 <div class="sidebar">
 
-<div class="brand">Dr Youssef Nafea</div>
+<div class="brand">🧬 Dr Youssef Nafea</div>
 
-<div class="admin-card" id="adminName">Admin</div>
+<div class="admin-card">
+<div id="adminName">Admin</div>
+</div>
 
 <div class="menu">
 <a href="admin.html">🏠 الرئيسية</a>
 <a href="admin-videos.html">🎥 الفيديوهات</a>
 <a href="admin-analytics.html">📊 التحليلات</a>
-</div>
-
-<div class="quick">
-<h3 style="color:var(--gold)">⚡ اختصارات</h3>
-
-<a href="admin-videos.html">🎥 إدارة الفيديوهات</a>
-<a class="green" href="admin-analytics.html">📊 التحليلات</a>
-
-<div style="margin-top:10px;text-align:center">
-👨‍🎓 الطلاب: <b id="studentsCountSide">0</b>
-</div>
-
-<div style="text-align:center;margin-top:8px">
-🎬 الفيديوهات: <b id="videosCountSide">0</b>
-</div>
-
+<a href="admin-files.html">📁 الملفات</a>
 </div>
 
 </div>
@@ -352,6 +236,7 @@ tr:hover{
 <th>الحالة</th>
 </tr>
 </thead>
+
 <tbody id="studentsTable"></tbody>
 </table>
 
@@ -359,36 +244,33 @@ tr:hover{
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 
 const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* AUTH */
+/* ================= LOGOUT ================= */
 function logout(){
-
-  localStorage.clear();
-
-  client.auth.signOut();
-
-  history.pushState(null, "", location.href);
-
-  window.location.replace("login.html");
-
+localStorage.removeItem("user");
+window.location.href="login.html";
 }
-/* LOAD STUDENTS */
+
+/* ================= LOAD ================= */
 async function loadStudents(){
 
 const { data } = await client.from("students").select("*");
 
 document.getElementById("studentsCount").innerText = data?.length || 0;
-document.getElementById("studentsCountSide").innerText = data?.length || 0;
 
 const table = document.getElementById("studentsTable");
 table.innerHTML = "";
 
 data?.forEach(s=>{
+
 table.innerHTML += `
 <tr>
 <td>${s.full_name || "-"}</td>
@@ -397,19 +279,21 @@ table.innerHTML += `
 <td>${s.activated ? "✅" : "❌"}</td>
 </tr>
 `;
+
 });
 
 }
 
-/* LOAD VIDEOS */
 async function loadVideos(){
-const { count } = await client.from("videos").select("*",{count:"exact",head:true});
+
+const { count } = await client
+.from("videos")
+.select("*",{count:"exact",head:true});
 
 document.getElementById("videosCount").innerText = count || 0;
-document.getElementById("videosCountSide").innerText = count || 0;
+
 }
 
-/* LOAD ANALYTICS */
 async function loadAnalytics(){
 
 const { data } = await client.from("student_progress").select("*");
@@ -426,7 +310,6 @@ document.getElementById("viewsCount").innerText = avg.toFixed(1) + "%";
 
 }
 
-/* INIT */
 loadStudents();
 loadVideos();
 loadAnalytics();
