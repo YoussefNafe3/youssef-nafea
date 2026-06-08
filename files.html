@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>الملفات التعليمية</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
+
+body{
+background:#0f172a;
+color:white;
+min-height:100vh;
+padding:25px;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.back-btn{
+background:#1e293b;
+color:white;
+padding:12px 18px;
+border-radius:12px;
+text-decoration:none;
+}
+
+.title{
+font-size:30px;
+font-weight:800;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+gap:20px;
+}
+
+.file-card{
+background:#1e293b;
+border-radius:20px;
+padding:20px;
+border:1px solid rgba(255,255,255,.08);
+transition:.3s;
+}
+
+.file-card:hover{
+transform:translateY(-5px);
+}
+
+.file-title{
+font-size:20px;
+font-weight:800;
+margin-bottom:10px;
+}
+
+.file-desc{
+opacity:.8;
+margin-bottom:15px;
+line-height:1.8;
+}
+
+.download-btn{
+display:block;
+width:100%;
+text-align:center;
+padding:12px;
+border-radius:12px;
+background:#FFD700;
+color:#111;
+font-weight:800;
+text-decoration:none;
+}
+
+.empty{
+text-align:center;
+padding:50px;
+opacity:.7;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+<a href="dashboard.html" class="back-btn">⬅ رجوع</a>
+<div class="title">📚 الملفات التعليمية</div>
+</div>
+
+<div id="filesContainer" class="grid"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<script>
+
+const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+
+const client = window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+async function loadFiles(){
+
+const container = document.getElementById("filesContainer");
+
+const { data , error } = await client
+.from("study_files")
+.select("*")
+.eq("class_group", user.class_group)
+.order("created_at",{ascending:false});
+
+if(error){
+container.innerHTML="<div class='empty'>حدث خطأ</div>";
+return;
+}
+
+if(!data.length){
+container.innerHTML="<div class='empty'>لا توجد ملفات حالياً</div>";
+return;
+}
+
+container.innerHTML = data.map(file => `
+
+<div class="file-card">
+
+<div class="file-title">
+📄 ${file.title || ""}
+</div>
+
+<div class="file-desc">
+${file.description || ""}
+</div>
+
+<a
+href="${file.file_url}"
+target="_blank"
+class="download-btn"
+>
+تحميل الملف
+</a>
+
+</div>
+
+`).join("");
+
+}
+
+loadFiles();
+
+</script>
+
+</body>
+</html>
