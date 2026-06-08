@@ -1,28 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-<link rel="icon" type="image/png" href="logo.png">
-<meta charset="UTF-8">
-<title>منصة د. يوسف نافع</title>
-</head>
-<body>
 
-<div class="top-bar">
-
-    <div class="logo-small">
-        <img src="images/logo.png" alt="Logo">
-    </div>
-
-    <div id="authArea" class="auth-area"></div>
-
-</div>
-</body>
-
-</html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>د. يوسف نافع </title>
+
+<title>منصة د. يوسف نافع</title>
+
+<link rel="icon" type="image/png" href="logo.png">
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
@@ -361,7 +346,7 @@ justify-content:space-between;
 align-items:center;
 padding:10px 20px;
 z-index:9999;
-background:rgba(0,0,0,0.4);
+background:rgba(0,0,0,.4);
 backdrop-filter:blur(10px);
 }
 
@@ -379,8 +364,8 @@ filter:drop-shadow(0 0 8px rgba(255,215,0,.4));
 
 .auth-area{
 display:flex;
-gap:10px;
 align-items:center;
+gap:10px;
 }
 
 .nav-btn{
@@ -410,13 +395,27 @@ font-weight:700;
 
 <body>
 
-<!-- THEME -->
-<div class="auth-buttons">
-  <button id="themeToggle" onclick="toggleTheme()">🌙</button>
-  <a href="login.html" class="nav-btn">تسجيل الدخول</a>
-  <a href="signup.html" class="nav-btn signup">إنشاء حساب</a>
-</div>
+<div class="top-bar">
 
+    <div class="logo-small">
+        <img src="images/logo.png" alt="Logo">
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;">
+
+        <button id="themeToggle" onclick="toggleTheme()">🌙</button>
+
+        <div id="authArea" class="auth-area">
+            <a href="login.html" class="nav-btn">تسجيل الدخول</a>
+
+            <a href="signup.html" class="nav-btn signup">
+                إنشاء حساب
+            </a>
+        </div>
+
+    </div>
+
+</div>
 <!-- HERO -->
 <section class="hero">
 
