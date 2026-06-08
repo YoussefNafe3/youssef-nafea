@@ -144,27 +144,12 @@ text-align:center;
 </div>
 
 <script>
-
-const supabase = window.supabase.createClient(
+const client = window.supabase.createClient(
 "https://nhdowqzecpwmkunczodl.supabase.co",
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo"
 );
 
-const msg = document.getElementById("msg");
-const debug = document.getElementById("debug");
-const btn = document.getElementById("btn");
-
-function setProgress(v){
-document.getElementById("bar").style.display = "block";
-document.getElementById("progress").style.width = v + "%";
-}
-
-function log(e){
-console.log(e);
-debug.innerText = JSON.stringify(e?.message || e);
-}
-
-async function upload(){
+window.upload = async function () {
 
 const title = document.getElementById("title").value.trim();
 const desc = document.getElementById("desc").value.trim();
@@ -172,48 +157,37 @@ const class_group = document.getElementById("class_group").value;
 const type = document.getElementById("type").value;
 const file = document.getElementById("file").files[0];
 
-if(!title){
-msg.innerText = "❌ اكتب عنوان";
-return;
-}
+const msg = document.getElementById("msg");
 
 if(!file){
 msg.innerText = "❌ اختار ملف";
 return;
 }
 
-btn.disabled = true;
-btn.innerText = "⏳ جاري الرفع...";
-msg.innerText = "جاري الاتصال بالسيرفر...";
+msg.innerText = "⏳ جاري الرفع...";
 
 try{
 
 const fileName = Date.now() + "-" + file.name;
-const path = type === "video" ? "videos/" + fileName : "files/" + fileName;
+const path = type === "video"
+? "videos/" + fileName
+: "files/" + fileName;
 
-setProgress(10);
-
-const { data, error } = await supabase.storage
+const { data, error } = await client.storage
 .from("study-files")
 .upload(path, file);
 
 if(error){
-log(error);
-msg.innerText = "❌ خطأ في الرفع (Storage)";
-btn.disabled = false;
-btn.innerText = "🚀 رفع الملف";
+console.log(error);
+msg.innerText = "❌ فشل الرفع";
 return;
 }
 
-setProgress(60);
-
-const { data: urlData } = supabase.storage
+const { data: urlData } = client.storage
 .from("study-files")
 .getPublicUrl(data.path);
 
-setProgress(80);
-
-const { error: dbError } = await supabase
+const { error: dbError } = await client
 .from("study_files")
 .insert({
 title,
@@ -223,31 +197,19 @@ class_group
 });
 
 if(dbError){
-log(dbError);
+console.log(dbError);
 msg.innerText = "❌ تم الرفع لكن فشل الحفظ";
 return;
 }
 
-setProgress(100);
-
 msg.innerText = "✅ تم الرفع بنجاح";
 
-setTimeout(()=>{
-btn.disabled = false;
-btn.innerText = "🚀 رفع الملف";
-msg.innerText = "";
-setProgress(0);
-},2000);
-
-}catch(e){
-log(e);
+}catch(err){
+console.log(err);
 msg.innerText = "❌ خطأ غير متوقع";
-btn.disabled = false;
-btn.innerText = "🚀 رفع الملف";
 }
 
-}
-
+};
 </script>
 
 </body>
