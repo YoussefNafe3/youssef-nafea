@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>رفع الملفات - Admin</title>
+<title>رفع الملفات - احترافي</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -23,19 +23,18 @@ min-height:100vh;
 }
 
 .card{
-width:450px;
+width:460px;
 background:rgba(255,255,255,.06);
 backdrop-filter:blur(25px);
 border:1px solid rgba(255,255,255,.12);
 border-radius:22px;
 padding:25px;
-box-shadow:0 25px 60px rgba(0,0,0,.4);
+box-shadow:0 25px 60px rgba(0,0,0,.5);
 }
 
 h2{
 text-align:center;
 margin-bottom:20px;
-font-size:22px;
 font-weight:800;
 }
 
@@ -94,17 +93,10 @@ transition:.2s;
 }
 
 #msg{
-margin-top:12px;
+margin-top:10px;
 text-align:center;
 font-weight:700;
 min-height:20px;
-}
-
-.debug{
-font-size:11px;
-opacity:.6;
-margin-top:8px;
-text-align:center;
 }
 
 </style>
@@ -139,17 +131,32 @@ text-align:center;
 <button id="btn" onclick="upload()">🚀 رفع الملف</button>
 
 <div id="msg"></div>
-<div class="debug" id="debug"></div>
 
 </div>
 
 <script>
+
 const client = window.supabase.createClient(
 "https://nhdowqzecpwmkunczodl.supabase.co",
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo"
 );
 
-window.upload = async function () {
+/* ================= CLEAN FILE NAME (IMPORTANT FIX) ================= */
+function cleanFileName(name){
+  return name
+    .replace(/[\u0600-\u06FF]/g, "")   // remove Arabic
+    .replace(/\s+/g, "_")             // replace spaces
+    .replace(/[^a-zA-Z0-9._-]/g, "");  // remove unsafe chars
+}
+
+/* ================= PROGRESS UI ================= */
+function setProgress(v){
+  document.getElementById("bar").style.display = "block";
+  document.getElementById("progress").style.width = v + "%";
+}
+
+/* ================= MAIN UPLOAD ================= */
+window.upload = async function(){
 
 const title = document.getElementById("title").value.trim();
 const desc = document.getElementById("desc").value.trim();
@@ -158,20 +165,34 @@ const type = document.getElementById("type").value;
 const file = document.getElementById("file").files[0];
 
 const msg = document.getElementById("msg");
+const btn = document.getElementById("btn");
+
+if(!title){
+msg.innerText = "❌ اكتب عنوان";
+return;
+}
 
 if(!file){
 msg.innerText = "❌ اختار ملف";
 return;
 }
 
-msg.innerText = "⏳ جاري الرفع...";
+btn.disabled = true;
+btn.innerText = "⏳ جاري الرفع...";
+msg.innerText = "جاري رفع الملف...";
 
 try{
 
-const fileName = Date.now() + "-" + file.name;
+/* clean file name (FIX BUG) */
+const fileName = Date.now() + "-" + cleanFileName(file.name);
+
+/* path */
 const path = type === "video"
-? "videos/" + fileName
-: "files/" + fileName;
+  ? "videos/" + fileName
+  : "files/" + fileName;
+
+/* upload */
+setProgress(20);
 
 const { data, error } = await client.storage
 .from("study-files")
@@ -179,14 +200,22 @@ const { data, error } = await client.storage
 
 if(error){
 console.log(error);
-msg.innerText = "❌ فشل الرفع";
+msg.innerText = "❌ فشل رفع الملف";
+btn.disabled = false;
+btn.innerText = "🚀 رفع الملف";
 return;
 }
 
+setProgress(70);
+
+/* public url */
 const { data: urlData } = client.storage
 .from("study-files")
 .getPublicUrl(data.path);
 
+setProgress(90);
+
+/* save DB */
 const { error: dbError } = await client
 .from("study_files")
 .insert({
@@ -202,14 +231,26 @@ msg.innerText = "❌ تم الرفع لكن فشل الحفظ";
 return;
 }
 
+setProgress(100);
+
 msg.innerText = "✅ تم الرفع بنجاح";
+
+setTimeout(()=>{
+btn.disabled = false;
+btn.innerText = "🚀 رفع الملف";
+msg.innerText = "";
+setProgress(0);
+},2000);
 
 }catch(err){
 console.log(err);
 msg.innerText = "❌ خطأ غير متوقع";
+btn.disabled = false;
+btn.innerText = "🚀 رفع الملف";
 }
 
 };
+
 </script>
 
 </body>
