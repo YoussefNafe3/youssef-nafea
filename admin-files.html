@@ -8,9 +8,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 body{
-font-family:Cairo;
-background:#0f172a;
+margin:0;
+font-family:'Cairo',sans-serif;
+background:linear-gradient(135deg,#0f172a,#111827,#020617);
 color:white;
 display:flex;
 justify-content:center;
@@ -20,28 +22,85 @@ min-height:100vh;
 
 .container{
 width:420px;
-background:#111827;
-padding:20px;
-border-radius:15px;
+background:rgba(255,255,255,.06);
+backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,.12);
+padding:25px;
+border-radius:20px;
+box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
 }
 
 input,select{
 width:100%;
-padding:10px;
+padding:12px;
 margin:10px 0;
-border-radius:10px;
+border-radius:12px;
 border:none;
+outline:none;
+background:rgba(255,255,255,.08);
+color:white;
+}
+
+input::placeholder{
+color:#ccc;
 }
 
 button{
 width:100%;
 padding:12px;
 border:none;
-border-radius:10px;
-background:#FFD700;
+border-radius:12px;
+background:linear-gradient(135deg,#FFD700,#ffb300);
 font-weight:bold;
 cursor:pointer;
+transition:.3s;
+font-size:15px;
 }
+
+button:hover{
+transform:translateY(-2px);
+}
+
+button:disabled{
+opacity:.6;
+cursor:not-allowed;
+}
+
+.progress-bar{
+width:100%;
+height:10px;
+background:rgba(255,255,255,.1);
+border-radius:20px;
+overflow:hidden;
+margin-top:10px;
+display:none;
+}
+
+.progress{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#22c55e,#16a34a);
+transition:.2s;
+}
+
+#msg{
+text-align:center;
+margin-top:12px;
+font-weight:700;
+min-height:20px;
+}
+
+.small{
+font-size:12px;
+opacity:.7;
+text-align:center;
+}
+
 </style>
 </head>
 
@@ -49,10 +108,11 @@ cursor:pointer;
 
 <div class="container">
 
-<h2>رفع ملف / فيديو</h2>
+<h2>📤 رفع ملف / فيديو</h2>
 
-<input id="title" placeholder="عنوان">
-<input id="desc" placeholder="وصف">
+<input id="title" placeholder="عنوان الملف *">
+
+<input id="desc" placeholder="وصف (اختياري)">
 
 <select id="class_group">
   <option value="first_science">أولى ثانوي</option>
@@ -67,81 +127,126 @@ cursor:pointer;
 
 <input type="file" id="file">
 
-<button onclick="upload()">رفع</button>
+<div class="progress-bar" id="progressBar">
+  <div class="progress" id="progress"></div>
+</div>
 
-<p id="msg"></p>
+<button id="uploadBtn" onclick="upload()">🚀 رفع</button>
+
+<div id="msg"></div>
+
+<p class="small">يتم رفع الملفات مباشرة إلى Supabase Storage</p>
 
 </div>
 
 <script>
+
 const supabase = window.supabase.createClient(
 "https://nhdowqzecpwmkunczodl.supabase.co",
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo"
 );
 
+function setProgress(value){
+document.getElementById("progressBar").style.display = "block";
+document.getElementById("progress").style.width = value + "%";
+}
+
+function resetUI(){
+document.getElementById("uploadBtn").disabled = false;
+document.getElementById("uploadBtn").innerText = "🚀 رفع";
+setProgress(0);
+}
+
 async function upload(){
 
-const title = document.getElementById("title").value;
-const desc = document.getElementById("desc").value;
+const title = document.getElementById("title").value.trim();
+const desc = document.getElementById("desc").value.trim(); // optional
 const class_group = document.getElementById("class_group").value;
 const type = document.getElementById("type").value;
 const file = document.getElementById("file").files[0];
 
 const msg = document.getElementById("msg");
+const btn = document.getElementById("uploadBtn");
 
-if(!file){
-msg.innerText = "اختار ملف";
+if(!title){
+msg.innerText = "❌ لازم تكتب عنوان";
 return;
 }
 
-msg.innerText = "جاري الرفع...";
+if(!file){
+msg.innerText = "❌ اختار ملف";
+return;
+}
+
+btn.disabled = true;
+btn.innerText = "⏳ جاري الرفع...";
 
 try{
 
-// 1️⃣ رفع الملف على Storage
 const fileName = `${Date.now()}-${file.name}`;
+const bucket = "study-files";
 
-const bucket = type === "video" ? "study-files" : "study-files";
+const path = type === "video" ? `videos/${fileName}` : `files/${fileName}`;
+
+msg.innerText = "⏳ جاري رفع الملف...";
 
 const { data, error } = await supabase.storage
 .from(bucket)
-.upload(type === "video" ? `videos/${fileName}` : `files/${fileName}`, file);
+.upload(path, file, {
+cacheControl: '3600',
+upsert: false
+});
 
 if(error){
-msg.innerText = "خطأ في رفع الملف";
+console.log(error);
+msg.innerText = "❌ فشل في رفع الملف";
+resetUI();
 return;
 }
 
-// 2️⃣ الحصول على الرابط
+setProgress(70);
+
 const { data: urlData } = supabase.storage
 .from(bucket)
 .getPublicUrl(data.path);
 
 const file_url = urlData.publicUrl;
 
-// 3️⃣ حفظ في الجدول
+setProgress(90);
+
 const { error: dbError } = await supabase
 .from("study_files")
 .insert({
 title,
-description: desc,
+description: desc || null,
 file_url,
 class_group
 });
 
 if(dbError){
-msg.innerText = "تم الرفع لكن فشل الحفظ";
+console.log(dbError);
+msg.innerText = "❌ تم الرفع لكن فشل الحفظ";
+resetUI();
 return;
 }
 
-msg.innerText = "تم الرفع بنجاح ✅";
+setProgress(100);
+
+msg.innerText = "✅ تم الرفع بنجاح";
+
+setTimeout(()=>{
+resetUI();
+msg.innerText = "";
+},2000);
 
 }catch(err){
 console.log(err);
-msg.innerText = "خطأ غير متوقع";
+msg.innerText = "❌ خطأ غير متوقع";
+resetUI();
 }
 
 }
+
 </script>
 
 </body>
