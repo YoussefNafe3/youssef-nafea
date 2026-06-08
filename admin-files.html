@@ -31,11 +31,7 @@ padding:25px;
 box-shadow:0 25px 60px rgba(0,0,0,.5);
 }
 
-h2{
-text-align:center;
-margin-bottom:20px;
-font-weight:800;
-}
+h2{text-align:center;margin-bottom:20px;font-weight:800;}
 
 input,select{
 width:100%;
@@ -46,10 +42,7 @@ border:none;
 outline:none;
 background:rgba(255,255,255,.08);
 color:white;
-font-size:14px;
 }
-
-input::placeholder{color:#cbd5e1;}
 
 button{
 width:100%;
@@ -59,11 +52,8 @@ border-radius:12px;
 background:linear-gradient(135deg,#FFD700,#ffb300);
 font-weight:800;
 cursor:pointer;
-font-size:15px;
-transition:.3s;
 }
 
-button:hover{transform:translateY(-2px);}
 button:disabled{opacity:.6;cursor:not-allowed;}
 
 .bar{
@@ -80,14 +70,12 @@ display:none;
 height:100%;
 width:0%;
 background:linear-gradient(90deg,#22c55e,#16a34a);
-transition:.2s;
 }
 
 #msg{
-margin-top:10px;
 text-align:center;
+margin-top:10px;
 font-weight:700;
-min-height:20px;
 }
 </style>
 </head>
@@ -146,6 +134,12 @@ function setProgress(v){
   document.getElementById("progress").style.width = v + "%";
 }
 
+/* ================= AUTH FIX (IMPORTANT) ================= */
+async function getUserSafe(){
+  const { data: { session } } = await client.auth.getSession();
+  return session?.user || null;
+}
+
 /* ================= MAIN UPLOAD ================= */
 window.upload = async function(){
 
@@ -158,7 +152,7 @@ const file = document.getElementById("file").files[0];
 const msg = document.getElementById("msg");
 const btn = document.getElementById("btn");
 
-/* ================= CHECK INPUT ================= */
+/* ================= VALIDATION ================= */
 if(!title){
 msg.innerText = "❌ اكتب عنوان";
 return;
@@ -169,42 +163,37 @@ msg.innerText = "❌ اختار ملف";
 return;
 }
 
-/* ================= CHECK USER (IMPORTANT FIX) ================= */
-const { data: { user } } = await client.auth.getUser();
+/* ================= CHECK USER (FIXED) ================= */
+const user = await getUserSafe();
 
 if(!user){
 msg.innerText = "❌ لازم تسجل دخول الأول";
 return;
 }
 
-/* ================= UI STATE ================= */
+/* ================= UI ================= */
 btn.disabled = true;
 btn.innerText = "⏳ جاري الرفع...";
 msg.innerText = "جاري رفع الملف...";
 
 try{
 
-/* ================= FILE NAME ================= */
 const fileName = Date.now() + "-" + cleanFileName(file.name);
 
-/* ================= PATH ================= */
 const path = type === "video"
   ? "videos/" + fileName
   : "files/" + fileName;
 
-/* ================= UPLOAD ================= */
 setProgress(20);
 
+/* ================= UPLOAD ================= */
 const { data, error } = await client.storage
 .from("study-files")
-.upload(path, file, {
-  cacheControl: "3600",
-  upsert: false
-});
+.upload(path, file);
 
 if(error){
 console.log(error);
-msg.innerText = "❌ فشل رفع الملف (RLS أو Storage Policy)";
+msg.innerText = "❌ فشل رفع الملف (راجع RLS)";
 btn.disabled = false;
 btn.innerText = "🚀 رفع الملف";
 return;
@@ -219,7 +208,7 @@ const { data: urlData } = client.storage
 
 setProgress(85);
 
-/* ================= DB INSERT ================= */
+/* ================= DB SAVE ================= */
 const { error: dbError } = await client
 .from("study_files")
 .insert([{
@@ -233,7 +222,7 @@ const { error: dbError } = await client
 
 if(dbError){
 console.log(dbError);
-msg.innerText = "❌ تم رفع الملف لكن فشل الحفظ في قاعدة البيانات";
+msg.innerText = "❌ تم الرفع لكن فشل الحفظ";
 btn.disabled = false;
 btn.innerText = "🚀 رفع الملف";
 return;
@@ -241,7 +230,7 @@ return;
 
 setProgress(100);
 
-msg.innerText = "✅ تم رفع الملف بنجاح";
+msg.innerText = "✅ تم الرفع بنجاح";
 
 setTimeout(()=>{
 btn.disabled = false;
