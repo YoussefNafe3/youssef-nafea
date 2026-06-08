@@ -1,14 +1,25 @@
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>لوحة الطالب | د. يوسف نافع</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+
+:root{
+--bg1:#0f172a;
+--bg2:#111827;
+--card:rgba(255,255,255,.06);
+--border:rgba(255,255,255,.12);
+--gold:#FFD700;
+--text:#ffffff;
+--shadow:0 20px 50px rgba(0,0,0,.35);
+}
+
 *{
 margin:0;
 padding:0;
@@ -17,43 +28,47 @@ font-family:'Cairo',sans-serif;
 }
 
 body{
-background:linear-gradient(135deg,#0f172a,#111827,#1e293b);
+background:linear-gradient(135deg,var(--bg1),var(--bg2));
 min-height:100vh;
-color:white;
+color:var(--text);
 padding:20px;
 }
 
+/* ================= TOPBAR ================= */
 .topbar{
 display:flex;
 justify-content:space-between;
 align-items:center;
 gap:15px;
-background:rgba(255,255,255,.08);
-backdrop-filter:blur(15px);
-padding:15px 25px;
-border-radius:20px;
-border:1px solid rgba(255,255,255,.1);
+padding:15px 20px;
+background:rgba(255,255,255,.06);
+border:1px solid var(--border);
+backdrop-filter:blur(20px);
+border-radius:18px;
 margin-bottom:25px;
+box-shadow:var(--shadow);
 }
 
 .logo{
-font-size:28px;
+font-size:22px;
 font-weight:800;
-color:#FFD700;
+color:var(--gold);
+letter-spacing:.5px;
 }
 
 .user-name{
-font-size:20px;
 font-weight:700;
+font-size:16px;
+opacity:.9;
 cursor:pointer;
-color:#fff;
 transition:.3s;
 }
 
 .user-name:hover{
-color:#FFD700;
+color:var(--gold);
 }
 
+/* ================= BUTTONS ================= */
 .actions{
 display:flex;
 gap:10px;
@@ -61,28 +76,37 @@ flex-wrap:wrap;
 }
 
 .btn{
-border:none;
-padding:12px 18px;
+padding:10px 16px;
 border-radius:12px;
+border:1px solid transparent;
 cursor:pointer;
 font-weight:700;
 text-decoration:none;
-color:white;
 transition:.3s;
+font-size:14px;
+display:inline-flex;
+align-items:center;
+gap:6px;
 }
 
 .home-btn{
-background:#2563eb;
+background:rgba(37,99,235,.15);
+border-color:rgba(37,99,235,.4);
+color:#60a5fa;
 }
 
 .logout-btn{
-background:#ef4444;
+background:rgba(239,68,68,.15);
+border-color:rgba(239,68,68,.4);
+color:#f87171;
 }
 
 .btn:hover{
 transform:translateY(-2px);
+box-shadow:0 10px 25px rgba(0,0,0,.25);
 }
 
+/* ================= HERO ================= */
 .hero{
 position:relative;
 overflow:hidden;
@@ -91,86 +115,104 @@ padding:60px 20px;
 border-radius:25px;
 text-align:center;
 margin-bottom:30px;
-box-shadow:0 20px 50px rgba(0,0,0,.3);
+box-shadow:var(--shadow);
+}
+
+.hero::before,
+.hero::after{
+content:'';
+position:absolute;
+border-radius:50%;
+background:rgba(255,255,255,.08);
 }
 
 .hero::before{
-content:'';
-position:absolute;
 width:300px;
 height:300px;
-background:rgba(255,255,255,.08);
-border-radius:50%;
 top:-120px;
 left:-120px;
 }
 
 .hero::after{
-content:'';
-position:absolute;
 width:250px;
 height:250px;
-background:rgba(255,255,255,.05);
-border-radius:50%;
 bottom:-120px;
 right:-120px;
 }
 
 .hero h1{
-position:relative;
-font-size:42px;
+font-size:38px;
 margin-bottom:10px;
-z-index:2;
 }
 
 .hero p{
-position:relative;
-z-index:2;
-font-size:18px;
+opacity:.9;
+font-size:16px;
 }
 
+/* ================= CARDS ================= */
 .cards{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:25px;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:20px;
 }
 
 .card{
-background:rgba(255,255,255,.08);
-backdrop-filter:blur(20px);
-border:1px solid rgba(255,255,255,.1);
-border-radius:24px;
-padding:35px;
+background:var(--card);
+border:1px solid var(--border);
+backdrop-filter:blur(18px);
+border-radius:20px;
+padding:25px;
 text-decoration:none;
 color:white;
-transition:.4s;
+transition:.35s;
+position:relative;
+overflow:hidden;
+box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+.card::before{
+content:'';
+position:absolute;
+inset:0;
+background:radial-gradient(circle at top left, rgba(255,215,0,.12), transparent 40%);
+opacity:0;
+transition:.3s;
 }
 
 .card:hover{
-transform:translateY(-8px);
-box-shadow:0 20px 40px rgba(59,130,246,.3);
+transform:translateY(-8px) scale(1.02);
+border-color:rgba(255,215,0,.35);
+}
+
+.card:hover::before{
+opacity:1;
 }
 
 .icon{
-font-size:52px;
-margin-bottom:15px;
-}
-
-.card h3{
-font-size:24px;
+font-size:40px;
 margin-bottom:10px;
 }
 
+.card h3{
+font-size:18px;
+margin-bottom:6px;
+}
+
 .card p{
-opacity:.85;
+opacity:.75;
+font-size:14px;
 }
 
+/* ================= FOOTER ================= */
 .footer{
-margin-top:40px;
 text-align:center;
-opacity:.7;
+margin-top:40px;
+opacity:.6;
+font-size:13px;
 }
 
+/* ================= MOBILE ================= */
 @media(max-width:768px){
 
 .topbar{
@@ -179,83 +221,82 @@ text-align:center;
 }
 
 .hero h1{
-font-size:30px;
+font-size:26px;
 }
 
 .actions{
 justify-content:center;
 }
-}
-</style>
 
+.card{
+padding:20px;
+}
+}
+
+</style>
 </head>
 
 <body>
 
 <div class="topbar">
 
-<div class="logo">
-Dr Youssef Nafea
-</div>
+<div class="logo">Dr Youssef Nafea</div>
 
 <div class="user-name" id="userName" onclick="goDashboard()">
 مرحباً
 </div>
 
 <div class="actions">
-<a href="index.html" class="btn home-btn">
-🏠 الصفحة الرئيسية
-</a>
-
-<button class="btn logout-btn" onclick="logout()">
-🚪 تسجيل الخروج
-</button>
+<a href="index.html" class="btn home-btn">🏠 الرئيسية</a>
+<button class="btn logout-btn" onclick="logout()">🚪 خروج</button>
 </div>
 
 </div>
 
+<!-- HERO -->
 <div class="hero">
 <h1>منصة د. يوسف نافع</h1>
-<p>كل محاضراتك وحصصك وملفاتك التعليمية في مكان واحد</p>
+<p>كل محاضراتك وملفاتك وحصصك في مكان واحد بشكل منظم</p>
 </div>
 
+<!-- CARDS -->
 <div class="cards">
 
 <div class="card" onclick="window.location.href='videos.html'">
 <div class="icon">🎥</div>
 <h3>الفيديوهات</h3>
-<p>مشاهدة جميع المحاضرات المسجلة</p>
+<p>مشاهدة المحاضرات المسجلة</p>
 </div>
 
-<a href="#" class="card">
+<div class="card">
 <div class="icon">📅</div>
 <h3>الحصص</h3>
-<p>مواعيد الحصص القادمة والبث المباشر</p>
-</a>
+<p>جدول الحصص</p>
+</div>
 
-<a href="files.html" class="dashboard-card">
-  <div class="icon">📚</div>
-  <h3>الملفات التعليمية</h3>
-  <p>ملازم - مراجعات - ملفات PDF</p>
-</a>
+<div class="card" onclick="window.location.href='files.html'">
+<div class="icon">📚</div>
+<h3>الملفات التعليمية</h3>
+<p>ملازم + ملفات PDF</p>
+</div>
 
-<a href="#" class="card">
+<div class="card">
 <div class="icon">📝</div>
 <h3>الواجبات</h3>
-<p>متابعة الواجبات والتكليفات</p>
-</a>
+<p>متابعة التكليفات</p>
+</div>
 
-<a href="#" class="card">
+<div class="card">
 <div class="icon">🏆</div>
 <h3>النتائج</h3>
-<p>متابعة نتائج الاختبارات والتقييمات</p>
-</a>
+<p>نتائج الاختبارات</p>
+</div>
 
-<a href="#" class="card">
+<div class="card">
 <div class="icon">📢</div>
 <h3>الإعلانات</h3>
-<p>آخر الأخبار والتنبيهات المهمة</p>
-</a>
+<p>آخر التنبيهات</p>
+</div>
 
 </div>
 
@@ -274,21 +315,13 @@ document.getElementById("userName").innerHTML =
 "👋 " + (user.full_name || user.name);
 
 function logout(){
-
-  localStorage.clear();
-
-  client.auth.signOut();
-
-  history.pushState(null, "", location.href);
-
-  window.location.replace("login.html");
-
+localStorage.clear();
+window.location.href = "login.html";
 }
 
 function goDashboard(){
 window.location.href = "dashboard.html";
 }
-
 </script>
 
 </body>
