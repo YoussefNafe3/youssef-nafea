@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>رفع الملفات - الأدمن</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f172a,#111827,#020617);
+color:white;
+min-height:100vh;
+padding:20px;
+}
+
+/* HEADER */
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.title{
+font-size:26px;
+font-weight:800;
+}
+
+.back{
+padding:10px 15px;
+background:rgba(255,255,255,.1);
+border-radius:12px;
+text-decoration:none;
+color:white;
+}
+
+/* FORM */
+.form{
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:18px;
+border:1px solid rgba(255,255,255,.1);
+max-width:700px;
+margin:auto;
+}
+
+input,select,textarea{
+width:100%;
+padding:12px;
+margin-bottom:12px;
+border:none;
+border-radius:12px;
+background:rgba(255,255,255,.08);
+color:white;
+outline:none;
+}
+
+textarea{
+resize:none;
+height:90px;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:#FFD700;
+color:#111;
+font-weight:800;
+cursor:pointer;
+transition:.3s;
+}
+
+button:hover{
+transform:scale(1.02);
+}
+
+/* FILE LIST */
+.list{
+margin-top:30px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:15px;
+}
+
+.card{
+background:rgba(255,255,255,.05);
+padding:15px;
+border-radius:15px;
+border:1px solid rgba(255,255,255,.08);
+}
+
+.card h3{
+margin-bottom:8px;
+}
+
+.delete{
+background:#ef4444;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+<a class="back" href="admin.html">⬅ رجوع</a>
+<div class="title">📁 إدارة الملفات</div>
+</div>
+
+<div class="form">
+
+<input id="title" placeholder="عنوان الملف">
+
+<textarea id="desc" placeholder="وصف الملف"></textarea>
+
+<select id="class_group">
+<option value="first_science">أولى ثانوي</option>
+<option value="third_biology">تالتة ثانوي أحياء</option>
+<option value="third_geology">تالتة ثانوي جيولوجيا</option>
+</select>
+
+<input type="file" id="file">
+
+<button onclick="uploadFile()">رفع الملف</button>
+
+</div>
+
+<div class="list" id="list"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* UPLOAD */
+async function uploadFile(){
+
+const title = document.getElementById("title").value;
+const desc = document.getElementById("desc").value;
+const class_group = document.getElementById("class_group").value;
+const file = document.getElementById("file").files[0];
+
+if(!file){
+alert("اختار ملف");
+return;
+}
+
+/* 1 upload to storage */
+const fileName = Date.now() + "_" + file.name;
+
+const { error: uploadError } = await client.storage
+.from("study-files")
+.upload(fileName, file);
+
+if(uploadError){
+alert("خطأ في رفع الملف");
+return;
+}
+
+/* 2 get public url */
+const { data } = client.storage
+.from("study-files")
+.getPublicUrl(fileName);
+
+const file_url = data.publicUrl;
+
+/* 3 insert DB */
+const { error: dbError } = await client
+.from("study_files")
+.insert([{
+title,
+description: desc,
+class_group,
+file_url
+}]);
+
+if(dbError){
+alert("خطأ في الحفظ");
+return;
+}
+
+alert("تم الرفع بنجاح ✅");
+loadFiles();
+
+}
+
+/* LOAD FILES */
+async function loadFiles(){
+
+const { data } = await client
+.from("study_files")
+.select("*")
+.order("created_at",{ascending:false});
+
+const list = document.getElementById("list");
+
+list.innerHTML = data.map(f=>`
+
+<div class="card">
+<h3>${f.title}</h3>
+<p>${f.description || ""}</p>
+<a href="${f.file_url}" target="_blank">📥 فتح</a>
+
+<button class="delete" onclick="deleteFile('${f.id}')">حذف</button>
+</div>
+
+`).join("");
+
+}
+
+/* DELETE */
+async function deleteFile(id){
+
+await client.from("study_files")
+.delete()
+.eq("id",id);
+
+loadFiles();
+
+}
+
+loadFiles();
+
+</script>
+
+</body>
+</html>
