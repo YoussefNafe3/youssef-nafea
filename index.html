@@ -199,13 +199,7 @@ transform:translateY(-5px);
 }
 
 /* ================= INFO ================= */
-.info {
-  position: relative;
-  padding: 60px 20px;
-  text-align: center;
-  background: linear-gradient(135deg, #0f172a, #111827);
-  overflow: hidden;
-}
+
 
 /* glow background effect */
 .info::before {
@@ -271,7 +265,61 @@ transform:translateY(-5px);
 .dark .info span{
 color:#FFD700;
 }
+.info {
+  position: relative;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #0f172a, #111827);
+  overflow: hidden;
+  text-align: center;
+}
 
+/* container */
+.info-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
+}
+
+/* image */
+.info-img {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4));
+  animation: floatIcon 3s ease-in-out infinite;
+}
+
+/* text */
+.info span {
+  font-size: 24px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #38bdf8, #facc15);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* floating animation */
+@keyframes floatIcon {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  .info span {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .info-img {
+    width: 38px;
+    height: 38px;
+  }
+}
 /* ================= CONTACT ================= */
 .contact{
 padding:70px 20px;
@@ -745,7 +793,15 @@ transform: translateX(-30px) scale(1.05); /* 👈 يطلعها برا الكون
 
 <!-- INFO -->
 <section class="info">
-<span>الأحياء • العلوم المتكاملة • الجيولوجيا</span>
+  
+  <div class="info-content">
+
+    <img src="icon.png" alt="science icon" class="info-img">
+
+    <span>الأحياء • العلوم المتكاملة • الجيولوجيا</span>
+
+  </div>
+
 </section>
 
 <!-- CONTACT -->
