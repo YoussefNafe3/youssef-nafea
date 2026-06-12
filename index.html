@@ -542,6 +542,120 @@ transform: translateX(-30px) scale(1.05); /* 👈 يطلعها برا الكون
     transform: translateY(0);
   }
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Section Background */
+.about-section {
+  padding: 100px 10%;
+  background: linear-gradient(135deg, #0f172a, #111827);
+  color: #fff;
+}
+
+/* Layout */
+.about-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+/* Image */
+.about-image {
+  flex: 1;
+  animation: slideInLeft 1s ease forwards;
+}
+
+.about-image img {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  transition: transform 0.5s ease;
+}
+
+.about-image img:hover {
+  transform: scale(1.05);
+}
+
+/* Text */
+.about-text {
+  flex: 1;
+  animation: slideInRight 1s ease forwards;
+}
+
+.about-text h2 {
+  font-size: 40px;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, #38bdf8, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.about-text p {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #cbd5e1;
+  max-width: 500px;
+}
+
+/* Button */
+.about-btn {
+  display: inline-block;
+  margin-top: 25px;
+  padding: 12px 28px;
+  background: linear-gradient(90deg, #38bdf8, #6366f1);
+  color: white;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.about-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(56,189,248,0.4);
+}
+
+/* Animations */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-80px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(80px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .about-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .about-text p {
+    margin: auto;
+  }
+}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -652,6 +766,26 @@ transform: translateX(-30px) scale(1.05); /* 👈 يطلعها برا الكون
 <!-- WHATSAPP FLOAT -->
 <a class="whatsapp" href="https://api.whatsapp.com/send?phone=201027065087" target="_blank">💬</a>
 
+<section class="about-section">
+  <div class="about-container">
+
+    <div class="about-image">
+      <img src="brain.png" alt="About Image">
+    </div>
+
+    <div class="about-text">
+      <h2>Understanding is Power</h2>
+
+      <p>
+        The power of understanding lies in its ability to transform uncertainty into confidence
+        and challenges into achievements
+      </p>
+
+      <a href="#" class="about-btn">Learn More</a>
+    </div>
+
+  </div>
+</section>        
 <!-- FOOTER -->
 <footer>
 © 2026 Dr Youssef Nafea 
