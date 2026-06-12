@@ -408,9 +408,10 @@ color:#111;
 font-weight:700;
 }
 
-/* القسم العام */
+/* ================= ABOUT SECTION (PRO FIX) ================= */
+
 .about-me {
-  padding: 80px 20px;
+  padding: 90px 20px;
   background: linear-gradient(135deg, #f8fafc, #eef2ff);
 }
 
@@ -418,29 +419,41 @@ font-weight:700;
 .about-container {
   max-width: 1100px;
   margin: auto;
+
   display: flex;
   align-items: center;
-  gap: 50px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 60px;
+
+  flex-wrap: wrap; /* مهم للموبايل */
 }
 
 /* الصورة */
-.about-image img {
-  max-width: 100%;
-  height: auto;
-  max-height: 320px;
-  object-fit: contain;
+.about-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
-  /* أنيميشن ابتدائي */
+.about-image img {
+  width: 320px;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 25px;
+
+  box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+
+  /* animation start */
   opacity: 0;
-  transform: scale(0.8) rotate(-5deg);
+  transform: scale(0.85) rotate(-6deg);
   transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* النص */
 .about-text {
   flex: 1;
+  min-width: 300px;
+
   opacity: 0;
   transform: translateX(60px);
   transition: all 1.2s ease;
@@ -457,16 +470,16 @@ font-weight:700;
   transform: translateX(0);
 }
 
-/* العناوين */
+/* العنوان */
 .about-text h2 {
-  font-size: 34px;
-  margin-bottom: 5px;
+  font-size: 36px;
+  margin-bottom: 6px;
   color: #0f172a;
 }
 
 .about-text h4 {
   color: #2563eb;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 /* النص */
@@ -477,19 +490,18 @@ font-weight:700;
   font-size: 16px;
 }
 
-/* زر */
+/* الزر */
 .about-text .btn {
   display: inline-block;
   margin-top: 15px;
-  padding: 12px 24px;
+  padding: 12px 26px;
   background: #2563eb;
   color: #fff;
-  border-radius: 10px;
+  border-radius: 12px;
   text-decoration: none;
   font-weight: 600;
+
   transition: all 0.3s ease;
-  border: none;
-  outline: none;
   box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
 }
 
@@ -498,7 +510,8 @@ font-weight:700;
   transform: translateY(-3px);
   box-shadow: 0 15px 30px rgba(37, 99, 235, 0.35);
 }
-/* أنيميشن الظهور عند السكروول */
+
+/* أنيميشن عام */
 .reveal {
   opacity: 0;
   transform: translateY(60px);
@@ -508,6 +521,22 @@ font-weight:700;
 .reveal.active {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* موبايل */
+@media (max-width: 768px) {
+  .about-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .about-text {
+    transform: translateY(40px);
+  }
+
+  .reveal.active .about-text {
+    transform: translateY(0);
+  }
 }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
