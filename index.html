@@ -407,6 +407,104 @@ background:#FFD700;
 color:#111;
 font-weight:700;
 }
+
+/* القسم العام */
+.about-me {
+  padding: 80px 20px;
+  background: linear-gradient(135deg, #f8fafc, #eef2ff);
+}
+
+/* الحاوية */
+.about-container {
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  flex-wrap: wrap;
+}
+
+/* الصورة */
+.about-image img {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 25px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+
+  /* أنيميشن ابتدائي */
+  opacity: 0;
+  transform: scale(0.8) rotate(-5deg);
+  transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* النص */
+.about-text {
+  flex: 1;
+  opacity: 0;
+  transform: translateX(60px);
+  transition: all 1.2s ease;
+}
+
+/* عند التفعيل */
+.reveal.active .about-image img {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.reveal.active .about-text {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* العناوين */
+.about-text h2 {
+  font-size: 34px;
+  margin-bottom: 5px;
+  color: #0f172a;
+}
+
+.about-text h4 {
+  color: #2563eb;
+  margin-bottom: 20px;
+}
+
+/* النص */
+.about-text p {
+  line-height: 1.9;
+  color: #475569;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+/* زر */
+.btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 12px 24px;
+  background: #2563eb;
+  color: white;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: #1e40af;
+  transform: translateY(-2px);
+}
+
+/* أنيميشن الظهور عند السكروول */
+.reveal {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -441,6 +539,37 @@ font-weight:700;
 
 </section>
 
+<section class="about-me reveal">
+
+  <div class="about-container">
+
+    <!-- الصورة -->
+    <div class="about-image">
+      <img src="section.png" alt="Dr Youssef Nafea">
+    </div>
+
+    <!-- النص -->
+    <div class="about-text">
+
+      <h2>د. يوسف نافع</h2>
+      <h4>مدرس الأحياء والعلوم المتكاملة</h4>
+
+      <p>
+        أنا دكتور يوسف نافع، متخصص في تدريس الأحياء والعلوم المتكاملة بطريقة مبسطة وعملية تساعد الطلاب على الفهم وليس الحفظ فقط.
+      </p>
+
+      <p>
+        أعمل على تبسيط المفاهيم العلمية وربطها بالحياة اليومية باستخدام أسلوب حديث وتفاعلي يجعل التعلم أكثر متعة ووضوحًا.
+      </p>
+
+      <a href="#courses" class="btn">شاهد الكورسات</a>
+
+    </div>
+
+  </div>
+
+</section>
+        
 <!-- FEATURES -->
 <h2 class="section-title">🔬 تحجز معانا ليه؟</h2>
 
@@ -545,6 +674,21 @@ localStorage.setItem("theme", document.body.classList.contains("dark"));
 if(localStorage.getItem("theme") === "true"){
 document.body.classList.add("dark");
 } 
+</script>
+<script>
+const reveals = document.querySelectorAll('.reveal');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+    }
+  });
+}, {
+  threshold: 0.2
+});
+
+reveals.forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
