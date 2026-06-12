@@ -142,23 +142,69 @@ opacity:.95;
 }
 
 /* ================= BUTTON ================= */
-.btn{
-display:inline-block;
-background:var(--btn);
-color:var(--btnText);
-padding:14px 40px;
-border-radius:50px;
-font-weight:800;
-text-decoration:none;
-transition:.3s;
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 
-/* 🔥 الظل يرجع ثابت */
-box-shadow:0 8px 25px rgba(0,0,0,.20);
+  padding: 14px 42px;
+  border-radius: 50px;
+
+  background: linear-gradient(135deg, #FFD700, #ffcc00);
+  color: #111;
+
+  font-weight: 900;
+  font-size: 16px;
+  text-decoration: none;
+
+  position: relative;
+  overflow: hidden;
+
+  box-shadow:
+    0 10px 25px rgba(255, 215, 0, 0.25),
+    0 4px 10px rgba(0, 0, 0, 0.15);
+
+  transition: all 0.3s ease;
 }
 
-.btn:hover{
-transform:scale(1.05);
-box-shadow:0 12px 30px rgba(0,0,0,.25);
+/* hover */
+.btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow:
+    0 15px 35px rgba(255, 215, 0, 0.35),
+    0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* shine effect */
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  transform: skewX(-20deg);
+}
+
+.btn:hover::before {
+  animation: shine 0.8s ease;
+}
+
+@keyframes shine {
+  0% { left: -80%; }
+  100% { left: 130%; }
+}
+
+/* click effect */
+.btn:active {
+  transform: scale(0.98);
 }
 
 /* ================= FEATURES ================= */
