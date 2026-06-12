@@ -419,7 +419,8 @@ font-weight:700;
 .about-container {
   max-width: 1100px;
   margin: auto;
-
+  position: relative;
+  overflow: visible; /* مهم جدًا */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -436,10 +437,12 @@ font-weight:700;
 }
 
 .about-image img {
-  max-width: 100%;
+  max-width: none; /* 👈 مهم عشان ما يقيدهاش */
   height: auto;
-  max-height: 320px;
+  max-height: none;
   object-fit: contain;
+transform: translateX(-30px) scale(1.05); /* 👈 يطلعها برا الكونتينر */
+  position: relative;
 }
 
   box-shadow: 0 25px 60px rgba(0,0,0,0.2);
@@ -516,7 +519,7 @@ font-weight:700;
 .reveal {
   opacity: 0;
   transform: translateY(60px);
-  transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: all 1.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .reveal.active {
