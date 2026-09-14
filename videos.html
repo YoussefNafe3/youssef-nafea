@@ -1,3825 +1,3299 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="منصة د. يوسف نافع التعليمية - مشاهدة الدروس والفيديوهات التعليمية"
+  >
+
+  <meta name="theme-color" content="#07111f">
+
+  <title>الفيديوهات | د. يوسف نافع</title>
+
+  <!-- =========================================================
+       FONTS
+  ========================================================== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- =========================================================
+       SUPABASE
+  ========================================================== -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+  ></script>
+
+  <!-- =========================================================
+       YOUTUBE IFRAME API
+  ========================================================== -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <!-- =========================================================
+       ICONS
+  ========================================================== -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  >
+
+  <!-- =========================================================
+       STYLE
+  ========================================================== -->
+  <style>
+
+    /* =========================================================
+       RESET
+    ========================================================== */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Cairo", sans-serif;
+      background:
+        radial-gradient(
+          circle at 10% 10%,
+          rgba(37, 99, 235, 0.12),
+          transparent 28%
+        ),
+        radial-gradient(
+          circle at 90% 90%,
+          rgba(14, 165, 233, 0.10),
+          transparent 30%
+        ),
+        #050b14;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    select {
+      font-family: inherit;
+    }
+
+    button {
+      border: 0;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* =========================================================
+       APP
+    ========================================================== */
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      position: relative;
+    }
+
+    /* =========================================================
+       SIDEBAR
+    ========================================================== */
+
+    .sidebar {
+      width: 350px;
+      min-width: 350px;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      right: 0;
+
+      display: flex;
+      flex-direction: column;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(10, 20, 35, 0.98),
+          rgba(5, 12, 22, 0.98)
+        );
+
+      border-left: 1px solid rgba(148, 163, 184, 0.12);
+
+      box-shadow:
+        -20px 0 60px rgba(0, 0, 0, 0.18);
+
+      z-index: 50;
+    }
+
+    /* =========================================================
+       BRAND
+    ========================================================== */
+
+    .brand {
+      padding: 26px 24px 20px;
+
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+
+      border-radius: 16px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #0ea5e9
+        );
+
+      box-shadow:
+        0 12px 30px rgba(37, 99, 235, 0.25);
+
+      font-size: 22px;
+      color: white;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.4;
+    }
+
+    .brand-subtitle {
+      margin-top: 3px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* =========================================================
+       STUDENT INFO
+    ========================================================== */
+
+    .student-card {
+      margin: 20px;
+
+      padding: 17px;
 
-    <meta charset="UTF-8">
+      border-radius: 18px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(30, 41, 59, 0.72),
+          rgba(15, 23, 42, 0.72)
+        );
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+      border: 1px solid rgba(148, 163, 184, 0.12);
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .student-label {
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 5px;
+    }
 
-    <meta
-        name="theme-color"
-        content="#07111f"
-    >
+    .student-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: #f8fafc;
 
-    <title>
-        الفيديوهات | د. يوسف نافع
-    </title>
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
+    .student-class {
+      margin-top: 7px;
 
-    <!-- =====================================================
-         GOOGLE FONT
-    ====================================================== -->
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
 
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
+      font-size: 11px;
+      color: #93c5fd;
 
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
+      background: rgba(37, 99, 235, 0.10);
+      border: 1px solid rgba(59, 130, 246, 0.14);
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
+      padding: 5px 9px;
+      border-radius: 999px;
+    }
 
+    /* =========================================================
+       VIDEOS HEADER
+    ========================================================== */
 
-    <!-- =====================================================
-         SUPABASE
-    ====================================================== -->
+    .videos-header {
+      padding: 0 20px 14px;
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
-    ></script>
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
 
+    .videos-heading {
+      font-size: 14px;
+      font-weight: 800;
+    }
 
-    <!-- =====================================================
-         YOUTUBE IFRAME API
-    ====================================================== -->
+    .video-count {
+      min-width: 30px;
+      height: 28px;
 
-    <script
-        src="https://www.youtube.com/iframe_api"
-    ></script>
+      padding: 0 8px;
 
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-    <style>
+      border-radius: 9px;
 
-        /* =====================================================
-           RESET
-        ====================================================== */
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.14);
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:"Cairo",sans-serif;
-        }
+      color: #93c5fd;
+      font-size: 12px;
+      font-weight: 800;
+    }
 
+    /* =========================================================
+       VIDEO LIST
+    ========================================================== */
 
-        html,
-        body{
-            min-height:100%;
-        }
+    .video-list {
+      flex: 1;
+      min-height: 0;
 
+      overflow-y: auto;
 
-        body{
+      padding: 0 14px 20px;
+    }
 
-            min-height:100vh;
+    .video-list::-webkit-scrollbar {
+      width: 6px;
+    }
 
-            background:
-                radial-gradient(
-                    circle at 15% 15%,
-                    rgba(37,99,235,.13),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 85% 80%,
-                    rgba(245,158,11,.08),
-                    transparent 30%
-                ),
-                linear-gradient(
-                    135deg,
-                    #07111f 0%,
-                    #0b1626 48%,
-                    #111827 100%
-                );
+    .video-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-            color:#fff;
+    .video-list::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.16);
+      border-radius: 999px;
+    }
 
-            display:flex;
+    /* =========================================================
+       VIDEO ITEM
+    ========================================================== */
 
-            overflow-x:hidden;
-        }
+    .video-item {
+      width: 100%;
 
+      padding: 13px;
 
-        /* =====================================================
-           SIDEBAR
-        ====================================================== */
+      margin-bottom: 9px;
 
-        .sidebar{
+      border-radius: 15px;
 
-            width:300px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
 
-            flex:0 0 300px;
+      cursor: pointer;
 
-            min-height:100vh;
+      background: rgba(15, 23, 42, 0.62);
 
-            padding:25px 18px;
+      border: 1px solid rgba(148, 163, 184, 0.08);
 
-            background:
-                rgba(7,17,31,.90);
+      transition:
+        transform 0.18s ease,
+        background 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+    }
 
-            border-left:
-                1px solid rgba(255,255,255,.07);
+    .video-item:hover {
+      transform: translateY(-1px);
 
-            backdrop-filter:
-                blur(20px);
+      background: rgba(30, 41, 59, 0.85);
 
-            -webkit-backdrop-filter:
-                blur(20px);
+      border-color: rgba(59, 130, 246, 0.20);
+    }
 
-            overflow-y:auto;
-        }
+    .video-item.active {
+      background:
+        linear-gradient(
+          135deg,
+          rgba(37, 99, 235, 0.20),
+          rgba(14, 165, 233, 0.08)
+        );
 
+      border-color: rgba(59, 130, 246, 0.35);
 
-        /* =====================================================
-           LOGO
-        ====================================================== */
+      box-shadow:
+        0 8px 25px rgba(37, 99, 235, 0.08);
+    }
 
-        .logo-area{
+    .video-number {
+      width: 38px;
+      height: 38px;
 
-            display:flex;
+      flex-shrink: 0;
 
-            align-items:center;
+      border-radius: 12px;
 
-            gap:12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-            padding:0 8px;
+      background: rgba(255,255,255,0.05);
 
-            margin-bottom:30px;
-        }
+      color: #94a3b8;
 
+      font-size: 12px;
+      font-weight: 800;
+    }
 
-        .logo-icon{
+    .video-item.active .video-number {
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #0ea5e9
+        );
 
-            width:55px;
+      color: white;
+    }
 
-            height:55px;
+    .video-info {
+      min-width: 0;
+      flex: 1;
+    }
 
-            flex:0 0 55px;
+    .video-title {
+      font-size: 13px;
+      line-height: 1.7;
 
-            display:flex;
+      font-weight: 700;
 
-            align-items:center;
+      color: #e2e8f0;
 
-            justify-content:center;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
 
-            border-radius:17px;
+    .video-type {
+      margin-top: 4px;
 
-            font-size:27px;
+      font-size: 10px;
+      color: #64748b;
 
-            background:
-                linear-gradient(
-                    135deg,
-                    #facc15,
-                    #f59e0b
-                );
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
 
-            color:#111827;
+    /* =========================================================
+       EMPTY / LOADING
+    ========================================================== */
 
-            box-shadow:
-                0 12px 28px rgba(245,158,11,.18);
-        }
+    .state-box {
+      margin: 15px 6px;
 
+      min-height: 180px;
 
-        .logo-text h2{
+      padding: 25px 18px;
 
-            font-size:19px;
+      border-radius: 18px;
 
-            line-height:1.3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
 
-            font-weight:800;
-        }
+      text-align: center;
 
+      background: rgba(15, 23, 42, 0.55);
 
-        .logo-text p{
+      border: 1px dashed rgba(148, 163, 184, 0.15);
 
-            margin-top:3px;
+      color: #94a3b8;
+    }
 
-            color:#64748b;
+    .state-icon {
+      width: 48px;
+      height: 48px;
 
-            font-size:12px;
-        }
+      margin-bottom: 12px;
 
+      border-radius: 14px;
 
-        /* =====================================================
-           SIDEBAR TITLE
-        ====================================================== */
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-        .sidebar-title{
+      background: rgba(37, 99, 235, 0.10);
 
-            display:flex;
+      color: #60a5fa;
 
-            align-items:center;
+      font-size: 18px;
+    }
 
-            gap:10px;
+    .state-title {
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 800;
+    }
 
-            padding:0 7px;
+    .state-text {
+      margin-top: 7px;
 
-            margin-bottom:14px;
+      color: #64748b;
 
-            color:#e2e8f0;
+      font-size: 11px;
+      line-height: 1.8;
+    }
 
-            font-size:15px;
+    .retry-button {
+      margin-top: 14px;
 
-            font-weight:800;
-        }
+      padding: 9px 16px;
 
+      border-radius: 10px;
 
-        .sidebar-number{
+      background: #2563eb;
+      color: white;
 
-            width:30px;
+      cursor: pointer;
 
-            height:30px;
+      font-size: 11px;
+      font-weight: 800;
 
-            flex:0 0 30px;
+      transition: 0.2s ease;
+    }
 
-            display:flex;
+    .retry-button:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
 
-            align-items:center;
+    /* =========================================================
+       MAIN
+    ========================================================== */
 
-            justify-content:center;
+    .main {
+      flex: 1;
+      min-width: 0;
 
-            border-radius:10px;
+      padding: 28px;
 
-            background:
-                rgba(250,204,21,.10);
+      position: relative;
+    }
 
-            color:#facc15;
+    /* =========================================================
+       TOPBAR
+    ========================================================== */
 
-            font-weight:800;
-        }
+    .topbar {
+      max-width: 1450px;
+      margin: 0 auto 24px;
 
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
-        /* =====================================================
-           VIDEO LIST
-        ====================================================== */
+      gap: 20px;
+    }
 
-        #videoList{
+    .page-title {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.4px;
+    }
 
-            display:flex;
+    .page-subtitle {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #64748b;
+    }
 
-            flex-direction:column;
+    .connection-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
 
-            gap:10px;
-        }
+      padding: 9px 13px;
 
+      border-radius: 999px;
 
-        .video-item{
+      background: rgba(16, 185, 129, 0.08);
 
-            position:relative;
+      border: 1px solid rgba(16, 185, 129, 0.12);
 
-            padding:16px 15px;
+      color: #6ee7b7;
 
-            border-radius:16px;
+      font-size: 11px;
+      font-weight: 700;
+    }
 
-            cursor:pointer;
+    .status-dot {
+      width: 7px;
+      height: 7px;
 
-            background:
-                rgba(255,255,255,.035);
+      border-radius: 50%;
 
-            border:
-                1px solid rgba(255,255,255,.06);
+      background: #34d399;
 
-            color:#cbd5e1;
+      box-shadow:
+        0 0 0 4px rgba(52, 211, 153, 0.08);
+    }
 
-            transition:
-                background .22s ease,
-                border-color .22s ease,
-                transform .22s ease,
-                box-shadow .22s ease;
-        }
+    /* =========================================================
+       PLAYER CARD
+    ========================================================== */
 
+    .player-card {
+      max-width: 1450px;
+      margin: 0 auto;
 
-        .video-item:hover{
+      background:
+        linear-gradient(
+          145deg,
+          rgba(15, 23, 42, 0.88),
+          rgba(8, 15, 27, 0.92)
+        );
 
-            background:
-                rgba(37,99,235,.14);
+      border: 1px solid rgba(148, 163, 184, 0.10);
 
-            border-color:
-                rgba(59,130,246,.35);
+      border-radius: 24px;
 
-            transform:
-                translateX(-2px);
-        }
+      overflow: hidden;
 
+      box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.22);
+    }
 
-        .video-item.active{
+    /* =========================================================
+       PLAYER
+    ========================================================== */
 
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(37,99,235,.25),
-                    rgba(30,64,175,.16)
-                );
+    .player-wrapper {
+      width: 100%;
 
-            border-color:
-                rgba(59,130,246,.65);
+      aspect-ratio: 16 / 9;
 
-            color:#fff;
+      background: #000;
 
-            box-shadow:
-                0 12px 30px rgba(37,99,235,.10);
-        }
+      position: relative;
 
+      overflow: hidden;
+    }
 
-        .video-title{
+    .player-wrapper video,
+    .player-wrapper iframe {
+      width: 100%;
+      height: 100%;
 
-            font-size:14px;
+      display: block;
 
-            font-weight:700;
+      border: 0;
+    }
 
-            line-height:1.7;
-        }
+    #videoPlayer {
+      background: #000;
+    }
 
+    #youtubePlayer {
+      display: none;
+    }
 
-        .video-type{
+    /* =========================================================
+       PLAYER PLACEHOLDER
+    ========================================================== */
 
-            margin-top:6px;
+    .player-placeholder {
+      position: absolute;
+      inset: 0;
 
-            color:#94a3b8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
 
-            font-size:11px;
-        }
+      text-align: center;
 
+      background:
+        radial-gradient(
+          circle at center,
+          rgba(37, 99, 235, 0.12),
+          transparent 45%
+        ),
+        #030812;
 
-        /* =====================================================
-           LOADING / ERROR / EMPTY
-        ====================================================== */
+      z-index: 2;
+    }
 
-        .list-message{
+    .placeholder-icon {
+      width: 72px;
+      height: 72px;
 
-            padding:15px;
+      margin-bottom: 18px;
 
-            border-radius:15px;
+      border-radius: 22px;
 
-            color:#94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-            background:
-                rgba(255,255,255,.025);
+      background:
+        linear-gradient(
+          135deg,
+          rgba(37, 99, 235, 0.20),
+          rgba(14, 165, 233, 0.10)
+        );
 
-            border:
-                1px solid rgba(255,255,255,.05);
+      border: 1px solid rgba(96, 165, 250, 0.12);
 
-            font-size:13px;
+      color: #60a5fa;
 
-            line-height:1.9;
-        }
+      font-size: 28px;
+    }
 
+    .placeholder-title {
+      font-size: 18px;
+      font-weight: 900;
+    }
 
-        .list-message.error{
+    .placeholder-text {
+      max-width: 420px;
 
-            color:#fca5a5;
+      margin-top: 8px;
 
-            background:
-                rgba(239,68,68,.08);
+      color: #64748b;
 
-            border-color:
-                rgba(239,68,68,.22);
-        }
+      font-size: 12px;
+      line-height: 1.8;
+    }
 
+    /* =========================================================
+       VIDEO DETAILS
+    ========================================================== */
 
-        .list-message.warning{
+    .video-details {
+      padding: 24px 26px 28px;
+    }
 
-            color:#fbbf24;
+    .current-title {
+      font-size: 21px;
+      font-weight: 900;
+      line-height: 1.6;
 
-            background:
-                rgba(245,158,11,.08);
+      color: #f8fafc;
+    }
 
-            border-color:
-                rgba(245,158,11,.20);
-        }
+    .current-meta {
+      margin-top: 10px;
 
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
 
-        /* =====================================================
-           MAIN
-        ====================================================== */
+    .meta-badge {
+      padding: 6px 10px;
 
-        .main{
+      border-radius: 999px;
 
-            flex:1;
+      background: rgba(148, 163, 184, 0.06);
 
-            min-width:0;
+      border: 1px solid rgba(148, 163, 184, 0.08);
 
-            padding:35px;
-        }
+      color: #94a3b8;
 
+      font-size: 10px;
+      font-weight: 700;
+    }
 
-        /* =====================================================
-           TOPBAR
-        ====================================================== */
+    .meta-badge.blue {
+      background: rgba(37, 99, 235, 0.09);
+      border-color: rgba(59, 130, 246, 0.12);
+      color: #93c5fd;
+    }
 
-        .topbar{
+    /* =========================================================
+       PROGRESS
+    ========================================================== */
 
-            display:flex;
+    .progress-section {
+      margin-top: 22px;
 
-            align-items:center;
+      padding: 16px;
 
-            justify-content:space-between;
+      border-radius: 16px;
 
-            gap:20px;
+      background: rgba(255,255,255,0.025);
 
-            margin-bottom:30px;
-        }
+      border: 1px solid rgba(148, 163, 184, 0.07);
+    }
 
+    .progress-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
-        .top-title h1{
+      gap: 10px;
 
-            font-size:30px;
+      margin-bottom: 10px;
+    }
 
-            line-height:1.3;
+    .progress-label {
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 700;
+    }
 
-            font-weight:800;
+    .progress-value {
+      color: #60a5fa;
+      font-size: 11px;
+      font-weight: 900;
+    }
 
-            letter-spacing:-.5px;
-        }
+    .progress-track {
+      width: 100%;
+      height: 6px;
 
+      overflow: hidden;
 
-        .top-title p{
+      border-radius: 999px;
 
-            margin-top:6px;
+      background: rgba(148, 163, 184, 0.10);
+    }
 
-            color:#7891ae;
+    .progress-bar {
+      width: 0%;
+      height: 100%;
 
-            font-size:14px;
-        }
+      border-radius: inherit;
 
+      background:
+        linear-gradient(
+          90deg,
+          #2563eb,
+          #0ea5e9
+        );
 
-        .back-btn{
+      transition: width 0.25s ease;
+    }
 
-            display:inline-flex;
+    /* =========================================================
+       MOBILE SIDEBAR BUTTON
+    ========================================================== */
 
-            align-items:center;
+    .mobile-menu-button {
+      display: none;
 
-            justify-content:center;
+      position: fixed;
 
-            padding:12px 18px;
+      bottom: 20px;
+      right: 20px;
 
-            border-radius:14px;
+      width: 52px;
+      height: 52px;
 
-            border:
-                1px solid rgba(255,255,255,.09);
+      border-radius: 17px;
 
-            background:
-                rgba(255,255,255,.05);
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #0ea5e9
+        );
 
-            color:#dbeafe;
+      color: white;
 
-            text-decoration:none;
+      box-shadow:
+        0 15px 35px rgba(37, 99, 235, 0.35);
 
-            font-size:14px;
+      cursor: pointer;
 
-            font-weight:700;
+      z-index: 200;
 
-            white-space:nowrap;
+      font-size: 18px;
+    }
 
-            transition:.25s ease;
-        }
+    /* =========================================================
+       OVERLAY
+    ========================================================== */
 
+    .sidebar-overlay {
+      display: none;
 
-        .back-btn:hover{
+      position: fixed;
+      inset: 0;
 
-            background:
-                rgba(37,99,235,.15);
+      background: rgba(0, 0, 0, 0.55);
 
-            border-color:
-                rgba(59,130,246,.35);
+      backdrop-filter: blur(3px);
 
-            color:#fff;
-        }
+      z-index: 40;
+    }
 
+    /* =========================================================
+       RESPONSIVE
+    ========================================================== */
 
-        /* =====================================================
-           PLAYER CARD
-        ====================================================== */
+    @media (max-width: 1050px) {
 
-        .player-card{
+      .sidebar {
+        width: 310px;
+        min-width: 310px;
+      }
 
-            width:100%;
+      .main {
+        padding: 20px;
+      }
 
-            padding:25px;
+      .current-title {
+        font-size: 18px;
+      }
+    }
 
-            border-radius:25px;
+    @media (max-width: 820px) {
 
-            background:
-                rgba(255,255,255,.045);
+      .app {
+        display: block;
+      }
 
-            border:
-                1px solid rgba(255,255,255,.09);
+      .sidebar {
+        position: fixed;
 
-            box-shadow:
-                0 25px 70px rgba(0,0,0,.25);
-        }
+        top: 0;
+        right: -100%;
 
+        width: min(350px, 88vw);
+        min-width: 0;
 
-        /* =====================================================
-           PLAYER WRAPPER
-        ====================================================== */
+        transition: right 0.25s ease;
 
-        .player-wrapper{
+        box-shadow:
+          -25px 0 70px rgba(0,0,0,0.35);
+      }
 
-            position:relative;
+      .sidebar.open {
+        right: 0;
+      }
 
-            width:100%;
+      .sidebar-overlay.active {
+        display: block;
+      }
 
-            aspect-ratio:16 / 9;
+      .mobile-menu-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-            background:#000;
+      .main {
+        width: 100%;
+        padding: 15px;
+      }
 
-            border-radius:18px;
+      .topbar {
+        margin-bottom: 15px;
+      }
 
-            overflow:hidden;
+      .page-title {
+        font-size: 20px;
+      }
 
-            box-shadow:
-                0 20px 50px rgba(0,0,0,.35);
-        }
+      .connection-status {
+        display: none;
+      }
 
+      .player-card {
+        border-radius: 18px;
+      }
 
-        /* =====================================================
-           HTML VIDEO
-        ====================================================== */
+      .video-details {
+        padding: 20px;
+      }
+    }
 
-        #videoPlayer{
+    @media (max-width: 500px) {
 
-            width:100%;
+      .main {
+        padding: 10px;
+      }
 
-            height:100%;
+      .topbar {
+        padding: 4px 5px;
+      }
 
-            display:none;
+      .page-title {
+        font-size: 18px;
+      }
 
-            background:#000;
-        }
+      .page-subtitle {
+        font-size: 10px;
+      }
 
+      .video-details {
+        padding: 17px;
+      }
 
-        /* =====================================================
-           YOUTUBE
-        ====================================================== */
+      .current-title {
+        font-size: 16px;
+      }
 
-        #youtubePlayer{
+      .player-placeholder {
+        padding: 20px;
+      }
 
-            position:absolute;
+      .placeholder-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        font-size: 22px;
+      }
 
-            inset:0;
+      .placeholder-title {
+        font-size: 15px;
+      }
 
-            width:100%;
+      .placeholder-text {
+        font-size: 10px;
+      }
+    }
 
-            height:100%;
-
-            display:none;
-
-            border:0;
-
-            background:#000;
-        }
-
-
-        /* =====================================================
-           WATERMARK
-        ====================================================== */
-
-        #watermark{
-
-            position:absolute;
-
-            top:16px;
-
-            left:16px;
-
-            z-index:30;
-
-            pointer-events:none;
-
-            user-select:none;
-
-            color:#fff;
-
-            opacity:.30;
-
-            font-size:11px;
-
-            line-height:1.65;
-
-            white-space:pre-line;
-
-            text-align:left;
-
-            direction:ltr;
-
-            text-shadow:
-                0 1px 3px #000,
-                0 0 5px #000;
-        }
-
-
-        /* =====================================================
-           EMPTY PLAYER
-        ====================================================== */
-
-        .empty-player{
-
-            position:absolute;
-
-            inset:0;
-
-            z-index:10;
-
-            display:flex;
-
-            align-items:center;
-
-            justify-content:center;
-
-            flex-direction:column;
-
-            gap:10px;
-
-            color:#64748b;
-
-            background:
-                radial-gradient(
-                    circle at center,
-                    #0b1728,
-                    #020617
-                );
-        }
-
-
-        .empty-player-icon{
-
-            font-size:45px;
-
-            opacity:.5;
-        }
-
-
-        .empty-player-text{
-
-            font-size:14px;
-
-            font-weight:700;
-        }
-
-
-        /* =====================================================
-           PLAYER ERROR
-        ====================================================== */
-
-        #playerError{
-
-            position:absolute;
-
-            inset:0;
-
-            z-index:40;
-
-            display:none;
-
-            align-items:center;
-
-            justify-content:center;
-
-            flex-direction:column;
-
-            text-align:center;
-
-            padding:25px;
-
-            background:
-                rgba(2,6,23,.96);
-
-            color:#fff;
-        }
-
-
-        #playerError .error-icon{
-
-            font-size:42px;
-
-            margin-bottom:12px;
-        }
-
-
-        #playerError h3{
-
-            color:#fca5a5;
-
-            font-size:18px;
-
-            margin-bottom:6px;
-        }
-
-
-        #playerError p{
-
-            max-width:600px;
-
-            color:#94a3b8;
-
-            font-size:13px;
-
-            line-height:1.8;
-        }
-
-
-        /* =====================================================
-           CONTROLS AREA
-        ====================================================== */
-
-        .controls-area{
-
-            margin-top:18px;
-        }
-
-
-        .speedBox{
-
-            display:flex;
-
-            align-items:center;
-
-            flex-wrap:wrap;
-
-            gap:7px;
-
-            margin-bottom:15px;
-        }
-
-
-        .speed-label{
-
-            margin-left:5px;
-
-            color:#94a3b8;
-
-            font-size:13px;
-
-            font-weight:700;
-        }
-
-
-        .speedBtn{
-
-            padding:8px 14px;
-
-            border-radius:10px;
-
-            border:
-                1px solid rgba(255,255,255,.06);
-
-            background:
-                rgba(255,255,255,.07);
-
-            color:#cbd5e1;
-
-            font-size:12px;
-
-            font-weight:800;
-
-            cursor:pointer;
-
-            transition:.2s ease;
-        }
-
-
-        .speedBtn:hover{
-
-            background:
-                rgba(37,99,235,.20);
-
-            color:#fff;
-        }
-
-
-        .speedBtn.active{
-
-            background:#2563eb;
-
-            border-color:#3b82f6;
-
-            color:#fff;
-
-            box-shadow:
-                0 7px 18px rgba(37,99,235,.18);
-        }
-
-
-        /* =====================================================
-           VIDEO INFO
-        ====================================================== */
-
-        .video-info{
-
-            padding-top:5px;
-        }
-
-
-        #videoTitle{
-
-            margin-bottom:7px;
-
-            color:#f8fafc;
-
-            font-size:20px;
-
-            font-weight:800;
-
-            line-height:1.5;
-        }
-
-
-        .video-status{
-
-            display:flex;
-
-            align-items:center;
-
-            justify-content:space-between;
-
-            gap:15px;
-
-            flex-wrap:wrap;
-        }
-
-
-        #percentBox{
-
-            color:#94a3b8;
-
-            font-size:13px;
-
-            font-weight:700;
-        }
-
-
-        /* =====================================================
-           PROGRESS
-        ====================================================== */
-
-        .progress{
-
-            width:100%;
-
-            height:6px;
-
-            margin-top:12px;
-
-            border-radius:20px;
-
-            overflow:hidden;
-
-            background:
-                rgba(255,255,255,.08);
-        }
-
-
-        .progress-bar{
-
-            width:0%;
-
-            height:100%;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    #2563eb,
-                    #60a5fa
-                );
-
-            transition:
-                width .25s ease;
-        }
-
-
-        /* =====================================================
-           ANTI RECORD / TAB HIDDEN
-        ====================================================== */
-
-        #antiRecord{
-
-            position:fixed;
-
-            inset:0;
-
-            z-index:999999;
-
-            display:none;
-
-            align-items:center;
-
-            justify-content:center;
-
-            flex-direction:column;
-
-            padding:25px;
-
-            text-align:center;
-
-            background:
-                rgba(0,0,0,.96);
-
-            backdrop-filter:
-                blur(15px);
-        }
-
-
-        #antiRecord .anti-icon{
-
-            margin-bottom:15px;
-
-            font-size:50px;
-        }
-
-
-        #antiRecord h2{
-
-            margin-bottom:8px;
-
-            color:#f87171;
-
-            font-size:22px;
-        }
-
-
-        #antiRecord p{
-
-            color:#cbd5e1;
-
-            font-size:14px;
-        }
-
-
-        /* =====================================================
-           MOBILE
-        ====================================================== */
-
-        @media(max-width:900px){
-
-            body{
-
-                flex-direction:column;
-            }
-
-
-            .sidebar{
-
-                width:100%;
-
-                min-height:auto;
-
-                flex:0 0 auto;
-
-                padding:15px;
-
-                border-left:none;
-
-                border-bottom:
-                    1px solid rgba(255,255,255,.08);
-            }
-
-
-            .logo-area{
-
-                margin-bottom:18px;
-            }
-
-
-            #videoList{
-
-                flex-direction:row;
-
-                overflow-x:auto;
-
-                padding-bottom:5px;
-
-                scrollbar-width:none;
-            }
-
-
-            #videoList::-webkit-scrollbar{
-
-                display:none;
-            }
-
-
-            .video-item{
-
-                min-width:220px;
-
-                flex:0 0 220px;
-            }
-
-
-            .main{
-
-                width:100%;
-
-                padding:18px 12px;
-            }
-
-
-            .topbar{
-
-                flex-direction:column;
-
-                align-items:stretch;
-
-                text-align:right;
-            }
-
-
-            .back-btn{
-
-                width:100%;
-            }
-
-
-            .top-title h1{
-
-                font-size:25px;
-            }
-
-
-            .player-card{
-
-                padding:12px;
-
-                border-radius:18px;
-            }
-
-
-            .player-wrapper{
-
-                border-radius:13px;
-            }
-
-
-            #videoTitle{
-
-                font-size:17px;
-            }
-        }
-
-
-        /* =====================================================
-           SMALL MOBILE
-        ====================================================== */
-
-        @media(max-width:480px){
-
-            .logo-icon{
-
-                width:48px;
-
-                height:48px;
-
-                flex-basis:48px;
-
-                font-size:23px;
-            }
-
-
-            .logo-text h2{
-
-                font-size:17px;
-            }
-
-
-            .video-item{
-
-                min-width:190px;
-
-                flex-basis:190px;
-
-                padding:13px;
-            }
-
-
-            .video-title{
-
-                font-size:13px;
-            }
-
-
-            .speedBtn{
-
-                flex:1;
-
-                min-width:55px;
-
-                padding:8px 5px;
-            }
-
-
-            #watermark{
-
-                top:9px;
-
-                left:9px;
-
-                font-size:9px;
-            }
-        }
-
-    </style>
-
+  </style>
 </head>
-
 
 <body>
 
+  <!-- =========================================================
+       APP
+  ========================================================== -->
 
-    <!-- =====================================================
-         TAB HIDDEN SCREEN
-    ====================================================== -->
+  <div class="app">
 
-    <div id="antiRecord">
-
-        <div class="anti-icon">
-            ⚠️
-        </div>
-
-        <h2>
-            تم إيقاف العرض مؤقتًا
-        </h2>
-
-        <p>
-            ارجع إلى صفحة الفيديو لاستكمال المشاهدة.
-        </p>
-
-    </div>
-
-
-    <!-- =====================================================
+    <!-- =======================================================
          SIDEBAR
-    ====================================================== -->
+    ======================================================== -->
 
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
 
+      <div class="brand">
 
-        <div class="logo-area">
+        <div class="brand-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
 
-            <div class="logo-icon">
-                🎬
-            </div>
+        <div class="brand-text">
 
-            <div class="logo-text">
+          <div class="brand-title">
+            د. يوسف نافع
+          </div>
 
-                <h2>
-                    الفيديوهات
-                </h2>
-
-                <p>
-                    منصة د. يوسف نافع
-                </p>
-
-            </div>
+          <div class="brand-subtitle">
+            منصة التعليم الذكية
+          </div>
 
         </div>
 
+      </div>
 
-        <div class="sidebar-title">
 
-            <div class="sidebar-number">
-                1
-            </div>
+      <!-- STUDENT -->
 
-            <span>
-                محتوى المادة
-            </span>
+      <div class="student-card">
+
+        <div class="student-label">
+          الطالب
+        </div>
+
+        <div class="student-name" id="studentName">
+          جاري التحميل...
+        </div>
+
+        <div class="student-class">
+
+          <i class="fa-solid fa-layer-group"></i>
+
+          <span id="studentClass">
+            جاري تحديد الصف...
+          </span>
 
         </div>
 
+      </div>
 
-        <div id="videoList">
 
-            <div class="list-message">
-                جاري تحميل الفيديوهات...
-            </div>
+      <!-- VIDEOS HEADER -->
+
+      <div class="videos-header">
+
+        <div class="videos-heading">
+          المحاضرات والدروس
+        </div>
+
+        <div class="video-count" id="videoCount">
+          0
+        </div>
+
+      </div>
+
+
+      <!-- VIDEO LIST -->
+
+      <div class="video-list" id="videoList">
+
+        <div class="state-box">
+
+          <div class="state-icon">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          </div>
+
+          <div class="state-title">
+            جاري تحميل الفيديوهات
+          </div>
+
+          <div class="state-text">
+            لحظات ويتم تحميل المحتوى الخاص بك...
+          </div>
 
         </div>
+
+      </div>
 
     </aside>
 
 
-    <!-- =====================================================
+    <!-- =======================================================
+         OVERLAY
+    ======================================================== -->
+
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="closeSidebar()"
+    ></div>
+
+
+    <!-- =======================================================
          MAIN
-    ====================================================== -->
+    ======================================================== -->
 
     <main class="main">
 
+      <!-- TOPBAR -->
 
-        <div class="topbar">
+      <div class="topbar">
 
+        <div>
 
-            <div class="top-title">
+          <div class="page-title">
+            الفيديوهات التعليمية
+          </div>
 
-                <h1>
-                    قاعة الفيديو
-                </h1>
-
-                <p>
-                    شاهد الدروس واستكمل تقدمك من حيث توقفت.
-                </p>
-
-            </div>
-
-
-            <a
-                href="dashboard.html"
-                class="back-btn"
-            >
-                ← العودة للوحة الطالب
-            </a>
-
+          <div class="page-subtitle">
+            شاهد دروسك وتابع تقدمك في المحتوى التعليمي
+          </div>
 
         </div>
 
 
-        <!-- =================================================
-             PLAYER CARD
-        ================================================== -->
+        <div class="connection-status">
 
-        <section class="player-card">
+          <span class="status-dot"></span>
 
+          <span id="connectionText">
+            متصل بالمنصة
+          </span>
 
-            <div class="player-wrapper">
+        </div>
 
-
-                <!-- =========================================
-                     HTML VIDEO
-                ========================================== -->
-
-                <video
-                    id="videoPlayer"
-                    controls
-                    controlsList="nodownload noplaybackrate"
-                    playsinline
-                    preload="metadata"
-                    oncontextmenu="return false;"
-                ></video>
+      </div>
 
 
-                <!-- =========================================
-                     YOUTUBE
-                ========================================== -->
+      <!-- PLAYER CARD -->
 
-                <div
-                    id="youtubePlayer"
-                ></div>
+      <section class="player-card">
 
+        <!-- PLAYER -->
 
-                <!-- =========================================
-                     WATERMARK
-                ========================================== -->
+        <div class="player-wrapper" id="playerWrapper">
 
-                <div id="watermark">
-                    تحميل بيانات الطالب...
-                </div>
+          <!-- PLACEHOLDER -->
 
+          <div
+            class="player-placeholder"
+            id="playerPlaceholder"
+          >
 
-                <!-- =========================================
-                     EMPTY
-                ========================================== -->
+            <div class="placeholder-icon">
+              <i class="fa-solid fa-play"></i>
+            </div>
 
-                <div
-                    class="empty-player"
-                    id="emptyPlayer"
-                >
+            <div class="placeholder-title">
+              اختر درسًا للبدء
+            </div>
 
-                    <div class="empty-player-icon">
-                        ▶️
-                    </div>
+            <div class="placeholder-text">
+              اختر أحد الفيديوهات من القائمة الجانبية لبدء المشاهدة.
+            </div>
 
-                    <div class="empty-player-text">
-                        اختر فيديو من القائمة
-                    </div>
-
-                </div>
+          </div>
 
 
-                <!-- =========================================
-                     PLAYER ERROR
-                ========================================== -->
+          <!-- NATIVE VIDEO -->
 
-                <div id="playerError">
+          <video
+            id="videoPlayer"
+            controls
+            playsinline
+            preload="metadata"
+          ></video>
 
-                    <div class="error-icon">
-                        ⚠️
-                    </div>
 
-                    <h3>
-                        تعذر تشغيل الفيديو
-                    </h3>
+          <!-- YOUTUBE -->
 
-                    <p id="playerErrorText">
-                        حدث خطأ أثناء تشغيل الفيديو.
-                    </p>
+          <div
+            id="youtubePlayer"
+            style="display:none;"
+          ></div>
 
-                </div>
+        </div>
 
+
+        <!-- VIDEO DETAILS -->
+
+        <div class="video-details">
+
+          <div
+            class="current-title"
+            id="currentTitle"
+          >
+            لم يتم اختيار فيديو
+          </div>
+
+
+          <div class="current-meta">
+
+            <div
+              class="meta-badge blue"
+              id="currentClass"
+            >
+              —
+            </div>
+
+            <div
+              class="meta-badge"
+              id="currentType"
+            >
+              —
+            </div>
+
+            <div
+              class="meta-badge"
+              id="currentStatus"
+            >
+              لم يبدأ المشاهدة
+            </div>
+
+          </div>
+
+
+          <!-- PROGRESS -->
+
+          <div class="progress-section">
+
+            <div class="progress-head">
+
+              <div class="progress-label">
+                تقدم المشاهدة
+              </div>
+
+              <div
+                class="progress-value"
+                id="progressValue"
+              >
+                0%
+              </div>
 
             </div>
 
+            <div class="progress-track">
 
-            <!-- =================================================
-                 CONTROLS
-            ================================================== -->
-
-            <div class="controls-area">
-
-
-                <div class="speedBox">
-
-                    <span class="speed-label">
-                        سرعة التشغيل:
-                    </span>
-
-
-                    <button
-                        type="button"
-                        class="speedBtn"
-                        data-speed="0.75"
-                        onclick="setSpeed(0.75)"
-                    >
-                        0.75x
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="speedBtn active"
-                        data-speed="1"
-                        onclick="setSpeed(1)"
-                    >
-                        1x
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="speedBtn"
-                        data-speed="1.25"
-                        onclick="setSpeed(1.25)"
-                    >
-                        1.25x
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="speedBtn"
-                        data-speed="1.5"
-                        onclick="setSpeed(1.5)"
-                    >
-                        1.5x
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="speedBtn"
-                        data-speed="2"
-                        onclick="setSpeed(2)"
-                    >
-                        2x
-                    </button>
-
-                </div>
-
-
-                <!-- =================================================
-                     VIDEO INFO
-                ================================================== -->
-
-                <div class="video-info">
-
-                    <div id="videoTitle">
-                        اختر فيديو
-                    </div>
-
-
-                    <div class="video-status">
-
-                        <div id="percentBox">
-                            📊 0%
-                        </div>
-
-                    </div>
-
-
-                    <div class="progress">
-
-                        <div
-                            class="progress-bar"
-                            id="progressBar"
-                        ></div>
-
-                    </div>
-
-                </div>
+              <div
+                class="progress-bar"
+                id="progressBar"
+              ></div>
 
             </div>
 
-        </section>
+          </div>
+
+        </div>
+
+      </section>
 
     </main>
 
-
-    <!-- =====================================================
-         JAVASCRIPT
-    ====================================================== -->
-
-    <script>
-
-        "use strict";
+  </div>
 
 
-        /* =====================================================
-           SUPABASE CONFIGURATION
-        ====================================================== */
+  <!-- =========================================================
+       MOBILE MENU
+  ========================================================== -->
 
-   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <button
+    class="mobile-menu-button"
+    id="mobileMenuButton"
+    type="button"
+    aria-label="فتح قائمة الفيديوهات"
+    onclick="toggleSidebar()"
+  >
+    <i class="fa-solid fa-list"></i>
+  </button>
 
-<script>
-/* =========================================================
-   SUPABASE CONFIGURATION
-   نفس إعدادات صفحة الرفع بالضبط
-========================================================= */
 
-const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
+  <!-- =========================================================
+       JAVASCRIPT
+  ========================================================== -->
 
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+  <script>
 
-/* إنشاء اتصال Supabase */
-const client = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-);
+    "use strict";
 
-console.log("Supabase client initialized");
-console.log("Project:", SUPABASE_URL);
-</script>
-        /* =====================================================
-           SAFE LOCAL STORAGE
-        ====================================================== */
 
-        function getSavedUser(){
+    /* =========================================================
+       SUPABASE CONFIGURATION
 
-            try{
+       IMPORTANT:
+       This is the SAME configuration used by the upload page.
+    ========================================================== */
 
-                const raw =
-                    localStorage.getItem("user");
+    const SUPABASE_URL =
+      "https://nhdowqzecpwmkunczodl.supabase.co";
 
-                if(!raw){
-                    return {};
-                }
+    const SUPABASE_ANON_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
-                const parsed =
-                    JSON.parse(raw);
 
-                if(
-                    parsed &&
-                    typeof parsed === "object"
-                ){
+    /* =========================================================
+       SUPABASE CLIENT
+    ========================================================== */
 
-                    return parsed;
+    let client = null;
 
-                }
 
-            }catch(error){
+    function initializeSupabase() {
 
-                console.error(
-                    "USER LOCALSTORAGE ERROR:",
-                    error
-                );
+      if (
+        typeof window.supabase === "undefined" ||
+        typeof window.supabase.createClient !== "function"
+      ) {
 
-            }
+        throw new Error(
+          "لم يتم تحميل مكتبة Supabase بشكل صحيح."
+        );
 
-            return {};
+      }
 
+      client = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+      return client;
+    }
+
+
+    /* =========================================================
+       DOM ELEMENTS
+    ========================================================== */
+
+    const videoList =
+      document.getElementById("videoList");
+
+    const videoCount =
+      document.getElementById("videoCount");
+
+    const studentName =
+      document.getElementById("studentName");
+
+    const studentClass =
+      document.getElementById("studentClass");
+
+    const currentTitle =
+      document.getElementById("currentTitle");
+
+    const currentClass =
+      document.getElementById("currentClass");
+
+    const currentType =
+      document.getElementById("currentType");
+
+    const currentStatus =
+      document.getElementById("currentStatus");
+
+    const progressBar =
+      document.getElementById("progressBar");
+
+    const progressValue =
+      document.getElementById("progressValue");
+
+    const videoPlayer =
+      document.getElementById("videoPlayer");
+
+    const youtubePlayerContainer =
+      document.getElementById("youtubePlayer");
+
+    const playerPlaceholder =
+      document.getElementById("playerPlaceholder");
+
+    const sidebar =
+      document.getElementById("sidebar");
+
+    const sidebarOverlay =
+      document.getElementById("sidebarOverlay");
+
+    const connectionText =
+      document.getElementById("connectionText");
+
+
+    /* =========================================================
+       STUDENT DATA
+    ========================================================== */
+
+    let savedUser = {};
+
+    try {
+
+      savedUser =
+        JSON.parse(
+          localStorage.getItem("user") || "{}"
+        ) || {};
+
+    } catch (error) {
+
+      console.error(
+        "LOCAL STORAGE ERROR:",
+        error
+      );
+
+      savedUser = {};
+
+    }
+
+
+    /* =========================================================
+       CLASS GROUP NORMALIZATION
+    ========================================================== */
+
+    function normalizeClassGroup(value) {
+
+      const original =
+        String(value || "")
+          .trim();
+
+      const normalized =
+        original
+          .toLowerCase()
+          .replace(/\s+/g, " ");
+
+
+      const aliases = {
+
+        "first_science":
+          "first_science",
+
+        "first science":
+          "first_science",
+
+        "أولى ثانوي":
+          "first_science",
+
+        "اولى ثانوي":
+          "first_science",
+
+        "أولى ثانوي علوم متكاملة":
+          "first_science",
+
+        "اولى ثانوي علوم متكاملة":
+          "first_science",
+
+
+        "third_biology":
+          "third_biology",
+
+        "third biology":
+          "third_biology",
+
+        "تالتة ثانوي أحياء":
+          "third_biology",
+
+        "تالته ثانوي أحياء":
+          "third_biology",
+
+        "ثالثة ثانوي أحياء":
+          "third_biology",
+
+        "ثالثه ثانوي أحياء":
+          "third_biology",
+
+
+        "third_geology":
+          "third_geology",
+
+        "third geology":
+          "third_geology",
+
+        "تالتة ثانوي جيولوجيا":
+          "third_geology",
+
+        "تالته ثانوي جيولوجيا":
+          "third_geology",
+
+        "ثالثة ثانوي جيولوجيا":
+          "third_geology",
+
+        "ثالثه ثانوي جيولوجيا":
+          "third_geology"
+
+      };
+
+
+      return (
+        aliases[original] ||
+        aliases[normalized] ||
+        original
+      );
+    }
+
+
+    /* =========================================================
+       USER OBJECT
+    ========================================================== */
+
+    const user = {
+
+      id:
+        savedUser.id ||
+        savedUser.student_id ||
+        "000",
+
+      name:
+        savedUser.name ||
+        savedUser.full_name ||
+        savedUser.student_name ||
+        "الطالب",
+
+      email:
+        savedUser.email ||
+        "unknown",
+
+      class_group:
+        normalizeClassGroup(
+          savedUser.class_group ||
+          savedUser.classGroup ||
+          savedUser.grade ||
+          savedUser.class ||
+          ""
+        )
+
+    };
+
+
+    /* =========================================================
+       CLASS DISPLAY NAME
+    ========================================================== */
+
+    function getClassDisplayName(classGroup) {
+
+      switch (classGroup) {
+
+        case "first_science":
+          return "أولى ثانوي — علوم متكاملة";
+
+        case "third_biology":
+          return "تالتة ثانوي — أحياء";
+
+        case "third_geology":
+          return "تالتة ثانوي — جيولوجيا";
+
+        default:
+          return classGroup || "غير محدد";
+
+      }
+
+    }
+
+
+    /* =========================================================
+       STATE
+    ========================================================== */
+
+    const state = {
+
+      videos: [],
+
+      currentVideo: null,
+
+      currentVideoId: null,
+
+      currentType: null,
+
+      youtubePlayer: null,
+
+      progressTimer: null,
+
+      lastSavedPercent: 0,
+
+      lastSavedSeconds: 0,
+
+      sessionStarted: false
+
+    };
+
+
+    /* =========================================================
+       INITIAL UI
+    ========================================================== */
+
+    studentName.textContent =
+      user.name;
+
+    studentClass.textContent =
+      getClassDisplayName(
+        user.class_group
+      );
+
+
+    /* =========================================================
+       SAFE TEXT
+    ========================================================== */
+
+    function escapeHtml(value) {
+
+      const div =
+        document.createElement("div");
+
+      div.textContent =
+        String(value ?? "");
+
+      return div.innerHTML;
+    }
+
+
+    /* =========================================================
+       ERROR FORMATTER
+    ========================================================== */
+
+    function formatSupabaseError(error) {
+
+      if (!error) {
+        return "خطأ غير معروف.";
+      }
+
+      const message =
+        error.message ||
+        "خطأ غير معروف.";
+
+      const code =
+        error.code ||
+        "";
+
+      const details =
+        error.details ||
+        "";
+
+      const hint =
+        error.hint ||
+        "";
+
+      let result =
+        message;
+
+      if (code) {
+        result +=
+          "\n\nCode: " + code;
+      }
+
+      if (details) {
+        result +=
+          "\n\nDetails: " + details;
+      }
+
+      if (hint) {
+        result +=
+          "\n\nHint: " + hint;
+      }
+
+      return result;
+    }
+
+
+    /* =========================================================
+       ERROR UI
+    ========================================================== */
+
+    function showErrorState(
+      title,
+      message,
+      allowRetry = true
+    ) {
+
+      videoList.innerHTML = `
+
+        <div class="state-box">
+
+          <div
+            class="state-icon"
+            style="
+              background:rgba(239,68,68,.10);
+              color:#f87171;
+            "
+          >
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+
+          <div class="state-title">
+            ${escapeHtml(title)}
+          </div>
+
+          <div
+            class="state-text"
+            style="white-space:pre-line;"
+          >
+            ${escapeHtml(message)}
+          </div>
+
+          ${
+            allowRetry
+              ? `
+                <button
+                  class="retry-button"
+                  type="button"
+                  onclick="loadVideos()"
+                >
+                  <i class="fa-solid fa-rotate-right"></i>
+                  إعادة المحاولة
+                </button>
+              `
+              : ""
+          }
+
+        </div>
+
+      `;
+
+      connectionText.textContent =
+        "يوجد خطأ في الاتصال";
+    }
+
+
+    /* =========================================================
+       LOADING UI
+    ========================================================== */
+
+    function showLoadingState() {
+
+      videoList.innerHTML = `
+
+        <div class="state-box">
+
+          <div class="state-icon">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          </div>
+
+          <div class="state-title">
+            جاري تحميل الفيديوهات
+          </div>
+
+          <div class="state-text">
+            يتم الآن جلب الفيديوهات الخاصة بصفك...
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    /* =========================================================
+       EMPTY UI
+    ========================================================== */
+
+    function showEmptyState() {
+
+      videoList.innerHTML = `
+
+        <div class="state-box">
+
+          <div class="state-icon">
+            <i class="fa-solid fa-video-slash"></i>
+          </div>
+
+          <div class="state-title">
+            لا توجد فيديوهات متاحة حاليًا
+          </div>
+
+          <div class="state-text">
+            لم يتم إضافة فيديوهات لهذا الصف حتى الآن.
+          </div>
+
+        </div>
+
+      `;
+
+      videoCount.textContent = "0";
+
+    }
+
+
+    /* =========================================================
+       VIDEO TYPE
+    ========================================================== */
+
+    function getVideoType(url) {
+
+      const value =
+        String(url || "")
+          .trim()
+          .toLowerCase();
+
+
+      if (
+        value.includes("youtube.com") ||
+        value.includes("youtu.be")
+      ) {
+
+        return "youtube";
+
+      }
+
+
+      return "file";
+
+    }
+
+
+    /* =========================================================
+       YOUTUBE ID
+    ========================================================== */
+
+    function getYouTubeId(url) {
+
+      if (!url) {
+        return null;
+      }
+
+      try {
+
+        const parsed =
+          new URL(url);
+
+        const hostname =
+          parsed.hostname
+            .toLowerCase()
+            .replace(/^www\./, "");
+
+
+        /* youtu.be */
+
+        if (
+          hostname === "youtu.be"
+        ) {
+
+          const id =
+            parsed.pathname
+              .replace("/", "")
+              .trim();
+
+          return id || null;
         }
 
 
-        const savedUser =
-            getSavedUser();
+        /* youtube.com */
+
+        if (
+          hostname === "youtube.com" ||
+          hostname === "m.youtube.com"
+        ) {
+
+          const watchId =
+            parsed.searchParams.get("v");
+
+          if (watchId) {
+            return watchId;
+          }
 
 
-        /* =====================================================
-           GET USER FIELD
-        ====================================================== */
+          const parts =
+            parsed.pathname
+              .split("/")
+              .filter(Boolean);
 
-        function firstValidValue(
-            ...values
-        ){
 
-            for(
-                const value of values
-            ){
+          const index =
+            parts.indexOf("shorts");
 
-                if(
-                    value !== undefined &&
-                    value !== null &&
-                    String(value).trim() !== ""
-                ){
+          if (
+            index !== -1 &&
+            parts[index + 1]
+          ) {
 
-                    return String(value).trim();
+            return parts[index + 1];
 
-                }
+          }
 
-            }
 
-            return "";
+          const embedIndex =
+            parts.indexOf("embed");
+
+          if (
+            embedIndex !== -1 &&
+            parts[embedIndex + 1]
+          ) {
+
+            return parts[embedIndex + 1];
+
+          }
 
         }
 
+      } catch (error) {
 
-        /* =====================================================
-           STUDENT
-        ====================================================== */
+        console.warn(
+          "Invalid YouTube URL:",
+          url,
+          error
+        );
 
-        const user = {
+      }
 
-            id:
-                firstValidValue(
-                    savedUser.id,
-                    savedUser.user_id,
-                    savedUser.student_id
-                ) ||
-                "000",
+      return null;
 
-
-            name:
-                firstValidValue(
-                    savedUser.name,
-                    savedUser.full_name,
-                    savedUser.fullName,
-                    savedUser.student_name
-                ) ||
-                "Student",
+    }
 
 
-            email:
-                firstValidValue(
-                    savedUser.email,
-                    savedUser.user_email
-                ) ||
-                "unknown",
+    /* =========================================================
+       LOAD VIDEOS
+    ========================================================== */
+
+    async function loadVideos() {
+
+      showLoadingState();
+
+      connectionText.textContent =
+        "جاري الاتصال...";
 
 
-            class_group:
-                firstValidValue(
-                    savedUser.class_group,
-                    savedUser.classGroup,
-                    savedUser.class,
-                    savedUser.grade,
-                    savedUser.group
-                ) ||
-                "unknown"
+      /* -------------------------------------------------------
+         CHECK SUPABASE
+      ------------------------------------------------------- */
 
-        };
+      try {
+
+        if (!client) {
+          initializeSupabase();
+        }
+
+      } catch (error) {
+
+        console.error(
+          "SUPABASE INITIALIZATION ERROR:",
+          error
+        );
+
+        showErrorState(
+          "تعذر تشغيل المنصة",
+          error.message ||
+          "تعذر تحميل مكتبة Supabase."
+        );
+
+        return;
+
+      }
+
+
+      /* -------------------------------------------------------
+         CHECK CLASS
+      ------------------------------------------------------- */
+
+      if (
+        !user.class_group ||
+        user.class_group === "unknown"
+      ) {
+
+        console.error(
+          "CLASS GROUP IS MISSING:",
+          savedUser
+        );
+
+        showErrorState(
+          "الصف الدراسي غير محدد",
+          "لم يتم العثور على class_group في بيانات الطالب.\n\nتأكد أن صفحة تسجيل الدخول تحفظ class_group بنفس القيمة الموجودة في صفحة الرفع."
+        );
+
+        return;
+
+      }
+
+
+      console.log(
+        "========================================"
+      );
+
+      console.log(
+        "SUPABASE URL:",
+        SUPABASE_URL
+      );
+
+      console.log(
+        "STUDENT:",
+        user
+      );
+
+      console.log(
+        "CLASS GROUP:",
+        user.class_group
+      );
+
+      console.log(
+        "========================================"
+      );
+
+
+      /* -------------------------------------------------------
+         QUERY
+      ------------------------------------------------------- */
+
+      try {
+
+        const response =
+          await client
+            .from("videos")
+            .select(
+              "id,title,url,class_group,is_premium"
+            )
+            .eq(
+              "class_group",
+              user.class_group
+            )
+            .order(
+              "id",
+              {
+                ascending: true
+              }
+            );
+
+
+        const data =
+          response.data;
+
+        const error =
+          response.error;
 
 
         console.log(
-            "========== STUDENT DATA =========="
+          "VIDEOS RESPONSE:",
+          {
+            data,
+            error
+          }
         );
+
+
+        /* -----------------------------------------------------
+           ERROR
+        ------------------------------------------------------ */
+
+        if (error) {
+
+          console.error(
+            "SUPABASE VIDEOS ERROR:",
+            error
+          );
+
+
+          const formatted =
+            formatSupabaseError(
+              error
+            );
+
+
+          if (
+            formatted
+              .toLowerCase()
+              .includes("invalid api key")
+          ) {
+
+            showErrorState(
+              "مشكلة في مفتاح Supabase",
+              "Invalid API key\n\nتأكد أن مفتاح SUPABASE_ANON_KEY الموجود في هذه الصفحة هو نفس المفتاح الموجود في صفحة الرفع."
+            );
+
+          } else if (
+            formatted
+              .toLowerCase()
+              .includes("row-level security")
+          ) {
+
+            showErrorState(
+              "صلاحيات قاعدة البيانات",
+              "Supabase يمنع قراءة جدول videos بسبب RLS.\n\nيجب إضافة سياسة SELECT مناسبة للطلاب."
+            );
+
+          } else {
+
+            showErrorState(
+              "تعذر تحميل الفيديوهات",
+              formatted
+            );
+
+          }
+
+          return;
+
+        }
+
+
+        /* -----------------------------------------------------
+           SAVE
+        ------------------------------------------------------ */
+
+        state.videos =
+          Array.isArray(data)
+            ? data
+            : [];
+
+
+        videoCount.textContent =
+          String(
+            state.videos.length
+          );
+
+
+        connectionText.textContent =
+          "متصل بالمنصة";
+
+
+        /* -----------------------------------------------------
+           EMPTY
+        ------------------------------------------------------ */
+
+        if (
+          state.videos.length === 0
+        ) {
+
+          showEmptyState();
+
+          return;
+
+        }
+
+
+        /* -----------------------------------------------------
+           RENDER
+        ------------------------------------------------------ */
+
+        renderVideos(
+          state.videos
+        );
+
+
+        /* -----------------------------------------------------
+           AUTO OPEN FIRST VIDEO
+        ------------------------------------------------------ */
+
+        selectVideo(
+          state.videos[0]
+        );
+
+      } catch (error) {
+
+        console.error(
+          "LOAD VIDEOS EXCEPTION:",
+          error
+        );
+
+        showErrorState(
+          "حدث خطأ غير متوقع",
+          error.message ||
+          "تعذر تحميل الفيديوهات."
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       RENDER VIDEOS
+    ========================================================== */
+
+    function renderVideos(videos) {
+
+      videoList.innerHTML = "";
+
+
+      videos.forEach(
+        function(video, index) {
+
+          const item =
+            document.createElement("div");
+
+          item.className =
+            "video-item";
+
+
+          item.dataset.videoId =
+            String(video.id);
+
+
+          const type =
+            getVideoType(
+              video.url
+            );
+
+
+          const icon =
+            type === "youtube"
+              ? "fa-brands fa-youtube"
+              : "fa-solid fa-circle-play";
+
+
+          item.innerHTML = `
+
+            <div class="video-number">
+              ${index + 1}
+            </div>
+
+            <div class="video-info">
+
+              <div class="video-title">
+                ${escapeHtml(
+                  video.title ||
+                  "فيديو بدون عنوان"
+                )}
+              </div>
+
+              <div class="video-type">
+
+                <i class="${icon}"></i>
+
+                ${
+                  type === "youtube"
+                    ? "YouTube"
+                    : "فيديو تعليمي"
+                }
+
+              </div>
+
+            </div>
+
+          `;
+
+
+          item.addEventListener(
+            "click",
+            function() {
+
+              selectVideo(
+                video
+              );
+
+              closeSidebar();
+
+            }
+          );
+
+
+          videoList.appendChild(
+            item
+          );
+
+        }
+      );
+
+    }
+
+
+    /* =========================================================
+       SELECT VIDEO
+    ========================================================== */
+
+    async function selectVideo(video) {
+
+      if (!video) {
+        return;
+      }
+
+
+      state.currentVideo =
+        video;
+
+      state.currentVideoId =
+        video.id;
+
+      state.currentType =
+        getVideoType(
+          video.url
+        );
+
+      state.lastSavedPercent = 0;
+
+      state.lastSavedSeconds = 0;
+
+
+      /* -------------------------------------------------------
+         ACTIVE ITEM
+      ------------------------------------------------------ */
+
+      document
+        .querySelectorAll(".video-item")
+        .forEach(
+          function(item) {
+
+            item.classList.toggle(
+              "active",
+              item.dataset.videoId ===
+              String(video.id)
+            );
+
+          }
+        );
+
+
+      /* -------------------------------------------------------
+         UI
+      ------------------------------------------------------ */
+
+      currentTitle.textContent =
+        video.title ||
+        "فيديو تعليمي";
+
+      currentClass.textContent =
+        getClassDisplayName(
+          video.class_group
+        );
+
+      currentStatus.textContent =
+        "جاري التحميل...";
+
+      progressBar.style.width =
+        "0%";
+
+      progressValue.textContent =
+        "0%";
+
+
+      /* -------------------------------------------------------
+         RESET PLAYERS
+      ------------------------------------------------------ */
+
+      stopProgressTracking();
+
+      destroyYouTubePlayer();
+
+
+      videoPlayer.pause();
+
+      videoPlayer.removeAttribute(
+        "src"
+      );
+
+      videoPlayer.load();
+
+      videoPlayer.style.display =
+        "none";
+
+
+      youtubePlayerContainer.innerHTML =
+        "";
+
+      youtubePlayerContainer.style.display =
+        "none";
+
+
+      playerPlaceholder.style.display =
+        "none";
+
+
+      /* -------------------------------------------------------
+         YOUTUBE
+      ------------------------------------------------------ */
+
+      if (
+        state.currentType ===
+        "youtube"
+      ) {
+
+        const youtubeId =
+          getYouTubeId(
+            video.url
+          );
+
+
+        if (!youtubeId) {
+
+          playerPlaceholder.style.display =
+            "flex";
+
+          currentStatus.textContent =
+            "رابط YouTube غير صالح";
+
+          return;
+
+        }
+
+
+        youtubePlayerContainer.style.display =
+          "block";
+
+
+        createYouTubePlayer(
+          youtubeId
+        );
+
+
+        currentType.textContent =
+          "YouTube";
+
+
+        return;
+
+      }
+
+
+      /* -------------------------------------------------------
+         FILE VIDEO
+      ------------------------------------------------------ */
+
+      videoPlayer.src =
+        video.url;
+
+      videoPlayer.style.display =
+        "block";
+
+
+      currentType.textContent =
+        "فيديو مرفوع";
+
+
+      currentStatus.textContent =
+        "جاهز للمشاهدة";
+
+
+      startNativeVideoTracking();
+
+    }
+
+
+    /* =========================================================
+       YOUTUBE PLAYER READY
+    ========================================================== */
+
+    window.onYouTubeIframeAPIReady =
+      function() {
 
         console.log(
-            "Student ID:",
-            user.id
+          "YouTube API Ready"
         );
 
-        console.log(
-            "Student Name:",
-            user.name
+      };
+
+
+    /* =========================================================
+       CREATE YOUTUBE PLAYER
+    ========================================================== */
+
+    function createYouTubePlayer(
+      youtubeId
+    ) {
+
+      if (
+        typeof window.YT ===
+        "undefined" ||
+        typeof window.YT.Player !==
+        "function"
+      ) {
+
+        console.error(
+          "YouTube API is not ready."
         );
 
-        console.log(
-            "Student Email:",
-            user.email
-        );
+        currentStatus.textContent =
+          "تعذر تشغيل YouTube";
 
-        console.log(
-            "Student class_group:",
-            user.class_group
-        );
+        return;
 
+      }
 
-        /* =====================================================
-           ELEMENTS
-        ====================================================== */
 
-        const video =
-            document.getElementById(
-                "videoPlayer"
-            );
+      state.youtubePlayer =
+        new YT.Player(
+          "youtubePlayer",
+          {
 
+            videoId:
+              youtubeId,
 
-        const youtubeFrame =
-            document.getElementById(
-                "youtubePlayer"
-            );
+            width:
+              "100%",
 
+            height:
+              "100%",
 
-        const videoList =
-            document.getElementById(
-                "videoList"
-            );
+            playerVars: {
 
+              autoplay: 0,
 
-        const videoTitle =
-            document.getElementById(
-                "videoTitle"
-            );
+              controls: 1,
 
+              rel: 0,
 
-        const progressBar =
-            document.getElementById(
-                "progressBar"
-            );
+              modestbranding: 1,
 
-
-        const percentBox =
-            document.getElementById(
-                "percentBox"
-            );
-
-
-        const watermark =
-            document.getElementById(
-                "watermark"
-            );
-
-
-        const emptyPlayer =
-            document.getElementById(
-                "emptyPlayer"
-            );
-
-
-        const playerError =
-            document.getElementById(
-                "playerError"
-            );
-
-
-        const playerErrorText =
-            document.getElementById(
-                "playerErrorText"
-            );
-
-
-        const antiRecord =
-            document.getElementById(
-                "antiRecord"
-            );
-
-
-        /* =====================================================
-           STATE
-        ====================================================== */
-
-        const state = {
-
-            currentVideoId:null,
-
-            currentVideoType:null,
-
-            currentYoutubeId:null,
-
-            duration:0,
-
-            restoring:false,
-
-            currentSpeed:1
-
-        };
-
-
-        /* =====================================================
-           SESSION
-        ====================================================== */
-
-        let session = {
-
-            skips:0,
-
-            lastTime:0,
-
-            startTime:Date.now()
-
-        };
-
-
-        /* =====================================================
-           YOUTUBE STATE
-        ====================================================== */
-
-        let youtubePlayer = null;
-
-        let youtubeAPIReady = false;
-
-        let pendingYoutubeId = null;
-
-
-        /* =====================================================
-           YOUTUBE API READY
-        ====================================================== */
-
-        window.onYouTubeIframeAPIReady =
-            function(){
-
-                youtubeAPIReady = true;
-
-                console.log(
-                    "✅ YouTube API ready"
-                );
-
-
-                if(pendingYoutubeId){
-
-                    const id =
-                        pendingYoutubeId;
-
-                    pendingYoutubeId = null;
-
-                    createYoutubePlayer(
-                        id
-                    );
-
-                }
-
-            };
-
-
-        /* =====================================================
-           ESCAPE HTML
-        ====================================================== */
-
-        function escapeHTML(
-            text
-        ){
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-            div.textContent =
-                String(text ?? "");
-
-            return div.innerHTML;
-
-        }
-
-
-        /* =====================================================
-           SHOW LIST MESSAGE
-        ====================================================== */
-
-        function showListMessage(
-            message,
-            type = ""
-        ){
-
-            videoList.innerHTML = `
-                <div class="list-message ${type}">
-                    ${message}
-                </div>
-            `;
-
-        }
-
-
-        /* =====================================================
-           SHOW PLAYER ERROR
-        ====================================================== */
-
-        function showPlayerError(
-            message
-        ){
-
-            playerErrorText.textContent =
-                message;
-
-            playerError.style.display =
-                "flex";
-
-        }
-
-
-        function hidePlayerError(){
-
-            playerError.style.display =
-                "none";
-
-        }
-
-
-        /* =====================================================
-           GET YOUTUBE ID
-        ====================================================== */
-
-        function getYouTubeId(
-            url
-        ){
-
-            if(!url){
-                return null;
-            }
-
-
-            try{
-
-                const parsed =
-                    new URL(
-                        String(url).trim()
-                    );
-
-
-                let hostname =
-                    parsed.hostname
-                        .toLowerCase()
-                        .replace(/^www\./,"")
-                        .replace(/^m\./,"");
-
-
-                /*
-                ================================================
-                youtube.com
-                ================================================
-                */
-
-                if(
-                    hostname === "youtube.com" ||
-                    hostname === "youtube-nocookie.com"
-                ){
-
-                    const watchId =
-                        parsed.searchParams.get("v");
-
-
-                    if(watchId){
-
-                        return watchId;
-
-                    }
-
-
-                    const embedMatch =
-                        parsed.pathname.match(
-                            /\/embed\/([^/?&]+)/
-                        );
-
-
-                    if(embedMatch){
-
-                        return embedMatch[1];
-
-                    }
-
-
-                    const shortsMatch =
-                        parsed.pathname.match(
-                            /\/shorts\/([^/?&]+)/
-                        );
-
-
-                    if(shortsMatch){
-
-                        return shortsMatch[1];
-
-                    }
-
-                }
-
-
-                /*
-                ================================================
-                youtu.be
-                ================================================
-                */
-
-                if(
-                    hostname === "youtu.be"
-                ){
-
-                    const parts =
-                        parsed.pathname
-                            .split("/")
-                            .filter(Boolean);
-
-
-                    if(parts.length){
-
-                        return parts[0];
-
-                    }
-
-                }
-
-            }catch(error){
-
-                console.warn(
-                    "Invalid video URL:",
-                    url,
-                    error
-                );
-
-            }
-
-
-            return null;
-
-        }
-
-
-        /* =====================================================
-           VIDEO TYPE
-        ====================================================== */
-
-        function getVideoType(
-            url
-        ){
-
-            const youtubeId =
-                getYouTubeId(url);
-
-
-            if(youtubeId){
-
-                return {
-
-                    type:"youtube",
-
-                    youtubeId:youtubeId
-
-                };
-
-            }
-
-
-            return {
-
-                type:"file",
-
-                youtubeId:null
-
-            };
-
-        }
-
-
-        /* =====================================================
-           WATERMARK
-        ====================================================== */
-
-        function updateWatermark(){
-
-            const currentTime =
-                new Date()
-                    .toLocaleTimeString(
-                        "ar-EG"
-                    );
-
-
-            watermark.innerText =
-`${user.name}
-ID: ${user.id}
-Email: ${user.email}
-${currentTime}`;
-
-        }
-
-
-        updateWatermark();
-
-
-        setInterval(
-            updateWatermark,
-            2000
-        );
-
-
-        /* =====================================================
-           LOAD VIDEOS
-        ====================================================== */
-
-        async function loadVideos(){
-
-            showListMessage(
-                "جاري تحميل الفيديوهات..."
-            );
-
-
-            console.log(
-                "========== LOAD VIDEOS =========="
-            );
-
-
-            console.log(
-                "Student class_group:",
-                user.class_group
-            );
-
-
-            try{
-
-                /*
-                =================================================
-                IMPORTANT
-                =================================================
-
-                We intentionally request the videos first,
-                then filter them in JavaScript.
-
-                This makes debugging class_group much easier
-                and avoids hiding the real problem behind
-                a failed .eq() query.
-                =================================================
-                */
-
-
-                const result =
-                    await client
-                        .from("videos")
-                        .select(
-                            "id,title,url,class_group,is_premium"
-                        )
-                        .order(
-                            "id",
-                            {
-                                ascending:true
-                            }
-                        );
-
-
-                const data =
-                    result.data;
-
-
-                const error =
-                    result.error;
-
-
-                console.log(
-                    "ALL VIDEOS:",
-                    data
-                );
-
-
-                console.log(
-                    "SUPABASE VIDEOS ERROR:",
-                    error
-                );
-
-
-                /* =============================================
-                   SUPABASE ERROR
-                ============================================== */
-
-                if(error){
-
-                    console.error(
-                        "❌ VIDEOS SELECT ERROR",
-                        error
-                    );
-
-
-                    showListMessage(
-                        `
-                        ❌ تعذر تحميل الفيديوهات
-                        <br>
-                        <small>
-                        ${escapeHTML(
-                            error.message ||
-                            "خطأ غير معروف"
-                        )}
-                        </small>
-                        `,
-                        "error"
-                    );
-
-
-                    return;
-
-                }
-
-
-                /* =============================================
-                   EMPTY TABLE / RLS POSSIBLE
-                ============================================== */
-
-                if(
-                    !Array.isArray(data) ||
-                    data.length === 0
-                ){
-
-                    console.warn(
-                        "No videos returned from Supabase."
-                    );
-
-
-                    showListMessage(
-                        `
-                        📭 لا توجد فيديوهات متاحة حاليًا
-                        <br>
-                        <small>
-                        إذا كان الفيديو موجودًا داخل جدول
-                        <b>videos</b> في Supabase،
-                        فراجع سياسة SELECT الخاصة بالجدول.
-                        </small>
-                        `,
-                        "warning"
-                    );
-
-
-                    return;
-
-                }
-
-
-                /* =============================================
-                   AVAILABLE CLASS GROUPS
-                ============================================== */
-
-                const availableGroups =
-                    [
-                        ...new Set(
-                            data.map(
-                                item =>
-                                    String(
-                                        item.class_group ??
-                                        ""
-                                    ).trim()
-                            )
-                        )
-                    ];
-
-
-                console.log(
-                    "AVAILABLE CLASS GROUPS:",
-                    availableGroups
-                );
-
-
-                /* =============================================
-                   NORMALIZE CLASS GROUP
-                ============================================== */
-
-                const studentGroup =
-                    String(
-                        user.class_group
-                    )
-                    .trim()
-                    .toLowerCase();
-
-
-                /*
-                ================================================
-                MATCH VIDEOS
-                ================================================
-                */
-
-                const matchedVideos =
-                    data.filter(
-                        function(item){
-
-                            const itemGroup =
-                                String(
-                                    item.class_group ??
-                                    ""
-                                )
-                                .trim()
-                                .toLowerCase();
-
-
-                            return (
-                                itemGroup ===
-                                studentGroup
-                            );
-
-                        }
-                    );
-
-
-                console.log(
-                    "STUDENT CLASS:",
-                    user.class_group
-                );
-
-
-                console.log(
-                    "MATCHED VIDEOS:",
-                    matchedVideos
-                );
-
-
-                /* =============================================
-                   CLASS GROUP MISSING
-                ============================================== */
-
-                if(
-                    studentGroup === "" ||
-                    studentGroup === "unknown"
-                ){
-
-                    showListMessage(
-                        `
-                        ⚠️ لم يتم تحديد صف الطالب
-                        <br>
-                        <small>
-                        class_group غير موجود في بيانات تسجيل الدخول.
-                        </small>
-                        `,
-                        "warning"
-                    );
-
-
-                    console.warn(
-                        "Student class_group is missing."
-                    );
-
-
-                    return;
-
-                }
-
-
-                /* =============================================
-                   NO MATCH
-                ============================================== */
-
-                if(
-                    matchedVideos.length === 0
-                ){
-
-                    showListMessage(
-                        `
-                        📭 لا توجد فيديوهات لهذا الصف
-                        <br>
-                        <small>
-                        صف الطالب:
-                        <b>
-                        ${escapeHTML(
-                            user.class_group
-                        )}
-                        </b>
-                        </small>
-                        <br>
-                        <small>
-                        القيم الموجودة في قاعدة البيانات:
-                        ${escapeHTML(
-                            availableGroups.join(" ، ")
-                        )}
-                        </small>
-                        `,
-                        "warning"
-                    );
-
-
-                    return;
-
-                }
-
-
-                /* =============================================
-                   RENDER
-                ============================================== */
-
-                videoList.innerHTML = "";
-
-
-                matchedVideos.forEach(
-                    function(videoData){
-
-                        renderVideoItem(
-                            videoData
-                        );
-
-                    }
-                );
-
-
-                console.log(
-                    "✅ Videos rendered:",
-                    matchedVideos.length
-                );
-
-
-            }catch(error){
-
-                console.error(
-                    "❌ LOAD VIDEOS EXCEPTION:",
-                    error
-                );
-
-
-                showListMessage(
-                    `
-                    ❌ حدث خطأ أثناء تحميل الفيديوهات
-                    <br>
-                    <small>
-                    ${escapeHTML(
-                        error.message ||
-                        String(error)
-                    )}
-                    </small>
-                    `,
-                    "error"
-                );
-
-            }
-
-        }
-
-
-        /* =====================================================
-           RENDER VIDEO ITEM
-        ====================================================== */
-
-        function renderVideoItem(
-            videoData
-        ){
-
-            const item =
-                document.createElement(
-                    "button"
-                );
-
-
-            item.type =
-                "button";
-
-
-            item.className =
-                "video-item";
-
-
-            item.dataset.id =
-                String(
-                    videoData.id
-                );
-
-
-            const info =
-                getVideoType(
-                    videoData.url
-                );
-
-
-            const typeText =
-                info.type === "youtube"
-                    ? "YouTube ▶️"
-                    : "فيديو تعليمي 🎬";
-
-
-            item.innerHTML = `
-
-                <div class="video-title">
-                    ${escapeHTML(
-                        videoData.title ||
-                        "فيديو بدون عنوان"
-                    )}
-                </div>
-
-                <div class="video-type">
-                    ${typeText}
-                </div>
-
-            `;
-
-
-            item.addEventListener(
-                "click",
-                function(){
-
-                    selectVideo(
-                        videoData,
-                        item
-                    );
-
-                }
-            );
-
-
-            videoList.appendChild(
-                item
-            );
-
-        }
-
-
-        /* =====================================================
-           SELECT VIDEO
-        ====================================================== */
-
-        function selectVideo(
-            videoData,
-            clickedItem
-        ){
-
-            hidePlayerError();
-
-
-            document
-                .querySelectorAll(
-                    ".video-item"
-                )
-                .forEach(
-                    function(item){
-
-                        item.classList.remove(
-                            "active"
-                        );
-
-                    }
-                );
-
-
-            clickedItem.classList.add(
-                "active"
-            );
-
-
-            state.currentVideoId =
-                videoData.id;
-
-
-            state.currentVideoType =
-                null;
-
-
-            state.currentYoutubeId =
-                null;
-
-
-            state.duration =
-                0;
-
-
-            state.restoring =
-                true;
-
-
-            session = {
-
-                skips:0,
-
-                lastTime:0,
-
-                startTime:Date.now()
-
-            };
-
-
-            videoTitle.textContent =
-                videoData.title ||
-                "فيديو";
-
-
-            progressBar.style.width =
-                "0%";
-
-
-            percentBox.textContent =
-                "📊 0%";
-
-
-            const info =
-                getVideoType(
-                    videoData.url
-                );
-
-
-            state.currentVideoType =
-                info.type;
-
-
-            state.currentYoutubeId =
-                info.youtubeId;
-
-
-            console.log(
-                "SELECTED VIDEO:",
-                videoData
-            );
-
-
-            if(
-                info.type === "youtube"
-            ){
-
-                loadYoutubeVideo(
-                    info.youtubeId
-                );
-
-                return;
-
-            }
-
-
-            loadFileVideo(
-                videoData.url
-            );
-
-        }
-
-
-        /* =====================================================
-           CREATE YOUTUBE PLAYER
-        ====================================================== */
-
-        function createYoutubePlayer(
-            youtubeId
-        ){
-
-            if(!youtubeId){
-
-                showPlayerError(
-                    "رابط YouTube غير صالح."
-                );
-
-                return;
-
-            }
-
-
-            if(
-                !youtubeAPIReady ||
-                !window.YT ||
-                !YT.Player
-            ){
-
-                pendingYoutubeId =
-                    youtubeId;
-
-
-                console.log(
-                    "⏳ Waiting for YouTube API..."
-                );
-
-
-                return;
-
-            }
-
-
-            if(youtubePlayer){
-
-                try{
-
-                    youtubePlayer.destroy();
-
-                }catch(error){
-
-                    console.warn(
-                        "YouTube destroy error:",
-                        error
-                    );
-
-                }
-
-
-                youtubePlayer =
-                    null;
-
-            }
-
-
-            youtubePlayer =
-                new YT.Player(
-                    "youtubePlayer",
-                    {
-
-                        videoId:youtubeId,
-
-                        playerVars:{
-
-                            autoplay:0,
-
-                            controls:1,
-
-                            rel:0,
-
-                            modestbranding:1,
-
-                            playsinline:1,
-
-                            fs:1,
-
-                            iv_load_policy:3
-
-                        },
-
-
-                        events:{
-
-                            onReady:
-                                onYoutubeReady,
-
-
-                            onStateChange:
-                                onYoutubeStateChange,
-
-
-                            onError:
-                                onYoutubeError
-
-                        }
-
-                    }
-                );
-
-        }
-
-
-        /* =====================================================
-           YOUTUBE READY
-        ====================================================== */
-
-        function onYoutubeReady(
-            event
-        ){
-
-            console.log(
-                "✅ YouTube player ready"
-            );
-
-
-            youtubeFrame.style.display =
-                "block";
-
-
-            video.style.display =
-                "none";
-
-
-            emptyPlayer.style.display =
-                "none";
-
-
-            hidePlayerError();
-
-
-            state.restoring =
-                true;
-
-
-            restoreYoutubeTime()
-                .finally(
-                    function(){
-
-                        state.restoring =
-                            false;
-
-                    }
-                );
-
-
-            setSpeed(
-                state.currentSpeed
-            );
-
-        }
-
-
-        /* =====================================================
-           YOUTUBE ERROR
-        ====================================================== */
-
-        function onYoutubeError(
-            event
-        ){
-
-            console.error(
-                "YouTube player error:",
-                event
-            );
-
-
-            showPlayerError(
-                "تعذر تشغيل فيديو YouTube. قد يكون الفيديو خاصًا أو غير متاح للتضمين."
-            );
-
-        }
-
-
-        /* =====================================================
-           YOUTUBE STATE
-        ====================================================== */
-
-        function onYoutubeStateChange(
-            event
-        ){
-
-            if(
-                !window.YT ||
-                !YT.PlayerState
-            ){
-
-                return;
-
-            }
-
-
-            if(
-                event.data ===
-                YT.PlayerState.ENDED
-            ){
-
-                saveSession();
-
-            }
-
-        }
-
-
-        /* =====================================================
-           LOAD YOUTUBE VIDEO
-        ====================================================== */
-
-        function loadYoutubeVideo(
-            youtubeId
-        ){
-
-            hidePlayerError();
-
-
-            video.pause();
-
-
-            video.removeAttribute(
-                "src"
-            );
-
-
-            video.load();
-
-
-            video.style.display =
-                "none";
-
-
-            youtubeFrame.style.display =
-                "block";
-
-
-            emptyPlayer.style.display =
-                "none";
-
-
-            if(
-                youtubePlayer &&
-                typeof youtubePlayer.loadVideoById ===
-                "function"
-            ){
-
-                try{
-
-                    youtubePlayer.loadVideoById(
-                        youtubeId
-                    );
-
-
-                    return;
-
-                }catch(error){
-
-                    console.warn(
-                        "YouTube loadVideoById error:",
-                        error
-                    );
-
-                }
-
-            }
-
-
-            createYoutubePlayer(
-                youtubeId
-            );
-
-        }
-
-
-        /* =====================================================
-           LOAD FILE VIDEO
-        ====================================================== */
-
-        function loadFileVideo(
-            url
-        ){
-
-            hidePlayerError();
-
-
-            if(!url){
-
-                showPlayerError(
-                    "رابط الفيديو غير موجود."
-                );
-
-                return;
-
-            }
-
-
-            youtubeFrame.style.display =
-                "none";
-
-
-            video.style.display =
-                "block";
-
-
-            emptyPlayer.style.display =
-                "none";
-
-
-            if(youtubePlayer){
-
-                try{
-
-                    youtubePlayer.stopVideo();
-
-                }catch(error){}
-
-            }
-
-
-            video.pause();
-
-
-            video.removeAttribute(
-                "src"
-            );
-
-
-            video.src =
-                url;
-
-
-            video.load();
-
-
-            video.addEventListener(
-                "loadedmetadata",
-                function(){
-
-                    state.duration =
-                        video.duration ||
-                        0;
-
-
-                    state.restoring =
-                        true;
-
-
-                    restoreFileTime()
-                        .finally(
-                            function(){
-
-                                state.restoring =
-                                    false;
-
-                            }
-                        );
-
-                },
-                {
-                    once:true
-                }
-            );
-
-
-            video.addEventListener(
-                "error",
-                function(){
-
-                    if(
-                        state.currentVideoType ===
-                        "file"
-                    ){
-
-                        showPlayerError(
-                            "تعذر تشغيل ملف الفيديو. تأكد من أن رابط Storage صالح وأن الملف متاح."
-                        );
-
-                    }
-
-                },
-                {
-                    once:true
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           RESTORE FILE TIME
-        ====================================================== */
-
-        async function restoreFileTime(){
-
-            if(
-                !state.currentVideoId
-            ){
-
-                return;
-
-            }
-
-
-            const saved =
-                await getPreviousSession();
-
-
-            if(
-                saved &&
-                Number(saved.watched_seconds) > 0 &&
-                Number.isFinite(video.duration)
-            ){
-
-                const maxTime =
-                    Math.max(
-                        0,
-                        video.duration - 2
-                    );
-
-
-                video.currentTime =
-                    Math.min(
-                        Number(
-                            saved.watched_seconds
-                        ),
-                        maxTime
-                    );
-
-
-                session.lastTime =
-                    video.currentTime;
-
-            }
-
-        }
-
-
-        /* =====================================================
-           RESTORE YOUTUBE TIME
-        ====================================================== */
-
-        async function restoreYoutubeTime(){
-
-            if(
-                !state.currentVideoId ||
-                !youtubePlayer
-            ){
-
-                return;
-
-            }
-
-
-            try{
-
-                const saved =
-                    await getPreviousSession();
-
-
-                if(
-                    saved &&
-                    Number(saved.watched_seconds) > 0
-                ){
-
-                    youtubePlayer.seekTo(
-                        Number(
-                            saved.watched_seconds
-                        ),
-                        true
-                    );
-
-
-                    session.lastTime =
-                        Number(
-                            saved.watched_seconds
-                        );
-
-                }
-
-            }catch(error){
-
-                console.warn(
-                    "RESTORE YOUTUBE ERROR:",
-                    error
-                );
-
-            }
-
-        }
-
-
-        /* =====================================================
-           GET PREVIOUS SESSION
-        ====================================================== */
-
-        async function getPreviousSession(){
-
-            if(
-                !state.currentVideoId
-            ){
-
-                return null;
-
-            }
-
-
-            try{
-
-                const result =
-                    await client
-                        .from("video_sessions")
-                        .select(
-                            "watched_seconds,duration,percent,updated_at"
-                        )
-                        .eq(
-                            "student_id",
-                            String(
-                                user.id
-                            )
-                        )
-                        .eq(
-                            "video_id",
-                            state.currentVideoId
-                        )
-                        .order(
-                            "updated_at",
-                            {
-                                ascending:false
-                            }
-                        )
-                        .limit(1);
-
-
-                if(result.error){
-
-                    console.warn(
-                        "PREVIOUS SESSION ERROR:",
-                        result.error
-                    );
-
-
-                    return null;
-
-                }
-
-
-                return (
-                    Array.isArray(result.data) &&
-                    result.data.length > 0
-                )
-                    ? result.data[0]
-                    : null;
-
-            }catch(error){
-
-                console.warn(
-                    "PREVIOUS SESSION EXCEPTION:",
-                    error
-                );
-
-
-                return null;
-
-            }
-
-        }
-
-
-        /* =====================================================
-           FILE TIME UPDATE
-        ====================================================== */
-
-        video.addEventListener(
-            "timeupdate",
-            function(){
-
-                if(
-                    state.currentVideoType !==
-                    "file"
-                ){
-
-                    return;
-
-                }
-
-
-                if(
-                    !video.duration ||
-                    !Number.isFinite(
-                        video.duration
-                    )
-                ){
-
-                    return;
-
-                }
-
-
-                const current =
-                    video.currentTime;
-
-
-                const duration =
-                    video.duration;
-
-
-                state.duration =
-                    duration;
-
-
-                const percent =
-                    Math.min(
-                        100,
-                        (
-                            current /
-                            duration
-                        ) *
-                        100
-                    );
-
-
-                updateProgress(
-                    percent
-                );
-
-
-                detectSkip(
-                    current
-                );
-
-            }
-        );
-
-
-        /* =====================================================
-           YOUTUBE PROGRESS
-        ====================================================== */
-
-        setInterval(
-            function(){
-
-                if(
-                    state.currentVideoType !==
-                    "youtube"
-                ){
-
-                    return;
-
-                }
-
-
-                if(
-                    !youtubePlayer ||
-                    typeof youtubePlayer.getCurrentTime !==
-                    "function"
-                ){
-
-                    return;
-
-                }
-
-
-                try{
-
-                    const current =
-                        youtubePlayer.getCurrentTime();
-
-
-                    const duration =
-                        youtubePlayer.getDuration();
-
-
-                    if(
-                        !duration ||
-                        duration <= 0
-                    ){
-
-                        return;
-
-                    }
-
-
-                    state.duration =
-                        duration;
-
-
-                    const percent =
-                        Math.min(
-                            100,
-                            (
-                                current /
-                                duration
-                            ) *
-                            100
-                        );
-
-
-                    updateProgress(
-                        percent
-                    );
-
-
-                    detectSkip(
-                        current
-                    );
-
-                }catch(error){}
+              playsinline: 1
 
             },
-            1000
+
+            events: {
+
+              onReady:
+                function() {
+
+                  currentStatus.textContent =
+                    "جاهز للمشاهدة";
+
+                  startYouTubeTracking();
+
+                },
+
+
+              onStateChange:
+                function(event) {
+
+                  if (
+                    event.data ===
+                    YT.PlayerState.PLAYING
+                  ) {
+
+                    currentStatus.textContent =
+                      "جاري المشاهدة";
+
+                  }
+
+
+                  if (
+                    event.data ===
+                    YT.PlayerState.PAUSED
+                  ) {
+
+                    currentStatus.textContent =
+                      "متوقف مؤقتًا";
+
+                  }
+
+
+                  if (
+                    event.data ===
+                    YT.PlayerState.ENDED
+                  ) {
+
+                    currentStatus.textContent =
+                      "تمت مشاهدة الفيديو";
+
+                    updateProgress(
+                      100
+                    );
+
+                    saveSession(
+                      true
+                    );
+
+                  }
+
+                }
+
+            }
+
+          }
         );
 
+    }
 
-        /* =====================================================
-           UPDATE PROGRESS
-        ====================================================== */
 
-        function updateProgress(
+    /* =========================================================
+       DESTROY YOUTUBE
+    ========================================================== */
+
+    function destroyYouTubePlayer() {
+
+      stopProgressTracking();
+
+
+      if (
+        state.youtubePlayer &&
+        typeof state.youtubePlayer.destroy ===
+        "function"
+      ) {
+
+        try {
+
+          state.youtubePlayer.destroy();
+
+        } catch (error) {
+
+          console.warn(
+            "YouTube destroy error:",
+            error
+          );
+
+        }
+
+      }
+
+
+      state.youtubePlayer =
+        null;
+
+    }
+
+
+    /* =========================================================
+       NATIVE VIDEO TRACKING
+    ========================================================== */
+
+    function startNativeVideoTracking() {
+
+      stopProgressTracking();
+
+
+      videoPlayer.ontimeupdate =
+        function() {
+
+          const duration =
+            Number(
+              videoPlayer.duration
+            );
+
+          const current =
+            Number(
+              videoPlayer.currentTime
+            );
+
+
+          if (
+            !duration ||
+            !Number.isFinite(duration)
+          ) {
+
+            return;
+
+          }
+
+
+          const percent =
+            Math.min(
+              100,
+              Math.max(
+                0,
+                (current / duration) *
+                100
+              )
+            );
+
+
+          updateProgress(
             percent
-        ){
+          );
 
-            const safePercent =
-                Math.max(
-                    0,
-                    Math.min(
-                        100,
-                        Number(percent) || 0
-                    )
-                );
 
+          if (
+            percent >= 90
+          ) {
 
-            percentBox.textContent =
-                `📊 ${safePercent.toFixed(1)}%`;
+            currentStatus.textContent =
+              "تمت مشاهدة الدرس";
 
+          } else if (
+            !videoPlayer.paused
+          ) {
 
-            progressBar.style.width =
-                safePercent + "%";
+            currentStatus.textContent =
+              "جاري المشاهدة";
 
-        }
+          }
 
+        };
 
-        /* =====================================================
-           SKIP DETECTION
-        ====================================================== */
 
-        function detectSkip(
-            current
-        ){
+      videoPlayer.onplay =
+        function() {
 
-            if(
-                state.restoring
-            ){
+          currentStatus.textContent =
+            "جاري المشاهدة";
 
-                session.lastTime =
-                    current;
+        };
 
-                return;
 
-            }
+      videoPlayer.onpause =
+        function() {
 
+          if (
+            videoPlayer.currentTime <
+            videoPlayer.duration
+          ) {
 
-            if(
-                current -
-                session.lastTime >
-                3
-            ){
+            currentStatus.textContent =
+              "متوقف مؤقتًا";
 
-                session.skips++;
+          }
 
-            }
+        };
 
 
-            session.lastTime =
-                current;
+      videoPlayer.onended =
+        function() {
 
-        }
+          updateProgress(
+            100
+          );
 
+          currentStatus.textContent =
+            "تمت مشاهدة الفيديو";
 
-        /* =====================================================
-           SPEED
-        ====================================================== */
+          saveSession(
+            true
+          );
 
-        function setSpeed(
-            speed
-        ){
+        };
 
-            state.currentSpeed =
-                Number(speed);
+    }
 
 
-            if(
-                state.currentVideoType ===
-                "file"
-            ){
+    /* =========================================================
+       YOUTUBE TRACKING
+    ========================================================== */
 
-                video.playbackRate =
-                    state.currentSpeed;
+    function startYouTubeTracking() {
 
-            }
+      stopProgressTracking();
 
 
-            if(
-                state.currentVideoType ===
-                "youtube" &&
-                youtubePlayer &&
-                typeof youtubePlayer.setPlaybackRate ===
-                "function"
-            ){
+      state.progressTimer =
+        setInterval(
+          function() {
 
-                try{
+            if (
+              !state.youtubePlayer ||
+              typeof state.youtubePlayer.getCurrentTime !==
+              "function"
+            ) {
 
-                    youtubePlayer.setPlaybackRate(
-                        state.currentSpeed
-                    );
-
-                }catch(error){
-
-                    console.warn(
-                        "YouTube speed error:",
-                        error
-                    );
-
-                }
-
-            }
-
-
-            document
-                .querySelectorAll(
-                    ".speedBtn"
-                )
-                .forEach(
-                    function(button){
-
-                        button.classList.toggle(
-                            "active",
-                            Number(
-                                button.dataset.speed
-                            ) ===
-                            state.currentSpeed
-                        );
-
-                    }
-                );
-
-        }
-
-
-        /* =====================================================
-           CURRENT PLAYBACK TIME
-        ====================================================== */
-
-        function getCurrentPlaybackTime(){
-
-            if(
-                state.currentVideoType ===
-                "file"
-            ){
-
-                return (
-                    Number(
-                        video.currentTime
-                    ) || 0
-                );
-
-            }
-
-
-            if(
-                state.currentVideoType ===
-                "youtube" &&
-                youtubePlayer &&
-                typeof youtubePlayer.getCurrentTime ===
-                "function"
-            ){
-
-                try{
-
-                    return (
-                        Number(
-                            youtubePlayer.getCurrentTime()
-                        ) || 0
-                    );
-
-                }catch(error){
-
-                    return 0;
-
-                }
-
-            }
-
-
-            return 0;
-
-        }
-
-
-        /* =====================================================
-           CURRENT DURATION
-        ====================================================== */
-
-        function getCurrentDuration(){
-
-            if(
-                state.currentVideoType ===
-                "file"
-            ){
-
-                return (
-                    Number(
-                        video.duration
-                    ) || 0
-                );
-
-            }
-
-
-            if(
-                state.currentVideoType ===
-                "youtube" &&
-                youtubePlayer &&
-                typeof youtubePlayer.getDuration ===
-                "function"
-            ){
-
-                try{
-
-                    return (
-                        Number(
-                            youtubePlayer.getDuration()
-                        ) || 0
-                    );
-
-                }catch(error){
-
-                    return 0;
-
-                }
-
-            }
-
-
-            return 0;
-
-        }
-
-
-        /* =====================================================
-           SAVE SESSION
-        ====================================================== */
-
-        async function saveSession(){
-
-            if(
-                !state.currentVideoId
-            ){
-
-                return;
+              return;
 
             }
 
 
             const current =
-                getCurrentPlaybackTime();
+              Number(
+                state.youtubePlayer
+                  .getCurrentTime()
+              );
 
 
             const duration =
-                getCurrentDuration();
+              Number(
+                state.youtubePlayer
+                  .getDuration()
+              );
 
 
-            if(
-                !duration ||
-                duration <= 0
-            ){
+            if (
+              !duration ||
+              !Number.isFinite(duration)
+            ) {
 
-                return;
+              return;
 
             }
 
 
             const percent =
-                Math.min(
-                    100,
-                    (
-                        current /
-                        duration
-                    ) *
-                    100
-                );
+              Math.min(
+                100,
+                Math.max(
+                  0,
+                  (current / duration) *
+                  100
+                )
+              );
 
 
-            const payload = {
-
-                student_id:
-                    String(
-                        user.id
-                    ),
-
-                video_id:
-                    state.currentVideoId,
-
-                class_group:
-                    user.class_group,
-
-                watched_seconds:
-                    Math.floor(
-                        current
-                    ),
-
-                duration:
-                    Math.floor(
-                        duration
-                    ),
-
-                percent:
-                    Number(
-                        percent.toFixed(2)
-                    ),
-
-                completed:
-                    percent >= 90,
-
-                skips:
-                    session.skips || 0,
-
-                updated_at:
-                    new Date()
-                        .toISOString()
-
-            };
+            updateProgress(
+              percent
+            );
 
 
-            try{
+          },
+          1000
+        );
 
-                const result =
-                    await client
-                        .from("video_sessions")
-                        .insert(
-                            [payload]
-                        );
+    }
 
 
-                if(result.error){
+    /* =========================================================
+       STOP TRACKING
+    ========================================================== */
 
-                    console.warn(
-                        "SAVE SESSION ERROR:",
-                        result.error
-                    );
+    function stopProgressTracking() {
+
+      if (
+        state.progressTimer
+      ) {
+
+        clearInterval(
+          state.progressTimer
+        );
+
+        state.progressTimer =
+          null;
+
+      }
+
+    }
 
 
-                    return;
+    /* =========================================================
+       UPDATE PROGRESS
+    ========================================================== */
 
-                }
+    function updateProgress(
+      percent
+    ) {
+
+      const safePercent =
+        Math.min(
+          100,
+          Math.max(
+            0,
+            Number(percent) || 0
+          )
+        );
 
 
-                console.log(
-                    "✅ SESSION SAVED",
-                    payload
-                );
+      progressBar.style.width =
+        safePercent.toFixed(1) +
+        "%";
 
-            }catch(error){
 
-                console.warn(
-                    "SAVE SESSION EXCEPTION:",
-                    error
-                );
+      progressValue.textContent =
+        Math.round(
+          safePercent
+        ) +
+        "%";
 
-            }
+
+      if (
+        safePercent >= 90
+      ) {
+
+        currentStatus.textContent =
+          "تم إكمال الدرس";
+
+      }
+
+    }
+
+
+    /* =========================================================
+       GET CURRENT POSITION
+    ========================================================== */
+
+    function getCurrentPlaybackData() {
+
+      let current = 0;
+      let duration = 0;
+
+
+      /* YOUTUBE */
+
+      if (
+        state.currentType ===
+        "youtube" &&
+        state.youtubePlayer
+      ) {
+
+        try {
+
+          current =
+            Number(
+              state.youtubePlayer
+                .getCurrentTime()
+            ) || 0;
+
+          duration =
+            Number(
+              state.youtubePlayer
+                .getDuration()
+            ) || 0;
+
+        } catch (error) {
+
+          console.warn(
+            "YouTube progress error:",
+            error
+          );
+
+        }
+
+      }
+
+
+      /* NATIVE */
+
+      if (
+        state.currentType ===
+        "file"
+      ) {
+
+        current =
+          Number(
+            videoPlayer.currentTime
+          ) || 0;
+
+        duration =
+          Number(
+            videoPlayer.duration
+          ) || 0;
+
+      }
+
+
+      return {
+        current,
+        duration
+      };
+
+    }
+
+
+    /* =========================================================
+       SAVE SESSION
+    ========================================================== */
+
+    async function saveSession(
+      forceComplete = false
+    ) {
+
+      if (
+        !state.currentVideoId ||
+        !client
+      ) {
+
+        return;
+
+      }
+
+
+      const playback =
+        getCurrentPlaybackData();
+
+
+      const current =
+        playback.current;
+
+      const duration =
+        playback.duration;
+
+
+      if (
+        !duration ||
+        !Number.isFinite(duration)
+      ) {
+
+        return;
+
+      }
+
+
+      const percent =
+        Math.min(
+          100,
+          Math.max(
+            0,
+            (current / duration) *
+            100
+          )
+        );
+
+
+      /* Prevent excessive DB writes */
+
+      const roundedPercent =
+        Number(
+          percent.toFixed(2)
+        );
+
+
+      if (
+        !forceComplete &&
+        Math.abs(
+          roundedPercent -
+          state.lastSavedPercent
+        ) < 5 &&
+        Math.abs(
+          current -
+          state.lastSavedSeconds
+        ) < 15
+      ) {
+
+        return;
+
+      }
+
+
+      state.lastSavedPercent =
+        roundedPercent;
+
+      state.lastSavedSeconds =
+        current;
+
+
+      const payload = {
+
+        student_id:
+          String(user.id),
+
+        video_id:
+          state.currentVideoId,
+
+        class_group:
+          user.class_group,
+
+        watched_seconds:
+          Math.floor(current),
+
+        duration:
+          Math.floor(duration),
+
+        percent:
+          roundedPercent,
+
+        completed:
+          forceComplete ||
+          percent >= 90,
+
+        skips:
+          0,
+
+        updated_at:
+          new Date().toISOString()
+
+      };
+
+
+      try {
+
+        const {
+          error
+        } =
+          await client
+            .from("video_sessions")
+            .upsert(
+              payload,
+              {
+                onConflict:
+                  "student_id,video_id"
+              }
+            );
+
+
+        if (error) {
+
+          console.warn(
+            "SESSION SAVE ERROR:",
+            error
+          );
+
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "SESSION SAVE EXCEPTION:",
+          error
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       PERIODIC SESSION SAVE
+    ========================================================== */
+
+    setInterval(
+      function() {
+
+        saveSession(
+          false
+        );
+
+      },
+      15000
+    );
+
+
+    /* =========================================================
+       SAVE BEFORE PAGE EXIT
+    ========================================================== */
+
+    window.addEventListener(
+      "beforeunload",
+      function() {
+
+        saveSession(
+          false
+        );
+
+      }
+    );
+
+
+    /* =========================================================
+       SIDEBAR
+    ========================================================== */
+
+    function toggleSidebar() {
+
+      sidebar.classList.toggle(
+        "open"
+      );
+
+      sidebarOverlay.classList.toggle(
+        "active"
+      );
+
+    }
+
+
+    function closeSidebar() {
+
+      sidebar.classList.remove(
+        "open"
+      );
+
+      sidebarOverlay.classList.remove(
+        "active"
+      );
+
+    }
+
+
+    /* =========================================================
+       KEYBOARD
+    ========================================================== */
+
+    document.addEventListener(
+      "keydown",
+      function(event) {
+
+        if (
+          event.key ===
+          "Escape"
+        ) {
+
+          closeSidebar();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       PREVENT RIGHT CLICK
+    ========================================================== */
+
+    document.addEventListener(
+      "contextmenu",
+      function(event) {
+
+        event.preventDefault();
+
+      }
+    );
+
+
+    /* =========================================================
+       DISABLE SOME SHORTCUTS
+    ========================================================== */
+
+    document.addEventListener(
+      "keydown",
+      function(event) {
+
+        const key =
+          String(
+            event.key
+          ).toLowerCase();
+
+
+        if (
+          event.ctrlKey &&
+          (
+            key === "u" ||
+            key === "s"
+          )
+        ) {
+
+          event.preventDefault();
 
         }
 
 
-        /* =====================================================
-           VIDEO END
-        ====================================================== */
+        if (
+          event.ctrlKey &&
+          event.shiftKey &&
+          (
+            key === "i" ||
+            key === "j"
+          )
+        ) {
 
-        video.addEventListener(
-            "ended",
-            function(){
+          event.preventDefault();
 
-                saveSession();
+        }
 
-            }
+
+        if (
+          key === "f12"
+        ) {
+
+          event.preventDefault();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       GLOBAL ERROR HANDLER
+    ========================================================== */
+
+    window.addEventListener(
+      "error",
+      function(event) {
+
+        console.error(
+          "GLOBAL ERROR:",
+          event.error ||
+          event.message
         );
 
-
-        /* =====================================================
-           PERIODIC SAVE
-        ====================================================== */
-
-        setInterval(
-            function(){
-
-                saveSession();
-
-            },
-            30000
-        );
+      }
+    );
 
 
-        /* =====================================================
-           VISIBILITY
-        ====================================================== */
+    /* =========================================================
+       INITIALIZE
+    ========================================================== */
 
-        document.addEventListener(
-            "visibilitychange",
-            function(){
+    async function initializePage() {
 
-                if(
-                    document.hidden
-                ){
+      try {
 
-                    antiRecord.style.display =
-                        "flex";
-
-
-                    saveSession();
-
-                }else{
-
-                    antiRecord.style.display =
-                        "none";
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           CONTEXT MENU
-        ====================================================== */
-
-        document.addEventListener(
-            "contextmenu",
-            function(event){
-
-                event.preventDefault();
-
-            }
-        );
-
-
-        /* =====================================================
-           DRAG PROTECTION
-        ====================================================== */
-
-        document.addEventListener(
-            "dragstart",
-            function(event){
-
-                event.preventDefault();
-
-            }
-        );
-
-
-        /* =====================================================
-           KEYBOARD SHORTCUTS
-        ====================================================== */
-
-        document.addEventListener(
-            "keydown",
-            function(event){
-
-                /*
-                -----------------------------------------------
-                F12
-                -----------------------------------------------
-                */
-
-                if(
-                    event.key === "F12"
-                ){
-
-                    event.preventDefault();
-
-                }
-
-
-                /*
-                -----------------------------------------------
-                Ctrl + U
-                -----------------------------------------------
-                */
-
-                if(
-                    event.ctrlKey &&
-                    event.key.toLowerCase() === "u"
-                ){
-
-                    event.preventDefault();
-
-                }
-
-
-                /*
-                -----------------------------------------------
-                Ctrl + Shift + I
-                -----------------------------------------------
-                */
-
-                if(
-                    event.ctrlKey &&
-                    event.shiftKey &&
-                    event.key.toLowerCase() === "i"
-                ){
-
-                    event.preventDefault();
-
-                }
-
-
-                /*
-                -----------------------------------------------
-                Ctrl + Shift + J
-                -----------------------------------------------
-                */
-
-                if(
-                    event.ctrlKey &&
-                    event.shiftKey &&
-                    event.key.toLowerCase() === "j"
-                ){
-
-                    event.preventDefault();
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           INITIALIZE
-        ====================================================== */
+        initializeSupabase();
 
         console.log(
-            "🔥 VIDEOS PAGE INITIALIZING..."
+          "Supabase initialized successfully."
+        );
+
+        console.log(
+          "Project:",
+          SUPABASE_URL
+        );
+
+        console.log(
+          "Student:",
+          user
         );
 
 
-        setSpeed(1);
+        await loadVideos();
+
+      } catch (error) {
+
+        console.error(
+          "INITIALIZATION ERROR:",
+          error
+        );
+
+        showErrorState(
+          "تعذر تشغيل الصفحة",
+          error.message ||
+          "حدث خطأ أثناء تشغيل المنصة."
+        );
+
+      }
+
+    }
 
 
-        loadVideos()
-            .then(
-                function(){
+    /* =========================================================
+       START
+    ========================================================== */
 
-                    console.log(
-                        "✅ loadVideos FINISHED"
-                    );
+    initializePage();
 
-                }
-            )
-            .catch(
-                function(error){
-
-                    console.error(
-                        "❌ loadVideos FAILED:",
-                        error
-                    );
-
-
-                    showListMessage(
-                        `
-                        ❌ حدث خطأ غير متوقع
-                        <br>
-                        <small>
-                        ${escapeHTML(
-                            error.message ||
-                            String(error)
-                        )}
-                        </small>
-                        `,
-                        "error"
-                    );
-
-                }
-            );
-
-
-    </script>
+  </script>
 
 </body>
-
 </html>
