@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -13,13 +14,18 @@
     content="منصة د. يوسف نافع التعليمية - مشاهدة الدروس والفيديوهات التعليمية"
   >
 
-  <meta name="theme-color" content="#07111f">
+  <meta
+    name="theme-color"
+    content="#07111f"
+  >
 
   <title>الفيديوهات | د. يوسف نافع</title>
+
 
   <!-- =========================================================
        FONTS
   ========================================================== -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -28,29 +34,35 @@
     rel="stylesheet"
   >
 
+
   <!-- =========================================================
        SUPABASE
   ========================================================== -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
-  ></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
 
   <!-- =========================================================
        YOUTUBE IFRAME API
   ========================================================== -->
+
   <script src="https://www.youtube.com/iframe_api"></script>
 
+
   <!-- =========================================================
-       ICONS
+       FONT AWESOME
   ========================================================== -->
+
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
   >
 
+
   <!-- =========================================================
        STYLE
   ========================================================== -->
+
   <style>
 
     /* =========================================================
@@ -86,9 +98,14 @@
       overflow-x: hidden;
     }
 
+    body.sidebar-open {
+      overflow: hidden;
+    }
+
     button,
     input,
-    select {
+    select,
+    textarea {
       font-family: inherit;
     }
 
@@ -101,6 +118,7 @@
       color: inherit;
     }
 
+
     /* =========================================================
        APP
     ========================================================== */
@@ -111,6 +129,7 @@
       position: relative;
     }
 
+
     /* =========================================================
        SIDEBAR
     ========================================================== */
@@ -119,6 +138,7 @@
       width: 350px;
       min-width: 350px;
       height: 100vh;
+
       position: sticky;
       top: 0;
       right: 0;
@@ -133,13 +153,15 @@
           rgba(5, 12, 22, 0.98)
         );
 
-      border-left: 1px solid rgba(148, 163, 184, 0.12);
+      border-left:
+        1px solid rgba(148, 163, 184, 0.12);
 
       box-shadow:
         -20px 0 60px rgba(0, 0, 0, 0.18);
 
-      z-index: 50;
+      z-index: 100;
     }
+
 
     /* =========================================================
        BRAND
@@ -152,12 +174,14 @@
       align-items: center;
       gap: 14px;
 
-      border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+      border-bottom:
+        1px solid rgba(148, 163, 184, 0.10);
     }
 
     .brand-icon {
       width: 52px;
       height: 52px;
+
       flex-shrink: 0;
 
       border-radius: 16px;
@@ -192,17 +216,18 @@
 
     .brand-subtitle {
       margin-top: 3px;
+
       font-size: 12px;
       color: #94a3b8;
     }
 
+
     /* =========================================================
-       STUDENT INFO
+       STUDENT CARD
     ========================================================== */
 
     .student-card {
       margin: 20px;
-
       padding: 17px;
 
       border-radius: 18px;
@@ -214,7 +239,8 @@
           rgba(15, 23, 42, 0.72)
         );
 
-      border: 1px solid rgba(148, 163, 184, 0.12);
+      border:
+        1px solid rgba(148, 163, 184, 0.12);
 
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.03);
@@ -246,12 +272,17 @@
       font-size: 11px;
       color: #93c5fd;
 
-      background: rgba(37, 99, 235, 0.10);
-      border: 1px solid rgba(59, 130, 246, 0.14);
+      background:
+        rgba(37, 99, 235, 0.10);
+
+      border:
+        1px solid rgba(59, 130, 246, 0.14);
 
       padding: 5px 9px;
+
       border-radius: 999px;
     }
+
 
     /* =========================================================
        VIDEOS HEADER
@@ -263,6 +294,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+
       gap: 10px;
     }
 
@@ -283,13 +315,18 @@
 
       border-radius: 9px;
 
-      background: rgba(37, 99, 235, 0.12);
-      border: 1px solid rgba(59, 130, 246, 0.14);
+      background:
+        rgba(37, 99, 235, 0.12);
+
+      border:
+        1px solid rgba(59, 130, 246, 0.14);
 
       color: #93c5fd;
+
       font-size: 12px;
       font-weight: 800;
     }
+
 
     /* =========================================================
        VIDEO LIST
@@ -313,9 +350,12 @@
     }
 
     .video-list::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.16);
+      background:
+        rgba(148, 163, 184, 0.16);
+
       border-radius: 999px;
     }
+
 
     /* =========================================================
        VIDEO ITEM
@@ -325,20 +365,22 @@
       width: 100%;
 
       padding: 13px;
-
       margin-bottom: 9px;
 
       border-radius: 15px;
 
       display: flex;
       align-items: center;
+
       gap: 12px;
 
       cursor: pointer;
 
-      background: rgba(15, 23, 42, 0.62);
+      background:
+        rgba(15, 23, 42, 0.62);
 
-      border: 1px solid rgba(148, 163, 184, 0.08);
+      border:
+        1px solid rgba(148, 163, 184, 0.08);
 
       transition:
         transform 0.18s ease,
@@ -350,9 +392,11 @@
     .video-item:hover {
       transform: translateY(-1px);
 
-      background: rgba(30, 41, 59, 0.85);
+      background:
+        rgba(30, 41, 59, 0.85);
 
-      border-color: rgba(59, 130, 246, 0.20);
+      border-color:
+        rgba(59, 130, 246, 0.20);
     }
 
     .video-item.active {
@@ -363,7 +407,8 @@
           rgba(14, 165, 233, 0.08)
         );
 
-      border-color: rgba(59, 130, 246, 0.35);
+      border-color:
+        rgba(59, 130, 246, 0.35);
 
       box-shadow:
         0 8px 25px rgba(37, 99, 235, 0.08);
@@ -381,7 +426,8 @@
       align-items: center;
       justify-content: center;
 
-      background: rgba(255,255,255,0.05);
+      background:
+        rgba(255,255,255,0.05);
 
       color: #94a3b8;
 
@@ -416,6 +462,7 @@
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
+
       overflow: hidden;
     }
 
@@ -430,8 +477,9 @@
       gap: 5px;
     }
 
+
     /* =========================================================
-       EMPTY / LOADING
+       STATE BOX
     ========================================================== */
 
     .state-box {
@@ -445,14 +493,17 @@
 
       display: flex;
       flex-direction: column;
+
       align-items: center;
       justify-content: center;
 
       text-align: center;
 
-      background: rgba(15, 23, 42, 0.55);
+      background:
+        rgba(15, 23, 42, 0.55);
 
-      border: 1px dashed rgba(148, 163, 184, 0.15);
+      border:
+        1px dashed rgba(148, 163, 184, 0.15);
 
       color: #94a3b8;
     }
@@ -469,7 +520,8 @@
       align-items: center;
       justify-content: center;
 
-      background: rgba(37, 99, 235, 0.10);
+      background:
+        rgba(37, 99, 235, 0.10);
 
       color: #60a5fa;
 
@@ -478,6 +530,7 @@
 
     .state-title {
       color: #e2e8f0;
+
       font-size: 13px;
       font-weight: 800;
     }
@@ -489,6 +542,7 @@
 
       font-size: 11px;
       line-height: 1.8;
+      white-space: pre-line;
     }
 
     .retry-button {
@@ -514,6 +568,7 @@
       transform: translateY(-1px);
     }
 
+
     /* =========================================================
        MAIN
     ========================================================== */
@@ -527,15 +582,19 @@
       position: relative;
     }
 
+
     /* =========================================================
        TOPBAR
     ========================================================== */
 
     .topbar {
       max-width: 1450px;
-      margin: 0 auto 24px;
+
+      margin:
+        0 auto 24px;
 
       display: flex;
+
       align-items: center;
       justify-content: space-between;
 
@@ -544,32 +603,41 @@
 
     .page-title {
       font-size: 24px;
+
       font-weight: 900;
+
       letter-spacing: -0.4px;
     }
 
     .page-subtitle {
       margin-top: 4px;
+
       font-size: 12px;
+
       color: #64748b;
     }
 
     .connection-status {
       display: inline-flex;
+
       align-items: center;
+
       gap: 8px;
 
       padding: 9px 13px;
 
       border-radius: 999px;
 
-      background: rgba(16, 185, 129, 0.08);
+      background:
+        rgba(16, 185, 129, 0.08);
 
-      border: 1px solid rgba(16, 185, 129, 0.12);
+      border:
+        1px solid rgba(16, 185, 129, 0.12);
 
       color: #6ee7b7;
 
       font-size: 11px;
+
       font-weight: 700;
     }
 
@@ -585,12 +653,14 @@
         0 0 0 4px rgba(52, 211, 153, 0.08);
     }
 
+
     /* =========================================================
        PLAYER CARD
     ========================================================== */
 
     .player-card {
       max-width: 1450px;
+
       margin: 0 auto;
 
       background:
@@ -600,7 +670,8 @@
           rgba(8, 15, 27, 0.92)
         );
 
-      border: 1px solid rgba(148, 163, 184, 0.10);
+      border:
+        1px solid rgba(148, 163, 184, 0.10);
 
       border-radius: 24px;
 
@@ -609,6 +680,7 @@
       box-shadow:
         0 25px 70px rgba(0, 0, 0, 0.22);
     }
+
 
     /* =========================================================
        PLAYER
@@ -642,7 +714,11 @@
 
     #youtubePlayer {
       display: none;
+
+      width: 100%;
+      height: 100%;
     }
+
 
     /* =========================================================
        PLAYER PLACEHOLDER
@@ -650,11 +726,15 @@
 
     .player-placeholder {
       position: absolute;
+
       inset: 0;
 
       display: flex;
+
       flex-direction: column;
+
       align-items: center;
+
       justify-content: center;
 
       text-align: center;
@@ -679,7 +759,9 @@
       border-radius: 22px;
 
       display: flex;
+
       align-items: center;
+
       justify-content: center;
 
       background:
@@ -689,7 +771,8 @@
           rgba(14, 165, 233, 0.10)
         );
 
-      border: 1px solid rgba(96, 165, 250, 0.12);
+      border:
+        1px solid rgba(96, 165, 250, 0.12);
 
       color: #60a5fa;
 
@@ -709,8 +792,10 @@
       color: #64748b;
 
       font-size: 12px;
+
       line-height: 1.8;
     }
+
 
     /* =========================================================
        VIDEO DETAILS
@@ -722,7 +807,9 @@
 
     .current-title {
       font-size: 21px;
+
       font-weight: 900;
+
       line-height: 1.6;
 
       color: #f8fafc;
@@ -732,8 +819,11 @@
       margin-top: 10px;
 
       display: flex;
+
       align-items: center;
+
       flex-wrap: wrap;
+
       gap: 8px;
     }
 
@@ -742,21 +832,29 @@
 
       border-radius: 999px;
 
-      background: rgba(148, 163, 184, 0.06);
+      background:
+        rgba(148, 163, 184, 0.06);
 
-      border: 1px solid rgba(148, 163, 184, 0.08);
+      border:
+        1px solid rgba(148, 163, 184, 0.08);
 
       color: #94a3b8;
 
       font-size: 10px;
+
       font-weight: 700;
     }
 
     .meta-badge.blue {
-      background: rgba(37, 99, 235, 0.09);
-      border-color: rgba(59, 130, 246, 0.12);
+      background:
+        rgba(37, 99, 235, 0.09);
+
+      border-color:
+        rgba(59, 130, 246, 0.12);
+
       color: #93c5fd;
     }
+
 
     /* =========================================================
        PROGRESS
@@ -769,14 +867,18 @@
 
       border-radius: 16px;
 
-      background: rgba(255,255,255,0.025);
+      background:
+        rgba(255,255,255,0.025);
 
-      border: 1px solid rgba(148, 163, 184, 0.07);
+      border:
+        1px solid rgba(148, 163, 184, 0.07);
     }
 
     .progress-head {
       display: flex;
+
       align-items: center;
+
       justify-content: space-between;
 
       gap: 10px;
@@ -786,29 +888,36 @@
 
     .progress-label {
       color: #94a3b8;
+
       font-size: 11px;
+
       font-weight: 700;
     }
 
     .progress-value {
       color: #60a5fa;
+
       font-size: 11px;
+
       font-weight: 900;
     }
 
     .progress-track {
       width: 100%;
+
       height: 6px;
 
       overflow: hidden;
 
       border-radius: 999px;
 
-      background: rgba(148, 163, 184, 0.10);
+      background:
+        rgba(148, 163, 184, 0.10);
     }
 
     .progress-bar {
       width: 0%;
+
       height: 100%;
 
       border-radius: inherit;
@@ -820,11 +929,13 @@
           #0ea5e9
         );
 
-      transition: width 0.25s ease;
+      transition:
+        width 0.25s ease;
     }
 
+
     /* =========================================================
-       MOBILE SIDEBAR BUTTON
+       MOBILE BUTTON
     ========================================================== */
 
     .mobile-menu-button {
@@ -859,6 +970,7 @@
       font-size: 18px;
     }
 
+
     /* =========================================================
        OVERLAY
     ========================================================== */
@@ -867,14 +979,18 @@
       display: none;
 
       position: fixed;
+
       inset: 0;
 
-      background: rgba(0, 0, 0, 0.55);
+      background:
+        rgba(0, 0, 0, 0.55);
 
-      backdrop-filter: blur(3px);
+      backdrop-filter:
+        blur(3px);
 
-      z-index: 40;
+      z-index: 90;
     }
+
 
     /* =========================================================
        RESPONSIVE
@@ -894,7 +1010,9 @@
       .current-title {
         font-size: 18px;
       }
+
     }
+
 
     @media (max-width: 820px) {
 
@@ -909,9 +1027,11 @@
         right: -100%;
 
         width: min(350px, 88vw);
+
         min-width: 0;
 
-        transition: right 0.25s ease;
+        transition:
+          right 0.25s ease;
 
         box-shadow:
           -25px 0 70px rgba(0,0,0,0.35);
@@ -927,6 +1047,7 @@
 
       .mobile-menu-button {
         display: flex;
+
         align-items: center;
         justify-content: center;
       }
@@ -955,7 +1076,9 @@
       .video-details {
         padding: 20px;
       }
+
     }
+
 
     @media (max-width: 500px) {
 
@@ -990,7 +1113,9 @@
       .placeholder-icon {
         width: 58px;
         height: 58px;
+
         border-radius: 18px;
+
         font-size: 22px;
       }
 
@@ -1001,10 +1126,13 @@
       .placeholder-text {
         font-size: 10px;
       }
+
     }
 
   </style>
+
 </head>
+
 
 <body>
 
@@ -1014,11 +1142,15 @@
 
   <div class="app">
 
+
     <!-- =======================================================
          SIDEBAR
     ======================================================== -->
 
-    <aside class="sidebar" id="sidebar">
+    <aside
+      class="sidebar"
+      id="sidebar"
+    >
 
       <div class="brand">
 
@@ -1049,7 +1181,10 @@
           الطالب
         </div>
 
-        <div class="student-name" id="studentName">
+        <div
+          class="student-name"
+          id="studentName"
+        >
           جاري التحميل...
         </div>
 
@@ -1074,7 +1209,10 @@
           المحاضرات والدروس
         </div>
 
-        <div class="video-count" id="videoCount">
+        <div
+          class="video-count"
+          id="videoCount"
+        >
           0
         </div>
 
@@ -1083,7 +1221,10 @@
 
       <!-- VIDEO LIST -->
 
-      <div class="video-list" id="videoList">
+      <div
+        class="video-list"
+        id="videoList"
+      >
 
         <div class="state-box">
 
@@ -1113,7 +1254,6 @@
     <div
       class="sidebar-overlay"
       id="sidebarOverlay"
-      onclick="closeSidebar()"
     ></div>
 
 
@@ -1122,6 +1262,7 @@
     ======================================================== -->
 
     <main class="main">
+
 
       <!-- TOPBAR -->
 
@@ -1145,7 +1286,7 @@
           <span class="status-dot"></span>
 
           <span id="connectionText">
-            متصل بالمنصة
+            جاري الاتصال...
           </span>
 
         </div>
@@ -1157,9 +1298,13 @@
 
       <section class="player-card">
 
+
         <!-- PLAYER -->
 
-        <div class="player-wrapper" id="playerWrapper">
+        <div
+          class="player-wrapper"
+          id="playerWrapper"
+        >
 
           <!-- PLACEHOLDER -->
 
@@ -1197,7 +1342,6 @@
 
           <div
             id="youtubePlayer"
-            style="display:none;"
           ></div>
 
         </div>
@@ -1289,7 +1433,6 @@
     id="mobileMenuButton"
     type="button"
     aria-label="فتح قائمة الفيديوهات"
-    onclick="toggleSidebar()"
   >
     <i class="fa-solid fa-list"></i>
   </button>
@@ -1306,9 +1449,8 @@
 
     /* =========================================================
        SUPABASE CONFIGURATION
-
-       IMPORTANT:
-       This is the SAME configuration used by the upload page.
+       
+       SAME PROJECT + SAME ANON KEY AS UPLOAD PAGE
     ========================================================== */
 
     const SUPABASE_URL =
@@ -1333,22 +1475,24 @@
       ) {
 
         throw new Error(
-          "لم يتم تحميل مكتبة Supabase بشكل صحيح."
+          "لم يتم تحميل مكتبة Supabase بشكل صحيح. تأكد من اتصال الإنترنت."
         );
 
       }
 
-      client = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-      );
+      client =
+        window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_ANON_KEY
+        );
 
       return client;
+
     }
 
 
     /* =========================================================
-       DOM ELEMENTS
+       DOM
     ========================================================== */
 
     const videoList =
@@ -1399,9 +1543,12 @@
     const connectionText =
       document.getElementById("connectionText");
 
+    const mobileMenuButton =
+      document.getElementById("mobileMenuButton");
+
 
     /* =========================================================
-       STUDENT DATA
+       READ STUDENT FROM LOCAL STORAGE
     ========================================================== */
 
     let savedUser = {};
@@ -1426,7 +1573,7 @@
 
 
     /* =========================================================
-       CLASS GROUP NORMALIZATION
+       NORMALIZE CLASS GROUP
     ========================================================== */
 
     function normalizeClassGroup(value) {
@@ -1507,11 +1654,12 @@
         aliases[normalized] ||
         original
       );
+
     }
 
 
     /* =========================================================
-       USER OBJECT
+       USER
     ========================================================== */
 
     const user = {
@@ -1544,10 +1692,12 @@
 
 
     /* =========================================================
-       CLASS DISPLAY NAME
+       CLASS DISPLAY
     ========================================================== */
 
-    function getClassDisplayName(classGroup) {
+    function getClassDisplayName(
+      classGroup
+    ) {
 
       switch (classGroup) {
 
@@ -1588,15 +1738,13 @@
 
       lastSavedPercent: 0,
 
-      lastSavedSeconds: 0,
-
-      sessionStarted: false
+      lastSavedSeconds: 0
 
     };
 
 
     /* =========================================================
-       INITIAL UI
+       INITIAL STUDENT UI
     ========================================================== */
 
     studentName.textContent =
@@ -1609,7 +1757,7 @@
 
 
     /* =========================================================
-       SAFE TEXT
+       ESCAPE HTML
     ========================================================== */
 
     function escapeHtml(value) {
@@ -1621,6 +1769,7 @@
         String(value ?? "");
 
       return div.innerHTML;
+
     }
 
 
@@ -1628,7 +1777,9 @@
        ERROR FORMATTER
     ========================================================== */
 
-    function formatSupabaseError(error) {
+    function formatSupabaseError(
+      error
+    ) {
 
       if (!error) {
         return "خطأ غير معروف.";
@@ -1669,11 +1820,12 @@
       }
 
       return result;
+
     }
 
 
     /* =========================================================
-       ERROR UI
+       SHOW ERROR
     ========================================================== */
 
     function showErrorState(
@@ -1700,10 +1852,7 @@
             ${escapeHtml(title)}
           </div>
 
-          <div
-            class="state-text"
-            style="white-space:pre-line;"
-          >
+          <div class="state-text">
             ${escapeHtml(message)}
           </div>
 
@@ -1712,8 +1861,8 @@
               ? `
                 <button
                   class="retry-button"
+                  id="retryVideosButton"
                   type="button"
-                  onclick="loadVideos()"
                 >
                   <i class="fa-solid fa-rotate-right"></i>
                   إعادة المحاولة
@@ -1728,11 +1877,27 @@
 
       connectionText.textContent =
         "يوجد خطأ في الاتصال";
+
+
+      const retryButton =
+        document.getElementById(
+          "retryVideosButton"
+        );
+
+      if (retryButton) {
+
+        retryButton.addEventListener(
+          "click",
+          loadVideos
+        );
+
+      }
+
     }
 
 
     /* =========================================================
-       LOADING UI
+       LOADING
     ========================================================== */
 
     function showLoadingState() {
@@ -1750,7 +1915,7 @@
           </div>
 
           <div class="state-text">
-            يتم الآن جلب الفيديوهات الخاصة بصفك...
+            يتم الآن جلب المحتوى التعليمي...
           </div>
 
         </div>
@@ -1761,7 +1926,7 @@
 
 
     /* =========================================================
-       EMPTY UI
+       EMPTY
     ========================================================== */
 
     function showEmptyState() {
@@ -1779,14 +1944,15 @@
           </div>
 
           <div class="state-text">
-            لم يتم إضافة فيديوهات لهذا الصف حتى الآن.
+            لم يتم العثور على فيديوهات متاحة لهذا الصف.
           </div>
 
         </div>
 
       `;
 
-      videoCount.textContent = "0";
+      videoCount.textContent =
+        "0";
 
     }
 
@@ -1795,7 +1961,9 @@
        VIDEO TYPE
     ========================================================== */
 
-    function getVideoType(url) {
+    function getVideoType(
+      url
+    ) {
 
       const value =
         String(url || "")
@@ -1822,7 +1990,9 @@
        YOUTUBE ID
     ========================================================== */
 
-    function getYouTubeId(url) {
+    function getYouTubeId(
+      url
+    ) {
 
       if (!url) {
         return null;
@@ -1836,33 +2006,45 @@
         const hostname =
           parsed.hostname
             .toLowerCase()
-            .replace(/^www\./, "");
+            .replace(
+              /^www\./,
+              ""
+            );
 
 
         /* youtu.be */
 
         if (
-          hostname === "youtu.be"
+          hostname ===
+          "youtu.be"
         ) {
 
-          const id =
+          return (
             parsed.pathname
-              .replace("/", "")
-              .trim();
+              .replace(
+                /^\//,
+                ""
+              )
+              .split("/")[0] ||
+            null
+          );
 
-          return id || null;
         }
 
 
         /* youtube.com */
 
         if (
-          hostname === "youtube.com" ||
-          hostname === "m.youtube.com"
+          hostname ===
+            "youtube.com" ||
+          hostname ===
+            "m.youtube.com"
         ) {
 
           const watchId =
-            parsed.searchParams.get("v");
+            parsed.searchParams.get(
+              "v"
+            );
 
           if (watchId) {
             return watchId;
@@ -1875,28 +2057,36 @@
               .filter(Boolean);
 
 
-          const index =
-            parts.indexOf("shorts");
+          const shortsIndex =
+            parts.indexOf(
+              "shorts"
+            );
 
           if (
-            index !== -1 &&
-            parts[index + 1]
+            shortsIndex !== -1 &&
+            parts[shortsIndex + 1]
           ) {
 
-            return parts[index + 1];
+            return (
+              parts[shortsIndex + 1]
+            );
 
           }
 
 
           const embedIndex =
-            parts.indexOf("embed");
+            parts.indexOf(
+              "embed"
+            );
 
           if (
             embedIndex !== -1 &&
             parts[embedIndex + 1]
           ) {
 
-            return parts[embedIndex + 1];
+            return (
+              parts[embedIndex + 1]
+            );
 
           }
 
@@ -1919,196 +2109,68 @@
 
     /* =========================================================
        LOAD VIDEOS
+       
+       IMPORTANT:
+       This is the ONLY loadVideos function in this file.
     ========================================================== */
 
-   async function loadVideos() {
-    const list = document.getElementById("videoList");
+    async function loadVideos() {
 
-    try {
-        list.innerHTML = `
-            <div style="padding:30px;text-align:center;color:#aaa">
-                جاري الاتصال بقاعدة البيانات...
-            </div>
-        `;
-
-        console.log("===== SUPABASE TEST =====");
-        console.log("URL:", SUPABASE_URL);
-        console.log("KEY LENGTH:", SUPABASE_ANON_KEY.length);
-
-        // الاتصال بـ Supabase
-        if (!client) {
-            initializeSupabase();
-        }
-
-        // اختبار قراءة جدول videos
-        const { data, error } = await client
-            .from("videos")
-            .select("id,title,url,class_group,is_premium")
-            .order("id", { ascending: true });
-
-        console.log("VIDEOS:", data);
-        console.log("ERROR:", error);
-
-        if (error) {
-            console.error("SUPABASE ERROR:", error);
-
-            list.innerHTML = `
-                <div style="
-                    padding:30px;
-                    text-align:center;
-                    color:#ff6b6b;
-                    line-height:2;
-                ">
-                    <div style="font-size:35px">❌</div>
-                    <b>تعذر تحميل الفيديوهات</b>
-                    <br><br>
-                    <small>${error.message || "خطأ غير معروف"}</small>
-                </div>
-            `;
-
-            return;
-        }
-
-        if (!data || data.length === 0) {
-            list.innerHTML = `
-                <div style="
-                    padding:30px;
-                    text-align:center;
-                    color:#aaa;
-                ">
-                    📭 لا توجد فيديوهات في جدول videos
-                </div>
-            `;
-
-            return;
-        }
-
-        /*
-         * مهم:
-         * في هذه المرحلة لا نعمل فلترة بـ class_group.
-         * نريد أولاً التأكد أن صفحة الطالب تستطيع
-         * قراءة الفيديوهات من Supabase.
-         */
-
-        state.videos = data;
-
-        console.log("TOTAL VIDEOS:", state.videos.length);
-
-        renderVideoList();
-
-        if (state.videos.length > 0) {
-            openVideo(state.videos[0]);
-        }
-
-    } catch (error) {
-
-        console.error("LOAD VIDEOS ERROR:", error);
-
-        list.innerHTML = `
-            <div style="
-                padding:30px;
-                text-align:center;
-                color:#ff6b6b;
-            ">
-                ❌ حدث خطأ أثناء تحميل الفيديوهات
-                <br><br>
-                <small>${error.message || error}</small>
-            </div>
-        `;
-    }
-}
-
-      /* -------------------------------------------------------
-         CHECK SUPABASE
-      ------------------------------------------------------- */
+      showLoadingState();
 
       try {
+
+        /* -----------------------------------------------------
+           INITIALIZE SUPABASE
+        ------------------------------------------------------ */
 
         if (!client) {
           initializeSupabase();
         }
 
-      } catch (error) {
 
-        console.error(
-          "SUPABASE INITIALIZATION ERROR:",
-          error
+        console.log(
+          "========================================"
         );
 
-        showErrorState(
-          "تعذر تشغيل المنصة",
-          error.message ||
-          "تعذر تحميل مكتبة Supabase."
+        console.log(
+          "SUPABASE URL:",
+          SUPABASE_URL
         );
 
-        return;
-
-      }
-
-
-      /* -------------------------------------------------------
-         CHECK CLASS
-      ------------------------------------------------------- */
-
-      if (
-        !user.class_group ||
-        user.class_group === "unknown"
-      ) {
-
-        console.error(
-          "CLASS GROUP IS MISSING:",
-          savedUser
+        console.log(
+          "KEY LENGTH:",
+          SUPABASE_ANON_KEY.length
         );
 
-        showErrorState(
-          "الصف الدراسي غير محدد",
-          "لم يتم العثور على class_group في بيانات الطالب.\n\nتأكد أن صفحة تسجيل الدخول تحفظ class_group بنفس القيمة الموجودة في صفحة الرفع."
+        console.log(
+          "STUDENT:",
+          user
         );
 
-        return;
-
-      }
-
-
-      console.log(
-        "========================================"
-      );
-
-      console.log(
-        "SUPABASE URL:",
-        SUPABASE_URL
-      );
-
-      console.log(
-        "STUDENT:",
-        user
-      );
-
-      console.log(
-        "CLASS GROUP:",
-        user.class_group
-      );
-
-      console.log(
-        "========================================"
-      );
+        console.log(
+          "========================================"
+        );
 
 
-      /* -------------------------------------------------------
-         QUERY
-      ------------------------------------------------------- */
+        /* -----------------------------------------------------
+           CHECK CLASS
+           
+           We DO NOT stop the database connection if class_group
+           is missing. We first read the database so the actual
+           problem can be diagnosed correctly.
+        ------------------------------------------------------ */
 
-      try {
+
+        /* -----------------------------------------------------
+           FETCH VIDEOS
+        ------------------------------------------------------ */
 
         const response =
           await client
             .from("videos")
             .select(
               "id,title,url,class_group,is_premium"
-            )
-            .eq(
-              "class_group",
-              user.class_group
             )
             .order(
               "id",
@@ -2135,7 +2197,7 @@
 
 
         /* -----------------------------------------------------
-           ERROR
+           DATABASE ERROR
         ------------------------------------------------------ */
 
         if (error) {
@@ -2152,26 +2214,36 @@
             );
 
 
+          const lower =
+            formatted.toLowerCase();
+
+
           if (
-            formatted
-              .toLowerCase()
-              .includes("invalid api key")
+            lower.includes(
+              "invalid api key"
+            )
           ) {
 
             showErrorState(
-              "مشكلة في مفتاح Supabase",
-              "Invalid API key\n\nتأكد أن مفتاح SUPABASE_ANON_KEY الموجود في هذه الصفحة هو نفس المفتاح الموجود في صفحة الرفع."
+              "مشكلة في الاتصال بـ Supabase",
+              "Supabase رفض مفتاح الاتصال الموجود في الصفحة.\n\nلكن إذا كانت صفحة الرفع تعمل بنفس المشروع، افتح Console وتأكد من قيمة KEY LENGTH وبيانات المشروع."
             );
 
           } else if (
-            formatted
-              .toLowerCase()
-              .includes("row-level security")
+            lower.includes(
+              "row-level security"
+            ) ||
+            lower.includes(
+              "permission denied"
+            ) ||
+            lower.includes(
+              "not authorized"
+            )
           ) {
 
             showErrorState(
-              "صلاحيات قاعدة البيانات",
-              "Supabase يمنع قراءة جدول videos بسبب RLS.\n\nيجب إضافة سياسة SELECT مناسبة للطلاب."
+              "صلاحيات قراءة الفيديوهات",
+              "قاعدة البيانات تمنع صفحة الطالب من قراءة جدول videos بسبب صلاحيات RLS.\n\nالفيديو موجود في Supabase، لكن يجب السماح للطلاب بقراءة الصفوف المسموح لهم بها."
             );
 
           } else {
@@ -2189,13 +2261,171 @@
 
 
         /* -----------------------------------------------------
-           SAVE
+           SAVE ALL VIDEOS
         ------------------------------------------------------ */
 
-        state.videos =
+        const allVideos =
           Array.isArray(data)
             ? data
             : [];
+
+
+        console.log(
+          "TOTAL VIDEOS FROM DATABASE:",
+          allVideos.length
+        );
+
+
+        /* -----------------------------------------------------
+           NO VIDEOS
+        ------------------------------------------------------ */
+
+        if (
+          allVideos.length === 0
+        ) {
+
+          state.videos = [];
+
+          showEmptyState();
+
+          connectionText.textContent =
+            "متصل بالمنصة";
+
+          return;
+
+        }
+
+
+        /* -----------------------------------------------------
+           FILTER BY STUDENT CLASS
+           
+           The upload page stores:
+             first_science
+             third_biology
+             third_geology
+        ------------------------------------------------------ */
+
+        const studentClassGroup =
+          normalizeClassGroup(
+            user.class_group
+          );
+
+
+        const filteredVideos =
+          allVideos.filter(
+            function(video) {
+
+              const videoClassGroup =
+                normalizeClassGroup(
+                  video.class_group
+                );
+
+
+              return (
+                videoClassGroup ===
+                studentClassGroup
+              );
+
+            }
+          );
+
+
+        console.log(
+          "STUDENT CLASS:",
+          studentClassGroup
+        );
+
+        console.log(
+          "VIDEOS FOR STUDENT:",
+          filteredVideos
+        );
+
+
+        /* -----------------------------------------------------
+           CLASS NOT FOUND
+        ------------------------------------------------------ */
+
+        if (
+          filteredVideos.length === 0
+        ) {
+
+          state.videos = [];
+
+          videoCount.textContent =
+            "0";
+
+
+          videoList.innerHTML = `
+
+            <div class="state-box">
+
+              <div class="state-icon">
+                <i class="fa-solid fa-filter-circle-xmark"></i>
+              </div>
+
+              <div class="state-title">
+                لا توجد فيديوهات لهذا الصف
+              </div>
+
+              <div class="state-text">
+                الصف المسجل للطالب:
+                ${escapeHtml(
+                  getClassDisplayName(
+                    studentClassGroup
+                  )
+                )}
+
+                \n\n
+                إجمالي الفيديوهات في قاعدة البيانات:
+                ${allVideos.length}
+
+                \n\n
+                إذا كنت قد أضفت الفيديو للتو، تأكد أن خانة الصف في صفحة الرفع مطابقة لصف الطالب.
+              </div>
+
+              <button
+                class="retry-button"
+                id="retryClassButton"
+                type="button"
+              >
+                <i class="fa-solid fa-rotate-right"></i>
+                تحديث الفيديوهات
+              </button>
+
+            </div>
+
+          `;
+
+
+          const retryClassButton =
+            document.getElementById(
+              "retryClassButton"
+            );
+
+          if (retryClassButton) {
+
+            retryClassButton.addEventListener(
+              "click",
+              loadVideos
+            );
+
+          }
+
+
+          connectionText.textContent =
+            "متصل بالمنصة";
+
+          return;
+
+        }
+
+
+        /* -----------------------------------------------------
+           SAVE FILTERED VIDEOS
+        ------------------------------------------------------ */
+
+        state.videos =
+          filteredVideos;
 
 
         videoCount.textContent =
@@ -2209,21 +2439,6 @@
 
 
         /* -----------------------------------------------------
-           EMPTY
-        ------------------------------------------------------ */
-
-        if (
-          state.videos.length === 0
-        ) {
-
-          showEmptyState();
-
-          return;
-
-        }
-
-
-        /* -----------------------------------------------------
            RENDER
         ------------------------------------------------------ */
 
@@ -2233,7 +2448,7 @@
 
 
         /* -----------------------------------------------------
-           AUTO OPEN FIRST VIDEO
+           OPEN FIRST VIDEO
         ------------------------------------------------------ */
 
         selectVideo(
@@ -2247,10 +2462,11 @@
           error
         );
 
+
         showErrorState(
-          "حدث خطأ غير متوقع",
+          "تعذر تحميل الفيديوهات",
           error.message ||
-          "تعذر تحميل الفيديوهات."
+          "حدث خطأ غير متوقع أثناء الاتصال بقاعدة البيانات."
         );
 
       }
@@ -2262,23 +2478,34 @@
        RENDER VIDEOS
     ========================================================== */
 
-    function renderVideos(videos) {
+    function renderVideos(
+      videos
+    ) {
 
-      videoList.innerHTML = "";
+      videoList.innerHTML =
+        "";
 
 
       videos.forEach(
-        function(video, index) {
+        function(
+          video,
+          index
+        ) {
 
           const item =
-            document.createElement("div");
+            document.createElement(
+              "div"
+            );
+
 
           item.className =
             "video-item";
 
 
           item.dataset.videoId =
-            String(video.id);
+            String(
+              video.id
+            );
 
 
           const type =
@@ -2353,12 +2580,27 @@
        SELECT VIDEO
     ========================================================== */
 
-    async function selectVideo(video) {
+    async function selectVideo(
+      video
+    ) {
 
       if (!video) {
         return;
       }
 
+
+      /* -------------------------------------------------------
+         SAVE PREVIOUS VIDEO
+      ------------------------------------------------------ */
+
+      await saveSession(
+        false
+      );
+
+
+      /* -------------------------------------------------------
+         STATE
+      ------------------------------------------------------ */
 
       state.currentVideo =
         video;
@@ -2371,9 +2613,11 @@
           video.url
         );
 
-      state.lastSavedPercent = 0;
+      state.lastSavedPercent =
+        0;
 
-      state.lastSavedSeconds = 0;
+      state.lastSavedSeconds =
+        0;
 
 
       /* -------------------------------------------------------
@@ -2381,14 +2625,18 @@
       ------------------------------------------------------ */
 
       document
-        .querySelectorAll(".video-item")
+        .querySelectorAll(
+          ".video-item"
+        )
         .forEach(
           function(item) {
 
             item.classList.toggle(
               "active",
               item.dataset.videoId ===
-              String(video.id)
+              String(
+                video.id
+              )
             );
 
           }
@@ -2396,23 +2644,29 @@
 
 
       /* -------------------------------------------------------
-         UI
+         DETAILS
       ------------------------------------------------------ */
 
       currentTitle.textContent =
         video.title ||
         "فيديو تعليمي";
 
+
       currentClass.textContent =
         getClassDisplayName(
-          video.class_group
+          normalizeClassGroup(
+            video.class_group
+          )
         );
+
 
       currentStatus.textContent =
         "جاري التحميل...";
 
+
       progressBar.style.width =
         "0%";
+
 
       progressValue.textContent =
         "0%";
@@ -2478,6 +2732,10 @@
         }
 
 
+        currentType.textContent =
+          "YouTube";
+
+
         youtubePlayerContainer.style.display =
           "block";
 
@@ -2487,28 +2745,25 @@
         );
 
 
-        currentType.textContent =
-          "YouTube";
-
-
         return;
 
       }
 
 
       /* -------------------------------------------------------
-         FILE VIDEO
+         NATIVE FILE VIDEO
       ------------------------------------------------------ */
+
+      currentType.textContent =
+        "فيديو مرفوع";
+
 
       videoPlayer.src =
         video.url;
 
+
       videoPlayer.style.display =
         "block";
-
-
-      currentType.textContent =
-        "فيديو مرفوع";
 
 
       currentStatus.textContent =
@@ -2521,7 +2776,7 @@
 
 
     /* =========================================================
-       YOUTUBE PLAYER READY
+       YOUTUBE API READY
     ========================================================== */
 
     window.onYouTubeIframeAPIReady =
@@ -2544,17 +2799,61 @@
 
       if (
         typeof window.YT ===
-        "undefined" ||
+          "undefined" ||
         typeof window.YT.Player !==
-        "function"
+          "function"
       ) {
 
-        console.error(
-          "YouTube API is not ready."
+        currentStatus.textContent =
+          "جاري تحميل مشغل YouTube...";
+
+
+        const waitForYouTube =
+          setInterval(
+            function() {
+
+              if (
+                typeof window.YT !==
+                  "undefined" &&
+                typeof window.YT.Player ===
+                  "function"
+              ) {
+
+                clearInterval(
+                  waitForYouTube
+                );
+
+
+                if (
+                  state.currentType ===
+                    "youtube" &&
+                  state.currentVideo
+                ) {
+
+                  createYouTubePlayer(
+                    youtubeId
+                  );
+
+                }
+
+              }
+
+            },
+            300
+          );
+
+
+        setTimeout(
+          function() {
+
+            clearInterval(
+              waitForYouTube
+            );
+
+          },
+          15000
         );
 
-        currentStatus.textContent =
-          "تعذر تشغيل YouTube";
 
         return;
 
@@ -2597,6 +2896,7 @@
                   currentStatus.textContent =
                     "جاهز للمشاهدة";
 
+
                   startYouTubeTracking();
 
                 },
@@ -2635,9 +2935,11 @@
                     currentStatus.textContent =
                       "تمت مشاهدة الفيديو";
 
+
                     updateProgress(
                       100
                     );
+
 
                     saveSession(
                       true
@@ -2667,7 +2969,7 @@
       if (
         state.youtubePlayer &&
         typeof state.youtubePlayer.destroy ===
-        "function"
+          "function"
       ) {
 
         try {
@@ -2709,6 +3011,7 @@
               videoPlayer.duration
             );
 
+
           const current =
             Number(
               videoPlayer.currentTime
@@ -2717,7 +3020,9 @@
 
           if (
             !duration ||
-            !Number.isFinite(duration)
+            !Number.isFinite(
+              duration
+            )
           ) {
 
             return;
@@ -2792,8 +3097,10 @@
             100
           );
 
+
           currentStatus.textContent =
             "تمت مشاهدة الفيديو";
+
 
           saveSession(
             true
@@ -2820,7 +3127,7 @@
             if (
               !state.youtubePlayer ||
               typeof state.youtubePlayer.getCurrentTime !==
-              "function"
+                "function"
             ) {
 
               return;
@@ -2828,23 +3135,37 @@
             }
 
 
-            const current =
-              Number(
-                state.youtubePlayer
-                  .getCurrentTime()
-              );
+            let current = 0;
+            let duration = 0;
 
 
-            const duration =
-              Number(
-                state.youtubePlayer
-                  .getDuration()
-              );
+            try {
+
+              current =
+                Number(
+                  state.youtubePlayer
+                    .getCurrentTime()
+                ) || 0;
+
+
+              duration =
+                Number(
+                  state.youtubePlayer
+                    .getDuration()
+                ) || 0;
+
+            } catch (error) {
+
+              return;
+
+            }
 
 
             if (
               !duration ||
-              !Number.isFinite(duration)
+              !Number.isFinite(
+                duration
+              )
             ) {
 
               return;
@@ -2866,7 +3187,6 @@
             updateProgress(
               percent
             );
-
 
           },
           1000
@@ -2940,7 +3260,7 @@
 
 
     /* =========================================================
-       GET CURRENT POSITION
+       CURRENT PLAYBACK
     ========================================================== */
 
     function getCurrentPlaybackData() {
@@ -2953,7 +3273,7 @@
 
       if (
         state.currentType ===
-        "youtube" &&
+          "youtube" &&
         state.youtubePlayer
       ) {
 
@@ -2964,6 +3284,7 @@
               state.youtubePlayer
                 .getCurrentTime()
             ) || 0;
+
 
           duration =
             Number(
@@ -2983,7 +3304,7 @@
       }
 
 
-      /* NATIVE */
+      /* NATIVE VIDEO */
 
       if (
         state.currentType ===
@@ -2994,6 +3315,7 @@
           Number(
             videoPlayer.currentTime
           ) || 0;
+
 
         duration =
           Number(
@@ -3042,7 +3364,9 @@
 
       if (
         !duration ||
-        !Number.isFinite(duration)
+        !Number.isFinite(
+          duration
+        )
       ) {
 
         return;
@@ -3061,13 +3385,13 @@
         );
 
 
-      /* Prevent excessive DB writes */
-
       const roundedPercent =
         Number(
           percent.toFixed(2)
         );
 
+
+      /* Prevent excessive writes */
 
       if (
         !forceComplete &&
@@ -3089,6 +3413,7 @@
       state.lastSavedPercent =
         roundedPercent;
 
+
       state.lastSavedSeconds =
         current;
 
@@ -3096,7 +3421,9 @@
       const payload = {
 
         student_id:
-          String(user.id),
+          String(
+            user.id
+          ),
 
         video_id:
           state.currentVideoId,
@@ -3105,10 +3432,14 @@
           user.class_group,
 
         watched_seconds:
-          Math.floor(current),
+          Math.floor(
+            current
+          ),
 
         duration:
-          Math.floor(duration),
+          Math.floor(
+            duration
+          ),
 
         percent:
           roundedPercent,
@@ -3128,9 +3459,7 @@
 
       try {
 
-        const {
-          error
-        } =
+        const response =
           await client
             .from("video_sessions")
             .upsert(
@@ -3142,11 +3471,13 @@
             );
 
 
-        if (error) {
+        if (
+          response.error
+        ) {
 
           console.warn(
-            "SESSION SAVE ERROR:",
-            error
+            "VIDEO SESSION SAVE ERROR:",
+            response.error
           );
 
         }
@@ -3154,7 +3485,7 @@
       } catch (error) {
 
         console.warn(
-          "SESSION SAVE EXCEPTION:",
+          "VIDEO SESSION SAVE EXCEPTION:",
           error
         );
 
@@ -3164,7 +3495,7 @@
 
 
     /* =========================================================
-       PERIODIC SESSION SAVE
+       PERIODIC SAVE
     ========================================================== */
 
     setInterval(
@@ -3180,7 +3511,7 @@
 
 
     /* =========================================================
-       SAVE BEFORE PAGE EXIT
+       BEFORE EXIT
     ========================================================== */
 
     window.addEventListener(
@@ -3209,6 +3540,10 @@
         "active"
       );
 
+      document.body.classList.toggle(
+        "sidebar-open"
+      );
+
     }
 
 
@@ -3222,11 +3557,27 @@
         "active"
       );
 
+      document.body.classList.remove(
+        "sidebar-open"
+      );
+
     }
 
 
+    mobileMenuButton.addEventListener(
+      "click",
+      toggleSidebar
+    );
+
+
+    sidebarOverlay.addEventListener(
+      "click",
+      closeSidebar
+    );
+
+
     /* =========================================================
-       KEYBOARD
+       ESCAPE
     ========================================================== */
 
     document.addEventListener(
@@ -3247,7 +3598,7 @@
 
 
     /* =========================================================
-       PREVENT RIGHT CLICK
+       BASIC PROTECTION
     ========================================================== */
 
     document.addEventListener(
@@ -3259,10 +3610,6 @@
       }
     );
 
-
-    /* =========================================================
-       DISABLE SOME SHORTCUTS
-    ========================================================== */
 
     document.addEventListener(
       "keydown",
@@ -3314,7 +3661,7 @@
 
 
     /* =========================================================
-       GLOBAL ERROR HANDLER
+       GLOBAL ERROR
     ========================================================== */
 
     window.addEventListener(
@@ -3332,7 +3679,7 @@
 
 
     /* =========================================================
-       INITIALIZE
+       INITIALIZE PAGE
     ========================================================== */
 
     async function initializePage() {
@@ -3341,14 +3688,17 @@
 
         initializeSupabase();
 
+
         console.log(
           "Supabase initialized successfully."
         );
+
 
         console.log(
           "Project:",
           SUPABASE_URL
         );
+
 
         console.log(
           "Student:",
@@ -3364,6 +3714,7 @@
           "INITIALIZATION ERROR:",
           error
         );
+
 
         showErrorState(
           "تعذر تشغيل الصفحة",
