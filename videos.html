@@ -3160,8 +3160,27 @@ document.addEventListener(
    INITIALIZE
 ========================================================= */
 
-loadVideos();
+console.log("🔥 SCRIPT REACHED INITIALIZE");
 
+loadVideos()
+    .then(() => {
+        console.log("🔥 loadVideos FINISHED");
+    })
+    .catch((error) => {
+        console.error("🔥 loadVideos FAILED:", error);
+
+        videoList.innerHTML = `
+            <div style="
+                padding:15px;
+                color:#f87171;
+                line-height:1.8;
+            ">
+                ❌ خطأ JavaScript:
+                <br>
+                ${escapeHTML(error.message || String(error))}
+            </div>
+        `;
+    });
 
 /* =========================================================
    DEFAULT SPEED
