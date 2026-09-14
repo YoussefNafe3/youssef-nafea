@@ -1236,7 +1236,10 @@ JSON.parse(
 
 
 const user = {
-
+console.log("========== STUDENT DATA ==========");
+console.log("User:", user);
+console.log("Student ID:", user.id);
+console.log("Student class_group:", user.class_group);
     id:
     savedUser.id ||
     "000",
@@ -1805,104 +1808,263 @@ setInterval(
 async function loadVideos(){
 
     videoList.innerHTML =
-    "جاري تحميل الفيديوهات...";
+        "جاري تحميل الفيديوهات...";
 
+    console.log("========== LOAD VIDEOS ==========");
+    console.log("Student:", user);
+    console.log("Student class_group:", user.class_group);
 
     try{
 
+        /*
+        =====================================================
+        1) TEST: GET ALL VIDEOS
+        =====================================================
+        */
+
         const {
-            data,
-            error
-        } =
-        await client
-        .from("videos")
-        .select("*")
-        .eq(
-            "class_group",
-            user.class_group
-        )
-        .order(
-            "id",
-            {
-                ascending:true
-            }
+            data: allVideos,
+            error: allVideosError
+        } = await client
+            .from("videos")
+            .select("id,title,url,class_group,is_premium")
+            .order("id", {
+                ascending: true
+            });
+
+
+        console.log("ALL VIDEOS:", allVideos);
+        console.log("ALL VIDEOS ERROR:", allVideosError);
+
+
+        if(allVideosError){
+
+            console.error(
+                "❌ SUPABASE SELECT ERROR:",
+                allVideosError
+            );
+
+            videoList.innerHTML = `
+                <div style="
+                    padding:15px;
+                    border-radius:14px;
+                    background:rgba(239,68,68,.10);
+                    border:1px solid rgba(239,68,68,.25);
+                    color:#fca5a5;
+                    font-size:13px;
+                    line-height:1.8;
+                ">
+                    ❌ لا يمكن تحميل الفيديوهات
+                    <br>
+                    ${escapeHTML(
+                        allVideosError.message ||
+                        "خطأ غير معروف"
+                    )}
+                </div>
+            `;
+
+            return;
+        }
+
+
+        /*
+        =====================================================
+        2) NO VIDEOS AT ALL
+        =====================================================
+        */
+
+        if(
+            !allVideos ||
+            allVideos.length === 0
+        ){
+
+            videoList.innerHTML = `
+                <div style="
+                    padding:15px;
+                    color:#94a3b8;
+                    font-size:13px;
+                    line-height:1.8;
+                ">
+                    📭 لا توجد فيديوهات في قاعدة البيانات
+                </div>
+            `;
+
+            console.log(
+                "⚠️ Supabase returned 0 videos."
+            );
+
+            return;
+        }
+
+
+        /*
+        =====================================================
+        3) SHOW CLASS GROUPS IN CONSOLE
+        =====================================================
+        */
+
+        console.log(
+            "AVAILABLE CLASS GROUPS:",
+            [
+                ...new Set(
+                    allVideos.map(
+                        v => v.class_group
+                    )
+                )
+            ]
         );
+
+
+        /*
+        =====================================================
+        4) CHECK STUDENT CLASS
+        =====================================================
+        */
+
+        if(
+            !user.class_group ||
+            user.class_group === "unknown"
+        ){
+
+            console.error(
+                "❌ Student class_group is missing."
+            );
+
+            videoList.innerHTML = `
+                <div style="
+                    padding:15px;
+                    border-radius:14px;
+                    background:rgba(245,158,11,.10);
+                    border:1px solid rgba(245,158,11,.25);
+                    color:#fbbf24;
+                    font-size:13px;
+                    line-height:1.8;
+                ">
+                    ⚠️ لم يتم تحديد صف الطالب
+                    <br>
+                    <small>
+                        class_group غير موجود في بيانات تسجيل الدخول.
+                    </small>
+                </div>
+            `;
+
+            return;
+        }
+
+
+        /*
+        =====================================================
+        5) FILTER VIDEOS
+        =====================================================
+        */
+
+        const data =
+            allVideos.filter(
+                function(v){
+
+                    return String(
+                        v.class_group
+                    ).trim()
+                    ===
+                    String(
+                        user.class_group
+                    ).trim();
+
+                }
+            );
 
 
         console.log(
-            "VIDEOS:",
-            data,
-            error
+            "STUDENT CLASS:",
+            user.class_group
+        );
+
+        console.log(
+            "MATCHED VIDEOS:",
+            data
         );
 
 
-        if(error){
-
-            console.error(
-                error
-            );
-
-            videoList.innerHTML =
-            "❌ خطأ في تحميل الفيديوهات";
-
-            return;
-
-        }
-
+        /*
+        =====================================================
+        6) NO MATCHING VIDEOS
+        =====================================================
+        */
 
         if(
-            !data ||
             data.length === 0
         ){
 
-            videoList.innerHTML =
-            "📭 لا توجد فيديوهات متاحة";
+            videoList.innerHTML = `
+                <div style="
+                    padding:15px;
+                    border-radius:14px;
+                    background:rgba(245,158,11,.08);
+                    border:1px solid rgba(245,158,11,.20);
+                    color:#fbbf24;
+                    font-size:13px;
+                    line-height:1.8;
+                ">
+                    📭 لا توجد فيديوهات لهذا الصف
+                    <br>
+                    <small>
+                        صف الطالب:
+                        ${escapeHTML(user.class_group)}
+                    </small>
+                </div>
+            `;
 
             return;
-
         }
 
 
-        videoList.innerHTML =
-        "";
+        /*
+        =====================================================
+        7) RENDER VIDEOS
+        =====================================================
+        */
+
+        videoList.innerHTML = "";
 
 
         data.forEach(
             function(v){
 
                 const item =
-                document.createElement(
-                    "div"
-                );
+                    document.createElement(
+                        "div"
+                    );
 
 
                 item.className =
-                "video-item";
+                    "video-item";
 
 
                 item.dataset.id =
-                v.id;
+                    v.id;
 
 
                 const videoInfo =
-                getVideoType(
-                    v.url
-                );
+                    getVideoType(
+                        v.url
+                    );
 
 
                 const typeText =
-                videoInfo.type ===
-                "youtube"
-                ?
-                "YouTube ▶️"
-                :
-                "فيديو تعليمي 🎬";
+                    videoInfo.type === "youtube"
+                    ?
+                    "YouTube ▶️"
+                    :
+                    "فيديو تعليمي 🎬";
 
 
                 item.innerHTML = `
 
                     <div class="video-title">
-                        ${escapeHTML(v.title || "فيديو بدون عنوان")}
+                        ${escapeHTML(
+                            v.title ||
+                            "فيديو بدون عنوان"
+                        )}
                     </div>
 
                     <div class="video-type">
@@ -1913,14 +2075,14 @@ async function loadVideos(){
 
 
                 item.onclick =
-                function(){
+                    function(){
 
-                    selectVideo(
-                        v,
-                        item
-                    );
+                        selectVideo(
+                            v,
+                            item
+                        );
 
-                };
+                    };
 
 
                 videoList.appendChild(
@@ -1931,14 +2093,27 @@ async function loadVideos(){
         );
 
 
+        console.log(
+            "✅ Videos rendered:",
+            data.length
+        );
+
     }catch(error){
 
         console.error(
+            "❌ LOAD VIDEOS EXCEPTION:",
             error
         );
 
-        videoList.innerHTML =
-        "❌ فشل الاتصال بقاعدة البيانات";
+        videoList.innerHTML = `
+            <div style="
+                padding:15px;
+                color:#f87171;
+                font-size:13px;
+            ">
+                ❌ حدث خطأ أثناء تحميل الفيديوهات
+            </div>
+        `;
 
     }
 
