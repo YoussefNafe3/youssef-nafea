@@ -1066,43 +1066,39 @@ async function saveVideo(){
 
         try{
 
-            const { error } =
-            await client
-            .from("videos")
-            .insert([{
+const { data: insertedVideo, error } = await client
+  .from("videos")
+  .insert([{
+    title: title,
+    url: data.publicUrl,
+    class_group: class_group,
+    is_premium: false
+  }])
+  .select()
+  .single();
 
-                title:
-                title,
+if (error) {
 
-                url:
-                embedUrl,
+  console.error("SUPABASE DATABASE ERROR:", error);
 
-                class_group:
-                selectedClass,
+  msg.innerText =
+    "❌ فشل حفظ الفيديو في قاعدة البيانات";
 
-                is_premium:
-                false
+  alert(
+    "خطأ قاعدة البيانات:\n\n" +
+    "Message: " + (error.message || "غير معروف") +
+    "\n\nCode: " + (error.code || "غير معروف") +
+    "\n\nDetails: " + (error.details || "لا يوجد") +
+    "\n\nHint: " + (error.hint || "لا يوجد")
+  );
 
-            }]);
+  btn.disabled = false;
+  return;
+}
 
+console.log("VIDEO SAVED:", insertedVideo);
 
-            if(error){
-
-                console.error(
-                    "YOUTUBE DATABASE ERROR:",
-                    error
-                );
-
-                showMessage(
-                    "❌ فشل حفظ الفيديو في قاعدة البيانات",
-                    "error"
-                );
-
-                uploadBtn.disabled = false;
-
-                return;
-            }
-
+msg.innerText = "✅ تم رفع وحفظ الفيديو بنجاح";
 
             showMessage(
                 "✅ تم إضافة فيديو YouTube بنجاح",
