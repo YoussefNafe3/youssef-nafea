@@ -1445,21 +1445,27 @@
            SUPABASE CONFIGURATION
         ====================================================== */
 
-        const SUPABASE_URL =
-            "https://nhdowqzecpwmkunczodl.supabase.co";
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
+<script>
+/* =========================================================
+   SUPABASE CONFIGURATION
+   نفس إعدادات صفحة الرفع بالضبط
+========================================================= */
 
-        const SUPABASE_ANON_KEY =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzIiwicmVmIjoibmhkb3dxemVjcHdtdWt1bmN6b2RsIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
 
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
-        const client =
-            window.supabase.createClient(
-                SUPABASE_URL,
-                SUPABASE_ANON_KEY
-            );
+/* إنشاء اتصال Supabase */
+const client = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 
-
+console.log("Supabase client initialized");
+console.log("Project:", SUPABASE_URL);
+</script>
         /* =====================================================
            SAFE LOCAL STORAGE
         ====================================================== */
