@@ -2512,58 +2512,42 @@ async function saveVideoToDatabase(
     classGroup
 ) {
 
-    /*
-      IMPORTANT:
-
-      لا نستخدم .select() هنا.
-
-      لأن INSERT لا يحتاج إلى SELECT
-      لإتمام الحفظ، واستخدام select()
-      قد يجعل RLS تمنع إرجاع الصف
-      رغم نجاح عملية الإدخال.
-    */
-
     const payload = {
-
         title: title,
-
         url: videoURL,
-
         class_group: classGroup,
-
         is_premium: false
     };
 
+    console.log("========== VIDEO INSERT ==========");
+    console.log("Payload:", payload);
 
-    console.log(
-        "VIDEO INSERT PAYLOAD:",
-        payload
-    );
-
-
-    const {
-        error
-    } = await client
+    const { error } = await client
         .from("videos")
         .insert(payload);
 
-
     if (error) {
 
-        console.error(
-            "SUPABASE INSERT ERROR:",
-            error
-        );
+        console.error("========== SUPABASE ERROR ==========");
+        console.error("message:", error.message);
+        console.error("code:", error.code);
+        console.error("details:", error.details);
+        console.error("hint:", error.hint);
+        console.error("full error:", error);
 
         throw new Error(
-            formatSupabaseError(error)
+            "Supabase Error\n" +
+            "Message: " + (error.message || "") +
+            "\nCode: " + (error.code || "") +
+            "\nDetails: " + (error.details || "") +
+            "\nHint: " + (error.hint || "")
         );
     }
 
+    console.log("========== INSERT SUCCESS ==========");
 
     return true;
 }
-
 
 /* ================================================================
    SUPABASE ERROR
