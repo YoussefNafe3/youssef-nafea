@@ -1,3751 +1,4961 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
 
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
-  >
-
-  <meta
-    name="description"
-    content="منصة د. يوسف نافع التعليمية - مشاهدة الدروس والفيديوهات التعليمية"
-  >
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-  <meta
-    name="theme-color"
-    content="#07111f"
-  >
+    <meta
+        name="theme-color"
+        content="#07111f"
+    >
 
-  <title>الفيديوهات | د. يوسف نافع</title>
+    <title>دروس الفيديو | د. يوسف نافع</title>
 
+    <!-- =========================================================
+         GOOGLE FONT
+    ========================================================== -->
 
-  <!-- =========================================================
-       FONTS
-  ========================================================== -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
-    rel="stylesheet"
-  >
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
 
-  <!-- =========================================================
-       SUPABASE
-  ========================================================== -->
+    <!-- =========================================================
+         SUPABASE
+    ========================================================== -->
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- =========================================================
+         YOUTUBE IFRAME API
+    ========================================================== -->
 
-  <!-- =========================================================
-       YOUTUBE IFRAME API
-  ========================================================== -->
+    <script src="https://www.youtube.com/iframe_api"></script>
 
-  <script src="https://www.youtube.com/iframe_api"></script>
 
+    <style>
 
-  <!-- =========================================================
-       FONT AWESOME
-  ========================================================== -->
-
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-  >
+        /* =========================================================
+           GLOBAL
+        ========================================================== */
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Cairo", sans-serif;
+        }
 
-  <!-- =========================================================
-       STYLE
-  ========================================================== -->
 
-  <style>
+        :root {
 
-    /* =========================================================
-       RESET
-    ========================================================== */
+            --bg-1: #050b14;
+            --bg-2: #081321;
+            --bg-3: #0d1b2d;
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+            --panel: rgba(255, 255, 255, .055);
+            --panel-strong: rgba(255, 255, 255, .075);
 
-    html {
-      scroll-behavior: smooth;
-    }
+            --border: rgba(255, 255, 255, .09);
+            --border-blue: rgba(59, 130, 246, .22);
 
-    body {
-      min-height: 100vh;
-      font-family: "Cairo", sans-serif;
-      background:
-        radial-gradient(
-          circle at 10% 10%,
-          rgba(37, 99, 235, 0.12),
-          transparent 28%
-        ),
-        radial-gradient(
-          circle at 90% 90%,
-          rgba(14, 165, 233, 0.10),
-          transparent 30%
-        ),
-        #050b14;
-      color: #f8fafc;
-      overflow-x: hidden;
-    }
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --muted-2: #64748b;
 
-    body.sidebar-open {
-      overflow: hidden;
-    }
+            --gold: #ffd45a;
+            --gold-2: #f5b82e;
 
-    button,
-    input,
-    select,
-    textarea {
-      font-family: inherit;
-    }
+            --blue: #3b82f6;
+            --blue-2: #2563eb;
 
-    button {
-      border: 0;
-    }
+            --green: #22c55e;
+            --red: #ef4444;
 
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
+            --shadow:
+                0 25px 80px rgba(0, 0, 0, .42);
+        }
 
 
-    /* =========================================================
-       APP
-    ========================================================== */
+        html {
+            scroll-behavior: smooth;
+        }
 
-    .app {
-      min-height: 100vh;
-      display: flex;
-      position: relative;
-    }
 
+        body {
 
-    /* =========================================================
-       SIDEBAR
-    ========================================================== */
+            min-height: 100vh;
 
-    .sidebar {
-      width: 350px;
-      min-width: 350px;
-      height: 100vh;
+            color: var(--text);
 
-      position: sticky;
-      top: 0;
-      right: 0;
+            background:
+                radial-gradient(
+                    circle at 10% 5%,
+                    rgba(37, 99, 235, .17),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(245, 184, 46, .07),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    135deg,
+                    var(--bg-1),
+                    var(--bg-2),
+                    var(--bg-3)
+                );
 
-      display: flex;
-      flex-direction: column;
+            overflow-x: hidden;
+        }
 
-      background:
-        linear-gradient(
-          180deg,
-          rgba(10, 20, 35, 0.98),
-          rgba(5, 12, 22, 0.98)
-        );
 
-      border-left:
-        1px solid rgba(148, 163, 184, 0.12);
+        button,
+        input {
+            font-family: inherit;
+        }
 
-      box-shadow:
-        -20px 0 60px rgba(0, 0, 0, 0.18);
 
-      z-index: 100;
-    }
+        button {
+            border: 0;
+        }
 
 
-    /* =========================================================
-       BRAND
-    ========================================================== */
+        /* =========================================================
+           BACKGROUND DECORATION
+        ========================================================== */
 
-    .brand {
-      padding: 26px 24px 20px;
+        .background-orb {
 
-      display: flex;
-      align-items: center;
-      gap: 14px;
+            position: fixed;
 
-      border-bottom:
-        1px solid rgba(148, 163, 184, 0.10);
-    }
+            width: 320px;
+            height: 320px;
 
-    .brand-icon {
-      width: 52px;
-      height: 52px;
+            border-radius: 50%;
 
-      flex-shrink: 0;
+            pointer-events: none;
 
-      border-radius: 16px;
+            filter: blur(80px);
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+            opacity: .14;
 
-      background:
-        linear-gradient(
-          135deg,
-          #2563eb,
-          #0ea5e9
-        );
+            z-index: -1;
+        }
 
-      box-shadow:
-        0 12px 30px rgba(37, 99, 235, 0.25);
 
-      font-size: 22px;
-      color: white;
-    }
+        .orb-one {
 
-    .brand-text {
-      min-width: 0;
-    }
+            top: -100px;
+            right: -80px;
 
-    .brand-title {
-      font-size: 18px;
-      font-weight: 900;
-      line-height: 1.4;
-    }
+            background: #2563eb;
+        }
 
-    .brand-subtitle {
-      margin-top: 3px;
 
-      font-size: 12px;
-      color: #94a3b8;
-    }
+        .orb-two {
 
+            bottom: -130px;
+            left: -90px;
 
-    /* =========================================================
-       STUDENT CARD
-    ========================================================== */
+            background: #f5b82e;
+        }
 
-    .student-card {
-      margin: 20px;
-      padding: 17px;
 
-      border-radius: 18px;
+        /* =========================================================
+           APP
+        ========================================================== */
 
-      background:
-        linear-gradient(
-          145deg,
-          rgba(30, 41, 59, 0.72),
-          rgba(15, 23, 42, 0.72)
-        );
+        .app {
 
-      border:
-        1px solid rgba(148, 163, 184, 0.12);
+            width: 100%;
 
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.03);
-    }
+            min-height: 100vh;
 
-    .student-label {
-      font-size: 11px;
-      color: #64748b;
-      margin-bottom: 5px;
-    }
+            display: grid;
 
-    .student-name {
-      font-size: 15px;
-      font-weight: 800;
-      color: #f8fafc;
+            grid-template-columns:
+                360px
+                minmax(0, 1fr);
+        }
 
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
 
-    .student-class {
-      margin-top: 7px;
+        /* =========================================================
+           SIDEBAR
+        ========================================================== */
 
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
+        .sidebar {
 
-      font-size: 11px;
-      color: #93c5fd;
+            position: sticky;
 
-      background:
-        rgba(37, 99, 235, 0.10);
+            top: 0;
 
-      border:
-        1px solid rgba(59, 130, 246, 0.14);
+            height: 100vh;
 
-      padding: 5px 9px;
+            padding: 22px;
 
-      border-radius: 999px;
-    }
+            border-left:
+                1px solid var(--border);
 
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(5, 11, 20, .96),
+                    rgba(8, 19, 33, .93)
+                );
 
-    /* =========================================================
-       VIDEOS HEADER
-    ========================================================== */
+            backdrop-filter: blur(22px);
 
-    .videos-header {
-      padding: 0 20px 14px;
+            -webkit-backdrop-filter: blur(22px);
 
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+            overflow: hidden;
 
-      gap: 10px;
-    }
+            z-index: 20;
+        }
 
-    .videos-heading {
-      font-size: 14px;
-      font-weight: 800;
-    }
 
-    .video-count {
-      min-width: 30px;
-      height: 28px;
+        .sidebar-inner {
 
-      padding: 0 8px;
+            height: 100%;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+            display: flex;
 
-      border-radius: 9px;
+            flex-direction: column;
+        }
 
-      background:
-        rgba(37, 99, 235, 0.12);
 
-      border:
-        1px solid rgba(59, 130, 246, 0.14);
+        /* =========================================================
+           BRAND
+        ========================================================== */
 
-      color: #93c5fd;
+        .brand {
 
-      font-size: 12px;
-      font-weight: 800;
-    }
+            display: flex;
 
+            align-items: center;
 
-    /* =========================================================
-       VIDEO LIST
-    ========================================================== */
+            gap: 13px;
 
-    .video-list {
-      flex: 1;
-      min-height: 0;
+            padding-bottom: 20px;
 
-      overflow-y: auto;
+            border-bottom:
+                1px solid rgba(255, 255, 255, .07);
+        }
 
-      padding: 0 14px 20px;
-    }
 
-    .video-list::-webkit-scrollbar {
-      width: 6px;
-    }
+        .brand-icon {
 
-    .video-list::-webkit-scrollbar-track {
-      background: transparent;
-    }
+            width: 52px;
+            height: 52px;
 
-    .video-list::-webkit-scrollbar-thumb {
-      background:
-        rgba(148, 163, 184, 0.16);
+            flex: 0 0 52px;
 
-      border-radius: 999px;
-    }
+            display: flex;
 
+            align-items: center;
+            justify-content: center;
 
-    /* =========================================================
-       VIDEO ITEM
-    ========================================================== */
+            border-radius: 17px;
 
-    .video-item {
-      width: 100%;
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--gold),
+                    var(--gold-2)
+                );
 
-      padding: 13px;
-      margin-bottom: 9px;
+            color: #111827;
 
-      border-radius: 15px;
+            font-size: 25px;
 
-      display: flex;
-      align-items: center;
+            box-shadow:
+                0 12px 32px rgba(245, 184, 46, .18);
+        }
 
-      gap: 12px;
 
-      cursor: pointer;
+        .brand-info {
 
-      background:
-        rgba(15, 23, 42, 0.62);
+            min-width: 0;
+        }
 
-      border:
-        1px solid rgba(148, 163, 184, 0.08);
 
-      transition:
-        transform 0.18s ease,
-        background 0.18s ease,
-        border-color 0.18s ease,
-        box-shadow 0.18s ease;
-    }
+        .brand-info h1 {
 
-    .video-item:hover {
-      transform: translateY(-1px);
+            font-size: 18px;
 
-      background:
-        rgba(30, 41, 59, 0.85);
+            font-weight: 900;
 
-      border-color:
-        rgba(59, 130, 246, 0.20);
-    }
+            line-height: 1.35;
+        }
 
-    .video-item.active {
-      background:
-        linear-gradient(
-          135deg,
-          rgba(37, 99, 235, 0.20),
-          rgba(14, 165, 233, 0.08)
-        );
 
-      border-color:
-        rgba(59, 130, 246, 0.35);
+        .brand-info p {
 
-      box-shadow:
-        0 8px 25px rgba(37, 99, 235, 0.08);
-    }
+            color: var(--muted);
 
-    .video-number {
-      width: 38px;
-      height: 38px;
+            font-size: 11px;
 
-      flex-shrink: 0;
+            margin-top: 3px;
+        }
 
-      border-radius: 12px;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+        /* =========================================================
+           STUDENT CARD
+        ========================================================== */
 
-      background:
-        rgba(255,255,255,0.05);
+        .student-card {
 
-      color: #94a3b8;
+            margin-top: 18px;
 
-      font-size: 12px;
-      font-weight: 800;
-    }
+            padding: 14px;
 
-    .video-item.active .video-number {
-      background:
-        linear-gradient(
-          135deg,
-          #2563eb,
-          #0ea5e9
-        );
+            border-radius: 17px;
 
-      color: white;
-    }
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(59, 130, 246, .10),
+                    rgba(255, 255, 255, .035)
+                );
 
-    .video-info {
-      min-width: 0;
-      flex: 1;
-    }
+            border:
+                1px solid rgba(59, 130, 246, .15);
+        }
 
-    .video-title {
-      font-size: 13px;
-      line-height: 1.7;
 
-      font-weight: 700;
+        .student-label {
 
-      color: #e2e8f0;
+            color: var(--muted-2);
 
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+            font-size: 10px;
 
-      overflow: hidden;
-    }
+            font-weight: 700;
+        }
 
-    .video-type {
-      margin-top: 4px;
 
-      font-size: 10px;
-      color: #64748b;
+        .student-name {
 
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
+            margin-top: 3px;
 
+            font-size: 14px;
 
-    /* =========================================================
-       STATE BOX
-    ========================================================== */
+            font-weight: 900;
 
-    .state-box {
-      margin: 15px 6px;
+            white-space: nowrap;
 
-      min-height: 180px;
+            overflow: hidden;
 
-      padding: 25px 18px;
+            text-overflow: ellipsis;
+        }
 
-      border-radius: 18px;
 
-      display: flex;
-      flex-direction: column;
+        .student-class {
 
-      align-items: center;
-      justify-content: center;
+            margin-top: 5px;
 
-      text-align: center;
+            color: #93c5fd;
 
-      background:
-        rgba(15, 23, 42, 0.55);
+            font-size: 10px;
 
-      border:
-        1px dashed rgba(148, 163, 184, 0.15);
+            font-weight: 700;
+        }
 
-      color: #94a3b8;
-    }
 
-    .state-icon {
-      width: 48px;
-      height: 48px;
+        /* =========================================================
+           SIDEBAR TITLE
+        ========================================================== */
 
-      margin-bottom: 12px;
+        .list-header {
 
-      border-radius: 14px;
+            display: flex;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+            align-items: center;
 
-      background:
-        rgba(37, 99, 235, 0.10);
+            justify-content: space-between;
 
-      color: #60a5fa;
+            gap: 10px;
 
-      font-size: 18px;
-    }
+            margin-top: 22px;
 
-    .state-title {
-      color: #e2e8f0;
+            margin-bottom: 12px;
+        }
 
-      font-size: 13px;
-      font-weight: 800;
-    }
 
-    .state-text {
-      margin-top: 7px;
+        .list-header strong {
 
-      color: #64748b;
+            font-size: 14px;
 
-      font-size: 11px;
-      line-height: 1.8;
-      white-space: pre-line;
-    }
+            font-weight: 900;
+        }
 
-    .retry-button {
-      margin-top: 14px;
 
-      padding: 9px 16px;
+        .video-count {
 
-      border-radius: 10px;
+            min-width: 30px;
+            height: 25px;
 
-      background: #2563eb;
-      color: white;
+            padding: 0 8px;
 
-      cursor: pointer;
+            display: flex;
 
-      font-size: 11px;
-      font-weight: 800;
+            align-items: center;
+            justify-content: center;
 
-      transition: 0.2s ease;
-    }
+            border-radius: 999px;
 
-    .retry-button:hover {
-      background: #1d4ed8;
-      transform: translateY(-1px);
-    }
+            color: #bfdbfe;
 
+            background:
+                rgba(59, 130, 246, .12);
 
-    /* =========================================================
-       MAIN
-    ========================================================== */
+            border:
+                1px solid rgba(59, 130, 246, .17);
 
-    .main {
-      flex: 1;
-      min-width: 0;
+            font-size: 10px;
 
-      padding: 28px;
+            font-weight: 900;
+        }
 
-      position: relative;
-    }
 
+        /* =========================================================
+           VIDEO LIST
+        ========================================================== */
 
-    /* =========================================================
-       TOPBAR
-    ========================================================== */
+        .video-list {
 
-    .topbar {
-      max-width: 1450px;
+            flex: 1;
 
-      margin:
-        0 auto 24px;
+            min-height: 0;
 
-      display: flex;
+            overflow-y: auto;
 
-      align-items: center;
-      justify-content: space-between;
+            padding-left: 3px;
 
-      gap: 20px;
-    }
+            scrollbar-width: thin;
 
-    .page-title {
-      font-size: 24px;
+            scrollbar-color:
+                rgba(148, 163, 184, .25)
+                transparent;
+        }
 
-      font-weight: 900;
 
-      letter-spacing: -0.4px;
-    }
+        .video-list::-webkit-scrollbar {
+            width: 5px;
+        }
 
-    .page-subtitle {
-      margin-top: 4px;
 
-      font-size: 12px;
+        .video-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
-      color: #64748b;
-    }
 
-    .connection-status {
-      display: inline-flex;
+        .video-list::-webkit-scrollbar-thumb {
 
-      align-items: center;
+            background:
+                rgba(148, 163, 184, .25);
 
-      gap: 8px;
+            border-radius: 999px;
+        }
 
-      padding: 9px 13px;
 
-      border-radius: 999px;
+        /* =========================================================
+           VIDEO ITEM
+        ========================================================== */
 
-      background:
-        rgba(16, 185, 129, 0.08);
+        .video-item {
 
-      border:
-        1px solid rgba(16, 185, 129, 0.12);
+            position: relative;
 
-      color: #6ee7b7;
+            display: flex;
 
-      font-size: 11px;
+            align-items: center;
 
-      font-weight: 700;
-    }
+            gap: 11px;
 
-    .status-dot {
-      width: 7px;
-      height: 7px;
+            width: 100%;
 
-      border-radius: 50%;
+            margin-bottom: 8px;
 
-      background: #34d399;
+            padding: 12px;
 
-      box-shadow:
-        0 0 0 4px rgba(52, 211, 153, 0.08);
-    }
+            border-radius: 15px;
 
+            color: #cbd5e1;
 
-    /* =========================================================
-       PLAYER CARD
-    ========================================================== */
+            background:
+                rgba(255, 255, 255, .028);
 
-    .player-card {
-      max-width: 1450px;
+            border:
+                1px solid transparent;
 
-      margin: 0 auto;
+            cursor: pointer;
 
-      background:
-        linear-gradient(
-          145deg,
-          rgba(15, 23, 42, 0.88),
-          rgba(8, 15, 27, 0.92)
-        );
+            text-align: right;
 
-      border:
-        1px solid rgba(148, 163, 184, 0.10);
+            transition:
+                background .2s ease,
+                border-color .2s ease,
+                transform .2s ease;
+        }
 
-      border-radius: 24px;
 
-      overflow: hidden;
+        .video-item:hover {
 
-      box-shadow:
-        0 25px 70px rgba(0, 0, 0, 0.22);
-    }
+            background:
+                rgba(255, 255, 255, .055);
 
+            border-color:
+                rgba(255, 255, 255, .07);
 
-    /* =========================================================
-       PLAYER
-    ========================================================== */
+            transform:
+                translateX(-2px);
+        }
 
-    .player-wrapper {
-      width: 100%;
 
-      aspect-ratio: 16 / 9;
+        .video-item.active {
 
-      background: #000;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(59, 130, 246, .15),
+                    rgba(37, 99, 235, .07)
+                );
 
-      position: relative;
+            border-color:
+                rgba(59, 130, 246, .28);
+        }
 
-      overflow: hidden;
-    }
 
-    .player-wrapper video,
-    .player-wrapper iframe {
-      width: 100%;
-      height: 100%;
+        .video-number {
 
-      display: block;
+            width: 35px;
+            height: 35px;
 
-      border: 0;
-    }
+            flex: 0 0 35px;
 
-    #videoPlayer {
-      background: #000;
-    }
+            display: flex;
 
-    #youtubePlayer {
-      display: none;
+            align-items: center;
+            justify-content: center;
 
-      width: 100%;
-      height: 100%;
-    }
+            border-radius: 11px;
 
+            color: #93c5fd;
 
-    /* =========================================================
-       PLAYER PLACEHOLDER
-    ========================================================== */
+            background:
+                rgba(59, 130, 246, .10);
 
-    .player-placeholder {
-      position: absolute;
+            font-size: 11px;
 
-      inset: 0;
+            font-weight: 900;
+        }
 
-      display: flex;
 
-      flex-direction: column;
+        .video-item.active .video-number {
 
-      align-items: center;
+            color: #111827;
 
-      justify-content: center;
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--gold),
+                    var(--gold-2)
+                );
+        }
 
-      text-align: center;
 
-      background:
-        radial-gradient(
-          circle at center,
-          rgba(37, 99, 235, 0.12),
-          transparent 45%
-        ),
-        #030812;
+        .video-item-info {
 
-      z-index: 2;
-    }
+            min-width: 0;
 
-    .placeholder-icon {
-      width: 72px;
-      height: 72px;
+            flex: 1;
+        }
 
-      margin-bottom: 18px;
 
-      border-radius: 22px;
+        .video-item-title {
 
-      display: flex;
+            color: #e2e8f0;
 
-      align-items: center;
+            font-size: 12px;
 
-      justify-content: center;
+            font-weight: 800;
 
-      background:
-        linear-gradient(
-          135deg,
-          rgba(37, 99, 235, 0.20),
-          rgba(14, 165, 233, 0.10)
-        );
+            line-height: 1.65;
 
-      border:
-        1px solid rgba(96, 165, 250, 0.12);
+            display: -webkit-box;
 
-      color: #60a5fa;
+            -webkit-line-clamp: 2;
 
-      font-size: 28px;
-    }
+            -webkit-box-orient: vertical;
 
-    .placeholder-title {
-      font-size: 18px;
-      font-weight: 900;
-    }
+            overflow: hidden;
+        }
 
-    .placeholder-text {
-      max-width: 420px;
 
-      margin-top: 8px;
+        .video-item-type {
 
-      color: #64748b;
+            margin-top: 3px;
 
-      font-size: 12px;
+            color: var(--muted-2);
 
-      line-height: 1.8;
-    }
+            font-size: 9px;
 
+            font-weight: 700;
+        }
 
-    /* =========================================================
-       VIDEO DETAILS
-    ========================================================== */
 
-    .video-details {
-      padding: 24px 26px 28px;
-    }
+        /* =========================================================
+           SIDEBAR STATES
+        ========================================================== */
 
-    .current-title {
-      font-size: 21px;
+        .sidebar-state {
 
-      font-weight: 900;
+            min-height: 180px;
 
-      line-height: 1.6;
+            display: flex;
 
-      color: #f8fafc;
-    }
+            flex-direction: column;
 
-    .current-meta {
-      margin-top: 10px;
+            align-items: center;
 
-      display: flex;
+            justify-content: center;
 
-      align-items: center;
+            text-align: center;
 
-      flex-wrap: wrap;
+            padding: 20px;
 
-      gap: 8px;
-    }
+            color: var(--muted);
+        }
 
-    .meta-badge {
-      padding: 6px 10px;
 
-      border-radius: 999px;
+        .state-icon {
 
-      background:
-        rgba(148, 163, 184, 0.06);
+            font-size: 35px;
 
-      border:
-        1px solid rgba(148, 163, 184, 0.08);
+            margin-bottom: 10px;
+        }
 
-      color: #94a3b8;
 
-      font-size: 10px;
+        .sidebar-state strong {
 
-      font-weight: 700;
-    }
+            color: #cbd5e1;
 
-    .meta-badge.blue {
-      background:
-        rgba(37, 99, 235, 0.09);
+            font-size: 13px;
+        }
 
-      border-color:
-        rgba(59, 130, 246, 0.12);
 
-      color: #93c5fd;
-    }
+        .sidebar-state p {
 
+            margin-top: 5px;
 
-    /* =========================================================
-       PROGRESS
-    ========================================================== */
+            color: var(--muted-2);
 
-    .progress-section {
-      margin-top: 22px;
+            font-size: 10px;
 
-      padding: 16px;
+            line-height: 1.7;
+        }
 
-      border-radius: 16px;
 
-      background:
-        rgba(255,255,255,0.025);
+        .retry-btn {
 
-      border:
-        1px solid rgba(148, 163, 184, 0.07);
-    }
+            margin-top: 12px;
 
-    .progress-head {
-      display: flex;
+            min-height: 38px;
 
-      align-items: center;
+            padding: 0 15px;
 
-      justify-content: space-between;
+            border-radius: 11px;
 
-      gap: 10px;
+            color: #dbeafe;
 
-      margin-bottom: 10px;
-    }
+            background:
+                rgba(59, 130, 246, .12);
 
-    .progress-label {
-      color: #94a3b8;
+            border:
+                1px solid rgba(59, 130, 246, .2);
 
-      font-size: 11px;
+            cursor: pointer;
 
-      font-weight: 700;
-    }
+            font-size: 11px;
 
-    .progress-value {
-      color: #60a5fa;
+            font-weight: 800;
+        }
 
-      font-size: 11px;
 
-      font-weight: 900;
-    }
+        /* =========================================================
+           MAIN
+        ========================================================== */
 
-    .progress-track {
-      width: 100%;
+        .main {
 
-      height: 6px;
+            min-width: 0;
 
-      overflow: hidden;
+            min-height: 100vh;
 
-      border-radius: 999px;
+            padding: 28px;
+        }
 
-      background:
-        rgba(148, 163, 184, 0.10);
-    }
 
-    .progress-bar {
-      width: 0%;
+        .main-inner {
 
-      height: 100%;
+            width: 100%;
 
-      border-radius: inherit;
+            max-width: 1250px;
 
-      background:
-        linear-gradient(
-          90deg,
-          #2563eb,
-          #0ea5e9
-        );
+            margin: auto;
+        }
 
-      transition:
-        width 0.25s ease;
-    }
 
+        /* =========================================================
+           TOP BAR
+        ========================================================== */
 
-    /* =========================================================
-       MOBILE BUTTON
-    ========================================================== */
+        .topbar {
 
-    .mobile-menu-button {
-      display: none;
+            display: flex;
 
-      position: fixed;
+            align-items: center;
 
-      bottom: 20px;
-      right: 20px;
+            justify-content: space-between;
 
-      width: 52px;
-      height: 52px;
+            gap: 20px;
 
-      border-radius: 17px;
+            margin-bottom: 22px;
+        }
 
-      background:
-        linear-gradient(
-          135deg,
-          #2563eb,
-          #0ea5e9
-        );
 
-      color: white;
+        .page-heading h2 {
 
-      box-shadow:
-        0 15px 35px rgba(37, 99, 235, 0.35);
+            font-size: 25px;
 
-      cursor: pointer;
+            font-weight: 900;
 
-      z-index: 200;
+            line-height: 1.35;
+        }
 
-      font-size: 18px;
-    }
 
+        .page-heading p {
 
-    /* =========================================================
-       OVERLAY
-    ========================================================== */
+            margin-top: 4px;
 
-    .sidebar-overlay {
-      display: none;
+            color: var(--muted);
 
-      position: fixed;
+            font-size: 12px;
+        }
 
-      inset: 0;
 
-      background:
-        rgba(0, 0, 0, 0.55);
+        .connection-badge {
 
-      backdrop-filter:
-        blur(3px);
+            display: inline-flex;
 
-      z-index: 90;
-    }
+            align-items: center;
 
+            gap: 7px;
 
-    /* =========================================================
-       RESPONSIVE
-    ========================================================== */
+            min-height: 38px;
 
-    @media (max-width: 1050px) {
+            padding: 0 13px;
 
-      .sidebar {
-        width: 310px;
-        min-width: 310px;
-      }
+            border-radius: 999px;
 
-      .main {
-        padding: 20px;
-      }
+            color: #86efac;
 
-      .current-title {
-        font-size: 18px;
-      }
+            background:
+                rgba(34, 197, 94, .07);
 
-    }
+            border:
+                1px solid rgba(34, 197, 94, .14);
 
+            font-size: 10px;
 
-    @media (max-width: 820px) {
+            font-weight: 800;
+        }
 
-      .app {
-        display: block;
-      }
 
-      .sidebar {
-        position: fixed;
+        .connection-dot {
 
-        top: 0;
-        right: -100%;
+            width: 7px;
+            height: 7px;
 
-        width: min(350px, 88vw);
+            border-radius: 50%;
 
-        min-width: 0;
+            background: var(--green);
 
-        transition:
-          right 0.25s ease;
+            box-shadow:
+                0 0 12px rgba(34, 197, 94, .65);
+        }
 
-        box-shadow:
-          -25px 0 70px rgba(0,0,0,0.35);
-      }
 
-      .sidebar.open {
-        right: 0;
-      }
+        .connection-badge.error {
 
-      .sidebar-overlay.active {
-        display: block;
-      }
+            color: #fca5a5;
 
-      .mobile-menu-button {
-        display: flex;
+            background:
+                rgba(239, 68, 68, .07);
 
-        align-items: center;
-        justify-content: center;
-      }
+            border-color:
+                rgba(239, 68, 68, .15);
+        }
 
-      .main {
-        width: 100%;
-        padding: 15px;
-      }
 
-      .topbar {
-        margin-bottom: 15px;
-      }
+        .connection-badge.error .connection-dot {
 
-      .page-title {
-        font-size: 20px;
-      }
+            background: var(--red);
 
-      .connection-status {
-        display: none;
-      }
+            box-shadow:
+                0 0 12px rgba(239, 68, 68, .55);
+        }
 
-      .player-card {
-        border-radius: 18px;
-      }
 
-      .video-details {
-        padding: 20px;
-      }
+        /* =========================================================
+           PLAYER CARD
+        ========================================================== */
 
-    }
+        .player-card {
 
+            overflow: hidden;
 
-    @media (max-width: 500px) {
+            border-radius: 25px;
 
-      .main {
-        padding: 10px;
-      }
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, .065),
+                    rgba(255, 255, 255, .025)
+                );
 
-      .topbar {
-        padding: 4px 5px;
-      }
+            border:
+                1px solid var(--border);
 
-      .page-title {
-        font-size: 18px;
-      }
+            box-shadow: var(--shadow);
 
-      .page-subtitle {
-        font-size: 10px;
-      }
+            backdrop-filter: blur(20px);
 
-      .video-details {
-        padding: 17px;
-      }
+            -webkit-backdrop-filter: blur(20px);
+        }
 
-      .current-title {
-        font-size: 16px;
-      }
 
-      .player-placeholder {
-        padding: 20px;
-      }
+        .player-header {
 
-      .placeholder-icon {
-        width: 58px;
-        height: 58px;
+            display: flex;
 
-        border-radius: 18px;
+            align-items: center;
 
-        font-size: 22px;
-      }
+            justify-content: space-between;
 
-      .placeholder-title {
-        font-size: 15px;
-      }
+            gap: 15px;
 
-      .placeholder-text {
-        font-size: 10px;
-      }
+            min-height: 68px;
 
-    }
+            padding: 12px 18px;
 
-  </style>
+            border-bottom:
+                1px solid rgba(255, 255, 255, .06);
+        }
+
+
+        .current-info {
+
+            min-width: 0;
+        }
+
+
+        .current-label {
+
+            color: var(--muted-2);
+
+            font-size: 10px;
+
+            font-weight: 700;
+        }
+
+
+        .current-title {
+
+            margin-top: 2px;
+
+            color: #f8fafc;
+
+            font-size: 15px;
+
+            font-weight: 900;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+
+        .current-type {
+
+            flex: 0 0 auto;
+
+            min-height: 32px;
+
+            padding: 0 11px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            color: #bfdbfe;
+
+            background:
+                rgba(59, 130, 246, .09);
+
+            border:
+                1px solid rgba(59, 130, 246, .13);
+
+            font-size: 9px;
+
+            font-weight: 900;
+        }
+
+
+        /* =========================================================
+           PLAYER
+        ========================================================== */
+
+        .player {
+
+            position: relative;
+
+            width: 100%;
+
+            aspect-ratio: 16 / 9;
+
+            min-height: 280px;
+
+            background: #000;
+
+            overflow: hidden;
+        }
+
+
+        .player video,
+        .player iframe {
+
+            width: 100%;
+
+            height: 100%;
+
+            display: block;
+
+            border: 0;
+
+            background: #000;
+        }
+
+
+        .player video {
+
+            object-fit: contain;
+        }
+
+
+        #youtubePlayer {
+
+            position: absolute;
+
+            inset: 0;
+
+            width: 100%;
+
+            height: 100%;
+        }
+
+
+        #youtubePlayer iframe {
+
+            width: 100% !important;
+
+            height: 100% !important;
+        }
+
+
+        /* =========================================================
+           EMPTY PLAYER
+        ========================================================== */
+
+        .player-empty {
+
+            position: absolute;
+
+            inset: 0;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            padding: 25px;
+
+            color: var(--muted);
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    rgba(59, 130, 246, .06),
+                    transparent 55%
+                );
+        }
+
+
+        .player-empty-icon {
+
+            font-size: 60px;
+
+            opacity: .65;
+
+            margin-bottom: 10px;
+        }
+
+
+        .player-empty strong {
+
+            color: #cbd5e1;
+
+            font-size: 15px;
+        }
+
+
+        .player-empty p {
+
+            margin-top: 5px;
+
+            color: var(--muted-2);
+
+            font-size: 11px;
+
+            line-height: 1.8;
+        }
+
+
+        /* =========================================================
+           VIDEO FOOTER
+        ========================================================== */
+
+        .player-footer {
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                auto;
+
+            align-items: center;
+
+            gap: 18px;
+
+            padding: 16px 18px;
+        }
+
+
+        .progress-info {
+
+            min-width: 0;
+        }
+
+
+        .progress-row {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+            margin-bottom: 7px;
+        }
+
+
+        .progress-label {
+
+            color: var(--muted);
+
+            font-size: 10px;
+        }
+
+
+        .progress-value {
+
+            color: var(--gold);
+
+            font-size: 10px;
+
+            font-weight: 900;
+        }
+
+
+        .progress-track {
+
+            width: 100%;
+
+            height: 7px;
+
+            overflow: hidden;
+
+            border-radius: 999px;
+
+            background:
+                rgba(255, 255, 255, .06);
+        }
+
+
+        .progress-bar {
+
+            height: 100%;
+
+            width: 0%;
+
+            border-radius: inherit;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--blue-2),
+                    #60a5fa,
+                    var(--gold)
+                );
+
+            transition:
+                width .25s ease;
+        }
+
+
+        .completion-badge {
+
+            display: none;
+
+            align-items: center;
+
+            gap: 6px;
+
+            min-height: 35px;
+
+            padding: 0 12px;
+
+            border-radius: 10px;
+
+            color: #86efac;
+
+            background:
+                rgba(34, 197, 94, .08);
+
+            border:
+                1px solid rgba(34, 197, 94, .14);
+
+            font-size: 10px;
+
+            font-weight: 900;
+        }
+
+
+        .completion-badge.visible {
+
+            display: inline-flex;
+        }
+
+
+        /* =========================================================
+           ERROR PANEL
+        ========================================================== */
+
+        .error-panel {
+
+            display: none;
+
+            margin-top: 18px;
+
+            padding: 17px;
+
+            border-radius: 17px;
+
+            background:
+                rgba(239, 68, 68, .07);
+
+            border:
+                1px solid rgba(239, 68, 68, .17);
+        }
+
+
+        .error-panel.visible {
+
+            display: block;
+        }
+
+
+        .error-title {
+
+            color: #fca5a5;
+
+            font-size: 13px;
+
+            font-weight: 900;
+
+            margin-bottom: 6px;
+        }
+
+
+        .error-text {
+
+            color: #fecaca;
+
+            font-size: 11px;
+
+            line-height: 1.8;
+
+            white-space: pre-wrap;
+
+            word-break: break-word;
+        }
+
+
+        /* =========================================================
+           INFO CARDS
+        ========================================================== */
+
+        .info-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 14px;
+
+            margin-top: 18px;
+        }
+
+
+        .info-card {
+
+            min-height: 105px;
+
+            padding: 16px;
+
+            border-radius: 18px;
+
+            background:
+                rgba(255, 255, 255, .035);
+
+            border:
+                1px solid rgba(255, 255, 255, .065);
+        }
+
+
+        .info-card-icon {
+
+            width: 35px;
+            height: 35px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background:
+                rgba(59, 130, 246, .09);
+
+            font-size: 16px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .info-card strong {
+
+            display: block;
+
+            font-size: 11px;
+
+            font-weight: 900;
+        }
+
+
+        .info-card span {
+
+            display: block;
+
+            margin-top: 3px;
+
+            color: var(--muted);
+
+            font-size: 9px;
+
+            line-height: 1.7;
+        }
+
+
+        /* =========================================================
+           LOADING
+        ========================================================== */
+
+        .loading-screen {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 9999;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                rgba(3, 7, 18, .82);
+
+            backdrop-filter: blur(9px);
+
+            -webkit-backdrop-filter: blur(9px);
+
+            transition:
+                opacity .25s ease,
+                visibility .25s ease;
+        }
+
+
+        .loading-screen.hidden {
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            pointer-events: none;
+        }
+
+
+        .loading-box {
+
+            width: min(90%, 350px);
+
+            padding: 28px;
+
+            border-radius: 22px;
+
+            text-align: center;
+
+            background:
+                #101b2d;
+
+            border:
+                1px solid rgba(255, 255, 255, .08);
+
+            box-shadow:
+                0 30px 100px rgba(0, 0, 0, .55);
+        }
+
+
+        .spinner {
+
+            width: 44px;
+            height: 44px;
+
+            margin:
+                0 auto 15px;
+
+            border-radius: 50%;
+
+            border:
+                4px solid rgba(255, 255, 255, .08);
+
+            border-top-color:
+                var(--gold);
+
+            animation:
+                spin .8s linear infinite;
+        }
+
+
+        @keyframes spin {
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+
+        .loading-box strong {
+
+            display: block;
+
+            font-size: 13px;
+        }
+
+
+        .loading-box span {
+
+            display: block;
+
+            margin-top: 5px;
+
+            color: var(--muted);
+
+            font-size: 10px;
+
+            line-height: 1.7;
+        }
+
+
+        /* =========================================================
+           MOBILE SIDEBAR TOGGLE
+        ========================================================== */
+
+        .mobile-menu-btn {
+
+            display: none;
+
+            width: 42px;
+            height: 42px;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            color: #e2e8f0;
+
+            background:
+                rgba(255, 255, 255, .055);
+
+            border:
+                1px solid rgba(255, 255, 255, .08);
+
+            cursor: pointer;
+
+            font-size: 18px;
+        }
+
+
+        .sidebar-overlay {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 15;
+
+            background:
+                rgba(0, 0, 0, .55);
+
+            backdrop-filter: blur(3px);
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================== */
+
+        @media (max-width: 1050px) {
+
+            .app {
+
+                grid-template-columns:
+                    310px
+                    minmax(0, 1fr);
+            }
+
+
+            .sidebar {
+
+                padding: 18px;
+            }
+
+
+            .main {
+
+                padding: 22px;
+            }
+
+
+            .info-grid {
+
+                grid-template-columns:
+                    1fr 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 820px) {
+
+            .app {
+
+                display: block;
+            }
+
+
+            .sidebar {
+
+                position: fixed;
+
+                top: 0;
+                right: 0;
+
+                width: min(88%, 350px);
+
+                height: 100vh;
+
+                transform:
+                    translateX(105%);
+
+                transition:
+                    transform .3s ease;
+
+                box-shadow:
+                    -20px 0 70px rgba(0, 0, 0, .35);
+
+                z-index: 30;
+            }
+
+
+            .sidebar.open {
+
+                transform:
+                    translateX(0);
+            }
+
+
+            .sidebar-overlay {
+
+                display: block;
+
+                opacity: 0;
+
+                visibility: hidden;
+
+                transition:
+                    opacity .3s ease,
+                    visibility .3s ease;
+
+                z-index: 25;
+            }
+
+
+            .sidebar-overlay.visible {
+
+                opacity: 1;
+
+                visibility: visible;
+            }
+
+
+            .mobile-menu-btn {
+
+                display: flex;
+            }
+
+
+            .topbar {
+
+                justify-content: flex-start;
+            }
+
+
+            .page-heading {
+
+                flex: 1;
+            }
+
+
+            .connection-badge {
+
+                display: none;
+            }
+
+
+            .main {
+
+                padding: 18px;
+            }
+
+
+            .player-card {
+
+                border-radius: 20px;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .main {
+
+                padding: 13px;
+            }
+
+
+            .topbar {
+
+                gap: 10px;
+
+                margin-bottom: 14px;
+            }
+
+
+            .page-heading h2 {
+
+                font-size: 19px;
+            }
+
+
+            .page-heading p {
+
+                font-size: 10px;
+            }
+
+
+            .player-header {
+
+                min-height: 62px;
+
+                padding: 10px 13px;
+            }
+
+
+            .current-title {
+
+                font-size: 12px;
+            }
+
+
+            .current-type {
+
+                font-size: 8px;
+
+                min-height: 29px;
+
+                padding: 0 8px;
+            }
+
+
+            .player {
+
+                min-height: 210px;
+            }
+
+
+            .player-footer {
+
+                grid-template-columns: 1fr;
+
+                gap: 10px;
+
+                padding: 13px;
+            }
+
+
+            .completion-badge {
+
+                width: fit-content;
+            }
+
+
+            .info-grid {
+
+                grid-template-columns: 1fr;
+
+                gap: 9px;
+            }
+
+
+            .info-card {
+
+                min-height: 90px;
+            }
+
+        }
+
+
+        /* =========================================================
+           ACCESSIBILITY
+        ========================================================== */
+
+        button:focus-visible,
+        .video-item:focus-visible {
+
+            outline:
+                2px solid #60a5fa;
+
+            outline-offset:
+                2px;
+        }
+
+    </style>
 
 </head>
 
 
 <body>
 
-  <!-- =========================================================
-       APP
-  ========================================================== -->
 
-  <div class="app">
+    <!-- =========================================================
+         BACKGROUND
+    ========================================================== -->
 
-
-    <!-- =======================================================
-         SIDEBAR
-    ======================================================== -->
-
-    <aside
-      class="sidebar"
-      id="sidebar"
-    >
-
-      <div class="brand">
-
-        <div class="brand-icon">
-          <i class="fa-solid fa-graduation-cap"></i>
-        </div>
-
-        <div class="brand-text">
-
-          <div class="brand-title">
-            د. يوسف نافع
-          </div>
-
-          <div class="brand-subtitle">
-            منصة التعليم الذكية
-          </div>
-
-        </div>
-
-      </div>
+    <div class="background-orb orb-one"></div>
+    <div class="background-orb orb-two"></div>
 
 
-      <!-- STUDENT -->
-
-      <div class="student-card">
-
-        <div class="student-label">
-          الطالب
-        </div>
-
-        <div
-          class="student-name"
-          id="studentName"
-        >
-          جاري التحميل...
-        </div>
-
-        <div class="student-class">
-
-          <i class="fa-solid fa-layer-group"></i>
-
-          <span id="studentClass">
-            جاري تحديد الصف...
-          </span>
-
-        </div>
-
-      </div>
-
-
-      <!-- VIDEOS HEADER -->
-
-      <div class="videos-header">
-
-        <div class="videos-heading">
-          المحاضرات والدروس
-        </div>
-
-        <div
-          class="video-count"
-          id="videoCount"
-        >
-          0
-        </div>
-
-      </div>
-
-
-      <!-- VIDEO LIST -->
-
-      <div
-        class="video-list"
-        id="videoList"
-      >
-
-        <div class="state-box">
-
-          <div class="state-icon">
-            <i class="fa-solid fa-spinner fa-spin"></i>
-          </div>
-
-          <div class="state-title">
-            جاري تحميل الفيديوهات
-          </div>
-
-          <div class="state-text">
-            لحظات ويتم تحميل المحتوى الخاص بك...
-          </div>
-
-        </div>
-
-      </div>
-
-    </aside>
-
-
-    <!-- =======================================================
-         OVERLAY
-    ======================================================== -->
+    <!-- =========================================================
+         LOADING
+    ========================================================== -->
 
     <div
-      class="sidebar-overlay"
-      id="sidebarOverlay"
+        class="loading-screen"
+        id="loadingScreen"
+    >
+
+        <div class="loading-box">
+
+            <div class="spinner"></div>
+
+            <strong>
+                جاري تحميل الدروس
+            </strong>
+
+            <span>
+                يتم الاتصال بمنصة د. يوسف نافع...
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         MOBILE OVERLAY
+    ========================================================== -->
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
     ></div>
 
 
-    <!-- =======================================================
-         MAIN
-    ======================================================== -->
+    <!-- =========================================================
+         APP
+    ========================================================== -->
 
-    <main class="main">
-
-
-      <!-- TOPBAR -->
-
-      <div class="topbar">
-
-        <div>
-
-          <div class="page-title">
-            الفيديوهات التعليمية
-          </div>
-
-          <div class="page-subtitle">
-            شاهد دروسك وتابع تقدمك في المحتوى التعليمي
-          </div>
-
-        </div>
+    <div class="app">
 
 
-        <div class="connection-status">
+        <!-- =====================================================
+             SIDEBAR
+        ====================================================== -->
 
-          <span class="status-dot"></span>
-
-          <span id="connectionText">
-            جاري الاتصال...
-          </span>
-
-        </div>
-
-      </div>
-
-
-      <!-- PLAYER CARD -->
-
-      <section class="player-card">
-
-
-        <!-- PLAYER -->
-
-        <div
-          class="player-wrapper"
-          id="playerWrapper"
+        <aside
+            class="sidebar"
+            id="sidebar"
         >
 
-          <!-- PLACEHOLDER -->
+            <div class="sidebar-inner">
 
-          <div
-            class="player-placeholder"
-            id="playerPlaceholder"
-          >
 
-            <div class="placeholder-icon">
-              <i class="fa-solid fa-play"></i>
-            </div>
+                <!-- BRAND -->
 
-            <div class="placeholder-title">
-              اختر درسًا للبدء
-            </div>
+                <div class="brand">
 
-            <div class="placeholder-text">
-              اختر أحد الفيديوهات من القائمة الجانبية لبدء المشاهدة.
-            </div>
+                    <div class="brand-icon">
+                        🎓
+                    </div>
 
-          </div>
+                    <div class="brand-info">
 
+                        <h1>
+                            د. يوسف نافع
+                        </h1>
 
-          <!-- NATIVE VIDEO -->
+                        <p>
+                            منصة الدروس التعليمية
+                        </p>
 
-          <video
-            id="videoPlayer"
-            controls
-            playsinline
-            preload="metadata"
-          ></video>
+                    </div>
 
+                </div>
 
-          <!-- YOUTUBE -->
 
-          <div
-            id="youtubePlayer"
-          ></div>
+                <!-- STUDENT -->
 
-        </div>
+                <div class="student-card">
 
+                    <div class="student-label">
+                        الطالب
+                    </div>
 
-        <!-- VIDEO DETAILS -->
+                    <div
+                        class="student-name"
+                        id="studentName"
+                    >
+                        الطالب
+                    </div>
 
-        <div class="video-details">
+                    <div
+                        class="student-class"
+                        id="studentClass"
+                    >
+                        جاري تحديد المجموعة...
+                    </div>
 
-          <div
-            class="current-title"
-            id="currentTitle"
-          >
-            لم يتم اختيار فيديو
-          </div>
+                </div>
 
 
-          <div class="current-meta">
+                <!-- LIST HEADER -->
 
-            <div
-              class="meta-badge blue"
-              id="currentClass"
-            >
-              —
-            </div>
+                <div class="list-header">
 
-            <div
-              class="meta-badge"
-              id="currentType"
-            >
-              —
-            </div>
+                    <strong>
+                        قائمة الدروس
+                    </strong>
 
-            <div
-              class="meta-badge"
-              id="currentStatus"
-            >
-              لم يبدأ المشاهدة
-            </div>
+                    <span
+                        class="video-count"
+                        id="videoCount"
+                    >
+                        0
+                    </span>
 
-          </div>
+                </div>
 
 
-          <!-- PROGRESS -->
+                <!-- VIDEO LIST -->
 
-          <div class="progress-section">
-
-            <div class="progress-head">
-
-              <div class="progress-label">
-                تقدم المشاهدة
-              </div>
-
-              <div
-                class="progress-value"
-                id="progressValue"
-              >
-                0%
-              </div>
-
-            </div>
-
-            <div class="progress-track">
-
-              <div
-                class="progress-bar"
-                id="progressBar"
-              ></div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-    </main>
-
-  </div>
-
-
-  <!-- =========================================================
-       MOBILE MENU
-  ========================================================== -->
-
-  <button
-    class="mobile-menu-button"
-    id="mobileMenuButton"
-    type="button"
-    aria-label="فتح قائمة الفيديوهات"
-  >
-    <i class="fa-solid fa-list"></i>
-  </button>
-
-
-  <!-- =========================================================
-       JAVASCRIPT
-  ========================================================== -->
-<!-- =========================================================
-     SUPABASE
-========================================================= -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-
-"use strict";
-
-/* =========================================================
-   SUPABASE CONFIG
-   نفس بيانات صفحة الرفع بالضبط
-========================================================= */
-
-const SUPABASE_URL =
-    "https://nhdowqzecpwmkunczodl.supabase.co";
-
-const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmUuanNsb2NhbCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
-
-
-/* =========================================================
-   CREATE CLIENT
-========================================================= */
-
-if (
-    typeof window.supabase === "undefined" ||
-    typeof window.supabase.createClient !== "function"
-) {
-    throw new Error(
-        "لم يتم تحميل مكتبة Supabase."
-    );
-}
-
-const client =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-    );
-
-
-/* =========================================================
-   DEBUG
-========================================================= */
-
-console.log(
-    "SUPABASE URL:",
-    SUPABASE_URL
-);
-
-console.log(
-    "SUPABASE KEY LENGTH:",
-    SUPABASE_ANON_KEY.length
-);
-
-console.log(
-    "SUPABASE PROJECT:",
-    SUPABASE_URL.split(".")[0]
-);
-
-</script>
-    /* =========================================================
-       DOM
-    ========================================================== */
-
-    const videoList =
-      document.getElementById("videoList");
-
-    const videoCount =
-      document.getElementById("videoCount");
-
-    const studentName =
-      document.getElementById("studentName");
-
-    const studentClass =
-      document.getElementById("studentClass");
-
-    const currentTitle =
-      document.getElementById("currentTitle");
-
-    const currentClass =
-      document.getElementById("currentClass");
-
-    const currentType =
-      document.getElementById("currentType");
-
-    const currentStatus =
-      document.getElementById("currentStatus");
-
-    const progressBar =
-      document.getElementById("progressBar");
-
-    const progressValue =
-      document.getElementById("progressValue");
-
-    const videoPlayer =
-      document.getElementById("videoPlayer");
-
-    const youtubePlayerContainer =
-      document.getElementById("youtubePlayer");
-
-    const playerPlaceholder =
-      document.getElementById("playerPlaceholder");
-
-    const sidebar =
-      document.getElementById("sidebar");
-
-    const sidebarOverlay =
-      document.getElementById("sidebarOverlay");
-
-    const connectionText =
-      document.getElementById("connectionText");
-
-    const mobileMenuButton =
-      document.getElementById("mobileMenuButton");
-
-
-    /* =========================================================
-       READ STUDENT FROM LOCAL STORAGE
-    ========================================================== */
-
-    let savedUser = {};
-
-    try {
-
-      savedUser =
-        JSON.parse(
-          localStorage.getItem("user") || "{}"
-        ) || {};
-
-    } catch (error) {
-
-      console.error(
-        "LOCAL STORAGE ERROR:",
-        error
-      );
-
-      savedUser = {};
-
-    }
-
-
-    /* =========================================================
-       NORMALIZE CLASS GROUP
-    ========================================================== */
-
-    function normalizeClassGroup(value) {
-
-      const original =
-        String(value || "")
-          .trim();
-
-      const normalized =
-        original
-          .toLowerCase()
-          .replace(/\s+/g, " ");
-
-
-      const aliases = {
-
-        "first_science":
-          "first_science",
-
-        "first science":
-          "first_science",
-
-        "أولى ثانوي":
-          "first_science",
-
-        "اولى ثانوي":
-          "first_science",
-
-        "أولى ثانوي علوم متكاملة":
-          "first_science",
-
-        "اولى ثانوي علوم متكاملة":
-          "first_science",
-
-
-        "third_biology":
-          "third_biology",
-
-        "third biology":
-          "third_biology",
-
-        "تالتة ثانوي أحياء":
-          "third_biology",
-
-        "تالته ثانوي أحياء":
-          "third_biology",
-
-        "ثالثة ثانوي أحياء":
-          "third_biology",
-
-        "ثالثه ثانوي أحياء":
-          "third_biology",
-
-
-        "third_geology":
-          "third_geology",
-
-        "third geology":
-          "third_geology",
-
-        "تالتة ثانوي جيولوجيا":
-          "third_geology",
-
-        "تالته ثانوي جيولوجيا":
-          "third_geology",
-
-        "ثالثة ثانوي جيولوجيا":
-          "third_geology",
-
-        "ثالثه ثانوي جيولوجيا":
-          "third_geology"
-
-      };
-
-
-      return (
-        aliases[original] ||
-        aliases[normalized] ||
-        original
-      );
-
-    }
-
-
-    /* =========================================================
-       USER
-    ========================================================== */
-
-    const user = {
-
-      id:
-        savedUser.id ||
-        savedUser.student_id ||
-        "000",
-
-      name:
-        savedUser.name ||
-        savedUser.full_name ||
-        savedUser.student_name ||
-        "الطالب",
-
-      email:
-        savedUser.email ||
-        "unknown",
-
-      class_group:
-        normalizeClassGroup(
-          savedUser.class_group ||
-          savedUser.classGroup ||
-          savedUser.grade ||
-          savedUser.class ||
-          ""
-        )
-
-    };
-
-
-    /* =========================================================
-       CLASS DISPLAY
-    ========================================================== */
-
-    function getClassDisplayName(
-      classGroup
-    ) {
-
-      switch (classGroup) {
-
-        case "first_science":
-          return "أولى ثانوي — علوم متكاملة";
-
-        case "third_biology":
-          return "تالتة ثانوي — أحياء";
-
-        case "third_geology":
-          return "تالتة ثانوي — جيولوجيا";
-
-        default:
-          return classGroup || "غير محدد";
-
-      }
-
-    }
-
-
-    /* =========================================================
-       STATE
-    ========================================================== */
-
-    const state = {
-
-      videos: [],
-
-      currentVideo: null,
-
-      currentVideoId: null,
-
-      currentType: null,
-
-      youtubePlayer: null,
-
-      progressTimer: null,
-
-      lastSavedPercent: 0,
-
-      lastSavedSeconds: 0
-
-    };
-
-
-    /* =========================================================
-       INITIAL STUDENT UI
-    ========================================================== */
-
-    studentName.textContent =
-      user.name;
-
-    studentClass.textContent =
-      getClassDisplayName(
-        user.class_group
-      );
-
-
-    /* =========================================================
-       ESCAPE HTML
-    ========================================================== */
-
-    function escapeHtml(value) {
-
-      const div =
-        document.createElement("div");
-
-      div.textContent =
-        String(value ?? "");
-
-      return div.innerHTML;
-
-    }
-
-
-    /* =========================================================
-       ERROR FORMATTER
-    ========================================================== */
-
-    function formatSupabaseError(
-      error
-    ) {
-
-      if (!error) {
-        return "خطأ غير معروف.";
-      }
-
-      const message =
-        error.message ||
-        "خطأ غير معروف.";
-
-      const code =
-        error.code ||
-        "";
-
-      const details =
-        error.details ||
-        "";
-
-      const hint =
-        error.hint ||
-        "";
-
-      let result =
-        message;
-
-      if (code) {
-        result +=
-          "\n\nCode: " + code;
-      }
-
-      if (details) {
-        result +=
-          "\n\nDetails: " + details;
-      }
-
-      if (hint) {
-        result +=
-          "\n\nHint: " + hint;
-      }
-
-      return result;
-
-    }
-
-
-    /* =========================================================
-       SHOW ERROR
-    ========================================================== */
-
-    function showErrorState(
-      title,
-      message,
-      allowRetry = true
-    ) {
-
-      videoList.innerHTML = `
-
-        <div class="state-box">
-
-          <div
-            class="state-icon"
-            style="
-              background:rgba(239,68,68,.10);
-              color:#f87171;
-            "
-          >
-            <i class="fa-solid fa-triangle-exclamation"></i>
-          </div>
-
-          <div class="state-title">
-            ${escapeHtml(title)}
-          </div>
-
-          <div class="state-text">
-            ${escapeHtml(message)}
-          </div>
-
-          ${
-            allowRetry
-              ? `
-                <button
-                  class="retry-button"
-                  id="retryVideosButton"
-                  type="button"
+                <div
+                    class="video-list"
+                    id="videoList"
                 >
-                  <i class="fa-solid fa-rotate-right"></i>
-                  إعادة المحاولة
-                </button>
-              `
-              : ""
-          }
 
-        </div>
+                    <div class="sidebar-state">
 
-      `;
+                        <div class="state-icon">
+                            ⏳
+                        </div>
 
-      connectionText.textContent =
-        "يوجد خطأ في الاتصال";
+                        <strong>
+                            جاري تحميل الفيديوهات...
+                        </strong>
 
+                    </div>
 
-      const retryButton =
-        document.getElementById(
-          "retryVideosButton"
-        );
+                </div>
 
-      if (retryButton) {
 
-        retryButton.addEventListener(
-          "click",
-          loadVideos
-        );
+            </div>
 
-      }
+        </aside>
 
-    }
 
+        <!-- =====================================================
+             MAIN
+        ====================================================== -->
 
-    /* =========================================================
-       LOADING
-    ========================================================== */
+        <main class="main">
 
-    function showLoadingState() {
+            <div class="main-inner">
 
-      videoList.innerHTML = `
 
-        <div class="state-box">
+                <!-- TOP BAR -->
 
-          <div class="state-icon">
-            <i class="fa-solid fa-spinner fa-spin"></i>
-          </div>
+                <div class="topbar">
 
-          <div class="state-title">
-            جاري تحميل الفيديوهات
-          </div>
+                    <button
+                        type="button"
+                        class="mobile-menu-btn"
+                        id="mobileMenuBtn"
+                        aria-label="فتح قائمة الدروس"
+                    >
+                        ☰
+                    </button>
 
-          <div class="state-text">
-            يتم الآن جلب المحتوى التعليمي...
-          </div>
 
-        </div>
+                    <div class="page-heading">
 
-      `;
+                        <h2>
+                            دروسك التعليمية
+                        </h2>
 
-    }
+                        <p>
+                            شاهد دروسك وتابع تقدمك من مكان واحد
+                        </p>
 
+                    </div>
 
-    /* =========================================================
-       EMPTY
-    ========================================================== */
 
-    function showEmptyState() {
+                    <div
+                        class="connection-badge"
+                        id="connectionBadge"
+                    >
 
-      videoList.innerHTML = `
+                        <span class="connection-dot"></span>
 
-        <div class="state-box">
+                        <span id="connectionText">
+                            متصل بالمنصة
+                        </span>
 
-          <div class="state-icon">
-            <i class="fa-solid fa-video-slash"></i>
-          </div>
+                    </div>
 
-          <div class="state-title">
-            لا توجد فيديوهات متاحة حاليًا
-          </div>
+                </div>
 
-          <div class="state-text">
-            لم يتم العثور على فيديوهات متاحة لهذا الصف.
-          </div>
 
-        </div>
+                <!-- PLAYER -->
 
-      `;
+                <section class="player-card">
 
-      videoCount.textContent =
-        "0";
 
-    }
+                    <!-- PLAYER HEADER -->
 
+                    <div class="player-header">
 
-    /* =========================================================
-       VIDEO TYPE
-    ========================================================== */
+                        <div class="current-info">
 
-    function getVideoType(
-      url
-    ) {
+                            <div class="current-label">
+                                الفيديو الحالي
+                            </div>
 
-      const value =
-        String(url || "")
-          .trim()
-          .toLowerCase();
+                            <div
+                                class="current-title"
+                                id="currentTitle"
+                            >
+                                اختر درسًا من القائمة
+                            </div>
 
+                        </div>
 
-      if (
-        value.includes("youtube.com") ||
-        value.includes("youtu.be")
-      ) {
 
-        return "youtube";
+                        <div
+                            class="current-type"
+                            id="currentType"
+                        >
+                            جاهز
+                        </div>
 
-      }
+                    </div>
 
 
-      return "file";
+                    <!-- PLAYER -->
 
-    }
+                    <div
+                        class="player"
+                        id="playerContainer"
+                    >
 
+                        <div
+                            class="player-empty"
+                            id="playerEmpty"
+                        >
 
-    /* =========================================================
-       YOUTUBE ID
-    ========================================================== */
+                            <div class="player-empty-icon">
+                                ▶️
+                            </div>
 
-    function getYouTubeId(
-      url
-    ) {
+                            <strong>
+                                اختر فيديو لبدء المشاهدة
+                            </strong>
 
-      if (!url) {
-        return null;
-      }
+                            <p>
+                                ستظهر المحاضرة هنا بعد اختيارها من القائمة
+                            </p>
 
-      try {
+                        </div>
 
-        const parsed =
-          new URL(url);
 
-        const hostname =
-          parsed.hostname
-            .toLowerCase()
-            .replace(
-              /^www\./,
-              ""
-            );
+                        <!-- NATIVE VIDEO -->
 
+                        <video
+                            id="videoPlayer"
+                            controls
+                            playsinline
+                            preload="metadata"
+                            controlsList="nodownload"
+                            disablePictureInPicture
+                            style="display:none;"
+                        ></video>
 
-        /* youtu.be */
 
-        if (
-          hostname ===
-          "youtu.be"
-        ) {
+                        <!-- YOUTUBE -->
 
-          return (
-            parsed.pathname
-              .replace(
-                /^\//,
-                ""
-              )
-              .split("/")[0] ||
-            null
-          );
+                        <div
+                            id="youtubePlayer"
+                            style="display:none;"
+                        ></div>
 
-        }
+                    </div>
 
 
-        /* youtube.com */
+                    <!-- PLAYER FOOTER -->
 
-        if (
-          hostname ===
-            "youtube.com" ||
-          hostname ===
-            "m.youtube.com"
-        ) {
+                    <div class="player-footer">
 
-          const watchId =
-            parsed.searchParams.get(
-              "v"
-            );
+                        <div class="progress-info">
 
-          if (watchId) {
-            return watchId;
-          }
+                            <div class="progress-row">
 
+                                <span class="progress-label">
+                                    تقدم المشاهدة
+                                </span>
 
-          const parts =
-            parsed.pathname
-              .split("/")
-              .filter(Boolean);
+                                <span
+                                    class="progress-value"
+                                    id="progressValue"
+                                >
+                                    0%
+                                </span>
 
+                            </div>
 
-          const shortsIndex =
-            parts.indexOf(
-              "shorts"
-            );
 
-          if (
-            shortsIndex !== -1 &&
-            parts[shortsIndex + 1]
-          ) {
+                            <div class="progress-track">
 
-            return (
-              parts[shortsIndex + 1]
-            );
+                                <div
+                                    class="progress-bar"
+                                    id="progressBar"
+                                ></div>
 
-          }
+                            </div>
 
+                        </div>
 
-          const embedIndex =
-            parts.indexOf(
-              "embed"
-            );
 
-          if (
-            embedIndex !== -1 &&
-            parts[embedIndex + 1]
-          ) {
+                        <div
+                            class="completion-badge"
+                            id="completionBadge"
+                        >
+                            ✓ تم إكمال الدرس
+                        </div>
 
-            return (
-              parts[embedIndex + 1]
-            );
+                    </div>
 
-          }
+                </section>
 
-        }
 
-      } catch (error) {
+                <!-- ERROR -->
 
-        console.warn(
-          "Invalid YouTube URL:",
-          url,
-          error
-        );
+                <div
+                    class="error-panel"
+                    id="errorPanel"
+                >
 
-      }
+                    <div class="error-title">
+                        ❌ تعذر تحميل الفيديوهات
+                    </div>
 
-      return null;
+                    <div
+                        class="error-text"
+                        id="errorText"
+                    ></div>
 
-    }
+                    <button
+                        type="button"
+                        class="retry-btn"
+                        id="retryBtn"
+                    >
+                        إعادة المحاولة
+                    </button>
 
+                </div>
 
-    /* =========================================================
-       LOAD VIDEOS
-       
-       IMPORTANT:
-       This is the ONLY loadVideos function in this file.
-    ========================================================== */
 
-    async function loadVideos() {
+                <!-- INFO -->
 
-      showLoadingState();
+                <div class="info-grid">
 
-      try {
 
-        /* -----------------------------------------------------
-           INITIALIZE SUPABASE
-        ------------------------------------------------------ */
+                    <div class="info-card">
 
-        if (!client) {
-          initializeSupabase();
-        }
+                        <div class="info-card-icon">
+                            ▶️
+                        </div>
 
+                        <strong>
+                            مشاهدة مباشرة
+                        </strong>
 
-        console.log(
-          "========================================"
-        );
+                        <span>
+                            يمكنك مشاهدة فيديوهات الدروس مباشرة من داخل المنصة.
+                        </span>
 
-        console.log(
-          "SUPABASE URL:",
-          SUPABASE_URL
-        );
+                    </div>
 
-        console.log(
-          "KEY LENGTH:",
-          SUPABASE_ANON_KEY.length
-        );
 
-        console.log(
-          "STUDENT:",
-          user
-        );
+                    <div class="info-card">
 
-        console.log(
-          "========================================"
-        );
+                        <div class="info-card-icon">
+                            📊
+                        </div>
 
+                        <strong>
+                            متابعة التقدم
+                        </strong>
 
-        /* -----------------------------------------------------
-           CHECK CLASS
-           
-           We DO NOT stop the database connection if class_group
-           is missing. We first read the database so the actual
-           problem can be diagnosed correctly.
-        ------------------------------------------------------ */
+                        <span>
+                            يتم حفظ تقدم المشاهدة تلقائيًا لكل فيديو.
+                        </span>
 
+                    </div>
 
-        /* -----------------------------------------------------
-           FETCH VIDEOS
-        ------------------------------------------------------ */
 
-        const response =
-          await client
-            .from("videos")
-            .select(
-              "id,title,url,class_group,is_premium"
-            )
-            .order(
-              "id",
-              {
-                ascending: true
-              }
-            );
+                    <div class="info-card">
 
+                        <div class="info-card-icon">
+                            📚
+                        </div>
 
-        const data =
-          response.data;
+                        <strong>
+                            محتوى مجموعتك
+                        </strong>
 
-        const error =
-          response.error;
+                        <span>
+                            تظهر لك الدروس الخاصة بمجموعتك الدراسية فقط.
+                        </span>
 
+                    </div>
 
-        console.log(
-          "VIDEOS RESPONSE:",
-          {
-            data,
-            error
-          }
-        );
 
+                </div>
 
-        /* -----------------------------------------------------
-           DATABASE ERROR
-        ------------------------------------------------------ */
 
-        if (error) {
+            </div>
 
-          console.error(
-            "SUPABASE VIDEOS ERROR:",
-            error
-          );
+        </main>
 
+    </div>
 
-          const formatted =
-            formatSupabaseError(
-              error
-            );
 
+    <!-- =========================================================
+         APPLICATION
+    ========================================================== -->
 
-          const lower =
-            formatted.toLowerCase();
+    <script>
 
+        "use strict";
 
-          if (
-            lower.includes(
-              "invalid api key"
-            )
-          ) {
 
-            showErrorState(
-              "مشكلة في الاتصال بـ Supabase",
-              "Supabase رفض مفتاح الاتصال الموجود في الصفحة.\n\nلكن إذا كانت صفحة الرفع تعمل بنفس المشروع، افتح Console وتأكد من قيمة KEY LENGTH وبيانات المشروع."
-            );
+        /* =========================================================
+           SUPABASE CONFIG
 
-          } else if (
-            lower.includes(
-              "row-level security"
-            ) ||
-            lower.includes(
-              "permission denied"
-            ) ||
-            lower.includes(
-              "not authorized"
-            )
-          ) {
+           مهم جدًا:
+           هذه القيم مطابقة لصفحة الرفع التي أرسلتها.
+        ========================================================== */
 
-            showErrorState(
-              "صلاحيات قراءة الفيديوهات",
-              "قاعدة البيانات تمنع صفحة الطالب من قراءة جدول videos بسبب صلاحيات RLS.\n\nالفيديو موجود في Supabase، لكن يجب السماح للطلاب بقراءة الصفوف المسموح لهم بها."
-            );
+        const SUPABASE_URL =
+            "https://nhdowqzecpwmkunczodl.supabase.co";
 
-          } else {
 
-            showErrorState(
-              "تعذر تحميل الفيديوهات",
-              formatted
-            );
+        const SUPABASE_ANON_KEY =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS5qcy5sb2NhbCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
-          }
 
-          return;
+        /* =========================================================
+           SUPABASE CLIENT
+        ========================================================== */
 
-        }
+        let client = null;
 
 
-        /* -----------------------------------------------------
-           SAVE ALL VIDEOS
-        ------------------------------------------------------ */
+        function initializeSupabase() {
 
-        const allVideos =
-          Array.isArray(data)
-            ? data
-            : [];
+            if (
+                typeof window.supabase === "undefined"
+            ) {
 
+                throw new Error(
+                    "مكتبة Supabase لم يتم تحميلها."
+                );
+            }
 
-        console.log(
-          "TOTAL VIDEOS FROM DATABASE:",
-          allVideos.length
-        );
 
+            if (
+                typeof window.supabase.createClient !== "function"
+            ) {
 
-        /* -----------------------------------------------------
-           NO VIDEOS
-        ------------------------------------------------------ */
+                throw new Error(
+                    "تعذر إنشاء اتصال Supabase."
+                );
+            }
 
-        if (
-          allVideos.length === 0
-        ) {
 
-          state.videos = [];
-
-          showEmptyState();
-
-          connectionText.textContent =
-            "متصل بالمنصة";
-
-          return;
-
-        }
-
-
-        /* -----------------------------------------------------
-           FILTER BY STUDENT CLASS
-           
-           The upload page stores:
-             first_science
-             third_biology
-             third_geology
-        ------------------------------------------------------ */
-
-        const studentClassGroup =
-          normalizeClassGroup(
-            user.class_group
-          );
-
-
-        const filteredVideos =
-          allVideos.filter(
-            function(video) {
-
-              const videoClassGroup =
-                normalizeClassGroup(
-                  video.class_group
+            client =
+                window.supabase.createClient(
+                    SUPABASE_URL,
+                    SUPABASE_ANON_KEY
                 );
 
 
-              return (
-                videoClassGroup ===
-                studentClassGroup
-              );
-
-            }
-          );
-
-
-        console.log(
-          "STUDENT CLASS:",
-          studentClassGroup
-        );
-
-        console.log(
-          "VIDEOS FOR STUDENT:",
-          filteredVideos
-        );
-
-
-        /* -----------------------------------------------------
-           CLASS NOT FOUND
-        ------------------------------------------------------ */
-
-        if (
-          filteredVideos.length === 0
-        ) {
-
-          state.videos = [];
-
-          videoCount.textContent =
-            "0";
-
-
-          videoList.innerHTML = `
-
-            <div class="state-box">
-
-              <div class="state-icon">
-                <i class="fa-solid fa-filter-circle-xmark"></i>
-              </div>
-
-              <div class="state-title">
-                لا توجد فيديوهات لهذا الصف
-              </div>
-
-              <div class="state-text">
-                الصف المسجل للطالب:
-                ${escapeHtml(
-                  getClassDisplayName(
-                    studentClassGroup
-                  )
-                )}
-
-                \n\n
-                إجمالي الفيديوهات في قاعدة البيانات:
-                ${allVideos.length}
-
-                \n\n
-                إذا كنت قد أضفت الفيديو للتو، تأكد أن خانة الصف في صفحة الرفع مطابقة لصف الطالب.
-              </div>
-
-              <button
-                class="retry-button"
-                id="retryClassButton"
-                type="button"
-              >
-                <i class="fa-solid fa-rotate-right"></i>
-                تحديث الفيديوهات
-              </button>
-
-            </div>
-
-          `;
-
-
-          const retryClassButton =
-            document.getElementById(
-              "retryClassButton"
-            );
-
-          if (retryClassButton) {
-
-            retryClassButton.addEventListener(
-              "click",
-              loadVideos
-            );
-
-          }
-
-
-          connectionText.textContent =
-            "متصل بالمنصة";
-
-          return;
-
+            return client;
         }
 
 
-        /* -----------------------------------------------------
-           SAVE FILTERED VIDEOS
-        ------------------------------------------------------ */
+        /* =========================================================
+           ELEMENTS
+        ========================================================== */
 
-        state.videos =
-          filteredVideos;
-
-
-        videoCount.textContent =
-          String(
-            state.videos.length
-          );
-
-
-        connectionText.textContent =
-          "متصل بالمنصة";
-
-
-        /* -----------------------------------------------------
-           RENDER
-        ------------------------------------------------------ */
-
-        renderVideos(
-          state.videos
-        );
-
-
-        /* -----------------------------------------------------
-           OPEN FIRST VIDEO
-        ------------------------------------------------------ */
-
-        selectVideo(
-          state.videos[0]
-        );
-
-      } catch (error) {
-
-        console.error(
-          "LOAD VIDEOS EXCEPTION:",
-          error
-        );
-
-
-        showErrorState(
-          "تعذر تحميل الفيديوهات",
-          error.message ||
-          "حدث خطأ غير متوقع أثناء الاتصال بقاعدة البيانات."
-        );
-
-      }
-
-    }
-
-
-    /* =========================================================
-       RENDER VIDEOS
-    ========================================================== */
-
-    function renderVideos(
-      videos
-    ) {
-
-      videoList.innerHTML =
-        "";
-
-
-      videos.forEach(
-        function(
-          video,
-          index
-        ) {
-
-          const item =
-            document.createElement(
-              "div"
+        const loadingScreen =
+            document.getElementById(
+                "loadingScreen"
             );
 
 
-          item.className =
-            "video-item";
-
-
-          item.dataset.videoId =
-            String(
-              video.id
+        const videoList =
+            document.getElementById(
+                "videoList"
             );
 
 
-          const type =
-            getVideoType(
-              video.url
+        const videoCount =
+            document.getElementById(
+                "videoCount"
             );
 
 
-          const icon =
-            type === "youtube"
-              ? "fa-brands fa-youtube"
-              : "fa-solid fa-circle-play";
+        const studentName =
+            document.getElementById(
+                "studentName"
+            );
 
 
-          item.innerHTML = `
+        const studentClass =
+            document.getElementById(
+                "studentClass"
+            );
 
-            <div class="video-number">
-              ${index + 1}
-            </div>
 
-            <div class="video-info">
+        const currentTitle =
+            document.getElementById(
+                "currentTitle"
+            );
 
-              <div class="video-title">
-                ${escapeHtml(
-                  video.title ||
-                  "فيديو بدون عنوان"
-                )}
-              </div>
 
-              <div class="video-type">
+        const currentType =
+            document.getElementById(
+                "currentType"
+            );
 
-                <i class="${icon}"></i>
 
-                ${
-                  type === "youtube"
-                    ? "YouTube"
-                    : "فيديو تعليمي"
+        const videoPlayer =
+            document.getElementById(
+                "videoPlayer"
+            );
+
+
+        const youtubePlayer =
+            document.getElementById(
+                "youtubePlayer"
+            );
+
+
+        const playerEmpty =
+            document.getElementById(
+                "playerEmpty"
+            );
+
+
+        const progressBar =
+            document.getElementById(
+                "progressBar"
+            );
+
+
+        const progressValue =
+            document.getElementById(
+                "progressValue"
+            );
+
+
+        const completionBadge =
+            document.getElementById(
+                "completionBadge"
+            );
+
+
+        const errorPanel =
+            document.getElementById(
+                "errorPanel"
+            );
+
+
+        const errorText =
+            document.getElementById(
+                "errorText"
+            );
+
+
+        const retryBtn =
+            document.getElementById(
+                "retryBtn"
+            );
+
+
+        const connectionBadge =
+            document.getElementById(
+                "connectionBadge"
+            );
+
+
+        const connectionText =
+            document.getElementById(
+                "connectionText"
+            );
+
+
+        const mobileMenuBtn =
+            document.getElementById(
+                "mobileMenuBtn"
+            );
+
+
+        const sidebar =
+            document.getElementById(
+                "sidebar"
+            );
+
+
+        const sidebarOverlay =
+            document.getElementById(
+                "sidebarOverlay"
+            );
+
+
+        /* =========================================================
+           USER
+        ========================================================== */
+
+        function getSavedUser() {
+
+            try {
+
+                const raw =
+                    localStorage.getItem(
+                        "user"
+                    );
+
+
+                if (!raw) {
+
+                    return {};
                 }
 
-              </div>
 
-            </div>
-
-          `;
-
-
-          item.addEventListener(
-            "click",
-            function() {
-
-              selectVideo(
-                video
-              );
-
-              closeSidebar();
-
-            }
-          );
-
-
-          videoList.appendChild(
-            item
-          );
-
-        }
-      );
-
-    }
-
-
-    /* =========================================================
-       SELECT VIDEO
-    ========================================================== */
-
-    async function selectVideo(
-      video
-    ) {
-
-      if (!video) {
-        return;
-      }
-
-
-      /* -------------------------------------------------------
-         SAVE PREVIOUS VIDEO
-      ------------------------------------------------------ */
-
-      await saveSession(
-        false
-      );
-
-
-      /* -------------------------------------------------------
-         STATE
-      ------------------------------------------------------ */
-
-      state.currentVideo =
-        video;
-
-      state.currentVideoId =
-        video.id;
-
-      state.currentType =
-        getVideoType(
-          video.url
-        );
-
-      state.lastSavedPercent =
-        0;
-
-      state.lastSavedSeconds =
-        0;
-
-
-      /* -------------------------------------------------------
-         ACTIVE ITEM
-      ------------------------------------------------------ */
-
-      document
-        .querySelectorAll(
-          ".video-item"
-        )
-        .forEach(
-          function(item) {
-
-            item.classList.toggle(
-              "active",
-              item.dataset.videoId ===
-              String(
-                video.id
-              )
-            );
-
-          }
-        );
-
-
-      /* -------------------------------------------------------
-         DETAILS
-      ------------------------------------------------------ */
-
-      currentTitle.textContent =
-        video.title ||
-        "فيديو تعليمي";
-
-
-      currentClass.textContent =
-        getClassDisplayName(
-          normalizeClassGroup(
-            video.class_group
-          )
-        );
-
-
-      currentStatus.textContent =
-        "جاري التحميل...";
-
-
-      progressBar.style.width =
-        "0%";
-
-
-      progressValue.textContent =
-        "0%";
-
-
-      /* -------------------------------------------------------
-         RESET PLAYERS
-      ------------------------------------------------------ */
-
-      stopProgressTracking();
-
-      destroyYouTubePlayer();
-
-
-      videoPlayer.pause();
-
-      videoPlayer.removeAttribute(
-        "src"
-      );
-
-      videoPlayer.load();
-
-      videoPlayer.style.display =
-        "none";
-
-
-      youtubePlayerContainer.innerHTML =
-        "";
-
-      youtubePlayerContainer.style.display =
-        "none";
-
-
-      playerPlaceholder.style.display =
-        "none";
-
-
-      /* -------------------------------------------------------
-         YOUTUBE
-      ------------------------------------------------------ */
-
-      if (
-        state.currentType ===
-        "youtube"
-      ) {
-
-        const youtubeId =
-          getYouTubeId(
-            video.url
-          );
-
-
-        if (!youtubeId) {
-
-          playerPlaceholder.style.display =
-            "flex";
-
-          currentStatus.textContent =
-            "رابط YouTube غير صالح";
-
-          return;
-
-        }
-
-
-        currentType.textContent =
-          "YouTube";
-
-
-        youtubePlayerContainer.style.display =
-          "block";
-
-
-        createYouTubePlayer(
-          youtubeId
-        );
-
-
-        return;
-
-      }
-
-
-      /* -------------------------------------------------------
-         NATIVE FILE VIDEO
-      ------------------------------------------------------ */
-
-      currentType.textContent =
-        "فيديو مرفوع";
-
-
-      videoPlayer.src =
-        video.url;
-
-
-      videoPlayer.style.display =
-        "block";
-
-
-      currentStatus.textContent =
-        "جاهز للمشاهدة";
-
-
-      startNativeVideoTracking();
-
-    }
-
-
-    /* =========================================================
-       YOUTUBE API READY
-    ========================================================== */
-
-    window.onYouTubeIframeAPIReady =
-      function() {
-
-        console.log(
-          "YouTube API Ready"
-        );
-
-      };
-
-
-    /* =========================================================
-       CREATE YOUTUBE PLAYER
-    ========================================================== */
-
-    function createYouTubePlayer(
-      youtubeId
-    ) {
-
-      if (
-        typeof window.YT ===
-          "undefined" ||
-        typeof window.YT.Player !==
-          "function"
-      ) {
-
-        currentStatus.textContent =
-          "جاري تحميل مشغل YouTube...";
-
-
-        const waitForYouTube =
-          setInterval(
-            function() {
-
-              if (
-                typeof window.YT !==
-                  "undefined" &&
-                typeof window.YT.Player ===
-                  "function"
-              ) {
-
-                clearInterval(
-                  waitForYouTube
-                );
+                const parsed =
+                    JSON.parse(raw);
 
 
                 if (
-                  state.currentType ===
-                    "youtube" &&
-                  state.currentVideo
+                    parsed &&
+                    typeof parsed === "object"
                 ) {
 
-                  createYouTubePlayer(
-                    youtubeId
-                  );
-
+                    return parsed;
                 }
 
-              }
 
-            },
-            300
-          );
+                return {};
 
+            } catch (error) {
 
-        setTimeout(
-          function() {
+                console.error(
+                    "USER STORAGE ERROR:",
+                    error
+                );
 
-            clearInterval(
-              waitForYouTube
-            );
-
-          },
-          15000
-        );
-
-
-        return;
-
-      }
-
-
-      state.youtubePlayer =
-        new YT.Player(
-          "youtubePlayer",
-          {
-
-            videoId:
-              youtubeId,
-
-            width:
-              "100%",
-
-            height:
-              "100%",
-
-            playerVars: {
-
-              autoplay: 0,
-
-              controls: 1,
-
-              rel: 0,
-
-              modestbranding: 1,
-
-              playsinline: 1
-
-            },
-
-            events: {
-
-              onReady:
-                function() {
-
-                  currentStatus.textContent =
-                    "جاهز للمشاهدة";
-
-
-                  startYouTubeTracking();
-
-                },
-
-
-              onStateChange:
-                function(event) {
-
-                  if (
-                    event.data ===
-                    YT.PlayerState.PLAYING
-                  ) {
-
-                    currentStatus.textContent =
-                      "جاري المشاهدة";
-
-                  }
-
-
-                  if (
-                    event.data ===
-                    YT.PlayerState.PAUSED
-                  ) {
-
-                    currentStatus.textContent =
-                      "متوقف مؤقتًا";
-
-                  }
-
-
-                  if (
-                    event.data ===
-                    YT.PlayerState.ENDED
-                  ) {
-
-                    currentStatus.textContent =
-                      "تمت مشاهدة الفيديو";
-
-
-                    updateProgress(
-                      100
-                    );
-
-
-                    saveSession(
-                      true
-                    );
-
-                  }
-
-                }
-
+                return {};
             }
-
-          }
-        );
-
-    }
-
-
-    /* =========================================================
-       DESTROY YOUTUBE
-    ========================================================== */
-
-    function destroyYouTubePlayer() {
-
-      stopProgressTracking();
-
-
-      if (
-        state.youtubePlayer &&
-        typeof state.youtubePlayer.destroy ===
-          "function"
-      ) {
-
-        try {
-
-          state.youtubePlayer.destroy();
-
-        } catch (error) {
-
-          console.warn(
-            "YouTube destroy error:",
-            error
-          );
-
         }
 
-      }
+
+        const savedUser =
+            getSavedUser();
 
 
-      state.youtubePlayer =
-        null;
+        const user = {
 
-    }
+            id:
+                savedUser.id ||
+                savedUser.student_id ||
+                "000",
 
+            name:
+                savedUser.name ||
+                savedUser.full_name ||
+                savedUser.student_name ||
+                "الطالب",
 
-    /* =========================================================
-       NATIVE VIDEO TRACKING
-    ========================================================== */
+            email:
+                savedUser.email ||
+                "",
 
-    function startNativeVideoTracking() {
-
-      stopProgressTracking();
-
-
-      videoPlayer.ontimeupdate =
-        function() {
-
-          const duration =
-            Number(
-              videoPlayer.duration
-            );
-
-
-          const current =
-            Number(
-              videoPlayer.currentTime
-            );
-
-
-          if (
-            !duration ||
-            !Number.isFinite(
-              duration
-            )
-          ) {
-
-            return;
-
-          }
-
-
-          const percent =
-            Math.min(
-              100,
-              Math.max(
-                0,
-                (current / duration) *
-                100
-              )
-            );
-
-
-          updateProgress(
-            percent
-          );
-
-
-          if (
-            percent >= 90
-          ) {
-
-            currentStatus.textContent =
-              "تمت مشاهدة الدرس";
-
-          } else if (
-            !videoPlayer.paused
-          ) {
-
-            currentStatus.textContent =
-              "جاري المشاهدة";
-
-          }
+            class_group:
+                savedUser.class_group ||
+                savedUser.classGroup ||
+                savedUser.grade ||
+                savedUser.class ||
+                ""
 
         };
 
 
-      videoPlayer.onplay =
-        function() {
+        /* =========================================================
+           CLASS GROUP NORMALIZATION
+        ========================================================== */
 
-          currentStatus.textContent =
-            "جاري المشاهدة";
-
-        };
-
-
-      videoPlayer.onpause =
-        function() {
-
-          if (
-            videoPlayer.currentTime <
-            videoPlayer.duration
-          ) {
-
-            currentStatus.textContent =
-              "متوقف مؤقتًا";
-
-          }
-
-        };
-
-
-      videoPlayer.onended =
-        function() {
-
-          updateProgress(
-            100
-          );
-
-
-          currentStatus.textContent =
-            "تمت مشاهدة الفيديو";
-
-
-          saveSession(
-            true
-          );
-
-        };
-
-    }
-
-
-    /* =========================================================
-       YOUTUBE TRACKING
-    ========================================================== */
-
-    function startYouTubeTracking() {
-
-      stopProgressTracking();
-
-
-      state.progressTimer =
-        setInterval(
-          function() {
+        function normalizeClassGroup(value) {
 
             if (
-              !state.youtubePlayer ||
-              typeof state.youtubePlayer.getCurrentTime !==
-                "function"
+                value === null ||
+                value === undefined
             ) {
 
-              return;
-
+                return "";
             }
 
 
-            let current = 0;
-            let duration = 0;
+            const text =
+                String(value)
+                    .trim()
+                    .toLowerCase();
+
+
+            const compact =
+                text
+                    .replace(/\s+/g, " ");
+
+
+            /* أولى ثانوي علوم متكاملة */
+
+            if (
+
+                compact === "first_science" ||
+
+                compact === "first science" ||
+
+                compact === "first_science " ||
+
+                compact === "أولى ثانوي" ||
+
+                compact === "اولى ثانوي" ||
+
+                compact === "أولى ثانوي علوم متكاملة" ||
+
+                compact === "اولى ثانوي علوم متكاملة" ||
+
+                compact === "أولى ثانوي — علوم متكاملة" ||
+
+                compact === "أولى ثانوي - علوم متكاملة"
+
+            ) {
+
+                return "first_science";
+            }
+
+
+            /* تالتة ثانوي أحياء */
+
+            if (
+
+                compact === "third_biology" ||
+
+                compact === "third biology" ||
+
+                compact === "تالتة ثانوي أحياء" ||
+
+                compact === "تالته ثانوي أحياء" ||
+
+                compact === "ثالثة ثانوي أحياء" ||
+
+                compact === "ثالثه ثانوي أحياء" ||
+
+                compact === "تالتة ثانوي — أحياء" ||
+
+                compact === "تالتة ثانوي - أحياء"
+
+            ) {
+
+                return "third_biology";
+            }
+
+
+            /* تالتة ثانوي جيولوجيا */
+
+            if (
+
+                compact === "third_geology" ||
+
+                compact === "third geology" ||
+
+                compact === "تالتة ثانوي جيولوجيا" ||
+
+                compact === "تالته ثانوي جيولوجيا" ||
+
+                compact === "ثالثة ثانوي جيولوجيا" ||
+
+                compact === "ثالثه ثانوي جيولوجيا" ||
+
+                compact === "تالتة ثانوي — جيولوجيا" ||
+
+                compact === "تالتة ثانوي - جيولوجيا"
+
+            ) {
+
+                return "third_geology";
+            }
+
+
+            return String(value).trim();
+        }
+
+
+        user.class_group =
+            normalizeClassGroup(
+                user.class_group
+            );
+
+
+        /* =========================================================
+           CLASS LABEL
+        ========================================================== */
+
+        function getClassLabel(classGroup) {
+
+            switch (classGroup) {
+
+                case "first_science":
+
+                    return "أولى ثانوي — علوم متكاملة";
+
+
+                case "third_biology":
+
+                    return "تالتة ثانوي — أحياء";
+
+
+                case "third_geology":
+
+                    return "تالتة ثانوي — جيولوجيا";
+
+
+                default:
+
+                    return classGroup ||
+                        "المجموعة الدراسية غير محددة";
+            }
+        }
+
+
+        /* =========================================================
+           STATE
+        ========================================================== */
+
+        const state = {
+
+            videos: [],
+
+            currentVideo: null,
+
+            currentVideoId: null,
+
+            currentType: null,
+
+            youtubePlayerInstance: null,
+
+            youtubeReady: false,
+
+            progressTimer: null,
+
+            lastSavedPercent: 0,
+
+            lastSavedSeconds: 0,
+
+            isSavingSession: false
+
+        };
+
+
+        /* =========================================================
+           UI HELPERS
+        ========================================================== */
+
+        function hideLoadingScreen() {
+
+            loadingScreen.classList.add(
+                "hidden"
+            );
+        }
+
+
+        function showLoadingScreen() {
+
+            loadingScreen.classList.remove(
+                "hidden"
+            );
+        }
+
+
+        function setConnectionStatus(
+            connected,
+            text
+        ) {
+
+            if (connected) {
+
+                connectionBadge.classList.remove(
+                    "error"
+                );
+
+                connectionText.textContent =
+                    text ||
+                    "متصل بالمنصة";
+
+                return;
+            }
+
+
+            connectionBadge.classList.add(
+                "error"
+            );
+
+            connectionText.textContent =
+                text ||
+                "مشكلة في الاتصال";
+        }
+
+
+        function showError(
+            error
+        ) {
+
+            const formatted =
+                formatError(error);
+
+
+            errorText.textContent =
+                formatted;
+
+
+            errorPanel.classList.add(
+                "visible"
+            );
+
+
+            setConnectionStatus(
+                false,
+                "مشكلة في الاتصال"
+            );
+
+
+            console.error(
+                "VIDEOS PAGE ERROR:",
+                error
+            );
+        }
+
+
+        function hideError() {
+
+            errorPanel.classList.remove(
+                "visible"
+            );
+
+            errorText.textContent =
+                "";
+        }
+
+
+        function formatError(error) {
+
+            if (!error) {
+
+                return "حدث خطأ غير معروف.";
+            }
+
+
+            if (
+                typeof error === "string"
+            ) {
+
+                return error;
+            }
+
+
+            const parts = [];
+
+
+            if (error.message) {
+
+                parts.push(
+                    error.message
+                );
+            }
+
+
+            if (error.code) {
+
+                parts.push(
+                    "Code: " +
+                    error.code
+                );
+            }
+
+
+            if (error.details) {
+
+                parts.push(
+                    "Details: " +
+                    error.details
+                );
+            }
+
+
+            if (error.hint) {
+
+                parts.push(
+                    "Hint: " +
+                    error.hint
+                );
+            }
+
+
+            if (!parts.length) {
+
+                try {
+
+                    return JSON.stringify(
+                        error,
+                        null,
+                        2
+                    );
+
+                } catch (jsonError) {
+
+                    return "حدث خطأ غير معروف.";
+                }
+            }
+
+
+            return parts.join(
+                "\n"
+            );
+        }
+
+
+        /* =========================================================
+           PLAYER RESET
+        ========================================================== */
+
+        function resetPlayer() {
+
+            stopProgressTimer();
+
+
+            if (
+                state.youtubePlayerInstance &&
+                typeof state.youtubePlayerInstance.destroy ===
+                    "function"
+            ) {
+
+                try {
+
+                    state.youtubePlayerInstance.destroy();
+
+                } catch (error) {
+
+                    console.warn(
+                        "YouTube destroy warning:",
+                        error
+                    );
+                }
+            }
+
+
+            state.youtubePlayerInstance =
+                null;
+
+
+            videoPlayer.pause();
+
+            videoPlayer.removeAttribute(
+                "src"
+            );
+
+            videoPlayer.load();
+
+            videoPlayer.style.display =
+                "none";
+
+
+            youtubePlayer.innerHTML =
+                "";
+
+            youtubePlayer.style.display =
+                "none";
+
+
+            playerEmpty.style.display =
+                "flex";
+
+
+            currentTitle.textContent =
+                "اختر درسًا من القائمة";
+
+
+            currentType.textContent =
+                "جاهز";
+
+
+            progressBar.style.width =
+                "0%";
+
+
+            progressValue.textContent =
+                "0%";
+
+
+            completionBadge.classList.remove(
+                "visible"
+            );
+
+
+            state.currentVideo =
+                null;
+
+            state.currentVideoId =
+                null;
+
+            state.currentType =
+                null;
+
+            state.lastSavedPercent =
+                0;
+
+            state.lastSavedSeconds =
+                0;
+        }
+
+
+        /* =========================================================
+           YOUTUBE ID
+        ========================================================== */
+
+        function getYouTubeId(url) {
+
+            if (!url) {
+
+                return null;
+            }
 
 
             try {
 
-              current =
-                Number(
-                  state.youtubePlayer
-                    .getCurrentTime()
-                ) || 0;
+                const parsed =
+                    new URL(
+                        String(url).trim()
+                    );
 
 
-              duration =
-                Number(
-                  state.youtubePlayer
-                    .getDuration()
-                ) || 0;
+                const host =
+                    parsed.hostname
+                        .toLowerCase()
+                        .replace(
+                            /^www\./,
+                            ""
+                        );
+
+
+                /* youtube.com */
+
+                if (
+                    host === "youtube.com" ||
+                    host === "m.youtube.com"
+                ) {
+
+                    const watchId =
+                        parsed.searchParams.get(
+                            "v"
+                        );
+
+
+                    if (watchId) {
+
+                        return cleanYouTubeId(
+                            watchId
+                        );
+                    }
+
+
+                    if (
+                        parsed.pathname.startsWith(
+                            "/embed/"
+                        )
+                    ) {
+
+                        return cleanYouTubeId(
+                            parsed.pathname
+                                .split("/embed/")[1]
+                                .split("/")[0]
+                        );
+                    }
+
+
+                    if (
+                        parsed.pathname.startsWith(
+                            "/shorts/"
+                        )
+                    ) {
+
+                        return cleanYouTubeId(
+                            parsed.pathname
+                                .split("/shorts/")[1]
+                                .split("/")[0]
+                        );
+                    }
+
+                }
+
+
+                /* youtu.be */
+
+                if (
+                    host === "youtu.be"
+                ) {
+
+                    return cleanYouTubeId(
+                        parsed.pathname
+                            .replace(
+                                /^\/+/,
+                                ""
+                            )
+                            .split("/")[0]
+                    );
+                }
+
+
+                return null;
 
             } catch (error) {
 
-              return;
+                return null;
+            }
+        }
 
+
+        function cleanYouTubeId(value) {
+
+            if (!value) {
+
+                return null;
+            }
+
+
+            const cleaned =
+                String(value)
+                    .trim()
+                    .split("?")[0]
+                    .split("&")[0]
+                    .split("#")[0];
+
+
+            if (
+                !/^[A-Za-z0-9_-]{6,20}$/.test(
+                    cleaned
+                )
+            ) {
+
+                return null;
+            }
+
+
+            return cleaned;
+        }
+
+
+        /* =========================================================
+           VIDEO TYPE
+        ========================================================== */
+
+        function getVideoType(video) {
+
+            const url =
+                String(
+                    video?.url || ""
+                ).trim();
+
+
+            if (
+                getYouTubeId(url)
+            ) {
+
+                return "youtube";
+            }
+
+
+            return "file";
+        }
+
+
+        /* =========================================================
+           FETCH VIDEOS
+           
+           مهم:
+           نقرأ كل الفيديوهات أولًا.
+           بعد نجاح الاتصال يتم تطبيق class_group
+           داخل المتصفح.
+           
+           هذا يمنع مشكلة أن فيديو موجود في DB
+           ولكن لا يظهر بسبب اختلاف بسيط في قيمة المجموعة.
+        ========================================================== */
+
+        async function fetchVideosFromSupabase() {
+
+            if (!client) {
+
+                initializeSupabase();
+            }
+
+
+            console.log(
+                "================================"
+            );
+
+            console.log(
+                "SUPABASE CONNECTION TEST"
+            );
+
+            console.log(
+                "URL:",
+                SUPABASE_URL
+            );
+
+            console.log(
+                "KEY LENGTH:",
+                SUPABASE_ANON_KEY.length
+            );
+
+            console.log(
+                "CLASS GROUP:",
+                user.class_group
+            );
+
+            console.log(
+                "================================"
+            );
+
+
+            const response =
+                await client
+                    .from("videos")
+                    .select(
+                        "id,title,url,class_group,is_premium"
+                    )
+                    .order(
+                        "id",
+                        {
+                            ascending: true
+                        }
+                    );
+
+
+            const data =
+                response.data;
+
+
+            const error =
+                response.error;
+
+
+            if (error) {
+
+                console.error(
+                    "SUPABASE VIDEOS ERROR:",
+                    error
+                );
+
+                throw error;
+            }
+
+
+            if (!Array.isArray(data)) {
+
+                throw new Error(
+                    "Supabase أعاد بيانات غير متوقعة."
+                );
+            }
+
+
+            console.log(
+                "TOTAL VIDEOS FROM SUPABASE:",
+                data.length
+            );
+
+
+            console.table(
+                data.map(
+                    function (item) {
+
+                        return {
+
+                            id: item.id,
+
+                            title: item.title,
+
+                            class_group:
+                                item.class_group,
+
+                            normalized:
+                                normalizeClassGroup(
+                                    item.class_group
+                                ),
+
+                            url:
+                                item.url
+
+                        };
+                    }
+                )
+            );
+
+
+            return data;
+        }
+
+
+        /* =========================================================
+           LOAD VIDEOS
+           
+           يوجد هنا LOAD VIDEOS واحد فقط.
+           لا يوجد أي كود خارج الدالة.
+        ========================================================== */
+
+        async function loadVideos() {
+
+            showLoadingScreen();
+
+            hideError();
+
+
+            try {
+
+                initializeSupabase();
+
+
+                const allVideos =
+                    await fetchVideosFromSupabase();
+
+
+                const studentGroup =
+                    normalizeClassGroup(
+                        user.class_group
+                    );
+
+
+                let filteredVideos =
+                    allVideos;
+
+
+                /*
+                   إذا كانت مجموعة الطالب محددة:
+                   نعرض فيديوهات مجموعته فقط.
+
+                   إذا لم تكن محددة:
+                   لا نخفي كل الفيديوهات؛
+                   بل نعرض الموجودة حتى يمكن اكتشاف
+                   مشكلة بيانات الطالب.
+                */
+
+                if (studentGroup) {
+
+                    filteredVideos =
+                        allVideos.filter(
+                            function (video) {
+
+                                return (
+                                    normalizeClassGroup(
+                                        video.class_group
+                                    ) ===
+                                    studentGroup
+                                );
+                            }
+                        );
+                }
+
+
+                /*
+                   إذا لم نجد فيديوهات للمجموعة،
+                   لكن توجد فيديوهات في الجدول،
+                   نطبع التفاصيل في Console.
+                */
+
+                if (
+                    filteredVideos.length === 0 &&
+                    allVideos.length > 0
+                ) {
+
+                    console.warn(
+                        "VIDEOS EXIST BUT NONE MATCH STUDENT CLASS."
+                    );
+
+                    console.warn(
+                        "Student class:",
+                        studentGroup
+                    );
+
+                    console.warn(
+                        "Available classes:",
+                        [
+                            ...new Set(
+                                allVideos.map(
+                                    function (video) {
+
+                                        return normalizeClassGroup(
+                                            video.class_group
+                                        );
+                                    }
+                                )
+                            )
+                        ]
+                    );
+                }
+
+
+                state.videos =
+                    filteredVideos;
+
+
+                renderVideos(
+                    state.videos
+                );
+
+
+                setConnectionStatus(
+                    true,
+                    "متصل بالمنصة"
+                );
+
+
+                if (
+                    state.videos.length > 0
+                ) {
+
+                    selectVideo(
+                        state.videos[0]
+                    );
+
+                } else {
+
+                    resetPlayer();
+                }
+
+
+            } catch (error) {
+
+                state.videos =
+                    [];
+
+                renderVideos(
+                    []
+                );
+
+                resetPlayer();
+
+                showError(
+                    error
+                );
+
+            } finally {
+
+                hideLoading();
+            }
+        }
+
+
+        /* =========================================================
+           RENDER VIDEOS
+        ========================================================== */
+
+        function renderVideos(
+            videos
+        ) {
+
+            videoList.innerHTML =
+                "";
+
+
+            videoCount.textContent =
+                String(
+                    Array.isArray(videos)
+                        ? videos.length
+                        : 0
+                );
+
+
+            if (
+                !Array.isArray(videos) ||
+                videos.length === 0
+            ) {
+
+                const stateBox =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                stateBox.className =
+                    "sidebar-state";
+
+
+                stateBox.innerHTML = `
+                    <div class="state-icon">📚</div>
+                    <strong>لا توجد فيديوهات</strong>
+                    <p>
+                        لا توجد دروس متاحة لهذه المجموعة حاليًا.
+                    </p>
+                    <button
+                        type="button"
+                        class="retry-btn"
+                        id="emptyRetryButton"
+                    >
+                        تحديث القائمة
+                    </button>
+                `;
+
+
+                videoList.appendChild(
+                    stateBox
+                );
+
+
+                const emptyRetry =
+                    document.getElementById(
+                        "emptyRetryButton"
+                    );
+
+
+                if (emptyRetry) {
+
+                    emptyRetry.addEventListener(
+                        "click",
+                        loadVideos
+                    );
+                }
+
+
+                return;
+            }
+
+
+            videos.forEach(
+                function (
+                    video,
+                    index
+                ) {
+
+                    const item =
+                        document.createElement(
+                            "button"
+                        );
+
+
+                    item.type =
+                        "button";
+
+
+                    item.className =
+                        "video-item";
+
+
+                    item.dataset.videoId =
+                        String(
+                            video.id
+                        );
+
+
+                    const type =
+                        getVideoType(
+                            video
+                        );
+
+
+                    const typeLabel =
+                        type === "youtube"
+                            ? "YouTube"
+                            : "فيديو مباشر";
+
+
+                    item.innerHTML = `
+
+                        <span class="video-number">
+                            ${index + 1}
+                        </span>
+
+                        <span class="video-item-info">
+
+                            <span class="video-item-title">
+                                ${escapeHTML(
+                                    video.title ||
+                                    "فيديو بدون عنوان"
+                                )}
+                            </span>
+
+                            <span class="video-item-type">
+                                ${typeLabel}
+                            </span>
+
+                        </span>
+
+                    `;
+
+
+                    item.addEventListener(
+                        "click",
+                        function () {
+
+                            selectVideo(
+                                video
+                            );
+
+                            closeSidebar();
+                        }
+                    );
+
+
+                    videoList.appendChild(
+                        item
+                    );
+                }
+            );
+        }
+
+
+        /* =========================================================
+           ESCAPE HTML
+        ========================================================== */
+
+        function escapeHTML(
+            value
+        ) {
+
+            return String(
+                value ?? ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+        }
+
+
+        /* =========================================================
+           SELECT VIDEO
+        ========================================================== */
+
+        async function selectVideo(
+            video
+        ) {
+
+            if (!video) {
+
+                return;
+            }
+
+
+            state.currentVideo =
+                video;
+
+
+            state.currentVideoId =
+                video.id;
+
+
+            state.currentType =
+                getVideoType(
+                    video
+                );
+
+
+            state.lastSavedPercent =
+                0;
+
+
+            state.lastSavedSeconds =
+                0;
+
+
+            completionBadge.classList.remove(
+                "visible"
+            );
+
+
+            currentTitle.textContent =
+                video.title ||
+                "فيديو بدون عنوان";
+
+
+            currentType.textContent =
+                state.currentType === "youtube"
+                    ? "YouTube"
+                    : "فيديو مباشر";
+
+
+            markActiveVideo(
+                video.id
+            );
+
+
+            resetPlayerElementsOnly();
+
+
+            playerEmpty.style.display =
+                "none";
+
+
+            if (
+                state.currentType ===
+                "youtube"
+            ) {
+
+                await playYouTubeVideo(
+                    video
+                );
+
+            } else {
+
+                await playNativeVideo(
+                    video
+                );
+            }
+
+
+            await loadSavedSession(
+                video.id
+            );
+        }
+
+
+        /* =========================================================
+           RESET PLAYER ELEMENTS
+           
+           لا يمس currentVideo.
+        ========================================================== */
+
+        function resetPlayerElementsOnly() {
+
+            stopProgressTimer();
+
+
+            if (
+                state.youtubePlayerInstance &&
+                typeof state.youtubePlayerInstance.destroy ===
+                    "function"
+            ) {
+
+                try {
+
+                    state.youtubePlayerInstance.destroy();
+
+                } catch (error) {
+
+                    console.warn(
+                        "YouTube destroy:",
+                        error
+                    );
+                }
+            }
+
+
+            state.youtubePlayerInstance =
+                null;
+
+
+            videoPlayer.pause();
+
+            videoPlayer.removeAttribute(
+                "src"
+            );
+
+            videoPlayer.load();
+
+            videoPlayer.style.display =
+                "none";
+
+
+            youtubePlayer.innerHTML =
+                "";
+
+            youtubePlayer.style.display =
+                "none";
+
+
+            progressBar.style.width =
+                "0%";
+
+
+            progressValue.textContent =
+                "0%";
+        }
+
+
+        /* =========================================================
+           ACTIVE VIDEO
+        ========================================================== */
+
+        function markActiveVideo(
+            videoId
+        ) {
+
+            const items =
+                videoList.querySelectorAll(
+                    ".video-item"
+                );
+
+
+            items.forEach(
+                function (item) {
+
+                    const isActive =
+                        String(
+                            item.dataset.videoId
+                        ) ===
+                        String(videoId);
+
+
+                    item.classList.toggle(
+                        "active",
+                        isActive
+                    );
+                }
+            );
+        }
+
+
+        /* =========================================================
+           PLAY NATIVE VIDEO
+        ========================================================== */
+
+        async function playNativeVideo(
+            video
+        ) {
+
+            const url =
+                String(
+                    video.url || ""
+                ).trim();
+
+
+            if (!url) {
+
+                throw new Error(
+                    "رابط الفيديو فارغ."
+                );
+            }
+
+
+            videoPlayer.src =
+                url;
+
+
+            videoPlayer.style.display =
+                "block";
+
+
+            youtubePlayer.style.display =
+                "none";
+
+
+            playerEmpty.style.display =
+                "none";
+
+
+            videoPlayer.load();
+
+
+            /*
+               نبدأ التشغيل يدويًا فقط.
+               لا نستخدم autoplay حتى لا تمنعه
+               المتصفحات الحديثة.
+            */
+
+
+            startProgressTimer();
+        }
+
+
+        /* =========================================================
+           YOUTUBE READY CALLBACK
+           
+           YouTube يستدعي هذه الدالة عالميًا.
+        ========================================================== */
+
+        window.onYouTubeIframeAPIReady =
+            function () {
+
+                state.youtubeReady =
+                    true;
+
+                console.log(
+                    "YouTube API ready."
+                );
+            };
+
+
+        /* =========================================================
+           PLAY YOUTUBE
+        ========================================================== */
+
+        async function playYouTubeVideo(
+            video
+        ) {
+
+            const videoId =
+                getYouTubeId(
+                    video.url
+                );
+
+
+            if (!videoId) {
+
+                throw new Error(
+                    "رابط YouTube المخزن في قاعدة البيانات غير صالح."
+                );
+            }
+
+
+            videoPlayer.style.display =
+                "none";
+
+
+            youtubePlayer.style.display =
+                "block";
+
+
+            playerEmpty.style.display =
+                "none";
+
+
+            youtubePlayer.innerHTML =
+                "";
+
+
+            /*
+               إذا كانت API جاهزة نستخدم IFrame API.
+               إذا لم تكن جاهزة نستخدم iframe عادي.
+            */
+
+            if (
+                state.youtubeReady &&
+                typeof YT !== "undefined" &&
+                YT.Player
+            ) {
+
+                await createYouTubePlayer(
+                    videoId
+                );
+
+            } else {
+
+                createYouTubeIframe(
+                    videoId
+                );
+
+                startProgressTimer();
+            }
+        }
+
+
+        /* =========================================================
+           CREATE YOUTUBE IFRAME FALLBACK
+        ========================================================== */
+
+        function createYouTubeIframe(
+            videoId
+        ) {
+
+            youtubePlayer.innerHTML =
+                "";
+
+
+            const iframe =
+                document.createElement(
+                    "iframe"
+                );
+
+
+            iframe.src =
+                "https://www.youtube.com/embed/" +
+                encodeURIComponent(
+                    videoId
+                ) +
+                "?rel=0" +
+                "&modestbranding=1" +
+                "&playsinline=1" +
+                "&controls=1";
+
+
+            iframe.title =
+                "YouTube video";
+
+
+            iframe.allow =
+                "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
+
+            iframe.allowFullscreen =
+                true;
+
+
+            iframe.referrerPolicy =
+                "strict-origin-when-cross-origin";
+
+
+            youtubePlayer.appendChild(
+                iframe
+            );
+        }
+
+
+        /* =========================================================
+           CREATE YOUTUBE API PLAYER
+        ========================================================== */
+
+        function createYouTubePlayer(
+            videoId
+        ) {
+
+            return new Promise(
+                function (
+                    resolve,
+                    reject
+                ) {
+
+                    let finished =
+                        false;
+
+
+                    const timeout =
+                        setTimeout(
+                            function () {
+
+                                if (!finished) {
+
+                                    finished =
+                                        true;
+
+                                    console.warn(
+                                        "YouTube API timeout. Falling back to iframe."
+                                    );
+
+
+                                    createYouTubeIframe(
+                                        videoId
+                                    );
+
+
+                                    startProgressTimer();
+
+
+                                    resolve();
+                                }
+
+                            },
+                            6000
+                        );
+
+
+                    try {
+
+                        state.youtubePlayerInstance =
+                            new YT.Player(
+                                "youtubePlayer",
+                                {
+
+                                    videoId:
+                                        videoId,
+
+                                    playerVars: {
+
+                                        rel: 0,
+
+                                        modestbranding: 1,
+
+                                        playsinline: 1,
+
+                                        controls: 1
+
+                                    },
+
+
+                                    events: {
+
+                                        onReady:
+                                            function () {
+
+                                                if (finished) {
+
+                                                    return;
+                                                }
+
+
+                                                finished =
+                                                    true;
+
+
+                                                clearTimeout(
+                                                    timeout
+                                                );
+
+
+                                                startProgressTimer();
+
+
+                                                resolve();
+                                            },
+
+
+                                        onStateChange:
+                                            function (
+                                                event
+                                            ) {
+
+                                                handleYouTubeState(
+                                                    event
+                                                );
+                                            },
+
+
+                                        onError:
+                                            function (
+                                                event
+                                            ) {
+
+                                                console.error(
+                                                    "YouTube Player Error:",
+                                                    event
+                                                );
+
+                                                if (!finished) {
+
+                                                    finished =
+                                                        true;
+
+
+                                                    clearTimeout(
+                                                        timeout
+                                                    );
+
+
+                                                    createYouTubeIframe(
+                                                        videoId
+                                                    );
+
+
+                                                    startProgressTimer();
+
+
+                                                    resolve();
+                                                }
+                                            }
+
+                                    }
+
+                                }
+                            );
+
+                    } catch (error) {
+
+                        clearTimeout(
+                            timeout
+                        );
+
+
+                        if (!finished) {
+
+                            finished =
+                                true;
+
+
+                            createYouTubeIframe(
+                                videoId
+                            );
+
+
+                            startProgressTimer();
+
+
+                            resolve();
+                        }
+                    }
+                }
+            );
+        }
+
+
+        /* =========================================================
+           YOUTUBE STATE
+        ========================================================== */
+
+        function handleYouTubeState(
+            event
+        ) {
+
+            if (
+                typeof YT === "undefined"
+            ) {
+
+                return;
             }
 
 
             if (
-              !duration ||
-              !Number.isFinite(
-                duration
-              )
+                event.data ===
+                YT.PlayerState.PLAYING
             ) {
 
-              return;
+                startProgressTimer();
 
+                return;
+            }
+
+
+            if (
+                event.data ===
+                YT.PlayerState.PAUSED
+            ) {
+
+                saveCurrentSession(
+                    false
+                );
+
+                return;
+            }
+
+
+            if (
+                event.data ===
+                YT.PlayerState.ENDED
+            ) {
+
+                updateProgressUI(
+                    100
+                );
+
+                saveCurrentSession(
+                    true
+                );
+            }
+        }
+
+
+        /* =========================================================
+           PROGRESS TIMER
+        ========================================================== */
+
+        function startProgressTimer() {
+
+            stopProgressTimer();
+
+
+            state.progressTimer =
+                setInterval(
+                    function () {
+
+                        updateCurrentProgress();
+
+                    },
+                    3000
+                );
+
+
+            updateCurrentProgress();
+        }
+
+
+        function stopProgressTimer() {
+
+            if (
+                state.progressTimer
+            ) {
+
+                clearInterval(
+                    state.progressTimer
+                );
+
+                state.progressTimer =
+                    null;
+            }
+        }
+
+
+        /* =========================================================
+           CURRENT PROGRESS
+        ========================================================== */
+
+        function updateCurrentProgress() {
+
+            if (
+                !state.currentVideo
+            ) {
+
+                return;
+            }
+
+
+            let current =
+                0;
+
+
+            let duration =
+                0;
+
+
+            if (
+                state.currentType ===
+                "youtube"
+            ) {
+
+                const player =
+                    state.youtubePlayerInstance;
+
+
+                if (
+                    player &&
+                    typeof player.getCurrentTime ===
+                        "function"
+                ) {
+
+                    try {
+
+                        current =
+                            Number(
+                                player.getCurrentTime()
+                            ) || 0;
+
+
+                        duration =
+                            Number(
+                                player.getDuration()
+                            ) || 0;
+
+                    } catch (error) {
+
+                        return;
+                    }
+                }
+
+            } else {
+
+                current =
+                    Number(
+                        videoPlayer.currentTime
+                    ) || 0;
+
+
+                duration =
+                    Number(
+                        videoPlayer.duration
+                    ) || 0;
+            }
+
+
+            if (
+                !duration ||
+                duration <= 0
+            ) {
+
+                return;
             }
 
 
             const percent =
-              Math.min(
-                100,
-                Math.max(
-                  0,
-                  (current / duration) *
-                  100
-                )
-              );
+                Math.min(
+                    100,
+                    Math.max(
+                        0,
+                        (current / duration) * 100
+                    )
+                );
 
 
-            updateProgress(
-              percent
+            updateProgressUI(
+                percent
             );
 
-          },
-          1000
-        );
 
-    }
+            /*
+               Save every ~5 percentage points,
+               and do not send excessive requests.
+            */
 
+            if (
+                Math.abs(
+                    percent -
+                    state.lastSavedPercent
+                ) >= 5 ||
+                Math.abs(
+                    current -
+                    state.lastSavedSeconds
+                ) >= 20
+            ) {
 
-    /* =========================================================
-       STOP TRACKING
-    ========================================================== */
-
-    function stopProgressTracking() {
-
-      if (
-        state.progressTimer
-      ) {
-
-        clearInterval(
-          state.progressTimer
-        );
-
-        state.progressTimer =
-          null;
-
-      }
-
-    }
-
-
-    /* =========================================================
-       UPDATE PROGRESS
-    ========================================================== */
-
-    function updateProgress(
-      percent
-    ) {
-
-      const safePercent =
-        Math.min(
-          100,
-          Math.max(
-            0,
-            Number(percent) || 0
-          )
-        );
-
-
-      progressBar.style.width =
-        safePercent.toFixed(1) +
-        "%";
-
-
-      progressValue.textContent =
-        Math.round(
-          safePercent
-        ) +
-        "%";
-
-
-      if (
-        safePercent >= 90
-      ) {
-
-        currentStatus.textContent =
-          "تم إكمال الدرس";
-
-      }
-
-    }
-
-
-    /* =========================================================
-       CURRENT PLAYBACK
-    ========================================================== */
-
-    function getCurrentPlaybackData() {
-
-      let current = 0;
-      let duration = 0;
-
-
-      /* YOUTUBE */
-
-      if (
-        state.currentType ===
-          "youtube" &&
-        state.youtubePlayer
-      ) {
-
-        try {
-
-          current =
-            Number(
-              state.youtubePlayer
-                .getCurrentTime()
-            ) || 0;
-
-
-          duration =
-            Number(
-              state.youtubePlayer
-                .getDuration()
-            ) || 0;
-
-        } catch (error) {
-
-          console.warn(
-            "YouTube progress error:",
-            error
-          );
-
+                saveCurrentSession(
+                    percent >= 90
+                );
+            }
         }
 
-      }
+
+        /* =========================================================
+           UPDATE PROGRESS UI
+        ========================================================== */
+
+        function updateProgressUI(
+            percent
+        ) {
+
+            const safePercent =
+                Math.min(
+                    100,
+                    Math.max(
+                        0,
+                        Number(percent) || 0
+                    )
+                );
 
 
-      /* NATIVE VIDEO */
-
-      if (
-        state.currentType ===
-        "file"
-      ) {
-
-        current =
-          Number(
-            videoPlayer.currentTime
-          ) || 0;
+            const rounded =
+                Math.round(
+                    safePercent
+                );
 
 
-        duration =
-          Number(
-            videoPlayer.duration
-          ) || 0;
-
-      }
+            progressBar.style.width =
+                rounded + "%";
 
 
-      return {
-        current,
-        duration
-      };
-
-    }
+            progressValue.textContent =
+                rounded + "%";
 
 
-    /* =========================================================
-       SAVE SESSION
-    ========================================================== */
+            if (
+                rounded >= 90
+            ) {
 
-    async function saveSession(
-      forceComplete = false
-    ) {
+                completionBadge.classList.add(
+                    "visible"
+                );
 
-      if (
-        !state.currentVideoId ||
-        !client
-      ) {
+            } else {
 
-        return;
-
-      }
-
-
-      const playback =
-        getCurrentPlaybackData();
+                completionBadge.classList.remove(
+                    "visible"
+                );
+            }
+        }
 
 
-      const current =
-        playback.current;
+        /* =========================================================
+           SAVE CURRENT SESSION
+        ========================================================== */
 
-      const duration =
-        playback.duration;
+        async function saveCurrentSession(
+            forceComplete
+        ) {
 
+            if (
+                !state.currentVideo ||
+                !client
+            ) {
 
-      if (
-        !duration ||
-        !Number.isFinite(
-          duration
-        )
-      ) {
-
-        return;
-
-      }
+                return;
+            }
 
 
-      const percent =
-        Math.min(
-          100,
-          Math.max(
-            0,
-            (current / duration) *
-            100
-          )
+            if (
+                state.isSavingSession
+            ) {
+
+                return;
+            }
+
+
+            let current =
+                0;
+
+
+            let duration =
+                0;
+
+
+            if (
+                state.currentType ===
+                "youtube"
+            ) {
+
+                const player =
+                    state.youtubePlayerInstance;
+
+
+                if (
+                    player &&
+                    typeof player.getCurrentTime ===
+                        "function"
+                ) {
+
+                    try {
+
+                        current =
+                            Number(
+                                player.getCurrentTime()
+                            ) || 0;
+
+
+                        duration =
+                            Number(
+                                player.getDuration()
+                            ) || 0;
+
+                    } catch (error) {
+
+                        return;
+                    }
+                }
+
+            } else {
+
+                current =
+                    Number(
+                        videoPlayer.currentTime
+                    ) || 0;
+
+
+                duration =
+                    Number(
+                        videoPlayer.duration
+                    ) || 0;
+            }
+
+
+            if (
+                !duration ||
+                duration <= 0
+            ) {
+
+                return;
+            }
+
+
+            const percent =
+                Math.min(
+                    100,
+                    Math.max(
+                        0,
+                        (current / duration) * 100
+                    )
+                );
+
+
+            const roundedPercent =
+                Math.round(
+                    percent * 100
+                ) / 100;
+
+
+            const completed =
+                Boolean(
+                    forceComplete ||
+                    percent >= 90
+                );
+
+
+            state.lastSavedPercent =
+                percent;
+
+
+            state.lastSavedSeconds =
+                current;
+
+
+            /*
+               لا نفترض أن جدول video_sessions
+               موجود بطريقة مختلفة.
+               هذا هو الشكل المتوقع من النظام الحالي.
+            */
+
+            const payload = {
+
+                student_id:
+                    String(
+                        user.id
+                    ),
+
+                video_id:
+                    state.currentVideoId,
+
+                class_group:
+                    user.class_group,
+
+                watched_seconds:
+                    Math.floor(
+                        current
+                    ),
+
+                duration:
+                    Math.floor(
+                        duration
+                    ),
+
+                percent:
+                    roundedPercent,
+
+                completed:
+                    completed,
+
+                skips:
+                    0,
+
+                updated_at:
+                    new Date().toISOString()
+            };
+
+
+            state.isSavingSession =
+                true;
+
+
+            try {
+
+                const response =
+                    await client
+                        .from("video_sessions")
+                        .upsert(
+                            payload,
+                            {
+                                onConflict:
+                                    "student_id,video_id"
+                            }
+                        );
+
+
+                if (
+                    response.error
+                ) {
+
+                    /*
+                       لا نوقف الفيديو إذا كان
+                       جدول التقدم غير مهيأ.
+                    */
+
+                    console.warn(
+                        "VIDEO SESSION SAVE WARNING:",
+                        response.error
+                    );
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "VIDEO SESSION EXCEPTION:",
+                    error
+                );
+
+            } finally {
+
+                state.isSavingSession =
+                    false;
+            }
+        }
+
+
+        /* =========================================================
+           LOAD SAVED SESSION
+        ========================================================== */
+
+        async function loadSavedSession(
+            videoId
+        ) {
+
+            if (
+                !client ||
+                !videoId ||
+                !user.id
+            ) {
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await client
+                        .from("video_sessions")
+                        .select(
+                            "watched_seconds,duration,percent,completed"
+                        )
+                        .eq(
+                            "student_id",
+                            String(
+                                user.id
+                            )
+                        )
+                        .eq(
+                            "video_id",
+                            videoId
+                        )
+                        .maybeSingle();
+
+
+                if (
+                    response.error
+                ) {
+
+                    console.warn(
+                        "SESSION LOAD WARNING:",
+                        response.error
+                    );
+
+                    return;
+                }
+
+
+                const session =
+                    response.data;
+
+
+                if (!session) {
+
+                    return;
+                }
+
+
+                const percent =
+                    Number(
+                        session.percent
+                    ) || 0;
+
+
+                updateProgressUI(
+                    percent
+                );
+
+
+                state.lastSavedPercent =
+                    percent;
+
+
+                state.lastSavedSeconds =
+                    Number(
+                        session.watched_seconds
+                    ) || 0;
+
+
+                /*
+                   لا نقفز تلقائيًا إلى المكان
+                   المحفوظ في YouTube.
+                   هذا يمنع التشغيل غير المتوقع.
+                   
+                   بالنسبة للفيديو المحلي،
+                   نضع currentTime بعد تحميل metadata.
+                */
+
+                if (
+                    state.currentType ===
+                    "file" &&
+                    state.lastSavedSeconds > 0
+                ) {
+
+                    const restoreTime =
+                        state.lastSavedSeconds;
+
+
+                    const restoreHandler =
+                        function () {
+
+                            if (
+                                videoPlayer.duration >
+                                restoreTime
+                            ) {
+
+                                try {
+
+                                    videoPlayer.currentTime =
+                                        restoreTime;
+
+                                } catch (error) {
+
+                                    console.warn(
+                                        "RESTORE TIME WARNING:",
+                                        error
+                                    );
+                                }
+                            }
+
+
+                            videoPlayer.removeEventListener(
+                                "loadedmetadata",
+                                restoreHandler
+                            );
+                        };
+
+
+                    videoPlayer.addEventListener(
+                        "loadedmetadata",
+                        restoreHandler
+                    );
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "SESSION LOAD EXCEPTION:",
+                    error
+                );
+            }
+        }
+
+
+        /* =========================================================
+           NATIVE VIDEO EVENTS
+        ========================================================== */
+
+        videoPlayer.addEventListener(
+            "play",
+            function () {
+
+                startProgressTimer();
+            }
         );
 
 
-      const roundedPercent =
-        Number(
-          percent.toFixed(2)
+        videoPlayer.addEventListener(
+            "pause",
+            function () {
+
+                saveCurrentSession(
+                    false
+                );
+            }
         );
 
 
-      /* Prevent excessive writes */
+        videoPlayer.addEventListener(
+            "ended",
+            function () {
 
-      if (
-        !forceComplete &&
-        Math.abs(
-          roundedPercent -
-          state.lastSavedPercent
-        ) < 5 &&
-        Math.abs(
-          current -
-          state.lastSavedSeconds
-        ) < 15
-      ) {
-
-        return;
-
-      }
+                updateProgressUI(
+                    100
+                );
 
 
-      state.lastSavedPercent =
-        roundedPercent;
+                saveCurrentSession(
+                    true
+                );
+            }
+        );
 
 
-      state.lastSavedSeconds =
-        current;
+        videoPlayer.addEventListener(
+            "timeupdate",
+            function () {
+
+                updateCurrentProgress();
+            }
+        );
 
 
-      const payload = {
+        /* =========================================================
+           RETRY
+        ========================================================== */
 
-        student_id:
-          String(
+        retryBtn.addEventListener(
+            "click",
+            function () {
+
+                loadVideos();
+            }
+        );
+
+
+        /* =========================================================
+           MOBILE MENU
+        ========================================================== */
+
+        function openSidebar() {
+
+            sidebar.classList.add(
+                "open"
+            );
+
+
+            sidebarOverlay.classList.add(
+                "visible"
+            );
+        }
+
+
+        function closeSidebar() {
+
+            sidebar.classList.remove(
+                "open"
+            );
+
+
+            sidebarOverlay.classList.remove(
+                "visible"
+            );
+        }
+
+
+        mobileMenuBtn.addEventListener(
+            "click",
+            openSidebar
+        );
+
+
+        sidebarOverlay.addEventListener(
+            "click",
+            closeSidebar
+        );
+
+
+        /* =========================================================
+           PREVENT CONTEXT MENU
+        ========================================================== */
+
+        videoPlayer.addEventListener(
+            "contextmenu",
+            function (event) {
+
+                event.preventDefault();
+            }
+        );
+
+
+        youtubePlayer.addEventListener(
+            "contextmenu",
+            function (event) {
+
+                event.preventDefault();
+            }
+        );
+
+
+        /* =========================================================
+           BASIC KEYBOARD PROTECTION
+        ========================================================== */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                /*
+                   لا نعطل Ctrl+F أو الكتابة في عناصر الإدخال.
+                */
+
+                const target =
+                    event.target;
+
+
+                if (
+                    target &&
+                    (
+                        target.tagName ===
+                            "INPUT" ||
+                        target.tagName ===
+                            "TEXTAREA"
+                    )
+                ) {
+
+                    return;
+                }
+
+
+                if (
+                    event.ctrlKey &&
+                    event.shiftKey &&
+                    (
+                        event.key ===
+                            "I" ||
+                        event.key ===
+                            "J" ||
+                        event.key ===
+                            "C"
+                    )
+                ) {
+
+                    event.preventDefault();
+
+                    return;
+                }
+
+
+                if (
+                    event.key ===
+                    "F12"
+                ) {
+
+                    event.preventDefault();
+                }
+            }
+        );
+
+
+        /* =========================================================
+           DISPLAY USER
+        ========================================================== */
+
+        studentName.textContent =
+            user.name;
+
+
+        studentClass.textContent =
+            getClassLabel(
+                user.class_group
+            );
+
+
+        /* =========================================================
+           DEBUG INFORMATION
+        ========================================================== */
+
+        console.log(
+            "========================================"
+        );
+
+        console.log(
+            "DR YOUSSEF NAFEA VIDEO PLATFORM"
+        );
+
+        console.log(
+            "SUPABASE URL:",
+            SUPABASE_URL
+        );
+
+        console.log(
+            "SUPABASE KEY LENGTH:",
+            SUPABASE_ANON_KEY.length
+        );
+
+        console.log(
+            "STUDENT ID:",
             user.id
-          ),
-
-        video_id:
-          state.currentVideoId,
-
-        class_group:
-          user.class_group,
-
-        watched_seconds:
-          Math.floor(
-            current
-          ),
-
-        duration:
-          Math.floor(
-            duration
-          ),
-
-        percent:
-          roundedPercent,
-
-        completed:
-          forceComplete ||
-          percent >= 90,
-
-        skips:
-          0,
-
-        updated_at:
-          new Date().toISOString()
-
-      };
-
-
-      try {
-
-        const response =
-          await client
-            .from("video_sessions")
-            .upsert(
-              payload,
-              {
-                onConflict:
-                  "student_id,video_id"
-              }
-            );
-
-
-        if (
-          response.error
-        ) {
-
-          console.warn(
-            "VIDEO SESSION SAVE ERROR:",
-            response.error
-          );
-
-        }
-
-      } catch (error) {
-
-        console.warn(
-          "VIDEO SESSION SAVE EXCEPTION:",
-          error
         );
-
-      }
-
-    }
-
-
-    /* =========================================================
-       PERIODIC SAVE
-    ========================================================== */
-
-    setInterval(
-      function() {
-
-        saveSession(
-          false
-        );
-
-      },
-      15000
-    );
-
-
-    /* =========================================================
-       BEFORE EXIT
-    ========================================================== */
-
-    window.addEventListener(
-      "beforeunload",
-      function() {
-
-        saveSession(
-          false
-        );
-
-      }
-    );
-
-
-    /* =========================================================
-       SIDEBAR
-    ========================================================== */
-
-    function toggleSidebar() {
-
-      sidebar.classList.toggle(
-        "open"
-      );
-
-      sidebarOverlay.classList.toggle(
-        "active"
-      );
-
-      document.body.classList.toggle(
-        "sidebar-open"
-      );
-
-    }
-
-
-    function closeSidebar() {
-
-      sidebar.classList.remove(
-        "open"
-      );
-
-      sidebarOverlay.classList.remove(
-        "active"
-      );
-
-      document.body.classList.remove(
-        "sidebar-open"
-      );
-
-    }
-
-
-    mobileMenuButton.addEventListener(
-      "click",
-      toggleSidebar
-    );
-
-
-    sidebarOverlay.addEventListener(
-      "click",
-      closeSidebar
-    );
-
-
-    /* =========================================================
-       ESCAPE
-    ========================================================== */
-
-    document.addEventListener(
-      "keydown",
-      function(event) {
-
-        if (
-          event.key ===
-          "Escape"
-        ) {
-
-          closeSidebar();
-
-        }
-
-      }
-    );
-
-
-    /* =========================================================
-       BASIC PROTECTION
-    ========================================================== */
-
-    document.addEventListener(
-      "contextmenu",
-      function(event) {
-
-        event.preventDefault();
-
-      }
-    );
-
-
-    document.addEventListener(
-      "keydown",
-      function(event) {
-
-        const key =
-          String(
-            event.key
-          ).toLowerCase();
-
-
-        if (
-          event.ctrlKey &&
-          (
-            key === "u" ||
-            key === "s"
-          )
-        ) {
-
-          event.preventDefault();
-
-        }
-
-
-        if (
-          event.ctrlKey &&
-          event.shiftKey &&
-          (
-            key === "i" ||
-            key === "j"
-          )
-        ) {
-
-          event.preventDefault();
-
-        }
-
-
-        if (
-          key === "f12"
-        ) {
-
-          event.preventDefault();
-
-        }
-
-      }
-    );
-
-
-    /* =========================================================
-       GLOBAL ERROR
-    ========================================================== */
-
-    window.addEventListener(
-      "error",
-      function(event) {
-
-        console.error(
-          "GLOBAL ERROR:",
-          event.error ||
-          event.message
-        );
-
-      }
-    );
-
-
-    /* =========================================================
-       INITIALIZE PAGE
-    ========================================================== */
-
-    async function initializePage() {
-
-      try {
-
-        initializeSupabase();
-
 
         console.log(
-          "Supabase initialized successfully."
+            "STUDENT NAME:",
+            user.name
         );
-
 
         console.log(
-          "Project:",
-          SUPABASE_URL
+            "STUDENT CLASS:",
+            user.class_group
         );
-
 
         console.log(
-          "Student:",
-          user
+            "========================================"
         );
 
 
-        await loadVideos();
+        /* =========================================================
+           INITIALIZE
+        ========================================================== */
 
-      } catch (error) {
+        async function initializePage() {
 
-        console.error(
-          "INITIALIZATION ERROR:",
-          error
+            try {
+
+                initializeSupabase();
+
+                await loadVideos();
+
+            } catch (error) {
+
+                showError(
+                    error
+                );
+
+                hideLoadingScreen();
+            }
+        }
+
+
+        /* =========================================================
+           START
+        ========================================================== */
+
+        initializePage();
+
+
+        /* =========================================================
+           BEFORE UNLOAD
+        ========================================================== */
+
+        window.addEventListener(
+            "beforeunload",
+            function () {
+
+                /*
+                   محاولة أخيرة لحفظ التقدم.
+                   لا نستخدم await هنا لأن المتصفح
+                   قد يغلق الصفحة فورًا.
+                */
+
+                saveCurrentSession(
+                    false
+                );
+            }
         );
 
-
-        showErrorState(
-          "تعذر تشغيل الصفحة",
-          error.message ||
-          "حدث خطأ أثناء تشغيل المنصة."
-        );
-
-      }
-
-    }
-
-
-    /* =========================================================
-       START
-    ========================================================== */
-
-    initializePage();
-
-  </script>
+    </script>
 
 </body>
+
 </html>
