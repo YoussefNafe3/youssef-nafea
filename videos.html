@@ -1441,56 +1441,68 @@
   <!-- =========================================================
        JAVASCRIPT
   ========================================================== -->
+<!-- =========================================================
+     SUPABASE
+========================================================= -->
 
-  <script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    "use strict";
+<script>
 
+"use strict";
 
-    /* =========================================================
-       SUPABASE CONFIGURATION
-       
-       SAME PROJECT + SAME ANON KEY AS UPLOAD PAGE
-    ========================================================== */
+/* =========================================================
+   SUPABASE CONFIG
+   نفس بيانات صفحة الرفع بالضبط
+========================================================= */
 
-    const SUPABASE_URL =
-      "https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_URL =
+    "https://nhdowqzecpwmkunczodl.supabase.co";
 
-    const SUPABASE_ANON_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
-
-
-    /* =========================================================
-       SUPABASE CLIENT
-    ========================================================== */
-
-    let client = null;
+const SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmUuanNsb2NhbCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
 
-    function initializeSupabase() {
+/* =========================================================
+   CREATE CLIENT
+========================================================= */
 
-      if (
-        typeof window.supabase === "undefined" ||
-        typeof window.supabase.createClient !== "function"
-      ) {
+if (
+    typeof window.supabase === "undefined" ||
+    typeof window.supabase.createClient !== "function"
+) {
+    throw new Error(
+        "لم يتم تحميل مكتبة Supabase."
+    );
+}
 
-        throw new Error(
-          "لم يتم تحميل مكتبة Supabase بشكل صحيح. تأكد من اتصال الإنترنت."
-        );
-
-      }
-
-      client =
-        window.supabase.createClient(
-          SUPABASE_URL,
-          SUPABASE_ANON_KEY
-        );
-
-      return client;
-
-    }
+const client =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
 
 
+/* =========================================================
+   DEBUG
+========================================================= */
+
+console.log(
+    "SUPABASE URL:",
+    SUPABASE_URL
+);
+
+console.log(
+    "SUPABASE KEY LENGTH:",
+    SUPABASE_ANON_KEY.length
+);
+
+console.log(
+    "SUPABASE PROJECT:",
+    SUPABASE_URL.split(".")[0]
+);
+
+</script>
     /* =========================================================
        DOM
     ========================================================== */
