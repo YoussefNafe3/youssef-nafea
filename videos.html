@@ -2,566 +2,401 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+<title>الفيديوهات | منصة د. يوسف نافع</title>
+
+<meta name="description" content="منصة د. يوسف نافع التعليمية">
 <meta name="theme-color" content="#07111f">
-<title>الفيديوهات | د. يوسف نافع</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://www.youtube.com/iframe_api"></script>
 
 <style>
 :root{
-  --bg:#06101d;
-  --bg2:#0b192b;
-  --card:rgba(12,28,47,.88);
+  --bg:#07111f;
+  --bg2:#0b1728;
+  --card:#0d1b2d;
+  --card2:#101f33;
   --line:rgba(255,255,255,.09);
-  --text:#f6f8fb;
-  --muted:#98a8bb;
-  --gold:#d9ad55;
-  --gold2:#f1d58e;
+  --text:#f4f7fb;
+  --muted:#9eacbd;
   --blue:#438fff;
-  --green:#36d39e;
-  --red:#ff6877;
-  --r:22px;
-  --shadow:0 24px 70px rgba(0,0,0,.38)
+  --blue2:#2563eb;
+  --gold:#d9ad55;
+  --green:#31c48d;
+  --danger:#ef5b67;
+  --shadow:0 18px 50px rgba(0,0,0,.25);
+  --radius:18px;
 }
 
 *{
-  box-sizing:border-box
+  box-sizing:border-box;
 }
 
-html,
+html{
+  scroll-behavior:smooth;
+}
+
 body{
   margin:0;
-  min-height:100%;
-  font-family:Tahoma,"Segoe UI",Arial,sans-serif;
   background:
-    radial-gradient(circle at 8% 0,rgba(67,143,255,.12),transparent 27%),
-    radial-gradient(circle at 92% 8%,rgba(217,173,85,.1),transparent 25%),
-    linear-gradient(135deg,var(--bg),var(--bg2));
-  color:var(--text)
+    radial-gradient(circle at 10% 0%,rgba(67,143,255,.09),transparent 30%),
+    radial-gradient(circle at 90% 10%,rgba(217,173,85,.06),transparent 28%),
+    var(--bg);
+  color:var(--text);
+  font-family:
+    Tahoma,
+    Arial,
+    "Segoe UI",
+    sans-serif;
+  min-height:100vh;
 }
 
 button,
-input{
-  font:inherit
+input,
+select{
+  font:inherit;
 }
 
 button{
-  cursor:pointer
+  cursor:pointer;
 }
 
-/* =========================
-   TOP BAR
-========================= */
-
 .top{
-  height:76px;
-  position:sticky;
-  top:0;
-  z-index:100;
+  height:72px;
+  padding:0 24px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 28px;
-  background:rgba(4,12,22,.84);
-  backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--line)
+  gap:20px;
+  border-bottom:1px solid var(--line);
+  background:rgba(7,17,31,.88);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  position:sticky;
+  top:0;
+  z-index:200;
 }
 
 .brand{
   display:flex;
   align-items:center;
   gap:12px;
-  min-width:0
+  min-width:0;
 }
 
 .logo{
   width:43px;
   height:43px;
-  border-radius:14px;
+  border-radius:13px;
   display:grid;
   place-items:center;
-  background:linear-gradient(135deg,var(--gold2),var(--gold));
-  color:#07111f;
+  background:
+    linear-gradient(135deg,#438fff,#174bb0);
+  box-shadow:
+    0 10px 30px rgba(67,143,255,.24);
+  font-size:21px;
   font-weight:900;
-  font-size:19px;
-  box-shadow:0 12px 30px rgba(217,173,85,.18)
 }
 
-.bt{
-  font-weight:900;
+.brandText{
+  min-width:0;
+}
+
+.brandText strong{
+  display:block;
   font-size:15px;
-  white-space:nowrap
+  white-space:nowrap;
 }
 
-.bs{
+.brandText span{
+  display:block;
+  margin-top:3px;
   color:var(--muted);
-  font-size:10px;
-  margin-top:4px
-}
-
-.topRight{
-  display:flex;
-  align-items:center;
-  gap:8px
-}
-
-.student{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  padding:6px 10px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.04);
-  border-radius:14px;
-  max-width:240px
-}
-
-.avatar{
-  width:33px;
-  height:33px;
-  border-radius:10px;
-  display:grid;
-  place-items:center;
-  background:#16365b;
-  font-weight:900
-}
-
-.sn{
   font-size:11px;
-  font-weight:900;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap
+  white-space:nowrap;
 }
 
-.sc{
-  font-size:9px;
-  color:var(--muted);
-  margin-top:3px
+.topActions{
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
-.topBtn,
-.act,
-.tool{
+.topBtn{
   border:1px solid var(--line);
-  background:rgba(255,255,255,.055);
   color:var(--text);
-  border-radius:12px;
-  min-height:40px;
-  padding:0 12px;
-  transition:.2s
+  background:rgba(255,255,255,.04);
+  border-radius:11px;
+  min-height:38px;
+  padding:0 13px;
+  font-size:12px;
+  font-weight:800;
+  transition:.2s ease;
 }
 
-.topBtn:hover,
-.act:hover,
-.tool:hover{
-  background:rgba(255,255,255,.09);
-  border-color:rgba(217,173,85,.35)
+.topBtn:hover{
+  border-color:rgba(67,143,255,.45);
+  background:rgba(67,143,255,.08);
 }
-
-/* =========================
-   LAYOUT
-========================= */
 
 .layout{
-  width:min(1500px,100%);
-  margin:auto;
-  padding:24px;
+  width:min(1500px,calc(100% - 32px));
+  margin:22px auto;
   display:grid;
   grid-template-columns:340px minmax(0,1fr);
-  gap:22px
+  gap:20px;
+  align-items:start;
 }
 
-.side,
-.card{
-  background:
-    linear-gradient(
-      145deg,
-      rgba(13,30,51,.9),
-      rgba(7,18,32,.92)
-    );
+.sidebar,
+.mainCard{
   border:1px solid var(--line);
-  border-radius:var(--r);
-  box-shadow:var(--shadow)
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.008)),
+    var(--card);
+  box-shadow:var(--shadow);
+  border-radius:var(--radius);
 }
 
-.side{
-  position:sticky;
-  top:100px;
-  height:calc(100vh - 124px);
+.sidebar{
   overflow:hidden;
+  position:sticky;
+  top:92px;
+  max-height:calc(100vh - 115px);
   display:flex;
-  flex-direction:column
+  flex-direction:column;
 }
 
 .sideHead{
-  padding:20px 18px 15px;
-  border-bottom:1px solid var(--line)
-}
-
-.row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px
+  padding:20px;
+  border-bottom:1px solid var(--line);
 }
 
 .sideTitle{
-  font-size:16px;
-  font-weight:900
+  font-size:17px;
+  font-weight:900;
 }
 
-.count{
-  min-width:30px;
-  height:28px;
-  display:grid;
-  place-items:center;
-  border-radius:10px;
-  background:linear-gradient(135deg,var(--gold2),var(--gold));
-  color:#091321;
+.sideSub{
+  color:var(--muted);
   font-size:11px;
-  font-weight:900
+  margin-top:6px;
+  line-height:1.7;
 }
 
-/* =========================
-   SEARCH
-========================= */
-
-.search{
+.searchBox{
+  margin-top:15px;
   position:relative;
-  margin-top:14px
 }
 
-.search input{
+.searchBox input{
   width:100%;
   height:43px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  outline:0;
   padding:0 40px 0 12px;
-  background:rgba(0,0,0,.2);
-  color:var(--text)
+  border:1px solid var(--line);
+  outline:none;
+  color:var(--text);
+  background:rgba(0,0,0,.15);
+  border-radius:12px;
 }
 
-.search input:focus{
-  border-color:rgba(67,143,255,.55)
+.searchBox input:focus{
+  border-color:rgba(67,143,255,.55);
+  box-shadow:0 0 0 3px rgba(67,143,255,.08);
 }
 
-.si{
+.searchIcon{
   position:absolute;
   right:13px;
-  top:12px;
-  color:var(--muted)
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  pointer-events:none;
 }
 
-/* =========================
-   VIDEO LIST
-========================= */
-
 .list{
-  padding:12px;
-  overflow:auto
+  overflow:auto;
+  padding:9px;
 }
 
 .list::-webkit-scrollbar{
-  width:6px
+  width:7px;
 }
 
 .list::-webkit-scrollbar-thumb{
-  background:rgba(255,255,255,.12);
-  border-radius:20px
+  background:rgba(255,255,255,.11);
+  border-radius:20px;
 }
 
-.item{
+.videoItem{
   width:100%;
-  display:flex;
-  gap:10px;
-  text-align:right;
-  padding:11px;
-  margin-bottom:8px;
   border:1px solid transparent;
-  border-radius:15px;
   background:transparent;
-  color:var(--text)
+  color:var(--text);
+  text-align:right;
+  border-radius:13px;
+  padding:12px;
+  margin-bottom:5px;
+  transition:.18s ease;
+  position:relative;
 }
 
-.item:hover{
-  background:rgba(255,255,255,.045);
-  border-color:var(--line)
+.videoItem:hover{
+  background:rgba(255,255,255,.035);
+  border-color:rgba(255,255,255,.06);
 }
 
-.item.active{
+.videoItem.active{
   background:
-    linear-gradient(
-      135deg,
-      rgba(67,143,255,.14),
-      rgba(217,173,85,.07)
-    );
-  border-color:rgba(67,143,255,.28)
+    linear-gradient(135deg,rgba(67,143,255,.13),rgba(217,173,85,.035));
+  border-color:rgba(67,143,255,.25);
 }
 
-.num{
-  width:34px;
-  height:34px;
-  flex:0 0 34px;
-  border-radius:10px;
-  display:grid;
-  place-items:center;
-  background:rgba(255,255,255,.055);
-  font-size:11px;
-  font-weight:900;
-  color:#b8c7d9
-}
-
-.active .num{
-  background:linear-gradient(135deg,var(--gold2),var(--gold));
-  color:#07111f
-}
-
-.it{
-  min-width:0
-}
-
-.ititle{
-  font-size:12px;
-  line-height:1.6;
+.videoItemTitle{
+  font-size:13px;
   font-weight:800;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden
+  line-height:1.6;
 }
 
-.imeta{
-  font-size:9px;
-  color:var(--muted);
-  margin-top:5px
-}
-
-.ibar{
-  height:3px;
-  background:rgba(255,255,255,.07);
-  border-radius:99px;
+.videoMeta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
   margin-top:7px;
-  overflow:hidden
+  color:var(--muted);
+  font-size:10px;
 }
 
-.ibar span{
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 7px;
+  border-radius:7px;
+  font-size:9px;
+  font-weight:900;
+  background:rgba(217,173,85,.1);
+  color:#e9c77f;
+}
+
+.badge.free{
+  background:rgba(49,196,141,.09);
+  color:#55dba9;
+}
+
+.itemProgress{
+  position:absolute;
+  bottom:0;
+  right:12px;
+  left:12px;
+  height:2px;
+  background:rgba(255,255,255,.05);
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.itemProgress i{
   display:block;
   height:100%;
+  background:linear-gradient(90deg,var(--blue),var(--gold));
   width:0;
-  background:linear-gradient(90deg,var(--blue),var(--gold))
 }
 
-/* =========================
-   MAIN
-========================= */
-
-.main{
-  min-width:0
+.mainCard{
+  padding:18px;
+  min-width:0;
 }
 
-.card{
-  padding:20px;
-  margin-bottom:18px
-}
-
-.notice{
-  display:none;
-  padding:11px 13px;
-  border-radius:12px;
-  font-size:11px;
-  line-height:1.8;
-  margin-bottom:14px
-}
-
-.notice.show{
-  display:block
-}
-
-.notice.info{
-  background:rgba(67,143,255,.08);
-  border:1px solid rgba(67,143,255,.22)
-}
-
-.notice.warn{
-  background:rgba(217,173,85,.08);
-  border:1px solid rgba(217,173,85,.22);
-  color:#ffedc1
-}
-
-.notice.error{
-  background:rgba(255,104,119,.08);
-  border:1px solid rgba(255,104,119,.22);
-  color:#ffd6da
-}
-
-.head{
+.heading{
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
-  gap:14px;
-  margin-bottom:15px
+  gap:15px;
+  margin-bottom:15px;
 }
 
-.eyebrow{
-  font-size:10px;
-  color:var(--gold2);
-  font-weight:900;
-  margin-bottom:5px
-}
-
-.title{
-  font-size:clamp(17px,2vw,25px);
+.heading h1{
+  margin:0;
+  font-size:21px;
   line-height:1.5;
-  font-weight:900;
-  margin:0
 }
 
-.meta{
-  font-size:10px;
+.heading p{
+  margin:5px 0 0;
   color:var(--muted);
-  margin-top:6px
+  font-size:11px;
 }
-
-.actions{
-  display:flex;
-  gap:7px;
-  flex-shrink:0
-}
-
-.act{
-  font-size:10px;
-  font-weight:900
-}
-
-.primary{
-  background:linear-gradient(135deg,var(--gold2),var(--gold));
-  color:#08121f;
-  border-color:transparent
-}
-
-/* =========================
-   PLAYER
-========================= */
 
 .player{
-  background:#000;
-  border:1px solid var(--line);
-  border-radius:19px;
-  overflow:hidden;
-  box-shadow:0 18px 50px rgba(0,0,0,.35)
+  width:100%;
 }
 
 .stage{
-  position:relative;
+  width:100%;
   aspect-ratio:16/9;
-  min-height:280px;
-  background:#000
+  min-height:300px;
+  background:#000;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:17px;
+  overflow:hidden;
+  position:relative;
+  isolation:isolate;
 }
 
 .stage video,
-.yt{
+.stage .yt,
+.stage iframe{
+  position:absolute;
+  inset:0;
   width:100%;
   height:100%;
-  display:none;
-  border:0;
-  background:#000
 }
 
 .stage video{
-  object-fit:contain
+  display:none;
+  background:#000;
+  object-fit:contain;
 }
 
-/* YouTube player */
+.stage.native-active video{
+  display:block;
+}
+
+.stage.native-active .yt{
+  display:none;
+}
+
+.stage.yt-active video{
+  display:none;
+}
+
+.stage.yt-active .yt{
+  display:block;
+}
+
 .yt{
-  position:relative;
-  z-index:1
-}
-
-/* =========================
-   YOUTUBE PROTECTION
-========================= */
-
-/*
-  مهم:
-  YouTube iframe نفسه Cross-Origin.
-  لا يمكن حذف عناصر YouTube الداخلية بـJS.
-  لذلك نضع طبقة فوق منطقة Watch on YouTube.
-*/
-
-.ytBlocker{
-  position:absolute;
-  z-index:50;
   display:none;
-  pointer-events:auto;
-
-  /*
-    المنطقة التي يظهر فيها
-    Watch on YouTube غالبًا
-  */
-  bottom:0;
-  left:0;
-
-  width:220px;
-  height:70px;
-
-  background:transparent;
-  cursor:not-allowed;
 }
-
-.stage.yt-active .ytBlocker{
-  display:block
-}
-
-/*
-  طبقة إضافية لمنطقة شعار YouTube
-  في بعض أحجام المشغل
-*/
-.ytBrandBlocker{
-  position:absolute;
-  z-index:49;
-  display:none;
-  pointer-events:auto;
-
-  bottom:0;
-  right:0;
-
-  width:135px;
-  height:60px;
-
-  background:transparent;
-  cursor:not-allowed;
-}
-
-.stage.yt-active .ytBrandBlocker{
-  display:block
-}
-
-/* =========================
-   WATERMARK
-========================= */
 
 .wm{
   position:absolute;
-  z-index:60;
-  top:13px;
-  left:13px;
-  padding:7px 9px;
-  border-radius:9px;
-  background:rgba(0,0,0,.38);
-  border:1px solid rgba(255,255,255,.08);
-  font-size:9px;
+  top:14px;
+  left:14px;
+  z-index:100;
+  pointer-events:none;
+  color:rgba(255,255,255,.86);
+  background:rgba(0,0,0,.32);
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border-radius:10px;
+  padding:7px 10px;
+  font-size:10px;
   font-weight:900;
-  color:rgba(255,255,255,.82);
-  pointer-events:none
+  letter-spacing:.2px;
 }
-
-/* =========================
-   EMPTY
-========================= */
 
 .empty{
   position:absolute;
@@ -569,351 +404,462 @@ button{
   display:grid;
   place-items:center;
   text-align:center;
-  padding:30px;
+  color:var(--muted);
+  padding:25px;
+  z-index:5;
   background:
-    radial-gradient(
-      circle at 50% 35%,
-      rgba(67,143,255,.1),
-      transparent 35%
-    ),
-    #03070d
+    radial-gradient(circle at center,rgba(67,143,255,.07),transparent 45%),
+    #050b14;
 }
 
-.emptyIcon{
-  width:70px;
-  height:70px;
-  margin:auto auto 14px;
-  display:grid;
-  place-items:center;
-  border-radius:22px;
-  background:rgba(255,255,255,.05);
-  border:1px solid var(--line);
-  font-size:27px
-}
-
-.emptyTitle{
-  font-weight:900;
-  font-size:17px
-}
-
-.emptyText{
-  font-size:11px;
-  line-height:1.8;
-  color:var(--muted);
-  margin-top:7px
-}
-
-/* =========================
-   PROGRESS
-========================= */
-
-.under{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-top:12px
-}
-
-.prog{
-  flex:1
-}
-
-.track{
-  height:6px;
-  background:rgba(255,255,255,.08);
-  border-radius:99px;
-  overflow:hidden
-}
-
-.track span{
+.empty strong{
   display:block;
-  height:100%;
-  width:0;
-  background:linear-gradient(90deg,var(--blue),var(--gold))
+  color:var(--text);
+  font-size:18px;
+  margin-bottom:8px;
 }
 
-.pinfo{
-  display:flex;
-  justify-content:space-between;
-  margin-top:6px;
-  color:var(--muted);
-  font-size:9px
+.empty span{
+  font-size:12px;
+  line-height:1.8;
 }
 
-/* =========================
-   CONTROLS
-========================= */
+/*
+=========================================================
+YOUTUBE BLOCKERS
+=========================================================
+YouTube داخلي cross-origin، لذلك الحجب هنا يتم بواسطة
+طبقات شفافة فوق مناطق الروابط.
+*/
+
+.ytBlocker,
+.ytBrandBlocker{
+  position:absolute;
+  display:none;
+  background:transparent;
+  pointer-events:auto;
+  cursor:not-allowed;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:none;
+}
+
+.stage.yt-active .ytBlocker,
+.stage.yt-active .ytBrandBlocker{
+  display:block;
+}
+
+/* المنطقة السفلية اليسرى */
+.ytBlocker{
+  z-index:80;
+  left:0;
+  bottom:0;
+  width:310px;
+  height:82px;
+}
+
+/* المنطقة السفلية اليمنى */
+.ytBrandBlocker{
+  z-index:79;
+  right:0;
+  bottom:0;
+  width:190px;
+  height:75px;
+}
+
+.stage:fullscreen .ytBlocker,
+.stage:-webkit-full-screen .ytBlocker{
+  width:380px;
+  height:100px;
+}
+
+.stage:fullscreen .ytBrandBlocker,
+.stage:-webkit-full-screen .ytBrandBlocker{
+  width:230px;
+  height:90px;
+}
+
+/*
+=========================================================
+TOOLS
+=========================================================
+*/
 
 .tools{
   display:flex;
-  gap:7px
+  flex-wrap:wrap;
+  justify-content:flex-start;
+  align-items:center;
+  gap:8px;
+  margin-top:12px;
 }
 
 .tool{
-  min-width:75px;
-  font-size:10px;
-  font-weight:900;
-  position:relative
-}
-
-.menu{
-  position:absolute;
-  z-index:100;
-  right:0;
-  bottom:45px;
-  width:155px;
-  padding:7px;
-  border-radius:14px;
+  height:39px;
+  padding:0 12px;
+  border-radius:10px;
   border:1px solid var(--line);
-  background:rgba(7,18,31,.98);
-  box-shadow:0 18px 45px rgba(0,0,0,.5);
-  display:none
-}
-
-.menu.open{
-  display:block
-}
-
-.menuTitle{
-  padding:7px;
-  color:var(--muted);
-  font-size:9px
-}
-
-.opt{
-  width:100%;
-  border:0;
-  border-radius:9px;
-  padding:9px;
-  background:transparent;
   color:var(--text);
-  text-align:right;
-  font-size:10px
+  background:rgba(255,255,255,.035);
+  font-size:11px;
+  font-weight:900;
+  transition:.2s ease;
 }
 
-.opt:hover,
-.opt.active{
-  background:rgba(255,255,255,.06);
-  color:var(--gold2)
+.tool:hover{
+  background:rgba(67,143,255,.08);
+  border-color:rgba(67,143,255,.45);
 }
 
-/* =========================
-   INFO
-========================= */
+.tool select{
+  border:0;
+  outline:0;
+  background:transparent;
+  color:inherit;
+  font-weight:900;
+  cursor:pointer;
+}
 
-.infoGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px
+.tool select option{
+  background:#0b1728;
+  color:#fff;
+}
+
+.fullscreenBtn{
+  min-width:118px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.fullscreenBtn:hover{
+  background:linear-gradient(
+    135deg,
+    rgba(67,143,255,.13),
+    rgba(217,173,85,.08)
+  );
+  border-color:rgba(67,143,255,.5);
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
 }
 
 .info{
-  padding:19px;
+  margin-top:14px;
+  padding:17px;
   border:1px solid var(--line);
-  border-radius:18px;
-  background:rgba(255,255,255,.025)
+  background:rgba(255,255,255,.018);
+  border-radius:14px;
 }
 
-.il{
-  font-size:9px;
-  color:var(--muted);
-  margin-bottom:7px
+.infoTop{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  align-items:flex-start;
 }
 
-.iv{
-  font-size:13px;
+.currentTitle{
+  font-size:17px;
   font-weight:900;
-  line-height:1.6
+  line-height:1.6;
 }
 
-/* =========================
-   LOADING
-========================= */
+.currentGroup{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:11px;
+}
 
-.overlay{
+.completeBtn{
+  min-width:125px;
+  height:40px;
+  border:1px solid rgba(49,196,141,.25);
+  border-radius:10px;
+  color:#5be0ae;
+  background:rgba(49,196,141,.07);
+  font-size:11px;
+  font-weight:900;
+}
+
+.completeBtn.done{
+  color:#fff;
+  background:linear-gradient(135deg,#209b72,#31c48d);
+  border-color:transparent;
+}
+
+.progressWrap{
+  margin-top:15px;
+}
+
+.progressInfo{
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:10px;
+  margin-bottom:7px;
+}
+
+.progressBar{
+  height:6px;
+  background:rgba(255,255,255,.07);
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progressBar i{
+  display:block;
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,var(--blue),var(--gold));
+  border-radius:20px;
+  transition:width .2s ease;
+}
+
+.notice{
+  margin-top:14px;
+  padding:11px 13px;
+  border-radius:11px;
+  background:rgba(67,143,255,.06);
+  border:1px solid rgba(67,143,255,.13);
+  color:#b8c9dc;
+  font-size:10px;
+  line-height:1.8;
+}
+
+.loading{
   position:fixed;
   inset:0;
-  z-index:9999;
+  z-index:1000;
   display:none;
   place-items:center;
-  background:rgba(2,7,13,.7);
-  backdrop-filter:blur(9px)
+  background:rgba(3,8,15,.78);
+  backdrop-filter:blur(7px);
 }
 
-.overlay.show{
-  display:grid
+.loading.show{
+  display:grid;
 }
 
-.loader{
-  width:min(320px,calc(100% - 30px));
-  padding:24px;
+.loaderBox{
+  width:min(320px,calc(100% - 40px));
+  padding:25px;
   text-align:center;
-  border-radius:20px;
-  background:#0a1728;
   border:1px solid var(--line);
-  box-shadow:var(--shadow)
+  border-radius:18px;
+  background:#0b1728;
+  box-shadow:var(--shadow);
 }
 
-.spin{
-  width:38px;
-  height:38px;
-  border-radius:50%;
+.spinner{
+  width:36px;
+  height:36px;
+  margin:0 auto 13px;
   border:3px solid rgba(255,255,255,.1);
-  border-top-color:var(--gold);
-  animation:sp .8s linear infinite;
-  margin:auto auto 13px
+  border-top-color:var(--blue);
+  border-right-color:var(--gold);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
 }
 
-@keyframes sp{
-  to{
-    transform:rotate(360deg)
-  }
+@keyframes spin{
+  to{transform:rotate(360deg)}
 }
 
-/* =========================
-   TOAST
-========================= */
+.loaderBox div:last-child{
+  color:var(--muted);
+  font-size:11px;
+}
 
 .toast{
   position:fixed;
-  z-index:10000;
-  bottom:24px;
   left:50%;
+  bottom:25px;
   transform:translate(-50%,20px);
+  z-index:1100;
+  min-width:230px;
+  max-width:calc(100% - 30px);
+  padding:12px 15px;
+  border-radius:11px;
+  border:1px solid rgba(255,255,255,.1);
+  background:#101f33;
+  color:#fff;
+  text-align:center;
+  font-size:11px;
+  font-weight:800;
   opacity:0;
   pointer-events:none;
-  background:rgba(7,17,29,.96);
-  border:1px solid var(--line);
-  border-radius:13px;
-  padding:11px 16px;
-  font-size:10px;
-  transition:.25s;
-  box-shadow:0 15px 45px rgba(0,0,0,.4)
+  transition:.25s ease;
+  box-shadow:var(--shadow);
 }
 
 .toast.show{
   opacity:1;
-  transform:translate(-50%,0)
+  transform:translate(-50%,0);
 }
 
-.mobile{
-  display:none
+.mobileMenu{
+  display:none;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+.stage:fullscreen{
+  width:100vw;
+  height:100vh;
+  min-height:100vh;
+  aspect-ratio:auto;
+  border:0;
+  border-radius:0;
+  background:#000;
+}
 
-@media(max-width:980px){
+.stage:-webkit-full-screen{
+  width:100vw;
+  height:100vh;
+  min-height:100vh;
+  aspect-ratio:auto;
+  border:0;
+  border-radius:0;
+  background:#000;
+}
+
+.stage:fullscreen video,
+.stage:fullscreen .yt,
+.stage:-webkit-full-screen video,
+.stage:-webkit-full-screen .yt{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.stage:fullscreen .wm,
+.stage:-webkit-full-screen .wm{
+  top:22px;
+  left:22px;
+  padding:9px 12px;
+  font-size:11px;
+  border-radius:11px;
+}
+
+@media(max-width:1050px){
+  .layout{
+    grid-template-columns:290px minmax(0,1fr);
+  }
+}
+
+@media(max-width:800px){
+  .top{
+    height:62px;
+    padding:0 13px;
+  }
+
+  .brandText span{
+    display:none;
+  }
+
+  .brandText strong{
+    font-size:13px;
+  }
 
   .layout{
+    width:calc(100% - 20px);
+    margin:10px auto;
     display:block;
-    padding:16px
   }
 
-  .side{
+  .sidebar{
     position:fixed;
+    top:62px;
+    right:0;
+    bottom:0;
+    width:min(330px,90vw);
+    max-height:none;
     z-index:500;
-    top:76px;
-    right:12px;
-    bottom:12px;
-    width:min(350px,calc(100vw - 24px));
-    height:auto;
-    transform:translateX(115%);
-    transition:.25s
+    border-radius:0;
+    transform:translateX(105%);
+    transition:.25s ease;
   }
 
-  .side.open{
-    transform:translateX(0)
+  .sidebar.open{
+    transform:translateX(0);
   }
 
-  .mobile{
-    display:inline-flex
+  .mobileMenu{
+    display:block;
   }
 
-  .student{
-    max-width:190px
+  .mainCard{
+    padding:10px;
+  }
+
+  .heading h1{
+    font-size:17px;
+  }
+
+  .stage{
+    min-height:210px;
+    border-radius:13px;
+  }
+
+  .overlayBg{
+    display:none;
+  }
+
+  .topActions .logoutTop{
+    display:none;
   }
 }
 
 @media(max-width:650px){
-
-  .top{
-    height:68px;
-    padding:0 11px
+  .fullscreenBtn{
+    min-width:100px;
+    padding:0 9px;
+    font-size:9px;
   }
 
-  .logo{
-    width:38px;
-    height:38px;
-    flex-basis:38px
-  }
-
-  .bt{
-    font-size:12px
-  }
-
-  .bs,
-  .student{
-    display:none
-  }
-
-  .topBtn{
-    font-size:0;
-    min-width:38px;
-    padding:0
-  }
-
-  .topBtn:first-letter{
-    font-size:18px
-  }
-
-  .layout{
-    padding:10px
-  }
-
-  .card{
-    padding:13px;
-    border-radius:17px
-  }
-
-  .head{
-    display:block
-  }
-
-  .actions{
-    margin-top:12px
-  }
-
-  .act{
-    flex:1
-  }
-
-  .stage{
-    min-height:210px
-  }
-
-  .under{
-    display:block
-  }
-
-  .tools{
-    justify-content:flex-end;
-    margin-top:9px
-  }
-
-  .infoGrid{
-    grid-template-columns:1fr
+  .stage:fullscreen .wm,
+  .stage:-webkit-full-screen .wm{
+    top:14px;
+    left:14px;
+    font-size:9px;
+    padding:7px 9px;
   }
 
   .ytBlocker{
-    width:180px;
-    height:62px
+    width:235px;
+    height:72px;
   }
 
   .ytBrandBlocker{
-    width:110px;
-    height:55px
+    width:145px;
+    height:65px;
+  }
+
+  .stage:fullscreen .ytBlocker,
+  .stage:-webkit-full-screen .ytBlocker{
+    width:270px;
+    height:82px;
+  }
+
+  .stage:fullscreen .ytBrandBlocker,
+  .stage:-webkit-full-screen .ytBrandBlocker{
+    width:170px;
+    height:72px;
+  }
+
+  .tools{
+    gap:6px;
+  }
+
+  .tool{
+    height:36px;
+    padding:0 9px;
+    font-size:10px;
+  }
+
+  .infoTop{
+    display:block;
+  }
+
+  .completeBtn{
+    margin-top:10px;
+    width:100%;
   }
 }
 </style>
@@ -922,346 +868,138 @@ button{
 <body>
 
 <header class="top">
-
   <div class="brand">
+    <div class="logo">🧬</div>
 
-    <div class="logo">
-      د
+    <div class="brandText">
+      <strong>د. يوسف نافع</strong>
+      <span>منصة الأحياء والعلوم المتكاملة</span>
     </div>
-
-    <div>
-      <div class="bt">
-        د. يوسف نافع — منصة التعلم
-      </div>
-
-      <div class="bs">
-        الفيديوهات التعليمية
-      </div>
-    </div>
-
   </div>
 
-  <div class="topRight">
-
-    <div class="student">
-
-      <div class="avatar" id="avatar">
-        ط
-      </div>
-
-      <div>
-
-        <div class="sn" id="studentName">
-          الطالب
-        </div>
-
-        <div class="sc" id="studentClass">
-          —
-        </div>
-
-      </div>
-
-    </div>
+  <div class="topActions">
+    <button
+      class="topBtn mobileMenu"
+      id="mobileMenuBtn"
+      type="button"
+    >☰ الدروس</button>
 
     <button
-      class="topBtn mobile"
-      id="menuBtn"
-      type="button">
-      ☰
-    </button>
-
-    <button
-      class="topBtn"
-      id="refreshBtn"
-      type="button">
-      ↻ <span>تحديث</span>
-    </button>
-
+      class="topBtn logoutTop"
+      id="logoutBtn"
+      type="button"
+    >تسجيل الخروج</button>
   </div>
-
 </header>
 
 
 <main class="layout">
 
-  <aside
-    class="side"
-    id="sidebar">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
 
     <div class="sideHead">
 
-      <div class="row">
-
-        <div class="sideTitle">
-          قائمة الفيديوهات
-        </div>
-
-        <div
-          class="count"
-          id="videoCount">
-          0
-        </div>
-
+      <div class="sideTitle">
+        قائمة الدروس
       </div>
 
-      <div class="search">
+      <div class="sideSub">
+        اختر الفيديو الذي تريد مشاهدته واستكمل من حيث توقفت.
+      </div>
 
-        <span class="si">
-          ⌕
-        </span>
+      <div class="searchBox">
+        <span class="searchIcon">⌕</span>
 
         <input
           id="searchInput"
           type="search"
-          placeholder="ابحث عن فيديو..."
-          autocomplete="off">
-
+          autocomplete="off"
+          placeholder="ابحث عن درس..."
+        >
       </div>
 
     </div>
 
-    <div
-      class="list"
-      id="videoList">
+    <div class="list" id="videoList">
+      <!-- يتم ملؤها بواسطة JavaScript -->
     </div>
 
   </aside>
 
 
-  <section class="main">
+  <!-- MAIN -->
+  <section class="mainCard">
 
-    <div class="card">
+    <div class="heading">
 
-      <div
-        class="notice"
-        id="notice">
+      <div>
+        <h1>الفيديوهات التعليمية</h1>
+
+        <p id="welcomeText">
+          اختر درسًا من القائمة لبدء المشاهدة.
+        </p>
       </div>
 
-
-      <div class="head">
-
-        <div>
-
-          <div class="eyebrow">
-            المحاضرة الحالية
-          </div>
-
-          <h1
-            class="title"
-            id="playerTitle">
-            اختر فيديو من القائمة
-          </h1>
-
-          <div
-            class="meta"
-            id="playerMeta">
-            ستظهر تفاصيل الفيديو هنا
-          </div>
-
-        </div>
+    </div>
 
 
-        <div class="actions">
+    <div class="player">
 
-          <button
-            class="act primary"
-            id="completeBtn"
-            disabled>
-            لم تكتمل المشاهدة
-          </button>
+      <div class="stage" id="stage">
 
-        </div>
+        <!-- Native video -->
+        <video
+          id="videoPlayer"
+          playsinline
+          controls
+          preload="metadata"
+          controlsList="nodownload noremoteplayback"
+          disablePictureInPicture
+        ></video>
 
-      </div>
+
+        <!-- YouTube -->
+        <div
+          class="yt"
+          id="youtubePlayer"
+        ></div>
 
 
-      <div class="player">
+        <!-- YouTube blockers -->
 
         <div
-          class="stage"
-          id="stage">
+          class="ytBlocker"
+          id="ytBlocker"
+          aria-hidden="true"
+          title="المشاهدة متاحة داخل المنصة فقط"
+        ></div>
 
-          <video
-            id="videoPlayer"
-            playsinline
-            controls
-            preload="metadata"
-            controlsList="nodownload noremoteplayback"
-            disablePictureInPicture>
-          </video>
-
-
-          <div
-            class="yt"
-            id="youtubePlayer">
-          </div>
+        <div
+          class="ytBrandBlocker"
+          id="ytBrandBlocker"
+          aria-hidden="true"
+          title="المشاهدة متاحة داخل المنصة فقط"
+        ></div>
 
 
-          <!--
-            طبقة منع Watch on YouTube
-          -->
-          <div
-            class="ytBlocker"
-            id="ytBlocker"
-            aria-hidden="true"
-            title="المشاهدة متاحة داخل المنصة فقط">
-          </div>
+        <!-- Watermark -->
 
-
-          <!--
-            طبقة إضافية لمنطقة شعار YouTube
-          -->
-          <div
-            class="ytBrandBlocker"
-            id="ytBrandBlocker"
-            aria-hidden="true">
-          </div>
-
-
-          <div class="wm">
-            د. يوسف نافع
-          </div>
-
-
-          <div
-            class="empty"
-            id="empty">
-
-            <div>
-
-              <div class="emptyIcon">
-                ▶
-              </div>
-
-              <div class="emptyTitle">
-                اختر المحاضرة التي تريد مشاهدتها
-              </div>
-
-              <div class="emptyText">
-                اختر أي فيديو من القائمة لبدء المشاهدة.
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div class="under">
-
-        <div class="prog">
-
-          <div class="track">
-            <span id="progressBar"></span>
-          </div>
-
-          <div class="pinfo">
-
-            <span id="progressText">
-              0%
-            </span>
-
-            <span id="timeText">
-              00:00 / 00:00
-            </span>
-
-          </div>
-
+        <div class="wm">
+          د. يوسف نافع
         </div>
 
 
-        <div class="tools">
+        <!-- Empty state -->
 
-          <!-- SPEED -->
+        <div class="empty" id="empty">
 
-          <div style="position:relative">
+          <div>
+            <strong>اختر درسًا للبدء</strong>
 
-            <button
-              class="tool"
-              id="speedBtn">
-              السرعة 1×
-            </button>
-
-            <div
-              class="menu"
-              id="speedMenu">
-
-              <div class="menuTitle">
-                سرعة التشغيل
-              </div>
-
-              <button
-                class="opt"
-                data-speed="0.5">
-                0.5×
-              </button>
-
-              <button
-                class="opt"
-                data-speed="0.75">
-                0.75×
-              </button>
-
-              <button
-                class="opt active"
-                data-speed="1">
-                1× — عادي
-              </button>
-
-              <button
-                class="opt"
-                data-speed="1.25">
-                1.25×
-              </button>
-
-              <button
-                class="opt"
-                data-speed="1.5">
-                1.5×
-              </button>
-
-              <button
-                class="opt"
-                data-speed="1.75">
-                1.75×
-              </button>
-
-              <button
-                class="opt"
-                data-speed="2">
-                2×
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <!-- QUALITY -->
-
-          <div style="position:relative">
-
-            <button
-              class="tool"
-              id="qualityBtn">
-              الجودة
-            </button>
-
-            <div
-              class="menu"
-              id="qualityMenu">
-
-              <div class="menuTitle">
-                جودة الفيديو
-              </div>
-
-              <div id="qualityOptions"></div>
-
-            </div>
-
+            <span>
+              الفيديو سيظهر هنا بعد اختيار الدرس من القائمة.
+            </span>
           </div>
 
         </div>
@@ -1271,35 +1009,111 @@ button{
     </div>
 
 
-    <div class="infoGrid">
+    <!-- TOOLS -->
 
-      <div class="info">
+    <div class="tools">
 
-        <div class="il">
-          حالة المشاهدة
+      <button
+        class="tool fullscreenBtn"
+        id="fullscreenBtn"
+        type="button"
+        title="ملء الشاشة"
+      >
+        ⛶ ملء الشاشة
+      </button>
+
+
+      <label class="tool">
+        السرعة:
+        <select id="speedSelect">
+          <option value="0.5">0.5×</option>
+          <option value="0.75">0.75×</option>
+          <option value="1" selected>1×</option>
+          <option value="1.25">1.25×</option>
+          <option value="1.5">1.5×</option>
+          <option value="1.75">1.75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+
+
+      <label
+        class="tool"
+        id="qualityWrap"
+        style="display:none"
+      >
+        الجودة:
+        <select id="qualitySelect">
+          <option value="default">تلقائي</option>
+          <option value="small">360p</option>
+          <option value="medium">480p</option>
+          <option value="hd720">720p</option>
+          <option value="hd1080">1080p</option>
+        </select>
+      </label>
+
+    </div>
+
+
+    <!-- INFO -->
+
+    <div class="info">
+
+      <div class="infoTop">
+
+        <div>
+
+          <div
+            class="currentTitle"
+            id="currentTitle"
+          >
+            لم يتم اختيار فيديو
+          </div>
+
+          <div
+            class="currentGroup"
+            id="currentGroup"
+          >
+            —
+          </div>
+
         </div>
 
-        <div
-          class="iv"
-          id="watchStatus">
-          لم تبدأ المشاهدة بعد
+
+        <button
+          class="completeBtn"
+          id="completeBtn"
+          type="button"
+        >
+          ✓ تحديد كمكتمل
+        </button>
+
+      </div>
+
+
+      <div class="progressWrap">
+
+        <div class="progressInfo">
+          <span id="progressText">
+            0%
+          </span>
+
+          <span id="timeText">
+            00:00 / 00:00
+          </span>
+        </div>
+
+
+        <div class="progressBar">
+          <i id="progressFill"></i>
         </div>
 
       </div>
 
 
-      <div class="info">
-
-        <div class="il">
-          المحاضرة
-        </div>
-
-        <div
-          class="iv"
-          id="currentVideoInfo">
-          لا يوجد فيديو محدد
-        </div>
-
+      <div class="notice">
+        يتم حفظ تقدمك أثناء المشاهدة تلقائيًا، ولا يتم احتساب التقديم
+        العشوائي داخل الفيديو كمشاهدة فعلية.
       </div>
 
     </div>
@@ -1309,32 +1123,33 @@ button{
 </main>
 
 
+<!-- LOADING -->
+
 <div
-  class="overlay"
-  id="loadingOverlay">
+  class="loading"
+  id="loading"
+>
+  <div class="loaderBox">
 
-  <div class="loader">
+    <div class="spinner"></div>
 
-    <div class="spin"></div>
-
-    <div id="loadingText">
-      جاري تحميل الفيديوهات...
+    <div>
+      جاري تحميل الفيديو...
     </div>
 
   </div>
-
 </div>
 
+
+<!-- TOAST -->
 
 <div
   class="toast"
-  id="toast">
-</div>
+  id="toast"
+></div>
 
 
 <script>
-(() => {
-
 'use strict';
 
 
@@ -1343,35 +1158,15 @@ button{
 ========================================================= */
 
 const SUPABASE_URL =
-  'https://nhdowqzecpwmkunczodl.supabase.co';
+  "https://nhdowqzecpwmkunczodl.supabase.co";
 
 const SUPABASE_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXAiLCJyZWYiOiJuaGRvd3F6ZWNwd3Bt'
-  + 'a3VuY3pvZGwiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc4MDYwMDI1NSwiZXhwIjoyMDk2MTc2MjU1fQ.'
-  + 'Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo';
-
-
-/*
-  المفتاح الصحيح الموجود في الكود العامل عندك.
-  لو ظهر Invalid API key بسبب تقسيم النص، استخدم النسخة
-  المكتوبة كسطر واحد الموجودة في كودك الأصلي.
-*/
-
-const SUPABASE_ANON_KEY_FINAL =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJz' +
-  'dXAiLCJyZWYiOiJuaGRvd3F6ZWNwd3Btaz' +
-  'VuY3pvZGwiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc4MDYwMDI1NSwiZXhwIjoyMDk2MTc2MjU1fQ.' +
-  'Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo';
-
-
-/*
-  نستخدم المفتاح الأصلي الذي أرسلته أنت كما هو.
-*/
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
 const client =
   window.supabase.createClient(
     SUPABASE_URL,
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo'
+    SUPABASE_ANON_KEY
   );
 
 
@@ -1382,414 +1177,230 @@ const client =
 const $ = id =>
   document.getElementById(id);
 
+const norm = value =>
+  String(value ?? '').trim().toLowerCase();
 
-const e = {
+const group = value =>
+  String(value ?? '').trim();
 
-  sidebar: $('sidebar'),
-  menu: $('menuBtn'),
-  refresh: $('refreshBtn'),
+const label = value =>
+  group(value) || 'غير محدد';
 
-  name: $('studentName'),
-  class: $('studentClass'),
-  avatar: $('avatar'),
+const esc = value =>
+  String(value ?? '')
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'","&#039;");
 
-  count: $('videoCount'),
-  list: $('videoList'),
-  search: $('searchInput'),
 
-  notice: $('notice'),
+/* =========================================================
+   DOM
+========================================================= */
 
-  title: $('playerTitle'),
-  meta: $('playerMeta'),
+const stage =
+  $('stage');
 
-  video: $('videoPlayer'),
-  yt: $('youtubePlayer'),
-  empty: $('empty'),
+const video =
+  $('videoPlayer');
 
-  complete: $('completeBtn'),
+const youtubePlayer =
+  $('youtubePlayer');
 
-  bar: $('progressBar'),
-  percent: $('progressText'),
-  time: $('timeText'),
+const empty =
+  $('empty');
 
-  status: $('watchStatus'),
-  current: $('currentVideoInfo'),
+const videoList =
+  $('videoList');
 
-  speed: $('speedBtn'),
-  speedMenu: $('speedMenu'),
+const searchInput =
+  $('searchInput');
 
-  quality: $('qualityBtn'),
-  qualityMenu: $('qualityMenu'),
-  qualityOptions: $('qualityOptions'),
+const currentTitle =
+  $('currentTitle');
 
-  overlay: $('loadingOverlay'),
-  loadingText: $('loadingText'),
+const currentGroup =
+  $('currentGroup');
 
-  toast: $('toast')
+const progressText =
+  $('progressText');
 
-};
+const progressFill =
+  $('progressFill');
 
+const timeText =
+  $('timeText');
+
+const completeBtn =
+  $('completeBtn');
+
+const loading =
+  $('loading');
+
+const toastEl =
+  $('toast');
+
+const qualityWrap =
+  $('qualityWrap');
+
+const qualitySelect =
+  $('qualitySelect');
+
+const speedSelect =
+  $('speedSelect');
+
+const fullscreenBtn =
+  $('fullscreenBtn');
+
+const sidebar =
+  $('sidebar');
+
+const mobileMenuBtn =
+  $('mobileMenuBtn');
+
+const logoutBtn =
+  $('logoutBtn');
+
+const welcomeText =
+  $('welcomeText');
+
+
+/* =========================================================
+   STATE
+========================================================= */
 
 const state = {
 
   all: [],
+
   visible: [],
 
   current: null,
+
   id: null,
+
   type: null,
 
   yt: null,
+
   ytId: null,
+
   ytPromise: null,
 
   speed: 1,
+
   quality: 'default',
 
   timer: null,
+
   saveTimer: null,
 
   sec: 0,
+
   duration: 0,
+
   pct: 0,
 
-  /*
-    الوقت الحقيقي الذي تمت مشاهدته.
-    لا يعتمد على currentTime وحده.
-  */
   watched: 0,
 
   lastVideoTime: null,
+
   lastWallTime: null,
 
   lastSaveWatched: -1,
 
   completed: false,
 
-  search: ''
+  search: '',
+
+  loadingToken: 0
 
 };
-
-
-/* =========================================================
-   NORMALIZATION
-========================================================= */
-
-function norm(v){
-
-  return String(v ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/[إأآ]/g,'ا')
-    .replace(/ى/g,'ي')
-    .replace(/ة/g,'ه')
-    .replace(/\s+/g,' ');
-
-}
-
-
-function group(v){
-
-  const x = norm(v);
-
-  if(!x){
-    return '';
-  }
-
-  if(
-    x === 'first_science' ||
-    (
-      x.includes('اولى') &&
-      x.includes('ثانوي') &&
-      x.includes('علوم')
-    ) ||
-    (
-      x.includes('first') &&
-      x.includes('science')
-    )
-  ){
-    return 'first_science';
-  }
-
-
-  if(
-    x === 'third_biology' ||
-    (
-      x.includes('تالته') &&
-      x.includes('ثانوي') &&
-      x.includes('احياء')
-    ) ||
-    (
-      x.includes('ثالثه') &&
-      x.includes('ثانوي') &&
-      x.includes('احياء')
-    ) ||
-    (
-      x.includes('third') &&
-      x.includes('biology')
-    )
-  ){
-    return 'third_biology';
-  }
-
-
-  if(
-    x === 'third_geology' ||
-    (
-      x.includes('تالته') &&
-      x.includes('ثانوي') &&
-      x.includes('جيولوجيا')
-    ) ||
-    (
-      x.includes('ثالثه') &&
-      x.includes('ثانوي') &&
-      x.includes('جيولوجيا')
-    ) ||
-    (
-      x.includes('third') &&
-      x.includes('geology')
-    )
-  ){
-    return 'third_geology';
-  }
-
-
-  return x;
-
-}
-
-
-function label(v){
-
-  if(v === 'first_science'){
-    return 'أولى ثانوي — علوم متكاملة';
-  }
-
-  if(v === 'third_biology'){
-    return 'تالتة ثانوي — أحياء';
-  }
-
-  if(v === 'third_geology'){
-    return 'تالتة ثانوي — جيولوجيا';
-  }
-
-  return v || 'المجموعة غير محددة';
-
-}
 
 
 /* =========================================================
    USER
 ========================================================= */
 
-function user(){
+let me = null;
 
-  let x = {};
 
-  try{
+/* =========================================================
+   UI
+========================================================= */
 
-    x =
-      JSON.parse(
-        localStorage.getItem('user') || '{}'
-      ) || {};
+function showLoading(text='جاري التحميل...'){
 
-  }catch{
+  const box =
+    loading.querySelector('.loaderBox div:last-child');
 
-    x = {};
-
+  if(box){
+    box.textContent = text;
   }
 
-
-  return {
-
-    id:
-      x.id ??
-      x.student_id ??
-      '000',
-
-    name:
-      x.name ??
-      x.full_name ??
-      x.student_name ??
-      'الطالب',
-
-    class_group:
-      group(
-        x.class_group ??
-        x.classGroup ??
-        x.grade ??
-        x.class ??
-        x.group ??
-        ''
-      )
-
-  };
-
-}
-
-
-const me = user();
-
-
-e.name.textContent = me.name;
-
-e.class.textContent =
-  label(me.class_group);
-
-e.avatar.textContent =
-  String(me.name || 'ط').trim()[0] || 'ط';
-
-
-/* =========================================================
-   HTML ESCAPE
-========================================================= */
-
-function esc(v){
-
-  return String(v ?? '')
-    .replace(
-      /[&<>'"]/g,
-      c => ({
-        '&':'&amp;',
-        '<':'&lt;',
-        '>':'&gt;',
-        "'":'&#039;',
-        '"':'&quot;'
-      }[c])
-    );
-
-}
-
-
-/* =========================================================
-   NOTICES
-========================================================= */
-
-function notice(
-  msg,
-  type='info'
-){
-
-  e.notice.textContent = msg;
-
-  e.notice.className =
-    'notice show ' + type;
-
-}
-
-
-function clearNotice(){
-
-  e.notice.className =
-    'notice';
-
-  e.notice.textContent = '';
-
-}
-
-
-/* =========================================================
-   LOADING
-========================================================= */
-
-function loading(
-  on,
-  text='جاري تحميل الفيديوهات...'
-){
-
-  e.loadingText.textContent = text;
-
-  e.overlay.classList.toggle(
-    'show',
-    !!on
-  );
-
-}
-
-
-function showLoading(t){
-  loading(true,t);
+  loading.classList.add('show');
 }
 
 
 function hideLoading(){
-  loading(false);
+
+  loading.classList.remove('show');
+
 }
 
 
-/* =========================================================
-   TOAST
-========================================================= */
+let toastTimer = null;
 
-let toastTimer;
-
-
-function toast(msg){
+function toast(message){
 
   clearTimeout(toastTimer);
 
-  e.toast.textContent = msg;
+  toastEl.textContent =
+    message;
 
-  e.toast.classList.add('show');
+  toastEl.classList.add('show');
 
   toastTimer =
-    setTimeout(
-      () =>
-        e.toast.classList.remove('show'),
-      2600
-    );
+    setTimeout(()=>{
+      toastEl.classList.remove('show');
+    },2600);
 
 }
 
 
 /* =========================================================
-   TIME FORMAT
+   TIME
 ========================================================= */
 
-function time(s){
+function fmtTime(seconds){
 
-  s = Number(s);
-
-  if(
-    !Number.isFinite(s) ||
-    s < 0
-  ){
-    s = 0;
-  }
-
-  const n = Math.floor(s);
+  seconds =
+    Math.max(0,Math.floor(Number(seconds)||0));
 
   const h =
-    Math.floor(n / 3600);
+    Math.floor(seconds/3600);
 
   const m =
-    Math.floor(
-      (n % 3600) / 60
-    );
+    Math.floor((seconds%3600)/60);
 
-  const q =
-    n % 60;
+  const s =
+    seconds%60;
 
+  if(h > 0){
 
-  if(h){
-
-    return (
-      String(h).padStart(2,'0') +
-      ':' +
-      String(m).padStart(2,'0') +
-      ':' +
-      String(q).padStart(2,'0')
-    );
+    return [
+      String(h).padStart(2,'0'),
+      String(m).padStart(2,'0'),
+      String(s).padStart(2,'0')
+    ].join(':');
 
   }
 
-
-  return (
-    String(m).padStart(2,'0') +
-    ':' +
-    String(q).padStart(2,'0')
-  );
-
+  return [
+    String(m).padStart(2,'0'),
+    String(s).padStart(2,'0')
+  ].join(':');
 }
 
 
@@ -1799,76 +1410,59 @@ function time(s){
 
 function ytId(url){
 
-  const s =
-    String(url || '').trim();
+  if(!url) return null;
 
+  const value =
+    String(url).trim();
 
-  const patterns = [
+  try{
 
-    /youtube\.com\/watch\?[^#]*v=([^&#]+)/i,
+    const u =
+      new URL(value);
 
-    /youtube\.com\/shorts\/([^?&#/]+)/i,
+    if(
+      u.hostname.includes('youtube.com')
+    ){
 
-    /youtube\.com\/embed\/([^?&#/]+)/i,
+      if(u.pathname === '/watch'){
+        return u.searchParams.get('v');
+      }
 
-    /youtube\.com\/live\/([^?&#/]+)/i,
+      if(u.pathname.startsWith('/embed/')){
+        return u.pathname.split('/embed/')[1].split('/')[0];
+      }
 
-    /youtu\.be\/([^?&#/]+)/i
+      if(u.pathname.startsWith('/shorts/')){
+        return u.pathname.split('/shorts/')[1].split('/')[0];
+      }
 
-  ];
+      if(u.pathname.startsWith('/live/')){
+        return u.pathname.split('/live/')[1].split('/')[0];
+      }
 
-
-  for(
-    const r of patterns
-  ){
-
-    const m = s.match(r);
-
-    if(m){
-      return m[1];
     }
 
-  }
+    if(
+      u.hostname === 'youtu.be' ||
+      u.hostname.endsWith('.youtu.be')
+    ){
+      return u.pathname.replace('/','').split('/')[0];
+    }
 
+  }catch{}
 
-  return null;
+  const match =
+    value.match(
+      /(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([A-Za-z0-9_-]{6,})/
+    );
 
+  return match ? match[1] : null;
 }
 
 
-function isYT(v){
+function isYT(url){
 
-  return !!ytId(v);
-
-}
-
-
-/* =========================================================
-   TIMER
-========================================================= */
-
-function stopTimer(){
-
-  if(state.timer){
-
-    clearInterval(
-      state.timer
-    );
-
-    state.timer = null;
-
-  }
-
-
-  if(state.saveTimer){
-
-    clearTimeout(
-      state.saveTimer
-    );
-
-    state.saveTimer = null;
-
-  }
+  return !!ytId(url);
 
 }
 
@@ -1880,35 +1474,27 @@ function stopTimer(){
 function resetUI(){
 
   state.sec = 0;
+
   state.duration = 0;
+
   state.pct = 0;
 
   state.watched = 0;
 
   state.lastVideoTime = null;
+
   state.lastWallTime = null;
 
   state.lastSaveWatched = -1;
 
   state.completed = false;
 
+  progress(0,0);
 
-  e.bar.style.width = '0%';
+  completeBtn.textContent =
+    '✓ تحديد كمكتمل';
 
-  e.percent.textContent = '0%';
-
-  e.time.textContent =
-    '00:00 / 00:00';
-
-
-  e.complete.textContent =
-    'لم تكتمل المشاهدة';
-
-  e.complete.disabled = true;
-
-
-  e.status.textContent =
-    'لم تبدأ المشاهدة بعد';
+  completeBtn.classList.remove('done');
 
 }
 
@@ -1917,108 +1503,55 @@ function resetUI(){
    PROGRESS
 ========================================================= */
 
-function progress(
-  sec,
-  dur
-){
+function progress(current,duration){
 
-  sec = Number(sec) || 0;
-  dur = Number(dur) || 0;
+  current =
+    Math.max(0,Number(current)||0);
 
+  duration =
+    Math.max(0,Number(duration)||0);
 
-  state.sec =
-    Math.max(0,sec);
+  state.sec = current;
 
-  state.duration =
-    Math.max(0,dur);
+  state.duration = duration;
 
-
-  /*
-    مهم جدًا:
-
-    لا نعتبر الفيديو مكتملًا بناءً على
-    currentTime.
-
-    الإكمال يعتمد على watched الحقيقي
-    أو حدث ENDED.
-  */
-
-  state.completed =
-    dur > 0 &&
-    state.watched >=
-      Math.max(0,dur - 1);
-
-
-  /*
-    شريط الفيديو يعرض مكان التشغيل الحالي،
-    وليس الوقت المشاهد فعليًا.
-  */
-
-  state.pct =
-    dur
+  const pct =
+    duration > 0
       ? Math.min(
           100,
-          Math.round(
-            sec / dur * 100
+          Math.max(
+            0,
+            (state.watched / duration) * 100
           )
         )
       : 0;
 
+  state.pct = pct;
 
-  e.bar.style.width =
-    state.pct + '%';
+  progressFill.style.width =
+    pct + '%';
 
-  e.percent.textContent =
-    state.pct + '%';
+  progressText.textContent =
+    Math.round(pct) + '%';
 
-
-  e.time.textContent =
-    `${time(sec)} / ${time(dur)}`;
-
-
-  /*
-    زر الإكمال لا يصبح متاحًا
-    إلا بعد اكتمال المشاهدة الفعلية.
-  */
+  timeText.textContent =
+    fmtTime(current) +
+    ' / ' +
+    fmtTime(duration);
 
   if(state.completed){
 
-    e.complete.textContent =
-      '✓ تمّت المشاهدة';
+    completeBtn.textContent =
+      '✓ مكتمل';
 
-    e.complete.disabled = false;
-
-  }else{
-
-    e.complete.textContent =
-      'لم تكتمل المشاهدة';
-
-    e.complete.disabled = true;
-
-  }
-
-
-  /*
-    عرض الوقت الفعلي الذي شاهده الطالب.
-  */
-
-  if(state.completed){
-
-    e.status.textContent =
-      'اكتملت المشاهدة — ' +
-      time(dur);
-
-  }else if(state.watched > 0){
-
-    e.status.textContent =
-      'تمت مشاهدة ' +
-      time(state.watched) +
-      ' فعليًا';
+    completeBtn.classList.add('done');
 
   }else{
 
-    e.status.textContent =
-      'لم تبدأ المشاهدة بعد';
+    completeBtn.textContent =
+      '✓ تحديد كمكتمل';
+
+    completeBtn.classList.remove('done');
 
   }
 
@@ -2036,26 +1569,20 @@ function trackActualWatch(
 ){
 
   current =
-    Number(current) || 0;
+    Number(current)||0;
 
   duration =
-    Number(duration) || 0;
-
-
-  /*
-    لو الفيديو متوقف:
-    لا نضيف أي وقت.
-  */
+    Number(duration)||0;
 
   if(!playing){
 
-    state.lastVideoTime = null;
-    state.lastWallTime = null;
+    state.lastVideoTime =
+      null;
 
-    progress(
-      current,
-      duration
-    );
+    state.lastWallTime =
+      null;
+
+    progress(current,duration);
 
     return;
 
@@ -2065,10 +1592,6 @@ function trackActualWatch(
   const now =
     performance.now();
 
-
-  /*
-    أول قراءة.
-  */
 
   if(
     state.lastVideoTime === null ||
@@ -2081,10 +1604,7 @@ function trackActualWatch(
     state.lastWallTime =
       now;
 
-    progress(
-      current,
-      duration
-    );
+    progress(current,duration);
 
     return;
 
@@ -2099,29 +1619,20 @@ function trackActualWatch(
   const wallDelta =
     Math.max(
       0,
-      (now -
-        state.lastWallTime) /
-        1000
+      (now - state.lastWallTime) / 1000
     );
 
 
   /*
-    هنا أهم حماية:
-
-    لو الطالب عمل Seek للأمام،
-    videoDelta سيكون أكبر بكثير من
-    الوقت الحقيقي.
-
-    في هذه الحالة لا نضيف القفزة.
+    لا نحسب القفزة الكبيرة الناتجة عن seek.
   */
 
   if(
     videoDelta >= 0 &&
-    videoDelta <=
-      Math.max(
-        2.5,
-        wallDelta * 2.5
-      )
+    videoDelta <= Math.max(
+      2.5,
+      wallDelta * 2.5
+    )
   ){
 
     state.watched +=
@@ -2139,11 +1650,6 @@ function trackActualWatch(
   state.lastWallTime =
     now;
 
-
-  /*
-    لا نسمح بأن يتجاوز watched
-    مدة الفيديو.
-  */
 
   if(duration > 0){
 
@@ -2168,24 +1674,28 @@ function trackActualWatch(
    SAVE PROGRESS
 ========================================================= */
 
-async function save(
-  force=false
-){
+async function save(force=false){
 
-  if(!state.id){
+  if(!state.id || !me){
     return;
   }
 
 
   const watched =
     Math.floor(
-      state.watched
+      Math.max(
+        0,
+        state.watched
+      )
     );
 
 
   const dur =
     Math.floor(
-      state.duration
+      Math.max(
+        0,
+        state.duration
+      )
     );
 
 
@@ -2199,10 +1709,6 @@ async function save(
         )
       : 0;
 
-
-  /*
-    لا نحفظ نفس الرقم باستمرار.
-  */
 
   if(
     !force &&
@@ -2227,45 +1733,39 @@ async function save(
   } =
     await client
       .from('video_sessions')
-      .upsert(
+      .upsert({
 
-        {
+        student_id:
+          String(me.id),
 
-          student_id:
-            String(me.id),
+        video_id:
+          String(state.id),
 
-          video_id:
-            String(state.id),
+        class_group:
+          me.class_group ?? null,
 
-          class_group:
-            me.class_group,
+        watched_seconds:
+          watched,
 
-          watched_seconds:
-            watched,
+        duration:
+          dur,
 
-          duration:
-            dur,
+        percent:
+          pct,
 
-          percent:
-            pct,
+        completed:
+          !!state.completed,
 
-          completed:
-            !!state.completed,
+        skips:
+          0,
 
-          skips:
-            0,
+        updated_at:
+          new Date().toISOString()
 
-          updated_at:
-            new Date().toISOString()
-
-        },
-
-        {
-          onConflict:
-            'student_id,video_id'
-        }
-
-      );
+      },{
+        onConflict:
+          'student_id,video_id'
+      });
 
 
   if(error){
@@ -2290,24 +1790,46 @@ function scheduleSave(){
     state.saveTimer
   );
 
-
   state.saveTimer =
     setTimeout(
-      () =>
+      ()=>{
         save(false).catch(
-          () => {}
-        ),
-      800
+          console.warn
+        );
+      },
+      1200
     );
 
 }
 
 
 /* =========================================================
-   YOUTUBE DESTROY
+   STOP TIMER
+========================================================= */
+
+function stopTimer(){
+
+  if(state.timer){
+
+    clearInterval(
+      state.timer
+    );
+
+    state.timer =
+      null;
+
+  }
+
+}
+
+
+/* =========================================================
+   DESTROY YOUTUBE
 ========================================================= */
 
 function destroyYT(){
+
+  stopTimer();
 
   if(state.yt){
 
@@ -2317,34 +1839,30 @@ function destroyYT(){
 
   }
 
+  state.yt =
+    null;
 
-  state.yt = null;
-  state.ytId = null;
+  state.ytId =
+    null;
 
-  e.yt.innerHTML = '';
-
-  e.yt.style.display =
-    'none';
+  youtubePlayer.innerHTML =
+    '';
 
 }
 
 
 /* =========================================================
-   WAIT FOR YOUTUBE
+   LOAD YOUTUBE API
 ========================================================= */
 
-function waitYT(
-  ms=10000
-){
+function waitYT(){
 
   if(
     window.YT &&
-    typeof window.YT.Player ===
-      'function'
+    window.YT.Player
   ){
 
     return Promise.resolve();
-
   }
 
 
@@ -2357,45 +1875,54 @@ function waitYT(
 
   state.ytPromise =
     new Promise(
-      (resolve,reject) => {
+      resolve=>{
 
-        const start =
-          Date.now();
-
-
-        const t =
-          setInterval(
-            () => {
-
-              if(
-                window.YT &&
-                typeof window.YT.Player ===
-                  'function'
-              ){
-
-                clearInterval(t);
-
-                resolve();
-
-              }else if(
-                Date.now() -
-                start >
-                ms
-              ){
-
-                clearInterval(t);
-
-                reject(
-                  new Error(
-                    'تعذر تجهيز مشغل YouTube.'
-                  )
-                );
-
-              }
-
-            },
-            100
+        const old =
+          document.getElementById(
+            'youtube-api-script'
           );
+
+        if(old){
+
+          const check =
+            setInterval(
+              ()=>{
+
+                if(
+                  window.YT &&
+                  window.YT.Player
+                ){
+
+                  clearInterval(check);
+                  resolve();
+
+                }
+
+              },
+              50
+            );
+
+          return;
+
+        }
+
+
+        window.onYouTubeIframeAPIReady =
+          ()=>resolve();
+
+
+        const script =
+          document.createElement('script');
+
+        script.id =
+          'youtube-api-script';
+
+        script.src =
+          'https://www.youtube.com/iframe_api';
+
+        document.head.appendChild(
+          script
+        );
 
       }
     );
@@ -2406,152 +1933,36 @@ function waitYT(
 }
 
 
-window.onYouTubeIframeAPIReady =
-  () => {};
-
-
 /* =========================================================
-   QUALITY
+   YOUTUBE QUALITY
 ========================================================= */
 
-function qualityLabel(q){
-
-  return (
-
-    {
-
-      default:'تلقائي',
-      auto:'تلقائي',
-
-      highres:'أعلى جودة',
-
-      hd2160:'2160p — 4K',
-      hd1440:'1440p',
-      hd1080:'1080p',
-      hd720:'720p',
-
-      large:'480p',
-      medium:'360p',
-      small:'240p',
-      tiny:'144p'
-
-    }[q] || q
-
-  );
-
-}
-
-
-function renderQuality(){
-
-  e.qualityOptions.innerHTML =
-    '';
-
-
-  let levels =
-    ['default'];
-
+function setYTQuality(){
 
   if(
-    state.yt &&
-    typeof state.yt.getAvailableQualityLevels ===
-      'function'
+    !state.yt ||
+    typeof state.yt.setPlaybackQuality !== 'function'
   ){
 
-    try{
-
-      levels =
-        levels.concat(
-          state.yt.getAvailableQualityLevels() || []
-        );
-
-    }catch{}
+    return;
 
   }
 
 
-  [
-    ...new Set(levels)
-  ].forEach(
-    q => {
+  try{
 
-      const b =
-        document.createElement(
-          'button'
-        );
-
-
-      b.className =
-        'opt' +
-        (
-          q === state.quality
-            ? ' active'
-            : ''
-        );
-
-
-      b.textContent =
-        qualityLabel(q);
-
-
-      b.onclick =
-        () =>
-          setQuality(q);
-
-
-      e.qualityOptions.appendChild(
-        b
-      );
-
-    }
-  );
-
-
-  e.quality.textContent =
-    'الجودة: ' +
-    qualityLabel(
-      state.quality
-    );
-
-}
-
-
-function setQuality(q){
-
-  state.quality =
-    q || 'default';
-
-
-  if(
-    state.yt &&
-    typeof state.yt.setPlaybackQuality ===
-      'function'
-  ){
-
-    try{
+    if(
+      state.quality &&
+      state.quality !== 'default'
+    ){
 
       state.yt.setPlaybackQuality(
         state.quality
       );
 
-    }catch{}
+    }
 
-  }
-
-
-  renderQuality();
-
-  e.qualityMenu.classList.remove(
-    'open'
-  );
-
-
-  toast(
-    'تم اختيار ' +
-    qualityLabel(
-      state.quality
-    )
-  );
+  }catch{}
 
 }
 
@@ -2560,193 +1971,32 @@ function setQuality(q){
    SPEED
 ========================================================= */
 
-function setSpeed(v){
+function applySpeed(){
 
-  v =
-    Number(v);
-
-
-  if(
-    !Number.isFinite(v) ||
-    v <= 0
-  ){
-
-    return;
-
-  }
-
-
-  state.speed =
-    v;
-
-
-  e.speed.textContent =
-    'السرعة ' +
-    v +
-    '×';
-
-
-  if(
-    state.type ===
-    'native'
-  ){
-
-    try{
-
-      e.video.playbackRate =
-        v;
-
-    }catch{}
-
-  }
-
-
-  if(
-    state.yt &&
-    typeof state.yt.setPlaybackRate ===
-      'function'
-  ){
-
-    try{
-
-      state.yt.setPlaybackRate(v);
-
-    }catch{}
-
-  }
-
-
-  document
-    .querySelectorAll(
-      '[data-speed]'
-    )
-    .forEach(
-      b =>
-        b.classList.toggle(
-          'active',
-          Number(
-            b.dataset.speed
-          ) === v
-        )
-    );
-
-
-  e.speedMenu.classList.remove(
-    'open'
-  );
-
-
-  toast(
-    'سرعة التشغيل: ' +
-    v +
-    '×'
-  );
-
-}
-
-
-/* =========================================================
-   RESET PLAYER
-========================================================= */
-
-function resetPlayer(){
-
-  stopTimer();
-
-  document
-    .getElementById('stage')
-    .classList.remove(
-      'yt-active'
-    );
-
-
-  destroyYT();
+  const speed =
+    Number(state.speed)||1;
 
 
   try{
 
-    e.video.pause();
-
-    e.video.removeAttribute(
-      'src'
-    );
-
-    e.video.load();
+    video.playbackRate =
+      speed;
 
   }catch{}
 
 
-  e.video.style.display =
-    'none';
+  if(
+    state.yt &&
+    typeof state.yt.setPlaybackRate === 'function'
+  ){
 
+    try{
+      state.yt.setPlaybackRate(
+        speed
+      );
+    }catch{}
 
-  e.empty.style.display =
-    'grid';
-
-
-  state.current = null;
-  state.id = null;
-  state.type = null;
-
-
-  e.title.textContent =
-    'اختر فيديو من القائمة';
-
-  e.meta.textContent =
-    'ستظهر تفاصيل الفيديو هنا';
-
-  e.current.textContent =
-    'لا يوجد فيديو محدد';
-
-
-  e.complete.disabled =
-    true;
-
-
-  resetUI();
-
-}
-
-
-/* =========================================================
-   NATIVE TIMER
-========================================================= */
-
-function startNative(){
-
-  stopTimer();
-
-
-  state.lastVideoTime =
-    null;
-
-  state.lastWallTime =
-    null;
-
-
-  state.timer =
-    setInterval(
-      () => {
-
-        if(
-          !e.video.paused &&
-          !e.video.ended
-        ){
-
-          trackActualWatch(
-            e.video.currentTime,
-            e.video.duration,
-            true
-          );
-
-
-          scheduleSave();
-
-        }
-
-      },
-      500
-    );
+  }
 
 }
 
@@ -2759,7 +2009,6 @@ function startYT(){
 
   stopTimer();
 
-
   state.lastVideoTime =
     null;
 
@@ -2769,42 +2018,37 @@ function startYT(){
 
   state.timer =
     setInterval(
-      () => {
+      ()=>{
 
         if(
           state.yt &&
-          typeof state.yt.getCurrentTime ===
-            'function'
+          typeof state.yt.getCurrentTime === 'function'
         ){
 
           try{
 
             const c =
-              state.yt.getCurrentTime() ||
-              0;
-
+              state.yt.getCurrentTime() || 0;
 
             const d =
-              state.yt.getDuration() ||
-              0;
-
+              state.yt.getDuration() || 0;
 
             const st =
               state.yt.getPlayerState();
+
+            const playing =
+              st ===
+              YT.PlayerState.PLAYING;
 
 
             trackActualWatch(
               c,
               d,
-              st ===
-                YT.PlayerState.PLAYING
+              playing
             );
 
 
-            if(
-              st ===
-              YT.PlayerState.PLAYING
-            ){
+            if(playing){
 
               scheduleSave();
 
@@ -2822,22 +2066,69 @@ function startYT(){
 
 
 /* =========================================================
-   YOUTUBE
+   NATIVE TIMER
 ========================================================= */
 
-async function loadYT(v){
+function startNative(){
+
+  stopTimer();
+
+  state.lastVideoTime =
+    null;
+
+  state.lastWallTime =
+    null;
+
+
+  state.timer =
+    setInterval(
+      ()=>{
+
+        if(
+          !video.paused &&
+          !video.ended
+        ){
+
+          trackActualWatch(
+            video.currentTime,
+            video.duration,
+            true
+          );
+
+          scheduleSave();
+
+        }
+
+      },
+      500
+    );
+
+}
+
+
+/* =========================================================
+   LOAD YOUTUBE
+========================================================= */
+
+async function loadYT(item){
 
   const id =
-    ytId(v.url);
-
+    ytId(item.url);
 
   if(!id){
 
-    throw new Error(
-      'رابط YouTube غير صالح.'
+    toast(
+      'رابط YouTube غير صحيح.'
     );
 
+    return;
+
   }
+
+
+  showLoading(
+    'جاري تحميل الفيديو...'
+  );
 
 
   await waitYT();
@@ -2846,289 +2137,325 @@ async function loadYT(v){
   destroyYT();
 
 
-  e.empty.style.display =
-    'none';
-
-  e.video.style.display =
-    'none';
-
-  e.yt.style.display =
-    'block';
-
-
-  document
-    .getElementById('stage')
-    .classList.add(
-      'yt-active'
-    );
-
-
   state.ytId =
     id;
 
-  state.quality =
-    'default';
 
+  qualityWrap.style.display =
+    'inline-flex';
 
-  await new Promise(
-    (
-      resolve,
-      reject
-    ) => {
 
-      let done =
-        false;
+  stage.classList.remove(
+    'native-active'
+  );
 
+  stage.classList.add(
+    'yt-active'
+  );
 
-      const ok =
-        () => {
+  empty.style.display =
+    'none';
 
-          if(done){
-            return;
-          }
 
-          done = true;
+  state.yt =
+    new YT.Player(
+      youtubePlayer,
+      {
 
-          resolve();
+        videoId:id,
 
-        };
+        width:'100%',
 
+        height:'100%',
 
-      const bad =
-        x => {
+        playerVars:{
 
-          if(done){
-            return;
-          }
+          autoplay:0,
 
-          done = true;
+          controls:1,
 
-          reject(x);
+          rel:0,
 
-        };
+          playsinline:1,
 
+          modestbranding:1,
 
-      try{
+          iv_load_policy:3,
 
-        state.yt =
-          new YT.Player(
-            'youtubePlayer',
-            {
+          fs:1,
 
-              videoId:id,
+          disablekb:1,
 
-              width:'100%',
-              height:'100%',
+          origin:location.origin
 
-              playerVars:{
+        },
 
-                autoplay:0,
+        events:{
 
-                controls:1,
+          onReady:event=>{
 
-                rel:0,
+            try{
 
-                playsinline:1,
+              const iframe =
+                state.yt?.getIframe?.();
 
-                modestbranding:1,
+              if(iframe){
 
-                iv_load_policy:3,
+                iframe.setAttribute(
+                  'allowfullscreen',
+                  'true'
+                );
 
-                fs:0,
-
-                disablekb:1,
-
-                origin:
-                  location.origin
-
-              },
-
-
-              events:{
-
-                onReady:() => {
-
-                  setSpeed(
-                    state.speed
-                  );
-
-                  renderQuality();
-
-                  startYT();
-
-                  ok();
-
-                },
-
-
-                onStateChange:x => {
-
-                  try{
-
-                    /*
-                      PLAYING
-                    */
-
-                    if(
-                      x.data ===
-                      YT.PlayerState.PLAYING
-                    ){
-
-                      startYT();
-
-                    }
-
-
-                    /*
-                      PAUSED
-                    */
-
-                    if(
-                      x.data ===
-                      YT.PlayerState.PAUSED
-                    ){
-
-                      state.lastVideoTime =
-                        null;
-
-                      state.lastWallTime =
-                        null;
-
-                      save(false)
-                        .catch(
-                          () => {}
-                        );
-
-                    }
-
-
-                    /*
-                      ENDED
-
-                      هنا فقط نعتبر الفيديو
-                      مكتملًا بشكل نهائي.
-                    */
-
-                    if(
-                      x.data ===
-                      YT.PlayerState.ENDED
-                    ){
-
-                      const duration =
-                        state.yt.getDuration() ||
-                        0;
-
-
-                      state.watched =
-                        Math.max(
-                          state.watched,
-                          duration
-                        );
-
-
-                      state.duration =
-                        duration;
-
-
-                      state.completed =
-                        true;
-
-
-                      progress(
-                        duration,
-                        duration
-                      );
-
-
-                      save(true)
-                        .catch(
-                          () => {}
-                        );
-
-
-                      e.status.textContent =
-                        'اكتملت مشاهدة المحاضرة ✓';
-
-                    }
-
-                  }catch{}
-
-                },
-
-
-                onError:() => {
-
-                  bad(
-                    new Error(
-                      'تعذر تشغيل فيديو YouTube داخل المشغل.'
-                    )
-                  );
-
-                }
+                iframe.setAttribute(
+                  'allow',
+                  'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen'
+                );
 
               }
 
+            }catch{}
+
+
+            hideLoading();
+
+
+            applySpeed();
+
+            setYTQuality();
+
+
+            /*
+              استكمال المشاهدة.
+              الـseek هنا لا يدخل ضمن watched
+            */
+
+            if(
+              !state.completed &&
+              state.watched > 2 &&
+              state.duration > 0 &&
+              state.watched <
+              state.duration - 2
+            ){
+
+              try{
+
+                state.yt.seekTo(
+                  state.watched,
+                  true
+                );
+
+              }catch{}
+
             }
-          );
 
-      }catch(x){
 
-        bad(x);
+            state.lastVideoTime =
+              null;
+
+            state.lastWallTime =
+              null;
+
+
+            startYT();
+
+          },
+
+
+          onStateChange:event=>{
+
+            if(
+              event.data ===
+              YT.PlayerState.PLAYING
+            ){
+
+              state.lastVideoTime =
+                null;
+
+              state.lastWallTime =
+                null;
+
+            }
+
+
+            if(
+              event.data ===
+              YT.PlayerState.ENDED
+            ){
+
+              const d =
+                state.yt?.getDuration?.() || 0;
+
+
+              state.watched =
+                d;
+
+              state.duration =
+                d;
+
+              state.completed =
+                true;
+
+
+              progress(
+                d,
+                d
+              );
+
+
+              save(true).catch(
+                console.warn
+              );
+
+
+              stopTimer();
+
+            }
+
+
+            if(
+              event.data ===
+              YT.PlayerState.PAUSED
+            ){
+
+              try{
+
+                const c =
+                  state.yt.getCurrentTime();
+
+                const d =
+                  state.yt.getDuration();
+
+                progress(c,d);
+
+              }catch{}
+
+              save(false).catch(
+                console.warn
+              );
+
+            }
+
+          },
+
+
+          onError:event=>{
+
+            hideLoading();
+
+            console.warn(
+              '[YouTube]',
+              event.data
+            );
+
+            toast(
+              'تعذر تشغيل فيديو YouTube.'
+            );
+
+          }
+
+        }
 
       }
-
-
-      setTimeout(
-        () =>
-          bad(
-            new Error(
-              'انتهت مهلة تشغيل YouTube.'
-            )
-          ),
-        12000
-      );
-
-    }
-  );
+    );
 
 }
 
 
 /* =========================================================
-   NATIVE VIDEO
+   LOAD NATIVE
 ========================================================= */
 
-function loadNative(v){
-
-  document
-    .getElementById('stage')
-    .classList.remove(
-      'yt-active'
-    );
-
+async function loadNative(item){
 
   destroyYT();
 
 
-  e.empty.style.display =
+  qualityWrap.style.display =
     'none';
 
-  e.video.style.display =
-    'block';
+
+  stage.classList.remove(
+    'yt-active'
+  );
+
+  stage.classList.add(
+    'native-active'
+  );
 
 
-  e.video.src =
-    String(v.url);
+  empty.style.display =
+    'none';
 
 
-  e.video.load();
+  video.src =
+    item.url;
 
 
-  e.video.playbackRate =
+  video.load();
+
+
+  video.playbackRate =
     state.speed;
 
 
-  renderQuality();
+  const onMetadata =
+    ()=>{
+
+      state.duration =
+        Number(video.duration)||0;
+
+
+      /*
+        استكمال المشاهدة
+      */
+
+      if(
+        !state.completed &&
+        state.watched > 2 &&
+        state.duration > 0 &&
+        state.watched <
+        state.duration - 2
+      ){
+
+        try{
+
+          video.currentTime =
+            state.watched;
+
+        }catch{}
+
+      }
+
+
+      state.lastVideoTime =
+        null;
+
+      state.lastWallTime =
+        null;
+
+
+      progress(
+        video.currentTime,
+        video.duration
+      );
+
+
+      video.removeEventListener(
+        'loadedmetadata',
+        onMetadata
+      );
+
+    };
+
+
+  video.addEventListener(
+    'loadedmetadata',
+    onMetadata
+  );
+
+
+  video.playbackRate =
+    state.speed;
 
 
   startNative();
@@ -3137,12 +2464,72 @@ function loadNative(v){
 
 
 /* =========================================================
+   RESET PLAYER
+========================================================= */
+
+function resetPlayer(){
+
+  stopTimer();
+
+  destroyYT();
+
+
+  if(
+    document.fullscreenElement ||
+    document.webkitFullscreenElement
+  ){
+
+    exitFullscreen().catch(
+      ()=>{}
+    );
+
+  }
+
+
+  video.pause();
+
+  video.removeAttribute(
+    'src'
+  );
+
+  video.load();
+
+
+  stage.classList.remove(
+    'native-active',
+    'yt-active'
+  );
+
+
+  empty.style.display =
+    'grid';
+
+
+  qualityWrap.style.display =
+    'none';
+
+}
+
+
+/* =========================================================
    LOAD SAVED PROGRESS
 ========================================================= */
 
-async function loadSavedProgress(
-  videoId
-){
+async function loadSavedProgress(videoId){
+
+  state.watched =
+    0;
+
+  state.completed =
+    false;
+
+
+  if(!me){
+
+    return;
+
+  }
+
 
   try{
 
@@ -3188,27 +2575,24 @@ async function loadSavedProgress(
     if(data.duration){
 
       state.duration =
-        Number(
-          data.duration
-        ) || 0;
+        Number(data.duration)||0;
 
     }
 
 
     /*
-      لا نثق في completed القديمة وحدها.
-      لو البيانات القديمة تقول completed=true
-      ولكن watched أقل من مدة الفيديو،
-      لا نعرضها كمكتملة.
+      لا نعتمد على completed القديم وحده.
+      الفيديو يصبح مكتملًا عندما تكون مدة المشاهدة
+      الفعلية وصلت تقريبًا للنهاية.
     */
 
     state.completed =
       state.duration > 0 &&
       state.watched >=
-        Math.max(
-          0,
-          state.duration - 1
-        );
+      Math.max(
+        0,
+        state.duration - 1
+      );
 
 
     progress(
@@ -3216,7 +2600,14 @@ async function loadSavedProgress(
       state.duration
     );
 
-  }catch{}
+  }catch(error){
+
+    console.warn(
+      '[Saved progress]',
+      error
+    );
+
+  }
 
 }
 
@@ -3225,116 +2616,122 @@ async function loadSavedProgress(
    SELECT VIDEO
 ========================================================= */
 
-async function select(v){
+async function selectVideo(item){
 
-  if(!v){
+  if(!item){
     return;
   }
 
 
-  await save(false)
-    .catch(
-      () => {}
-    );
-
-
-  state.current =
-    v;
-
-  state.id =
-    v.id;
-
-  state.type =
-    isYT(v.url)
-      ? 'youtube'
-      : 'native';
-
-
-  e.title.textContent =
-    v.title ||
-    'فيديو بدون عنوان';
-
-
-  e.meta.textContent =
-    state.type === 'youtube'
-      ? 'فيديو YouTube داخل منصة د. يوسف نافع'
-      : 'فيديو تعليمي على المنصة';
-
-
-  e.current.textContent =
-    v.title ||
-    'فيديو بدون عنوان';
+  const token =
+    ++state.loadingToken;
 
 
   resetUI();
 
 
-  /*
-    استرجاع الوقت الفعلي القديم
-  */
+  state.current =
+    item;
 
-  loadSavedProgress(
-    v.id
-  ).catch(
-    () => {}
-  );
+  state.id =
+    item.id;
+
+
+  state.type =
+    isYT(item.url)
+      ? 'youtube'
+      : 'native';
+
+
+  currentTitle.textContent =
+    item.title ||
+    'بدون عنوان';
+
+
+  currentGroup.textContent =
+    label(item.class_group);
 
 
   document
-    .querySelectorAll('.item')
-    .forEach(
-      x =>
-        x.classList.toggle(
-          'active',
-          String(
-            x.dataset.id
-          ) ===
-          String(v.id)
-        )
-    );
+    .querySelectorAll('.videoItem')
+    .forEach(el=>{
+
+      el.classList.toggle(
+        'active',
+        String(
+          el.dataset.id
+        ) ===
+        String(item.id)
+      );
+
+    });
 
 
-  try{
+  /*
+    ننتظر تحميل التقدم قبل تشغيل الفيديو
+    حتى يكون الـresume دقيقًا.
+  */
 
-    if(
-      state.type ===
-      'youtube'
-    ){
-
-      await loadYT(v);
-
-    }else{
-
-      loadNative(v);
-
-    }
+  await loadSavedProgress(
+    item.id
+  );
 
 
-    toast(
-      'تم تحميل المحاضرة'
-    );
-
-  }catch(x){
-
-    console.error(x);
-
-    destroyYT();
+  if(token !== state.loadingToken){
+    return;
+  }
 
 
-    e.video.style.display =
-      'none';
-
-    e.empty.style.display =
-      'grid';
+  resetPlayer();
 
 
-    notice(
-      'تعذر تشغيل الفيديو: ' +
-      (
-        x.message ||
-        'خطأ غير معروف'
-      ),
-      'error'
+  /*
+    بعد resetPlayer نعيد البيانات الأساسية.
+  */
+
+  state.current =
+    item;
+
+  state.id =
+    item.id;
+
+
+  state.type =
+    isYT(item.url)
+      ? 'youtube'
+      : 'native';
+
+
+  currentTitle.textContent =
+    item.title ||
+    'بدون عنوان';
+
+
+  currentGroup.textContent =
+    label(item.class_group);
+
+
+  progress(
+    0,
+    state.duration
+  );
+
+
+  if(state.type === 'youtube'){
+
+    await loadYT(item);
+
+  }else{
+
+    await loadNative(item);
+
+  }
+
+
+  if(window.innerWidth <= 800){
+
+    sidebar.classList.remove(
+      'open'
     );
 
   }
@@ -3346,101 +2743,123 @@ async function select(v){
    RENDER LIST
 ========================================================= */
 
-function render(
-  list = state.visible
-){
+function render(){
 
-  e.list.innerHTML =
+  const query =
+    norm(state.search);
+
+
+  state.visible =
+    state.all.filter(
+      item=>{
+
+        if(!query){
+          return true;
+        }
+
+        return (
+          norm(item.title).includes(query) ||
+          norm(item.class_group).includes(query)
+        );
+
+      }
+    );
+
+
+  videoList.innerHTML =
     '';
 
 
-  e.count.textContent =
-    list.length;
+  if(!state.visible.length){
 
-
-  if(!list.length){
-
-    e.list.innerHTML =
-      '<div style="padding:30px 15px;text-align:center;color:var(--muted);font-size:11px">' +
-      (
-        state.search
-          ? 'لا توجد نتائج مطابقة للبحث.'
-          : 'لا توجد فيديوهات متاحة.'
-      ) +
-      '</div>';
+    videoList.innerHTML =
+      `
+        <div style="
+          padding:25px 12px;
+          text-align:center;
+          color:var(--muted);
+          font-size:11px;
+        ">
+          لا توجد فيديوهات مطابقة للبحث.
+        </div>
+      `;
 
     return;
 
   }
 
 
-  list.forEach(
-    (v,i) => {
+  state.visible.forEach(
+    item=>{
 
-      const b =
+      const button =
         document.createElement(
           'button'
         );
 
 
-      b.type =
+      button.type =
         'button';
 
+      button.className =
+        'videoItem';
 
-      b.className =
-        'item' +
-        (
-          String(v.id) ===
-          String(state.id)
-            ? ' active'
-            : ''
-        );
+      button.dataset.id =
+        String(item.id);
 
 
-      b.dataset.id =
-        v.id;
+      const premium =
+        item.is_premium;
 
 
-      b.innerHTML =
+      button.innerHTML =
+        `
+          <div class="videoItemTitle">
+            ${esc(
+              item.title ||
+              'بدون عنوان'
+            )}
+          </div>
 
-        `<div class="num">${i + 1}</div>` +
+          <div class="videoMeta">
 
-        `<div class="it">` +
+            <span>
+              ${esc(
+                label(
+                  item.class_group
+                )
+              )}
+            </span>
 
-          `<div class="ititle">` +
-            esc(
-              v.title ||
-              'فيديو بدون عنوان'
-            ) +
-          `</div>` +
+            <span class="badge ${
+              premium
+                ? ''
+                : 'free'
+            }">
+              ${
+                premium
+                  ? '★ Premium'
+                  : 'مجاني'
+              }
+            </span>
 
-          `<div class="imeta">` +
-            (
-              isYT(v.url)
-                ? 'YouTube'
-                : 'فيديو مباشر'
-            ) +
-            ' • ' +
-            (
-              v.is_premium
-                ? 'Premium'
-                : 'تعليمي'
-            ) +
-          `</div>` +
+          </div>
 
-          `<div class="ibar">` +
-            `<span></span>` +
-          `</div>` +
-
-        `</div>`;
+          <div class="itemProgress">
+            <i></i>
+          </div>
+        `;
 
 
-      b.onclick =
-        () =>
-          select(v);
+      button.addEventListener(
+        'click',
+        ()=>selectVideo(item)
+      );
 
 
-      e.list.appendChild(b);
+      videoList.appendChild(
+        button
+      );
 
     }
   );
@@ -3449,29 +2868,98 @@ function render(
 
 
 /* =========================================================
-   FILTER
+   UPDATE ITEM PROGRESS
 ========================================================= */
 
-function filter(){
+async function updateListProgress(){
 
-  const q =
-    norm(
-      state.search
+  if(
+    !me ||
+    !state.all.length
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await client
+        .from('video_sessions')
+        .select(
+          'video_id,percent'
+        )
+        .eq(
+          'student_id',
+          String(me.id)
+        );
+
+
+    if(error || !data){
+      return;
+    }
+
+
+    const map =
+      new Map();
+
+
+    data.forEach(
+      row=>{
+
+        map.set(
+          String(row.video_id),
+          Math.max(
+            0,
+            Math.min(
+              100,
+              Number(row.percent)||0
+            )
+          )
+        );
+
+      }
     );
 
 
-  state.visible =
-    q
-      ? state.all.filter(
-          v =>
-            norm(
-              v.title
-            ).includes(q)
-        )
-      : [...state.all];
+    document
+      .querySelectorAll('.videoItem')
+      .forEach(
+        el=>{
+
+          const bar =
+            el.querySelector(
+              '.itemProgress i'
+            );
+
+          if(!bar){
+            return;
+          }
 
 
-  render();
+          bar.style.width =
+            (
+              map.get(
+                String(el.dataset.id)
+              ) || 0
+            ) + '%';
+
+        }
+      );
+
+  }catch(error){
+
+    console.warn(
+      '[List progress]',
+      error
+    );
+
+  }
 
 }
 
@@ -3480,14 +2968,11 @@ function filter(){
    LOAD VIDEOS
 ========================================================= */
 
-async function load(){
+async function loadVideos(){
 
   showLoading(
-    'جاري تحميل الفيديوهات...'
+    'جاري تحميل قائمة الفيديوهات...'
   );
-
-
-  clearNotice();
 
 
   try{
@@ -3511,187 +2996,66 @@ async function load(){
 
     if(error){
 
-      throw new Error(
-        error.message +
-        (
-          error.details
-            ? ' | ' +
-              error.details
-            : ''
-        )
+      console.error(
+        error
       );
+
+      throw error;
 
     }
 
 
     state.all =
       Array.isArray(data)
-        ? data.filter(
-            v =>
-              v &&
-              v.url
-          )
+        ? data
         : [];
 
 
-    if(
-      !state.all.length
-    ){
-
-      state.visible = [];
-
-      render();
-
-      notice(
-        'تم الاتصال بقاعدة البيانات، ولكن لا توجد فيديوهات مضافة حاليًا.',
-        'info'
-      );
-
-      resetPlayer();
-
-      return;
-
-    }
-
-
-    if(
-      me.class_group
-    ){
-
-      state.visible =
-        state.all.filter(
-          v =>
-            group(
-              v.class_group
-            ) ===
-            me.class_group
-        );
-
-
-      if(
-        !state.visible.length
-      ){
-
-        const gs =
-          [
-            ...new Set(
-              state.all
-                .map(
-                  v =>
-                    group(
-                      v.class_group
-                    )
-                )
-                .filter(Boolean)
-            )
-          ];
-
-
-        render();
-
-
-        notice(
-          'الفيديوهات موجودة، لكن لا يوجد فيديو مرتبط بالمجموعة الحالية (' +
-          label(me.class_group) +
-          '). المجموعات الموجودة: ' +
-          (
-            gs.length
-              ? gs.map(label).join(' — ')
-              : 'غير محددة'
-          ) +
-          '.',
-          'warn'
-        );
-
-
-        resetPlayer();
-
-        return;
-
-      }else{
-
-        clearNotice();
-
-      }
-
-    }else{
-
-      state.visible =
-        [...state.all];
-
-
-      notice(
-        'لم يتم تحديد المجموعة الدراسية في بيانات الطالب؛ تم عرض الفيديوهات المتاحة.',
-        'warn'
-      );
-
-    }
-
-
-    state.search =
-      '';
-
-    e.search.value =
-      '';
-
-
     render();
 
 
-    const p =
-      new URLSearchParams(
-        location.search
-      ).get('video');
+    await updateListProgress();
 
-
-    const chosen =
-      p
-        ? state.visible.find(
-            v =>
-              String(v.id) ===
-              String(p)
-          )
-        : state.visible[0];
-
-
-    if(chosen){
-
-      await select(
-        chosen
-      );
-
-    }
-
-  }catch(x){
-
-    console.error(
-      '[Videos] load:',
-      x
-    );
-
-
-    state.all = [];
-    state.visible = [];
-
-
-    render();
-
-
-    resetPlayer();
-
-
-    notice(
-      '❌ تعذر تحميل الفيديوهات: ' +
-      (
-        x.message ||
-        'خطأ غير معروف'
-      ),
-      'error'
-    );
-
-  }finally{
 
     hideLoading();
+
+
+    if(!state.all.length){
+
+      toast(
+        'لا توجد فيديوهات متاحة حاليًا.'
+      );
+
+    }
+
+  }catch(error){
+
+    console.error(
+      '[Videos]',
+      error
+    );
+
+    hideLoading();
+
+
+    videoList.innerHTML =
+      `
+        <div style="
+          padding:25px 12px;
+          text-align:center;
+          color:#ef8d96;
+          font-size:11px;
+          line-height:1.8;
+        ">
+          تعذر تحميل الفيديوهات.<br>
+          تأكد من الاتصال بقاعدة البيانات.
+        </div>
+      `;
+
+
+    toast(
+      'حدث خطأ أثناء تحميل الفيديوهات.'
+    );
 
   }
 
@@ -3699,23 +3063,15 @@ async function load(){
 
 
 /* =========================================================
-   COMPLETE BUTTON
+   COMPLETE
 ========================================================= */
 
-async function complete(){
+async function completeCurrent(){
 
-  /*
-    لا يمكن تنفيذها إلا إذا انتهى الفيديو
-    فعلًا.
-  */
-
-  if(
-    !state.id ||
-    !state.completed
-  ){
+  if(!state.id || !state.current){
 
     toast(
-      'يجب مشاهدة الفيديو كاملًا أولًا.'
+      'اختر فيديو أولًا.'
     );
 
     return;
@@ -3723,398 +3079,328 @@ async function complete(){
   }
 
 
-  await save(true)
-    .catch(
-      () => {}
+  state.completed =
+    true;
+
+
+  if(
+    state.duration > 0
+  ){
+
+    state.watched =
+      state.duration;
+
+    state.sec =
+      state.duration;
+
+  }
+
+
+  progress(
+    state.duration,
+    state.duration
+  );
+
+
+  try{
+
+    await save(true);
+
+    toast(
+      'تم تحديد الدرس كمكتمل ✓'
     );
 
 
-  toast(
-    'المحاضرة مكتملة بالفعل ✓'
-  );
+    await updateListProgress();
+
+  }catch{
+
+    toast(
+      'تعذر حفظ حالة الدرس.'
+    );
+
+  }
 
 }
 
 
 /* =========================================================
-   UI EVENTS
+   FULLSCREEN
 ========================================================= */
 
-e.refresh.onclick =
-  async () => {
+function updateFullscreenButton(){
 
-    await load();
-
-    toast(
-      'تم تحديث الفيديوهات'
-    );
-
-  };
+  if(!fullscreenBtn){
+    return;
+  }
 
 
-e.menu.onclick =
-  () =>
-    e.sidebar.classList.toggle(
-      'open'
-    );
+  const active =
+    !!document.fullscreenElement ||
+    !!document.webkitFullscreenElement;
 
 
-e.search.oninput =
-  x => {
-
-    state.search =
-      x.target.value;
-
-    filter();
-
-  };
+  fullscreenBtn.textContent =
+    active
+      ? '⛶ خروج من الشاشة'
+      : '⛶ ملء الشاشة';
 
 
-e.complete.onclick =
-  complete;
+  fullscreenBtn.title =
+    active
+      ? 'الخروج من ملء الشاشة'
+      : 'ملء الشاشة';
+
+}
 
 
-/* =========================================================
-   SPEED MENU
-========================================================= */
+async function enterFullscreen(){
 
-e.speed.onclick =
-  x => {
-
-    x.stopPropagation();
-
-    e.qualityMenu.classList.remove(
-      'open'
-    );
-
-    e.speedMenu.classList.toggle(
-      'open'
-    );
-
-  };
+  const target =
+    stage;
 
 
-/* =========================================================
-   QUALITY MENU
-========================================================= */
+  if(!target){
 
-e.quality.onclick =
-  x => {
+    return;
 
-    x.stopPropagation();
+  }
 
+
+  try{
 
     if(
-      state.type !==
-      'youtube'
+      document.fullscreenElement ||
+      document.webkitFullscreenElement
     ){
 
-      toast(
-        'التحكم في الجودة متاح لفيديوهات YouTube حسب الجودات التي يوفرها المصدر.'
-      );
+      await exitFullscreen();
 
       return;
 
     }
 
 
-    renderQuality();
+    if(
+      typeof target.requestFullscreen ===
+      'function'
+    ){
+
+      await target.requestFullscreen();
+
+      return;
+
+    }
 
 
-    e.speedMenu.classList.remove(
-      'open'
+    if(
+      typeof target.webkitRequestFullscreen ===
+      'function'
+    ){
+
+      target.webkitRequestFullscreen();
+
+      return;
+
+    }
+
+
+    toast(
+      'ملء الشاشة غير مدعوم في هذا المتصفح.'
+    );
+
+  }catch(error){
+
+    console.warn(
+      '[Fullscreen]',
+      error
     );
 
 
-    e.qualityMenu.classList.toggle(
-      'open'
-    );
+    /*
+      fallback للـYouTube iframe
+    */
 
-  };
+    try{
 
+      if(
+        state.yt &&
+        typeof state.yt.getIframe ===
+        'function'
+      ){
 
-/* =========================================================
-   SPEED OPTIONS
-========================================================= */
-
-document
-  .querySelectorAll(
-    '[data-speed]'
-  )
-  .forEach(
-    b =>
-      b.onclick =
-        () =>
-          setSpeed(
-            b.dataset.speed
-          )
-  );
+        const iframe =
+          state.yt.getIframe();
 
 
-/* =========================================================
-   CLOSE MENUS
-========================================================= */
+        if(
+          iframe &&
+          typeof iframe.requestFullscreen ===
+          'function'
+        ){
 
-document.addEventListener(
-  'click',
-  () => {
+          iframe.setAttribute(
+            'allowfullscreen',
+            'true'
+          );
 
-    e.speedMenu.classList.remove(
-      'open'
-    );
+          await iframe.requestFullscreen();
 
-    e.qualityMenu.classList.remove(
-      'open'
+          return;
+
+        }
+
+      }
+
+    }catch{}
+
+
+    toast(
+      'تعذر تشغيل ملء الشاشة في هذا المتصفح.'
     );
 
   }
-);
+
+}
 
 
-e.speedMenu.onclick =
-  x =>
-    x.stopPropagation();
+async function exitFullscreen(){
 
-
-e.qualityMenu.onclick =
-  x =>
-    x.stopPropagation();
-
-
-/* =========================================================
-   NATIVE VIDEO PROTECTION
-========================================================= */
-
-e.video.oncontextmenu =
-  x =>
-    x.preventDefault();
-
-
-/*
-  أثناء الـseek لا نعتبر المكان الجديد
-  مشاهدة فعلية.
-*/
-
-e.video.onseeking =
-  () => {
-
-    state.lastVideoTime =
-      null;
-
-    state.lastWallTime =
-      null;
-
-  };
-
-
-e.video.onseeked =
-  () => {
-
-    state.lastVideoTime =
-      e.video.currentTime;
-
-    state.lastWallTime =
-      performance.now();
-
-    progress(
-      e.video.currentTime,
-      e.video.duration
-    );
-
-  };
-
-
-/* =========================================================
-   NATIVE VIDEO EVENTS
-========================================================= */
-
-e.video.ontimeupdate =
-  () => {
+  try{
 
     if(
-      state.type ===
-      'native'
+      typeof document.exitFullscreen ===
+      'function' &&
+      document.fullscreenElement
     ){
 
-      progress(
-        e.video.currentTime,
-        e.video.duration
-      );
+      await document.exitFullscreen();
+
+      return;
 
     }
 
-  };
 
+    if(
+      typeof document.webkitExitFullscreen ===
+      'function' &&
+      document.webkitFullscreenElement
+    ){
 
-e.video.onloadedmetadata =
-  () => {
+      document.webkitExitFullscreen();
 
-    e.video.playbackRate =
-      state.speed;
-
-
-    progress(
-      e.video.currentTime,
-      e.video.duration
-    );
-
-  };
-
-
-e.video.onpause =
-  () => {
-
-    state.lastVideoTime =
-      null;
-
-    state.lastWallTime =
-      null;
-
-
-    save(false)
-      .catch(
-        () => {}
-      );
-
-  };
-
-
-/*
-  هنا فقط يتم اعتبار فيديو Native
-  مكتملًا:
-  عندما يصدر المتصفح حدث ended.
-*/
-
-e.video.onended =
-  () => {
-
-    const duration =
-      e.video.duration || 0;
-
-
-    if(duration > 0){
-
-      state.watched =
-        Math.max(
-          state.watched,
-          duration
-        );
-
-
-      state.duration =
-        duration;
-
-
-      state.completed =
-        true;
-
-
-      progress(
-        duration,
-        duration
-      );
-
-
-      save(true)
-        .catch(
-          () => {}
-        );
-
-
-      e.status.textContent =
-        'اكتملت مشاهدة المحاضرة ✓';
+      return;
 
     }
 
-  };
+  }catch(error){
 
-
-e.video.onerror =
-  () => {
-
-    notice(
-      'تعذر تشغيل ملف الفيديو. قد يكون الرابط غير متاح أو الملف غير مدعوم.',
-      'error'
+    console.warn(
+      '[Fullscreen Exit]',
+      error
     );
 
-  };
+  }
+
+}
+
+
+async function toggleFullscreen(){
+
+  const active =
+    !!document.fullscreenElement ||
+    !!document.webkitFullscreenElement;
+
+
+  if(active){
+
+    await exitFullscreen();
+
+  }else{
+
+    await enterFullscreen();
+
+  }
+
+
+  updateFullscreenButton();
+
+}
 
 
 /* =========================================================
-   YOUTUBE WATCH-ON-YOUTUBE BLOCKER
+   BLOCK YOUTUBE NAVIGATION
 ========================================================= */
 
-/*
-  مهم:
-
-  لا يمكن الوصول إلى عناصر iframe الخاصة بـYouTube
-  مباشرة لأنها Cross-Origin.
-
-  لذلك نستخدم overlay فوق المنطقة التي يظهر فيها
-  Watch on YouTube.
-
-  الضغط على overlay لا يسمح بفتح الرابط.
-*/
-
 const ytBlocker =
-  document.getElementById(
-    'ytBlocker'
-  );
-
+  $('ytBlocker');
 
 const ytBrandBlocker =
-  document.getElementById(
-    'ytBrandBlocker'
-  );
+  $('ytBrandBlocker');
 
 
-function blockYouTubeNavigation(
-  ev
-){
+function blockYouTubeNavigation(event){
 
-  ev.preventDefault();
+  event.preventDefault();
 
-  ev.stopPropagation();
+  event.stopPropagation();
 
-  ev.stopImmediatePropagation();
-
+  event.stopImmediatePropagation();
 
   toast(
     'المشاهدة متاحة من داخل منصة د. يوسف نافع فقط'
   );
-
 
   return false;
 
 }
 
 
-/*
-  مجموعة أحداث لضمان منع الضغط.
-*/
+const blockedEvents = [
 
-[
   'click',
+
+  'dblclick',
+
   'mousedown',
+
   'mouseup',
+
   'pointerdown',
+
   'pointerup',
+
+  'pointermove',
+
   'touchstart',
-  'touchend'
-].forEach(
-  eventName => {
+
+  'touchend',
+
+  'contextmenu'
+
+];
+
+
+blockedEvents.forEach(
+  eventName=>{
 
     ytBlocker.addEventListener(
       eventName,
       blockYouTubeNavigation,
-      true
+      {
+        capture:true,
+        passive:false
+      }
     );
 
 
     ytBrandBlocker.addEventListener(
       eventName,
       blockYouTubeNavigation,
-      true
+      {
+        capture:true,
+        passive:false
+      }
     );
 
   }
@@ -4122,69 +3408,23 @@ function blockYouTubeNavigation(
 
 
 /* =========================================================
-   EXTRA YOUTUBE LINK PROTECTION
+   EXTRA YOUTUBE PROTECTION
 ========================================================= */
 
-/*
-  لو ظهر رابط YouTube في الصفحة نفسها خارج
-  الطبقة المحجوبة، نحاول اعتراضه.
-
-  لن نستطيع الوصول إلى روابط داخل iframe
-  بسبب Cross-Origin، لكن هذا يحمي أي رابط
-  YouTube موجود خارج iframe.
-*/
-
-document.addEventListener(
+youtubePlayer.addEventListener(
   'click',
-  ev => {
+  event=>{
 
-    const link =
-      ev.target.closest &&
-      ev.target.closest('a');
-
-
-    if(!link){
-      return;
-    }
-
-
-    const href =
-      link.href || '';
-
+    /*
+      لا نحاول لمس DOM الداخلي للـiframe
+      لأنه cross-origin.
+    */
 
     if(
-      /(^|\.)youtube\.com$/i.test(
-        (() => {
-          try{
-            return new URL(href).hostname;
-          }catch{
-            return '';
-          }
-        })()
-      ) ||
-      /(^|\.)youtube-nocookie\.com$/i.test(
-        (() => {
-          try{
-            return new URL(href).hostname;
-          }catch{
-            return '';
-          }
-        })()
-      )
+      event.target === youtubePlayer
     ){
 
-      ev.preventDefault();
-
-      ev.stopPropagation();
-
-      ev.stopImmediatePropagation();
-
-
-      toast(
-        'المشاهدة متاحة من داخل منصة د. يوسف نافع فقط'
-      );
-
-      return false;
+      event.stopPropagation();
 
     }
 
@@ -4194,19 +3434,290 @@ document.addEventListener(
 
 
 /* =========================================================
+   NATIVE EVENTS
+========================================================= */
+
+video.addEventListener(
+  'play',
+  ()=>{
+
+    state.lastVideoTime =
+      null;
+
+    state.lastWallTime =
+      null;
+
+  }
+);
+
+
+video.addEventListener(
+  'pause',
+  ()=>{
+
+    try{
+
+      progress(
+        video.currentTime,
+        video.duration
+      );
+
+    }catch{}
+
+    save(false).catch(
+      console.warn
+    );
+
+  }
+);
+
+
+video.addEventListener(
+  'seeking',
+  ()=>{
+
+    /*
+      عند الـseek نمسح مرجع التتبع
+      حتى لا يتم احتساب القفزة كمشاهدة.
+    */
+
+    state.lastVideoTime =
+      null;
+
+    state.lastWallTime =
+      null;
+
+  }
+);
+
+
+video.addEventListener(
+  'seeked',
+  ()=>{
+
+    state.lastVideoTime =
+      video.currentTime;
+
+    state.lastWallTime =
+      performance.now();
+
+  }
+);
+
+
+video.addEventListener(
+  'timeupdate',
+  ()=>{
+
+    if(
+      !video.paused &&
+      !video.ended
+    ){
+
+      trackActualWatch(
+        video.currentTime,
+        video.duration,
+        true
+      );
+
+    }
+
+  }
+);
+
+
+video.addEventListener(
+  'ended',
+  ()=>{
+
+    state.watched =
+      Number(video.duration)||state.duration;
+
+    state.duration =
+      Number(video.duration)||state.duration;
+
+    state.completed =
+      true;
+
+
+    progress(
+      video.duration,
+      video.duration
+    );
+
+
+    save(true).catch(
+      console.warn
+    );
+
+
+    stopTimer();
+
+    updateListProgress();
+
+  }
+);
+
+
+video.addEventListener(
+  'ratechange',
+  ()=>{
+
+    state.speed =
+      Number(video.playbackRate)||1;
+
+  }
+);
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+searchInput.addEventListener(
+  'input',
+  ()=>{
+
+    state.search =
+      searchInput.value;
+
+    render();
+
+    updateListProgress();
+
+  }
+);
+
+
+/* =========================================================
+   SPEED
+========================================================= */
+
+speedSelect.addEventListener(
+  'change',
+  ()=>{
+
+    state.speed =
+      Number(
+        speedSelect.value
+      ) || 1;
+
+
+    applySpeed();
+
+  }
+);
+
+
+/* =========================================================
+   QUALITY
+========================================================= */
+
+qualitySelect.addEventListener(
+  'change',
+  ()=>{
+
+    state.quality =
+      qualitySelect.value;
+
+    setYTQuality();
+
+  }
+);
+
+
+/* =========================================================
+   COMPLETE BUTTON
+========================================================= */
+
+completeBtn.addEventListener(
+  'click',
+  completeCurrent
+);
+
+
+/* =========================================================
+   FULLSCREEN EVENTS
+========================================================= */
+
+fullscreenBtn.addEventListener(
+  'click',
+  toggleFullscreen
+);
+
+
+document.addEventListener(
+  'fullscreenchange',
+  updateFullscreenButton
+);
+
+
+document.addEventListener(
+  'webkitfullscreenchange',
+  updateFullscreenButton
+);
+
+
+updateFullscreenButton();
+
+
+/* =========================================================
+   MOBILE SIDEBAR
+========================================================= */
+
+mobileMenuBtn.addEventListener(
+  'click',
+  ()=>{
+
+    sidebar.classList.toggle(
+      'open'
+    );
+
+  }
+);
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+logoutBtn.addEventListener(
+  'click',
+  async ()=>{
+
+    try{
+
+      await client.auth.signOut();
+
+    }catch{}
+
+
+    location.href =
+      'login.html';
+
+  }
+);
+
+
+/* =========================================================
    BEFORE UNLOAD
 ========================================================= */
 
 window.addEventListener(
   'beforeunload',
-  () => {
+  ()=>{
+    /*
+      نحاول إرسال الحفظ الأخير.
+    */
 
-    if(state.id){
+    if(
+      state.id &&
+      me
+    ){
 
-      save(false)
-        .catch(
-          () => {}
-        );
+      save(true).catch(
+        ()=>{}
+      );
 
     }
 
@@ -4215,24 +3726,222 @@ window.addEventListener(
 
 
 /* =========================================================
+   AUTH / CURRENT USER
+========================================================= */
+
+async function getCurrentUser(){
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await client.auth.getUser();
+
+
+    if(
+      error ||
+      !data ||
+      !data.user
+    ){
+
+      return null;
+
+    }
+
+
+    const authUser =
+      data.user;
+
+
+    /*
+      نحاول جلب بيانات الطالب.
+      لو كان عندك profiles أو students يتم استخدام البيانات
+      المتاحة بدون تعطيل الصفحة.
+    */
+
+    let profile = null;
+
+
+    try{
+
+      const result =
+        await client
+          .from('students')
+          .select('*')
+          .eq(
+            'id',
+            authUser.id
+          )
+          .maybeSingle();
+
+
+      if(
+        !result.error &&
+        result.data
+      ){
+
+        profile =
+          result.data;
+
+      }
+
+    }catch{}
+
+
+    if(!profile){
+
+      try{
+
+        const result =
+          await client
+            .from('profiles')
+            .select('*')
+            .eq(
+              'id',
+              authUser.id
+            )
+            .maybeSingle();
+
+
+        if(
+          !result.error &&
+          result.data
+        ){
+
+          profile =
+            result.data;
+
+        }
+
+      }catch{}
+
+    }
+
+
+    return {
+
+      id:
+        authUser.id,
+
+      email:
+        authUser.email || '',
+
+      ...(profile || {})
+
+    };
+
+  }catch(error){
+
+    console.warn(
+      '[Auth]',
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
+/* =========================================================
    START
 ========================================================= */
 
-resetUI();
+async function start(){
 
-renderQuality();
+  showLoading(
+    'جاري تجهيز المنصة...'
+  );
 
-load().catch(
-  x => {
 
-    console.error(x);
+  me =
+    await getCurrentUser();
+
+
+  /*
+    لو الصفحة عندك أصلًا محمية من auth
+    نستمر طبيعيًا.
+  */
+
+  if(!me){
 
     hideLoading();
+
+    toast(
+      'يجب تسجيل الدخول أولًا.'
+    );
+
+
+    setTimeout(
+      ()=>{
+        location.href =
+          'login.html';
+      },
+      1000
+    );
+
+
+    return;
+
+  }
+
+
+  welcomeText.textContent =
+    me.full_name ||
+    me.name ||
+    me.email
+      ? `مرحبًا ${me.full_name || me.name || me.email}`
+      : 'اختر درسًا من القائمة لبدء المشاهدة.';
+
+
+  await loadVideos();
+
+
+  hideLoading();
+
+}
+
+
+/* =========================================================
+   GLOBAL ERROR HANDLING
+========================================================= */
+
+window.addEventListener(
+  'error',
+  event=>{
+
+    console.warn(
+      '[Videos Error]',
+      event.error ||
+      event.message
+    );
 
   }
 );
 
-})();
+
+window.addEventListener(
+  'unhandledrejection',
+  event=>{
+
+    console.warn(
+      '[Videos Promise]',
+      event.reason
+    );
+
+  }
+);
+
+
+/* =========================================================
+   START APP
+========================================================= */
+
+start();
+
 </script>
 
 </body>
