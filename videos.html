@@ -1922,12 +1922,121 @@
     ========================================================== */
 
     async function loadVideos() {
+  const list = document.getElementById("videoList");
 
-      showLoadingState();
+  list.innerHTML = `
+    <div style="padding:30px;text-align:center;color:#aaa">
+      جاري الاتصال بقاعدة البيانات...
+    </div>
+  `;
 
-      connectionText.textContent =
-        "جاري الاتصال...";
+  try {
+    // إنشاء Supabase من نفس بيانات صفحة الرفع
+    const supabaseClient = window.supabase.createClient(
+      "https://nhdowqzecpwmkunczodl.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhc2ViY3B3bWt1bmN6b2RsIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo"
+    );
 
+    console.log("SUPABASE CONNECTED");
+
+    // قراءة كل الفيديوهات أولاً للتأكد أن الاتصال يعمل
+    const { data, error } = await supabaseClient
+      .from("videos")
+      .select("id,title,url,class_group,is_premium")
+      .order("id", { ascending: true });
+
+    console.log("VIDEOS RESULT:", data);
+    console.log("VIDEOS ERROR:", error);
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      list.innerHTML = `
+        <div style="
+          padding:30px;
+          text-align:center;
+          color:#aaa;
+          line-height:2;
+        ">
+          <div style="font-size:40px">📭</div>
+          لا توجد فيديوهات في قاعدة البيانات.
+        </div>
+      `;
+      return;
+    }
+
+    // فلترة الفيديوهات حسب مجموعة الطالب
+    const studentClass = user.class_group;
+
+    const videosForStudent = data.filter(video => {
+      return video.class_group === studentClass;
+    });
+
+    console.log("STUDENT CLASS:", studentClass);
+    console.log("STUDENT VIDEOS:", videosForStudent);
+
+    if (videosForStudent.length === 0) {
+
+      list.innerHTML = `
+        <div style="
+          padding:30px;
+          text-align:center;
+          color:#aaa;
+          line-height:2;
+        ">
+          <div style="font-size:40px">📚</div>
+
+          <div style="color:white;font-size:18px;font-weight:bold">
+            لا توجد فيديوهات لهذه المجموعة
+          </div>
+
+          <div style="font-size:13px;margin-top:10px">
+            مجموعة الطالب:
+            <b style="color:#4da6ff">
+              ${studentClass || "غير محددة"}
+            </b>
+          </div>
+        </div>
+      `;
+
+      return;
+    }
+
+    // تخزين الفيديوهات
+    state.videos = videosForStudent;
+
+    // عرض الفيديوهات
+    renderVideoList();
+
+    // فتح أول فيديو
+    if (state.videos.length > 0) {
+      openVideo(state.videos[0]);
+    }
+
+  } catch (error) {
+
+    console.error("SUPABASE ERROR:", error);
+
+    list.innerHTML = `
+      <div style="
+        padding:25px;
+        text-align:center;
+        color:#ff6b6b;
+        white-space:pre-line;
+      ">
+        ❌ تعذر تحميل الفيديوهات
+
+        <br><br>
+
+        <small>
+          ${error.message || error}
+        </small>
+      </div>
+    `;
+  }
+}
 
       /* -------------------------------------------------------
          CHECK SUPABASE
