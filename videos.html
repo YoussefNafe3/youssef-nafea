@@ -163,22 +163,16 @@ a:focus-visible{
 
 .brandText strong{
   display:block;
-
   font-size:15px;
   font-weight:900;
-
   white-space:nowrap;
 }
 
 .brandText span{
   display:block;
-
   margin-top:3px;
-
   color:var(--muted);
-
   font-size:10px;
-
   white-space:nowrap;
 }
 
@@ -190,22 +184,18 @@ a:focus-visible{
 
 .topBtn{
   min-height:39px;
-
   padding:0 14px;
 
   border:1px solid var(--line);
   border-radius:11px;
 
   color:var(--text);
-
-  background:
-    rgba(255,255,255,.035);
+  background:rgba(255,255,255,.035);
 
   font-size:11px;
   font-weight:900;
 
-  transition:
-    .2s ease;
+  transition:.2s ease;
 
   text-decoration:none;
 
@@ -215,22 +205,14 @@ a:focus-visible{
 }
 
 .topBtn:hover{
-  border-color:
-    rgba(67,143,255,.45);
-
-  background:
-    rgba(67,143,255,.08);
-
-  transform:
-    translateY(-1px);
+  border-color:rgba(67,143,255,.45);
+  background:rgba(67,143,255,.08);
+  transform:translateY(-1px);
 }
 
 .homeBtn:hover{
-  border-color:
-    rgba(217,173,85,.45);
-
-  background:
-    rgba(217,173,85,.07);
+  border-color:rgba(217,173,85,.45);
+  background:rgba(217,173,85,.07);
 }
 
 .mobileMenu{
@@ -243,11 +225,10 @@ a:focus-visible{
 ========================================================= */
 
 .layout{
-  width:
-    min(
-      1500px,
-      calc(100% - 38px)
-    );
+  width:min(
+    1500px,
+    calc(100% - 38px)
+  );
 
   margin:
     24px auto 35px;
@@ -302,7 +283,8 @@ a:focus-visible{
 }
 
 .sideHead{
-  padding:21px 20px 17px;
+  padding:
+    21px 20px 17px;
 
   border-bottom:
     1px solid var(--line);
@@ -346,11 +328,8 @@ a:focus-visible{
 
 .sideSub{
   margin-top:7px;
-
   color:var(--muted);
-
   font-size:10px;
-
   line-height:1.75;
 }
 
@@ -417,9 +396,7 @@ a:focus-visible{
 
 .list{
   flex:1;
-
   overflow-y:auto;
-
   padding:10px;
 }
 
@@ -519,8 +496,7 @@ a:focus-visible{
   display:inline-flex;
   align-items:center;
 
-  padding:
-    4px 7px;
+  padding:4px 7px;
 
   border-radius:7px;
 
@@ -821,15 +797,6 @@ a:focus-visible{
    YOUTUBE BLOCKING
 ========================================================= */
 
-/*
-  YouTube يعمل داخل iframe خارجي Cross-Origin.
-  لذلك لا يمكن للصفحة تعديل HTML الداخلي لواجهة YouTube.
-
-  الحل هنا عبارة عن طبقات شفافة فوق مناطق الخروج
-  من المنصة.
-*/
-
-
 .ytBlocker,
 .ytBrandBlocker,
 .ytTitleBlocker{
@@ -837,7 +804,12 @@ a:focus-visible{
 
   display:none;
 
-  background:transparent;
+  /*
+    0.01 بدل transparent بالكامل:
+    غير ملحوظة بصريًا، ولكنها تساعد المتصفح
+    على اعتبار الطبقة هدفًا حقيقيًا للضغط.
+  */
+  background:rgba(0,0,0,.01);
 
   pointer-events:auto;
 
@@ -849,12 +821,9 @@ a:focus-visible{
   touch-action:none;
 
   -webkit-touch-callout:none;
+
+  -webkit-tap-highlight-color:transparent;
 }
-
-
-/*
-  لا تظهر أي طبقة إلا مع فيديو YouTube.
-*/
 
 .stage.yt-active .ytBlocker,
 .stage.yt-active .ytBrandBlocker,
@@ -864,58 +833,58 @@ a:focus-visible{
 
 
 /*
-  المنطقة السفلية اليسرى.
+  ---------------------------------------------------------
+  1) WATCH ON YOUTUBE
+  ---------------------------------------------------------
+
+  أكبر من المنطقة الأصلية بقليل لضمان عدم سقوط جزء
+  من النص خارج الـoverlay.
 */
 
 .ytBlocker{
-  z-index:90;
+  z-index:950;
 
   left:0;
   bottom:0;
 
-  width:42%;
-  height:86px;
+  width:52%;
+  height:92px;
 }
 
 
 /*
-  المنطقة السفلية اليمنى.
+  ---------------------------------------------------------
+  2) YOUTUBE BRANDING
+  ---------------------------------------------------------
 */
 
 .ytBrandBlocker{
-  z-index:89;
+  z-index:949;
 
   right:0;
   bottom:0;
 
-  width:31%;
-  height:82px;
+  width:34%;
+  height:88px;
 }
 
 
 /*
-  ========================================================
-  TITLE BLOCKER
-  ========================================================
+  ---------------------------------------------------------
+  3) TITLE BLOCKER
+  ---------------------------------------------------------
 
-  هذه الطبقة هي الخاصة بعنوان YouTube.
-
-  تم جعلها أكبر من النص نفسه بهامش حماية،
-  لأن موضع ومساحة عنوان YouTube قد تختلف
-  حسب حجم الشاشة وواجهة المشغل.
-
-  z-index = 92
-  أعلى من الـiframe وأقل من الـwatermark.
+  يحجب العنوان + منطقة الضغط حوله.
 */
 
 .ytTitleBlocker{
-  z-index:92;
+  z-index:952;
 
   top:0;
   left:0;
 
-  width:72%;
-  height:76px;
+  width:82%;
+  height:82px;
 }
 
 
@@ -978,25 +947,67 @@ a:focus-visible{
 
 
 /*
-  حجب YouTube في Fullscreen.
+  Fullscreen blocker.
 */
 
 .stage:fullscreen .ytBlocker,
 .stage:-webkit-full-screen .ytBlocker{
-  width:42%;
-  height:105px;
+  z-index:950;
+
+  left:0;
+  bottom:0;
+
+  width:52%;
+  height:112px;
 }
 
 .stage:fullscreen .ytBrandBlocker,
 .stage:-webkit-full-screen .ytBrandBlocker{
-  width:31%;
-  height:100px;
+  z-index:949;
+
+  right:0;
+  bottom:0;
+
+  width:34%;
+  height:106px;
 }
 
 .stage:fullscreen .ytTitleBlocker,
 .stage:-webkit-full-screen .ytTitleBlocker{
-  width:72%;
-  height:94px;
+  z-index:952;
+
+  top:0;
+  left:0;
+
+  width:82%;
+  height:104px;
+}
+
+
+/*
+  Fallback class:
+  بعض المتصفحات تتعامل بشكل مختلف مع :fullscreen.
+*/
+
+.stage.is-fullscreen .ytBlocker{
+  z-index:950;
+
+  width:52%;
+  height:112px;
+}
+
+.stage.is-fullscreen .ytBrandBlocker{
+  z-index:949;
+
+  width:34%;
+  height:106px;
+}
+
+.stage.is-fullscreen .ytTitleBlocker{
+  z-index:952;
+
+  width:82%;
+  height:104px;
 }
 
 
@@ -1515,19 +1526,42 @@ a:focus-visible{
 
 
   /*
-    موبايل:
-    تغطية منطقة العنوان بالكامل
-    لتجنب الضغط على أي جزء من رابط YouTube.
+    MOBILE TITLE BLOCKER
   */
 
   .ytTitleBlocker{
+    z-index:952;
+
     top:0;
     left:0;
 
     width:100%;
-    height:88px;
+    height:94px;
+  }
 
-    z-index:92;
+
+  /*
+    MOBILE WATCH ON YOUTUBE
+  */
+
+  .ytBlocker{
+    z-index:950;
+
+    left:0;
+    bottom:0;
+
+    width:58%;
+    height:88px;
+  }
+
+  .ytBrandBlocker{
+    z-index:949;
+
+    right:0;
+    bottom:0;
+
+    width:36%;
+    height:82px;
   }
 
 }
@@ -1581,58 +1615,95 @@ a:focus-visible{
 
 
   /*
-    الموبايل:
-    العنوان بالكامل + هامش حماية
+    على الهاتف نغطي منطقة العنوان بالكامل.
   */
 
   .ytTitleBlocker{
+    z-index:952;
+
     top:0;
     left:0;
 
     width:100%;
-    height:88px;
-
-    z-index:92;
+    height:96px;
   }
 
 
   /*
-    Fullscreen على الموبايل
+    حجب Watch on YouTube بالكامل.
+  */
+
+  .ytBlocker{
+    z-index:950;
+
+    left:0;
+    bottom:0;
+
+    width:62%;
+    height:88px;
+  }
+
+
+  /*
+    حجب الـbranding/الخروج في الجهة الأخرى.
+  */
+
+  .ytBrandBlocker{
+    z-index:949;
+
+    right:0;
+    bottom:0;
+
+    width:38%;
+    height:82px;
+  }
+
+
+  /*
+    MOBILE FULLSCREEN
   */
 
   .stage:fullscreen .ytTitleBlocker,
-  .stage:-webkit-full-screen .ytTitleBlocker{
+  .stage:-webkit-full-screen .ytTitleBlocker,
+  .stage.is-fullscreen .ytTitleBlocker{
+
     top:0;
     left:0;
 
     width:100%;
-    height:102px;
+    height:108px;
 
-    z-index:92;
+    z-index:952;
   }
 
-
-  .ytBlocker{
-    width:45%;
-    height:75px;
-  }
-
-  .ytBrandBlocker{
-    width:34%;
-    height:72px;
-  }
 
   .stage:fullscreen .ytBlocker,
-  .stage:-webkit-full-screen .ytBlocker{
-    width:45%;
-    height:90px;
+  .stage:-webkit-full-screen .ytBlocker,
+  .stage.is-fullscreen .ytBlocker{
+
+    left:0;
+    bottom:0;
+
+    width:62%;
+    height:98px;
+
+    z-index:950;
   }
 
+
   .stage:fullscreen .ytBrandBlocker,
-  .stage:-webkit-full-screen .ytBrandBlocker{
-    width:34%;
-    height:85px;
+  .stage:-webkit-full-screen .ytBrandBlocker,
+  .stage.is-fullscreen .ytBrandBlocker{
+
+    right:0;
+    bottom:0;
+
+    width:38%;
+    height:92px;
+
+    z-index:949;
   }
+
 
   .stage:fullscreen .wm,
   .stage:-webkit-full-screen .wm{
@@ -1690,12 +1761,38 @@ a:focus-visible{
 
 
   .ytTitleBlocker{
+    height:94px;
+  }
+
+  .ytBlocker{
+    width:64%;
+    height:92px;
+  }
+
+  .ytBrandBlocker{
+    width:40%;
     height:86px;
   }
 
+
   .stage:fullscreen .ytTitleBlocker,
-  .stage:-webkit-full-screen .ytTitleBlocker{
+  .stage:-webkit-full-screen .ytTitleBlocker,
+  .stage.is-fullscreen .ytTitleBlocker{
+    height:106px;
+  }
+
+  .stage:fullscreen .ytBlocker,
+  .stage:-webkit-full-screen .ytBlocker,
+  .stage.is-fullscreen .ytBlocker{
+    width:64%;
     height:100px;
+  }
+
+  .stage:fullscreen .ytBrandBlocker,
+  .stage:-webkit-full-screen .ytBrandBlocker,
+  .stage.is-fullscreen .ytBrandBlocker{
+    width:40%;
+    height:94px;
   }
 
 }
@@ -1727,7 +1824,6 @@ a:focus-visible{
 }
 </style>
 </head>
-
 
 <body>
 
@@ -1761,8 +1857,6 @@ a:focus-visible{
 
   <div class="topActions">
 
-    <!-- MOBILE MENU -->
-
     <button
       class="topBtn mobileMenu"
       id="mobileMenuBtn"
@@ -1774,7 +1868,7 @@ a:focus-visible{
     </button>
 
 
-    <!-- HOMEPAGE -->
+    <!-- HOME -->
 
     <a
       class="topBtn homeBtn"
@@ -1998,8 +2092,6 @@ a:focus-visible{
 
     <div class="tools">
 
-      <!-- FULLSCREEN -->
-
       <button
         class="tool fullscreenBtn"
         id="fullscreenBtn"
@@ -2009,8 +2101,6 @@ a:focus-visible{
         ⛶ ملء الشاشة
       </button>
 
-
-      <!-- SPEED -->
 
       <label class="tool">
 
@@ -2053,8 +2143,6 @@ a:focus-visible{
 
       </label>
 
-
-      <!-- QUALITY -->
 
       <label
         class="tool"
@@ -2210,7 +2298,6 @@ const SUPABASE_URL =
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
-
 const client =
   window.supabase.createClient(
     SUPABASE_URL,
@@ -2341,6 +2428,20 @@ const welcomeText =
 
 const videoCount =
   $('videoCount');
+
+
+/* =========================================================
+   BLOCKERS
+========================================================= */
+
+const ytBlocker =
+  $('ytBlocker');
+
+const ytBrandBlocker =
+  $('ytBrandBlocker');
+
+const ytTitleBlocker =
+  $('ytTitleBlocker');
 
 
 /* =========================================================
@@ -3983,10 +4084,6 @@ async function loadYT(
             setYTQuality();
 
 
-            /*
-              استكمال المشاهدة المحفوظة.
-            */
-
             if(
               !state.completed &&
               state.watched > 2 &&
@@ -4025,10 +4122,6 @@ async function loadYT(
               event.data ===
               YT.PlayerState.PLAYING
             ){
-
-              /*
-                لا نحسب الـseek كوقت مشاهدة.
-              */
 
               state.lastVideoTime =
                 null;
@@ -4095,10 +4188,6 @@ async function loadYT(
                 state.duration =
                   duration;
 
-
-                /*
-                  عند النهاية يصبح الفيديو 100%.
-                */
 
                 state.watched =
                   duration;
@@ -4194,7 +4283,8 @@ function resetPlayer(){
 
   stage.classList.remove(
     'native-active',
-    'yt-active'
+    'yt-active',
+    'is-fullscreen'
   );
 
 
@@ -4828,6 +4918,13 @@ function updateFullscreenButton(){
     !!document.webkitFullscreenElement;
 
 
+  stage.classList.toggle(
+    'is-fullscreen',
+    active &&
+    document.fullscreenElement === stage
+  );
+
+
   fullscreenBtn.textContent =
     active
       ? '⛶ خروج من الشاشة'
@@ -4870,6 +4967,12 @@ async function enterFullscreen(){
 
       await stage.requestFullscreen();
 
+      stage.classList.add(
+        'is-fullscreen'
+      );
+
+      updateFullscreenButton();
+
       return;
 
     }
@@ -4881,6 +4984,12 @@ async function enterFullscreen(){
     ){
 
       stage.webkitRequestFullscreen();
+
+      stage.classList.add(
+        'is-fullscreen'
+      );
+
+      updateFullscreenButton();
 
       return;
 
@@ -4898,10 +5007,6 @@ async function enterFullscreen(){
       error
     );
 
-
-    /*
-      Fallback للـYouTube iframe
-    */
 
     try{
 
@@ -4923,6 +5028,8 @@ async function enterFullscreen(){
 
         await iframe.requestFullscreen();
 
+        updateFullscreenButton();
+
         return;
 
       }
@@ -4942,6 +5049,11 @@ async function enterFullscreen(){
 async function exitFullscreen(){
 
   try{
+
+    stage.classList.remove(
+      'is-fullscreen'
+    );
+
 
     if(
       document.fullscreenElement &&
@@ -5000,32 +5112,79 @@ async function toggleFullscreen(){
 
 
 /* =========================================================
-   YOUTUBE BLOCK EVENTS
+   FULLSCREEN CHANGE
 ========================================================= */
 
-const ytBlocker =
-  $('ytBlocker');
+function syncFullscreenState(){
 
-const ytBrandBlocker =
-  $('ytBrandBlocker');
+  const active =
+    !!document.fullscreenElement ||
+    !!document.webkitFullscreenElement;
 
-const ytTitleBlocker =
-  $('ytTitleBlocker');
 
+  /*
+    class fallback للحجب.
+  */
+
+  if(
+    active &&
+    document.fullscreenElement === stage
+  ){
+
+    stage.classList.add(
+      'is-fullscreen'
+    );
+
+  }else{
+
+    stage.classList.remove(
+      'is-fullscreen'
+    );
+
+  }
+
+
+  updateFullscreenButton();
+
+}
+
+
+document.addEventListener(
+  'fullscreenchange',
+  syncFullscreenState
+);
+
+
+document.addEventListener(
+  'webkitfullscreenchange',
+  syncFullscreenState
+);
+
+
+/* =========================================================
+   YOUTUBE BLOCK EVENTS
+========================================================= */
 
 function blockYouTubeNavigation(
   event
 ){
 
   /*
-    منع انتقال الضغط إلى الـiframe.
+    منع الحدث من الوصول إلى YouTube.
   */
 
   event.preventDefault();
 
   event.stopPropagation();
 
-  event.stopImmediatePropagation();
+  if(
+    typeof event.stopImmediatePropagation ===
+    'function'
+  ){
+
+    event.stopImmediatePropagation();
+
+  }
 
 
   toast(
@@ -5039,7 +5198,7 @@ function blockYouTubeNavigation(
 
 
 /*
-  مجموعة أحداث الماوس واللمس.
+  الأحداث المطلوبة للماوس والـtouch.
 */
 
 const blockedEvents = [
@@ -5091,7 +5250,7 @@ blockedEvents.forEach(
 
 
     /*
-      حجب عنوان YouTube.
+      الحجب الخاص بالعنوان.
     */
 
     ytTitleBlocker.addEventListener(
@@ -5108,14 +5267,36 @@ blockedEvents.forEach(
 
 
 /*
-  حماية إضافية خاصة بالموبايل.
+  أحداث إضافية للموبايل.
 */
 
 [
   'touchmove',
-  'pointercancel'
+  'pointercancel',
+  'pointerover',
+  'pointerenter'
 ].forEach(
   eventName=>{
+
+    ytBlocker.addEventListener(
+      eventName,
+      blockYouTubeNavigation,
+      {
+        capture:true,
+        passive:false
+      }
+    );
+
+
+    ytBrandBlocker.addEventListener(
+      eventName,
+      blockYouTubeNavigation,
+      {
+        capture:true,
+        passive:false
+      }
+    );
+
 
     ytTitleBlocker.addEventListener(
       eventName,
@@ -5168,11 +5349,6 @@ video.addEventListener(
 );
 
 
-/*
-  عند Seek:
-  نمسح المرجع.
-*/
-
 video.addEventListener(
   'seeking',
   ()=>{
@@ -5186,11 +5362,6 @@ video.addEventListener(
   }
 );
 
-
-/*
-  بعد Seek:
-  نبدأ tracking جديد من المكان الحالي.
-*/
 
 video.addEventListener(
   'seeked',
@@ -5377,28 +5548,13 @@ completeBtn.addEventListener(
 
 
 /* =========================================================
-   FULLSCREEN EVENTS
+   FULLSCREEN BUTTON
 ========================================================= */
 
 fullscreenBtn.addEventListener(
   'click',
   toggleFullscreen
 );
-
-
-document.addEventListener(
-  'fullscreenchange',
-  updateFullscreenButton
-);
-
-
-document.addEventListener(
-  'webkitfullscreenchange',
-  updateFullscreenButton
-);
-
-
-updateFullscreenButton();
 
 
 /* =========================================================
@@ -5416,7 +5572,7 @@ mobileMenuBtn.addEventListener(
 
 
 /*
-  إغلاق القائمة عند الضغط خارجها.
+  إغلاق قائمة الدروس عند الضغط خارجها.
 */
 
 document.addEventListener(
@@ -5476,10 +5632,6 @@ document.addEventListener(
 logoutBtn.addEventListener(
   'click',
   async ()=>{
-
-    /*
-      حفظ آخر تقدم قبل تسجيل الخروج.
-    */
 
     try{
 
@@ -5564,10 +5716,6 @@ async function getCurrentUser(){
       !data ||
       !data.user
     ){
-
-      /*
-        fallback للـlocalStorage
-      */
 
       try{
 
@@ -5687,10 +5835,6 @@ async function getCurrentUser(){
       error
     );
 
-
-    /*
-      fallback للـlocalStorage
-    */
 
     try{
 
