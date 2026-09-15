@@ -176,6 +176,7 @@ function createYouTubePlayer(item){ const id=getYouTubeId(item.url);if(!id||!win
 
 async function selectVideo(item){
   if(!item)return;
+  if(!item.url){ toast("هذا الدرس لا يحتوي على رابط فيديو حاليًا."); return; }
   state.currentVideoId=item.id;state.currentVideo={...item,is_youtube:isYouTubeUrl(item.url)};state.lastTime=0;state.watchedRanges=[];state.skips=0;state.sessionSaved=false;
   videoTitle.textContent=item.title||"بدون عنوان";videoSubtitle.textContent=item.class_group?`المجموعة: ${item.class_group}`:"درس تعليمي";
   document.querySelectorAll(".videoItem").forEach(el=>el.classList.toggle("active",String(el.dataset.id)===String(item.id)));
@@ -200,16 +201,41 @@ function render(){
 
 async function loadVideos(){
   videoList.innerHTML='<div class="loadingItem">جاري تحميل الدروس...</div>';
+
   try{
-    const {data,error}=await client.from('videos').select('id,title,url,class_group,is_premium').order('id',{ascending:true});
-    if(error) throw error;
-    state.all=Array.isArray(data)?data.filter(v=>v&&v.url):[];
+    /* الاستعلام الأساسي — لا يعتمد على بيانات الطالب */
+    let result = await client
+      .from('videos')
+      .select('id,title,url,class_group,is_premium')
+      .order('id',{ascending:true});
+
+    /* احتياطي في حالة وجود مشكلة في أعمدة select المحددة */
+    if(result.error){
+      console.warn('[Videos primary query]',result.error);
+      result = await client
+        .from('videos')
+        .select('*')
+        .order('id',{ascending:true});
+    }
+
+    if(result.error){
+      throw result.error;
+    }
+
+    state.all = Array.isArray(result.data) ? result.data : [];
+
     render();
-    if(!state.all.length){videoTitle.textContent="لا توجد فيديوهات متاحة حاليًا";videoSubtitle.textContent="سيظهر المحتوى هنا عند توفره.";}
+
+    if(!state.all.length){
+      videoTitle.textContent = "لا توجد فيديوهات متاحة حاليًا";
+      videoSubtitle.textContent = "سيظهر المحتوى هنا عند إضافة الدروس.";
+    }
+
   }catch(error){
     console.error('[Videos]',error);
-    videoList.innerHTML='<div class="emptyItem">❌ تعذر تحميل الدروس حاليًا.</div>';
-    toast('تعذر تحميل الدروس. افتح Console لمعرفة رسالة Supabase.');
+    const message = error?.message || error?.details || 'خطأ غير معروف';
+    videoList.innerHTML = `<div class="emptyItem">❌ تعذر تحميل الدروس حاليًا.<br><small>${String(message).replace(/[<>]/g,'')}</small></div>`;
+    toast('تعذر تحميل الدروس حاليًا.');
   }
 }
 
@@ -242,8 +268,13 @@ window.addEventListener("beforeunload",()=>{saveSession();});
 (async function init(){
   updateUserUI();
   startWatermark();
+
+  /* تحميل الفيديوهات مستقل تمامًا عن بيانات البروفايل */
   await loadVideos();
+
+  /* تحديث اسم الطالب وبياناته بعد ظهور قائمة الفيديوهات */
   getCurrentUser();
+
   setInterval(saveSession,30000);
 })();
 </script>
