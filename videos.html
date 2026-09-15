@@ -93,7 +93,8 @@ button{
 
 button:focus-visible,
 input:focus-visible,
-select:focus-visible{
+select:focus-visible,
+a:focus-visible{
   outline:2px solid rgba(67,143,255,.7);
   outline-offset:2px;
 }
@@ -205,6 +206,12 @@ select:focus-visible{
 
   transition:
     .2s ease;
+
+  text-decoration:none;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .topBtn:hover{
@@ -216,6 +223,14 @@ select:focus-visible{
 
   transform:
     translateY(-1px);
+}
+
+.homeBtn:hover{
+  border-color:
+    rgba(217,173,85,.45);
+
+  background:
+    rgba(217,173,85,.07);
 }
 
 .mobileMenu{
@@ -807,18 +822,19 @@ select:focus-visible{
 ========================================================= */
 
 /*
-  ملاحظة:
-  YouTube iframe خارجي Cross-Origin.
-  لذلك لا يمكن حذف النص من داخله بواسطة JavaScript.
+  YouTube يعمل داخل iframe خارجي Cross-Origin.
+  لا يمكن تعديل DOM الداخلي له من الصفحة.
 
-  تم توسيع مناطق الحجب بشكل كبير:
-  - يسار أسفل الفيديو
-  - يمين أسفل الفيديو
-  مع ترك الجزء الأوسط للتحكم.
+  لذلك نستخدم طبقات شفافة فوق المناطق التي تسمح
+  بالخروج إلى YouTube.
+
+  ytTitleBlocker:
+  حجب عنوان الفيديو والمنطقة القابلة للنقر حول العنوان.
 */
 
 .ytBlocker,
-.ytBrandBlocker{
+.ytBrandBlocker,
+.ytTitleBlocker{
   position:absolute;
 
   display:none;
@@ -833,14 +849,18 @@ select:focus-visible{
   -webkit-user-select:none;
 
   touch-action:none;
+
+  -webkit-touch-callout:none;
 }
 
 .stage.yt-active .ytBlocker,
-.stage.yt-active .ytBrandBlocker{
+.stage.yt-active .ytBrandBlocker,
+.stage.yt-active .ytTitleBlocker{
   display:block;
 }
 
-/* حجب منطقة Watch on YouTube والـbranding ناحية اليسار */
+
+/* منطقة Watch on YouTube السفلية */
 .ytBlocker{
   z-index:90;
 
@@ -851,7 +871,8 @@ select:focus-visible{
   height:86px;
 }
 
-/* حجب المنطقة المقابلة ناحية اليمين */
+
+/* منطقة branding السفلية */
 .ytBrandBlocker{
   z-index:89;
 
@@ -864,9 +885,87 @@ select:focus-visible{
 
 
 /*
-  Fullscreen
+  حجب كامل منطقة عنوان YouTube في أعلى المشغل.
+
+  على الكمبيوتر:
+  تغطي المنطقة التي يظهر بها اسم/عنوان الفيديو
+  وكل المساحة القابلة للنقر حوله.
+
+  لا توجد طريقة مضمونة لجعل الحجب يلتف حول النص
+  وحده Pixel-Perfect لأن YouTube يتحكم في واجهة الـiframe.
 */
 
+.ytTitleBlocker{
+  z-index:92;
+
+  top:0;
+  left:0;
+
+  width:72%;
+
+  height:76px;
+}
+
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+.stage:fullscreen{
+  width:100vw;
+  height:100vh;
+
+  min-height:100vh;
+
+  aspect-ratio:auto;
+
+  border:0;
+
+  border-radius:0;
+
+  background:#000;
+}
+
+.stage:-webkit-full-screen{
+  width:100vw;
+  height:100vh;
+
+  min-height:100vh;
+
+  aspect-ratio:auto;
+
+  border:0;
+
+  border-radius:0;
+
+  background:#000;
+}
+
+.stage:fullscreen video,
+.stage:fullscreen .yt,
+.stage:-webkit-full-screen video,
+.stage:-webkit-full-screen .yt{
+  width:100%;
+  height:100%;
+
+  object-fit:contain;
+}
+
+.stage:fullscreen .wm,
+.stage:-webkit-full-screen .wm{
+  top:22px;
+  left:22px;
+
+  padding:
+    9px 12px;
+
+  border-radius:11px;
+
+  font-size:11px;
+}
+
+
+/* حجب YouTube في Fullscreen */
 .stage:fullscreen .ytBlocker,
 .stage:-webkit-full-screen .ytBlocker{
   width:42%;
@@ -877,6 +976,12 @@ select:focus-visible{
 .stage:-webkit-full-screen .ytBrandBlocker{
   width:31%;
   height:100px;
+}
+
+.stage:fullscreen .ytTitleBlocker,
+.stage:-webkit-full-screen .ytTitleBlocker{
+  width:72%;
+  height:94px;
 }
 
 
@@ -1285,64 +1390,6 @@ select:focus-visible{
 
 
 /* =========================================================
-   FULLSCREEN
-========================================================= */
-
-.stage:fullscreen{
-  width:100vw;
-  height:100vh;
-
-  min-height:100vh;
-
-  aspect-ratio:auto;
-
-  border:0;
-
-  border-radius:0;
-
-  background:#000;
-}
-
-.stage:-webkit-full-screen{
-  width:100vw;
-  height:100vh;
-
-  min-height:100vh;
-
-  aspect-ratio:auto;
-
-  border:0;
-
-  border-radius:0;
-
-  background:#000;
-}
-
-.stage:fullscreen video,
-.stage:fullscreen .yt,
-.stage:-webkit-full-screen video,
-.stage:-webkit-full-screen .yt{
-  width:100%;
-  height:100%;
-
-  object-fit:contain;
-}
-
-.stage:fullscreen .wm,
-.stage:-webkit-full-screen .wm{
-  top:22px;
-  left:22px;
-
-  padding:
-    9px 12px;
-
-  border-radius:11px;
-
-  font-size:11px;
-}
-
-
-/* =========================================================
    MOBILE
 ========================================================= */
 
@@ -1371,6 +1418,10 @@ select:focus-visible{
 
   .brandText strong{
     font-size:13px;
+  }
+
+  .topActions{
+    gap:5px;
   }
 
   .layout{
@@ -1417,11 +1468,7 @@ select:focus-visible{
   }
 
   .mobileMenu{
-    display:block;
-  }
-
-  .logoutTop{
-    display:none;
+    display:inline-flex;
   }
 
   .mainCard{
@@ -1450,9 +1497,42 @@ select:focus-visible{
     font-size:15px;
   }
 
+  /*
+    على الموبايل:
+    نغطي عرضًا أكبر من منطقة عنوان YouTube
+    لأن واجهة YouTube تكون أكثر تداخلًا على الشاشات الصغيرة.
+  */
+
+  .ytTitleBlocker{
+    top:0;
+    left:0;
+
+    width:94%;
+    height:84px;
+
+    z-index:92;
+  }
+
 }
 
+
 @media(max-width:650px){
+
+  .topBtn{
+    min-height:36px;
+
+    padding:
+      0 9px;
+
+    border-radius:10px;
+
+    font-size:10px;
+  }
+
+  .homeBtn{
+    padding:
+      0 10px;
+  }
 
   .fullscreenBtn{
     min-width:108px;
@@ -1480,6 +1560,36 @@ select:focus-visible{
     width:100%;
 
     margin-top:10px;
+  }
+
+  /*
+    حجب عنوان YouTube بالكامل على الهاتف
+    مع هامش حماية صغير حول حدوده.
+  */
+
+  .ytTitleBlocker{
+    top:0;
+    left:0;
+
+    width:100%;
+    height:88px;
+
+    z-index:92;
+  }
+
+  /*
+    Fullscreen على الهاتف
+  */
+
+  .stage:fullscreen .ytTitleBlocker,
+  .stage:-webkit-full-screen .ytTitleBlocker{
+    top:0;
+    left:0;
+
+    width:100%;
+    height:102px;
+
+    z-index:92;
   }
 
   .ytBlocker{
@@ -1513,6 +1623,90 @@ select:focus-visible{
       7px 9px;
 
     font-size:9px;
+  }
+
+}
+
+
+@media(max-width:430px){
+
+  .homeBtn{
+    min-width:38px;
+
+    width:38px;
+
+    padding:0;
+
+    font-size:0;
+  }
+
+  .homeBtn::before{
+    content:"⌂";
+
+    font-size:17px;
+
+    line-height:1;
+  }
+
+  .mobileMenu{
+    min-width:38px;
+
+    width:38px;
+
+    padding:0;
+
+    font-size:0;
+  }
+
+  .mobileMenu::before{
+    content:"☰";
+
+    font-size:17px;
+
+    line-height:1;
+  }
+
+  .stage{
+    min-height:180px;
+  }
+
+  .ytTitleBlocker{
+    height:86px;
+  }
+
+  .stage:fullscreen .ytTitleBlocker,
+  .stage:-webkit-full-screen .ytTitleBlocker{
+    height:100px;
+  }
+
+}
+
+
+/*
+  عندما يكون الجهاز صغيرًا جدًا:
+  نثبت زر الصفحة الرئيسية بصورة مختصرة
+  مع الحفاظ على بقية الأزرار.
+*/
+
+@media(max-width:350px){
+
+  .brand{
+    gap:8px;
+  }
+
+  .logo{
+    width:38px;
+    height:38px;
+    flex-basis:38px;
+    font-size:18px;
+  }
+
+  .brandText strong{
+    font-size:11px;
+  }
+
+  .topActions{
+    gap:3px;
   }
 
 }
@@ -1551,13 +1745,33 @@ select:focus-visible{
 
   <div class="topActions">
 
+    <!-- Mobile menu -->
+
     <button
       class="topBtn mobileMenu"
       id="mobileMenuBtn"
       type="button"
+      title="قائمة الدروس"
+      aria-label="قائمة الدروس"
     >
       ☰ الدروس
     </button>
+
+
+    <!-- HOMEPAGE BUTTON -->
+
+    <a
+      class="topBtn homeBtn"
+      id="homeBtn"
+      href="index.html"
+      title="العودة إلى الصفحة الرئيسية"
+      aria-label="العودة إلى الصفحة الرئيسية"
+    >
+      ⌂ الصفحة الرئيسية
+    </a>
+
+
+    <!-- LOGOUT -->
 
     <button
       class="topBtn logoutTop"
@@ -1625,6 +1839,7 @@ select:focus-visible{
           type="search"
           autocomplete="off"
           placeholder="ابحث عن درس..."
+          aria-label="البحث عن درس"
         >
 
       </div>
@@ -1696,8 +1911,11 @@ select:focus-visible{
         ></div>
 
 
-        <!-- YOUTUBE BLOCKERS -->
+        <!-- =================================================
+             YOUTUBE BLOCKERS
+        ================================================== -->
 
+        <!-- Bottom left -->
         <div
           class="ytBlocker"
           id="ytBlocker"
@@ -1705,9 +1923,26 @@ select:focus-visible{
           title="المشاهدة متاحة داخل منصة د. يوسف نافع فقط"
         ></div>
 
+
+        <!-- Bottom right -->
         <div
           class="ytBrandBlocker"
           id="ytBrandBlocker"
+          aria-hidden="true"
+          title="المشاهدة متاحة داخل منصة د. يوسف نافع فقط"
+        ></div>
+
+
+        <!--
+          TITLE BLOCKER
+
+          يغطي عنوان YouTube والمنطقة القابلة للنقر
+          حوله، ويعمل أيضًا في الموبايل وFullscreen.
+        -->
+
+        <div
+          class="ytTitleBlocker"
+          id="ytTitleBlocker"
           aria-hidden="true"
           title="المشاهدة متاحة داخل منصة د. يوسف نافع فقط"
         ></div>
@@ -1752,6 +1987,8 @@ select:focus-visible{
 
     <div class="tools">
 
+      <!-- FULLSCREEN -->
+
       <button
         class="tool fullscreenBtn"
         id="fullscreenBtn"
@@ -1761,6 +1998,8 @@ select:focus-visible{
         ⛶ ملء الشاشة
       </button>
 
+
+      <!-- SPEED -->
 
       <label class="tool">
 
@@ -1803,6 +2042,8 @@ select:focus-visible{
 
       </label>
 
+
+      <!-- QUALITY -->
 
       <label
         class="tool"
@@ -1902,7 +2143,7 @@ select:focus-visible{
 
 
       <div class="notice">
-        يتم حساب وقت المشاهدة الفعلي فقط. التقديم أو الرجوع داخل الفيديو لا يضيف وقتًا إلى وقت الاستماع إلا عند تشغيل الجزء فعليًا.
+        يتم حساب وقت المشاهدة الفعلي فقط. التقديم أو الرجوع داخل الفيديو لا يضيف وقتًا إلى وقت المشاهدة إلا عند تشغيل الجزء فعليًا.
       </div>
 
     </div>
@@ -1956,7 +2197,7 @@ const SUPABASE_URL =
   "https://nhdowqzecpwmkunczodl.supabase.co";
 
 const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJuaGRvd3F6ZWNwd3B3bWt1bmN6b2RsIiwicm9sIjoiYW5vbiIsImlhdCI6MTc4MDYwMDI1NSwiZXhwIjoyMDk2MTc2MjU1fQ.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
 const client =
   window.supabase.createClient(
@@ -1974,37 +2215,45 @@ const $ = id =>
 
 
 function norm(value){
+
   return String(value ?? '')
     .trim()
     .toLowerCase();
+
 }
 
 
 function label(value){
+
   const v =
     String(value ?? '').trim();
 
   return v || 'غير محدد';
+
 }
 
 
 function esc(value){
+
   return String(value ?? '')
     .replaceAll('&','&amp;')
     .replaceAll('<','&lt;')
     .replaceAll('>','&gt;')
     .replaceAll('"','&quot;')
     .replaceAll("'","&#039;");
+
 }
 
 
 function number(value){
+
   const n =
     Number(value);
 
   return Number.isFinite(n)
     ? n
     : 0;
+
 }
 
 
@@ -2111,6 +2360,8 @@ const state = {
 
   ytPromise: null,
 
+  ytPromiseResolve: null,
+
   speed: 1,
 
   quality: 'default',
@@ -2125,24 +2376,12 @@ const state = {
 
   pct: 0,
 
-  /*
-    مجموع الثواني التي شاهدها الطالب فعليًا.
-  */
   watched: 0,
 
-  /*
-    آخر موضع للفيديو أثناء التشغيل.
-  */
   lastVideoTime: null,
 
-  /*
-    الوقت الحقيقي المقابل لآخر عينة.
-  */
   lastWallTime: null,
 
-  /*
-    آخر قيمة تم حفظها.
-  */
   lastSaveWatched: -1,
 
   completed: false,
@@ -2151,23 +2390,8 @@ const state = {
 
   loadingToken: 0,
 
-  /*
-    فترات المشاهدة الفعلية داخل الجلسة الحالية.
-
-    مثال:
-
-    [
-      [0,40],
-      [120,160]
-    ]
-
-    => 80 ثانية فعلية.
-  */
   watchedRanges: [],
 
-  /*
-    منع تكرار احتساب نفس الجزء.
-  */
   rangeEpsilon: 0.15
 
 };
@@ -2403,20 +2627,6 @@ function isYT(url){
    WATCH RANGE ENGINE
 ========================================================= */
 
-/*
-  إضافة فترة مشاهدة فعلية.
-
-  لو الطالب شاهد:
-  0 -> 30
-  ثم 100 -> 120
-
-  يتم تخزين:
-  [0,30]
-  [100,120]
-
-  وليس 0 -> 120.
-*/
-
 function addWatchedRange(
   start,
   end
@@ -2474,11 +2684,6 @@ function addWatchedRange(
   }
 
 
-  /*
-    لو الفترة الجديدة قريبة من فترة قديمة
-    ندمجها.
-  */
-
   const epsilon =
     state.rangeEpsilon;
 
@@ -2503,10 +2708,6 @@ function addWatchedRange(
       range[1];
 
 
-    /*
-      لا يوجد تداخل ولا قرب.
-    */
-
     if(
       newEnd + epsilon < a ||
       newStart - epsilon > b
@@ -2520,11 +2721,6 @@ function addWatchedRange(
 
     }
 
-
-    /*
-      يوجد تداخل.
-      ندمج.
-    */
 
     newStart =
       Math.min(
@@ -2551,10 +2747,6 @@ function addWatchedRange(
     (a,b)=>a[0]-b[0]
   );
 
-
-  /*
-    Merge إضافي بعد الترتيب.
-  */
 
   const merged = [];
 
@@ -2603,11 +2795,6 @@ function addWatchedRange(
 }
 
 
-/*
-  حساب إجمالي الثواني الفعلية
-  بدون تكرار المناطق.
-*/
-
 function calculateWatchedSeconds(){
 
   let total = 0;
@@ -2644,11 +2831,6 @@ function calculateWatchedSeconds(){
 }
 
 
-/*
-  إنشاء Range واحدة من آخر موضع
-  إلى الموضع الحالي.
-*/
-
 function recordPlaybackSegment(
   previous,
   current
@@ -2682,12 +2864,6 @@ function recordPlaybackSegment(
           ) / 1000
         );
 
-
-  /*
-    السماح بسرعة 2.5x تقريبًا.
-    لو current قفز بشكل أكبر من الزمن الحقيقي
-    نعتبره Seek ولا نسجل القفزة.
-  */
 
   const videoDelta =
     current - previous;
@@ -2758,10 +2934,6 @@ function trackActualWatch(
     performance.now();
 
 
-  /*
-    أول عينة.
-  */
-
   if(
     state.lastVideoTime === null ||
     state.lastWallTime === null
@@ -2799,15 +2971,13 @@ function trackActualWatch(
 
 
   /*
-    نحسب فقط لو الحركة متوافقة مع الزمن الحقيقي.
+    لا نحسب Seek.
 
-    بهذا الشكل:
-    Play 0 -> 20
-    Seek 20 -> 200
-    Play 200 -> 220
+    لو:
+    20 -> 500
+    في لحظة قصيرة
 
-    النتيجة = 40 ثانية،
-    وليس 220 ثانية.
+    لن يتم تسجيل القفزة.
   */
 
   if(
@@ -2818,11 +2988,6 @@ function trackActualWatch(
       wallDelta * 2.5
     )
   ){
-
-    /*
-      نستخدم المقطع الفعلي،
-      وليس wallDelta فقط.
-    */
 
     const safeEnd =
       current;
@@ -2924,10 +3089,6 @@ function updateProgressUI(
     percent + '%';
 
 
-  /*
-    دقة عشرية.
-  */
-
   progressText.textContent =
     percent.toFixed(1) + '%';
 
@@ -3008,10 +3169,6 @@ async function save(
         )
       : 0;
 
-
-  /*
-    لا نحفظ كل نصف ثانية.
-  */
 
   if(
     !force &&
@@ -3171,10 +3328,57 @@ function waitYT(){
     new Promise(
       resolve=>{
 
+        state.ytPromiseResolve =
+          resolve;
+
+
+        const oldCallback =
+          window.onYouTubeIframeAPIReady;
+
+
         window.onYouTubeIframeAPIReady =
           ()=>{
-            resolve();
+
+            if(
+              typeof oldCallback ===
+              'function'
+            ){
+
+              try{
+                oldCallback();
+              }catch{}
+
+            }
+
+
+            if(
+              state.ytPromiseResolve
+            ){
+
+              const resolver =
+                state.ytPromiseResolve;
+
+              state.ytPromiseResolve =
+                null;
+
+              resolver();
+
+            }
+
           };
+
+
+        const existing =
+          document.getElementById(
+            'youtube-api-script'
+          );
+
+
+        if(existing){
+
+          return;
+
+        }
 
 
         const script =
@@ -3188,6 +3392,9 @@ function waitYT(){
 
         script.src =
           'https://www.youtube.com/iframe_api';
+
+        script.async =
+          true;
 
 
         document.head.appendChild(
@@ -3232,6 +3439,11 @@ function destroyYT(){
 
   youtubePlayer.innerHTML =
     '';
+
+
+  stage.classList.remove(
+    'yt-active'
+  );
 
 }
 
@@ -3356,13 +3568,6 @@ async function loadSavedProgress(
   videoId
 ){
 
-  /*
-    مهم:
-    لا نرث watchedRanges من جلسة قديمة،
-    لأن قاعدة البيانات تحفظ مجموع الثواني الفعلية
-    وليس الفترات نفسها.
-  */
-
   state.watchedRanges =
     [];
 
@@ -3432,14 +3637,6 @@ async function loadSavedProgress(
         )
       );
 
-
-    /*
-      completed الحقيقي:
-      الوصول إلى نهاية الفيديو.
-
-      لا نعتمد على completed وحده
-      حتى لا تتأثر البيانات القديمة.
-    */
 
     state.completed =
       state.duration > 0 &&
@@ -3587,13 +3784,6 @@ async function loadNative(
         );
 
 
-      /*
-        استكمال آخر مكان.
-
-        مهم:
-        عملية seek نفسها لا تسجل كمشاهدة.
-      */
-
       if(
         !state.completed &&
         state.watched > 2 &&
@@ -3662,6 +3852,8 @@ async function loadYT(
       'رابط YouTube غير صحيح.'
     );
 
+    hideLoading();
+
     return;
 
   }
@@ -3672,7 +3864,21 @@ async function loadYT(
   );
 
 
-  await waitYT();
+  try{
+
+    await waitYT();
+
+  }catch(error){
+
+    hideLoading();
+
+    toast(
+      'تعذر تحميل مشغل YouTube.'
+    );
+
+    return;
+
+  }
 
 
   destroyYT();
@@ -3756,6 +3962,12 @@ async function loadYT(
                   'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen'
                 );
 
+
+                iframe.setAttribute(
+                  'referrerpolicy',
+                  'strict-origin-when-cross-origin'
+                );
+
               }
 
             }catch{}
@@ -3770,9 +3982,8 @@ async function loadYT(
 
 
             /*
-              استكمال من آخر قيمة محفوظة.
-
-              لا نضيف هذه القفزة إلى watched.
+              لو يوجد progress محفوظ،
+              نرجع إليه بدون تسجيل الـseek كمشاهدة.
             */
 
             if(
@@ -3815,8 +4026,7 @@ async function loadYT(
             ){
 
               /*
-                بداية تشغيل أو بعد Seek.
-                لا نحسب القفزة.
+                بداية التشغيل أو العودة بعد Seek.
               */
 
               state.lastVideoTime =
@@ -3866,14 +4076,11 @@ async function loadYT(
 
               if(duration > 0){
 
-                /*
-                  عند النهاية:
-                  نضيف آخر جزء حتى النهاية.
-                */
-
                 if(
                   state.lastVideoTime !==
-                  null
+                  null &&
+                  duration >
+                  state.lastVideoTime
                 ){
 
                   addWatchedRange(
@@ -3889,7 +4096,7 @@ async function loadYT(
 
 
                 /*
-                  الفيديو بالكامل أصبح مشاهدًا.
+                  نهاية الفيديو = 100%
                 */
 
                 state.watched =
@@ -4084,6 +4291,11 @@ async function selectVideo(
   resetPlayer();
 
 
+  /*
+    resetPlayer لا يلمس state progress،
+    لذلك progress المحفوظ يظل موجودًا.
+  */
+
   state.current =
     item;
 
@@ -4174,6 +4386,7 @@ function resetUI(){
 
   state.watchedRanges =
     [];
+
 
   updateProgressUI(
     0,
@@ -4450,6 +4663,10 @@ async function loadVideos(){
 
   try{
 
+    /*
+      QUERY جدول videos محفوظ كما هو.
+    */
+
     const {
       data,
       error
@@ -4686,6 +4903,10 @@ async function enterFullscreen(){
     );
 
 
+    /*
+      Fallback لـiframe
+    */
+
     try{
 
       const iframe =
@@ -4792,6 +5013,9 @@ const ytBlocker =
 const ytBrandBlocker =
   $('ytBrandBlocker');
 
+const ytTitleBlocker =
+  $('ytTitleBlocker');
+
 
 function blockYouTubeNavigation(
   event
@@ -4813,6 +5037,15 @@ function blockYouTubeNavigation(
 
 }
 
+
+/*
+  هذه الأحداث تجعل الحجب فعالًا:
+  - Click
+  - Touch
+  - Mouse
+  - Pointer
+  - Context menu
+*/
 
 const blockedEvents = [
 
@@ -4853,6 +5086,41 @@ blockedEvents.forEach(
 
 
     ytBrandBlocker.addEventListener(
+      eventName,
+      blockYouTubeNavigation,
+      {
+        capture:true,
+        passive:false
+      }
+    );
+
+
+    /*
+      NEW:
+      حجب عنوان YouTube بالكامل.
+    */
+
+    ytTitleBlocker.addEventListener(
+      eventName,
+      blockYouTubeNavigation,
+      {
+        capture:true,
+        passive:false
+      }
+    );
+
+  }
+);
+
+
+/*
+  حماية إضافية للمس.
+*/
+
+['touchmove','pointercancel'].forEach(
+  eventName=>{
+
+    ytTitleBlocker.addEventListener(
       eventName,
       blockYouTubeNavigation,
       {
@@ -4904,15 +5172,8 @@ video.addEventListener(
 
 
 /*
-  أهم جزء في الـtracking:
-
-  عند الضغط على seek:
-  نمسح المرجع.
-
-  وبالتالي القفزة من:
-  30 -> 500
-
-  لن يتم احتسابها.
+  عند Seek:
+  لا يتم احتساب القفزة.
 */
 
 video.addEventListener(
@@ -4929,14 +5190,14 @@ video.addEventListener(
 );
 
 
+/*
+  بعد Seek:
+  نبدأ tracking من الموقع الجديد.
+*/
+
 video.addEventListener(
   'seeked',
   ()=>{
-
-    /*
-      لا نسجل الـseek.
-      نبدأ حسابًا جديدًا من الموضع الجديد.
-    */
 
     state.lastVideoTime =
       video.currentTime;
@@ -4999,10 +5260,6 @@ video.addEventListener(
 
 
     if(duration > 0){
-
-      /*
-        إضافة آخر جزء إلى النهاية.
-      */
 
       if(
         state.lastVideoTime !==
@@ -5161,6 +5418,61 @@ mobileMenuBtn.addEventListener(
 );
 
 
+/*
+  إغلاق القائمة عند الضغط خارجها
+  على الشاشات الصغيرة.
+*/
+
+document.addEventListener(
+  'click',
+  event=>{
+
+    if(
+      window.innerWidth > 800
+    ){
+
+      return;
+
+    }
+
+
+    if(
+      !sidebar.classList.contains(
+        'open'
+      )
+    ){
+
+      return;
+
+    }
+
+
+    const insideSidebar =
+      sidebar.contains(
+        event.target
+      );
+
+    const insideMenu =
+      mobileMenuBtn.contains(
+        event.target
+      );
+
+
+    if(
+      !insideSidebar &&
+      !insideMenu
+    ){
+
+      sidebar.classList.remove(
+        'open'
+      );
+
+    }
+
+  }
+);
+
+
 /* =========================================================
    LOGOUT
 ========================================================= */
@@ -5168,6 +5480,15 @@ mobileMenuBtn.addEventListener(
 logoutBtn.addEventListener(
   'click',
   async ()=>{
+
+    try{
+
+      await save(
+        true
+      );
+
+    }catch{}
+
 
     try{
 
@@ -5196,13 +5517,33 @@ window.addEventListener(
     ){
 
       /*
-        لا يمكن الاعتماد على await هنا،
-        لكن نحاول الحفظ الأخير.
+        محاولة أخيرة للحفظ.
       */
 
       save(true);
 
     }
+
+  }
+);
+
+
+/* =========================================================
+   VISIBILITY
+========================================================= */
+
+document.addEventListener(
+  'visibilitychange',
+  ()=>{
+
+    if(
+      document.hidden
+    ){
+
+      save(false);
+
+    }
+
   }
 );
 
@@ -5229,9 +5570,7 @@ async function getCurrentUser(){
     ){
 
       /*
-        fallback للـlocalStorage
-        لو نظام تسجيل الدخول الحالي عندك
-        يستخدم user هناك.
+        Fallback للـlocalStorage
       */
 
       try{
@@ -5384,6 +5723,18 @@ async function getCurrentUser(){
   }
 
 }
+
+
+/* =========================================================
+   PERIODIC SAVE
+========================================================= */
+
+setInterval(
+  ()=>{
+    save(false);
+  },
+  15000
+);
 
 
 /* =========================================================
