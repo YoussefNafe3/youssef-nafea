@@ -823,14 +823,12 @@ a:focus-visible{
 
 /*
   YouTube يعمل داخل iframe خارجي Cross-Origin.
-  لا يمكن تعديل DOM الداخلي له من الصفحة.
+  لذلك لا يمكن للصفحة تعديل HTML الداخلي لواجهة YouTube.
 
-  لذلك نستخدم طبقات شفافة فوق المناطق التي تسمح
-  بالخروج إلى YouTube.
-
-  ytTitleBlocker:
-  حجب عنوان الفيديو والمنطقة القابلة للنقر حول العنوان.
+  الحل هنا عبارة عن طبقات شفافة فوق مناطق الخروج
+  من المنصة.
 */
+
 
 .ytBlocker,
 .ytBrandBlocker,
@@ -853,6 +851,11 @@ a:focus-visible{
   -webkit-touch-callout:none;
 }
 
+
+/*
+  لا تظهر أي طبقة إلا مع فيديو YouTube.
+*/
+
 .stage.yt-active .ytBlocker,
 .stage.yt-active .ytBrandBlocker,
 .stage.yt-active .ytTitleBlocker{
@@ -860,7 +863,10 @@ a:focus-visible{
 }
 
 
-/* منطقة Watch on YouTube السفلية */
+/*
+  المنطقة السفلية اليسرى.
+*/
+
 .ytBlocker{
   z-index:90;
 
@@ -872,7 +878,10 @@ a:focus-visible{
 }
 
 
-/* منطقة branding السفلية */
+/*
+  المنطقة السفلية اليمنى.
+*/
+
 .ytBrandBlocker{
   z-index:89;
 
@@ -885,14 +894,18 @@ a:focus-visible{
 
 
 /*
-  حجب كامل منطقة عنوان YouTube في أعلى المشغل.
+  ========================================================
+  TITLE BLOCKER
+  ========================================================
 
-  على الكمبيوتر:
-  تغطي المنطقة التي يظهر بها اسم/عنوان الفيديو
-  وكل المساحة القابلة للنقر حوله.
+  هذه الطبقة هي الخاصة بعنوان YouTube.
 
-  لا توجد طريقة مضمونة لجعل الحجب يلتف حول النص
-  وحده Pixel-Perfect لأن YouTube يتحكم في واجهة الـiframe.
+  تم جعلها أكبر من النص نفسه بهامش حماية،
+  لأن موضع ومساحة عنوان YouTube قد تختلف
+  حسب حجم الشاشة وواجهة المشغل.
+
+  z-index = 92
+  أعلى من الـiframe وأقل من الـwatermark.
 */
 
 .ytTitleBlocker{
@@ -902,7 +915,6 @@ a:focus-visible{
   left:0;
 
   width:72%;
-
   height:76px;
 }
 
@@ -965,7 +977,10 @@ a:focus-visible{
 }
 
 
-/* حجب YouTube في Fullscreen */
+/*
+  حجب YouTube في Fullscreen.
+*/
+
 .stage:fullscreen .ytBlocker,
 .stage:-webkit-full-screen .ytBlocker{
   width:42%;
@@ -1403,6 +1418,7 @@ a:focus-visible{
 
 }
 
+
 @media(max-width:800px){
 
   .top{
@@ -1497,18 +1513,19 @@ a:focus-visible{
     font-size:15px;
   }
 
+
   /*
-    على الموبايل:
-    نغطي عرضًا أكبر من منطقة عنوان YouTube
-    لأن واجهة YouTube تكون أكثر تداخلًا على الشاشات الصغيرة.
+    موبايل:
+    تغطية منطقة العنوان بالكامل
+    لتجنب الضغط على أي جزء من رابط YouTube.
   */
 
   .ytTitleBlocker{
     top:0;
     left:0;
 
-    width:94%;
-    height:84px;
+    width:100%;
+    height:88px;
 
     z-index:92;
   }
@@ -1562,9 +1579,10 @@ a:focus-visible{
     margin-top:10px;
   }
 
+
   /*
-    حجب عنوان YouTube بالكامل على الهاتف
-    مع هامش حماية صغير حول حدوده.
+    الموبايل:
+    العنوان بالكامل + هامش حماية
   */
 
   .ytTitleBlocker{
@@ -1577,8 +1595,9 @@ a:focus-visible{
     z-index:92;
   }
 
+
   /*
-    Fullscreen على الهاتف
+    Fullscreen على الموبايل
   */
 
   .stage:fullscreen .ytTitleBlocker,
@@ -1591,6 +1610,7 @@ a:focus-visible{
 
     z-index:92;
   }
+
 
   .ytBlocker{
     width:45%;
@@ -1631,9 +1651,8 @@ a:focus-visible{
 @media(max-width:430px){
 
   .homeBtn{
-    min-width:38px;
-
     width:38px;
+    min-width:38px;
 
     padding:0;
 
@@ -1649,9 +1668,8 @@ a:focus-visible{
   }
 
   .mobileMenu{
-    min-width:38px;
-
     width:38px;
+    min-width:38px;
 
     padding:0;
 
@@ -1670,6 +1688,7 @@ a:focus-visible{
     min-height:180px;
   }
 
+
   .ytTitleBlocker{
     height:86px;
   }
@@ -1682,12 +1701,6 @@ a:focus-visible{
 }
 
 
-/*
-  عندما يكون الجهاز صغيرًا جدًا:
-  نثبت زر الصفحة الرئيسية بصورة مختصرة
-  مع الحفاظ على بقية الأزرار.
-*/
-
 @media(max-width:350px){
 
   .brand{
@@ -1697,7 +1710,9 @@ a:focus-visible{
   .logo{
     width:38px;
     height:38px;
+
     flex-basis:38px;
+
     font-size:18px;
   }
 
@@ -1712,6 +1727,7 @@ a:focus-visible{
 }
 </style>
 </head>
+
 
 <body>
 
@@ -1745,7 +1761,7 @@ a:focus-visible{
 
   <div class="topActions">
 
-    <!-- Mobile menu -->
+    <!-- MOBILE MENU -->
 
     <button
       class="topBtn mobileMenu"
@@ -1758,7 +1774,7 @@ a:focus-visible{
     </button>
 
 
-    <!-- HOMEPAGE BUTTON -->
+    <!-- HOMEPAGE -->
 
     <a
       class="topBtn homeBtn"
@@ -1915,7 +1931,6 @@ a:focus-visible{
              YOUTUBE BLOCKERS
         ================================================== -->
 
-        <!-- Bottom left -->
         <div
           class="ytBlocker"
           id="ytBlocker"
@@ -1924,7 +1939,6 @@ a:focus-visible{
         ></div>
 
 
-        <!-- Bottom right -->
         <div
           class="ytBrandBlocker"
           id="ytBrandBlocker"
@@ -1935,9 +1949,6 @@ a:focus-visible{
 
         <!--
           TITLE BLOCKER
-
-          يغطي عنوان YouTube والمنطقة القابلة للنقر
-          حوله، ويعمل أيضًا في الموبايل وFullscreen.
         -->
 
         <div
@@ -2197,7 +2208,8 @@ const SUPABASE_URL =
   "https://nhdowqzecpwmkunczodl.supabase.co";
 
 const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJuaGRvd3F6ZWNwd3B3bWt1bmN6b2RsIiwicm9sIjoiYW5vbiIsImlhdCI6MTc4MDYwMDI1NSwiZXhwIjoyMDk2MTc2MjU1fQ.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+
 
 const client =
   window.supabase.createClient(
@@ -2969,16 +2981,6 @@ function trackActualWatch(
       (now - state.lastWallTime) / 1000
     );
 
-
-  /*
-    لا نحسب Seek.
-
-    لو:
-    20 -> 500
-    في لحظة قصيرة
-
-    لن يتم تسجيل القفزة.
-  */
 
   if(
     videoDelta >= 0 &&
@@ -3982,8 +3984,7 @@ async function loadYT(
 
 
             /*
-              لو يوجد progress محفوظ،
-              نرجع إليه بدون تسجيل الـseek كمشاهدة.
+              استكمال المشاهدة المحفوظة.
             */
 
             if(
@@ -4026,7 +4027,7 @@ async function loadYT(
             ){
 
               /*
-                بداية التشغيل أو العودة بعد Seek.
+                لا نحسب الـseek كوقت مشاهدة.
               */
 
               state.lastVideoTime =
@@ -4096,7 +4097,7 @@ async function loadYT(
 
 
                 /*
-                  نهاية الفيديو = 100%
+                  عند النهاية يصبح الفيديو 100%.
                 */
 
                 state.watched =
@@ -4290,11 +4291,6 @@ async function selectVideo(
 
   resetPlayer();
 
-
-  /*
-    resetPlayer لا يلمس state progress،
-    لذلك progress المحفوظ يظل موجودًا.
-  */
 
   state.current =
     item;
@@ -4664,7 +4660,7 @@ async function loadVideos(){
   try{
 
     /*
-      QUERY جدول videos محفوظ كما هو.
+      نفس Query جدول videos بدون أي تغيير.
     */
 
     const {
@@ -4904,7 +4900,7 @@ async function enterFullscreen(){
 
 
     /*
-      Fallback لـiframe
+      Fallback للـYouTube iframe
     */
 
     try{
@@ -5021,6 +5017,10 @@ function blockYouTubeNavigation(
   event
 ){
 
+  /*
+    منع انتقال الضغط إلى الـiframe.
+  */
+
   event.preventDefault();
 
   event.stopPropagation();
@@ -5039,12 +5039,7 @@ function blockYouTubeNavigation(
 
 
 /*
-  هذه الأحداث تجعل الحجب فعالًا:
-  - Click
-  - Touch
-  - Mouse
-  - Pointer
-  - Context menu
+  مجموعة أحداث الماوس واللمس.
 */
 
 const blockedEvents = [
@@ -5096,8 +5091,7 @@ blockedEvents.forEach(
 
 
     /*
-      NEW:
-      حجب عنوان YouTube بالكامل.
+      حجب عنوان YouTube.
     */
 
     ytTitleBlocker.addEventListener(
@@ -5114,10 +5108,13 @@ blockedEvents.forEach(
 
 
 /*
-  حماية إضافية للمس.
+  حماية إضافية خاصة بالموبايل.
 */
 
-['touchmove','pointercancel'].forEach(
+[
+  'touchmove',
+  'pointercancel'
+].forEach(
   eventName=>{
 
     ytTitleBlocker.addEventListener(
@@ -5173,7 +5170,7 @@ video.addEventListener(
 
 /*
   عند Seek:
-  لا يتم احتساب القفزة.
+  نمسح المرجع.
 */
 
 video.addEventListener(
@@ -5192,7 +5189,7 @@ video.addEventListener(
 
 /*
   بعد Seek:
-  نبدأ tracking من الموقع الجديد.
+  نبدأ tracking جديد من المكان الحالي.
 */
 
 video.addEventListener(
@@ -5419,8 +5416,7 @@ mobileMenuBtn.addEventListener(
 
 
 /*
-  إغلاق القائمة عند الضغط خارجها
-  على الشاشات الصغيرة.
+  إغلاق القائمة عند الضغط خارجها.
 */
 
 document.addEventListener(
@@ -5481,6 +5477,10 @@ logoutBtn.addEventListener(
   'click',
   async ()=>{
 
+    /*
+      حفظ آخر تقدم قبل تسجيل الخروج.
+    */
+
     try{
 
       await save(
@@ -5515,10 +5515,6 @@ window.addEventListener(
       state.id &&
       me
     ){
-
-      /*
-        محاولة أخيرة للحفظ.
-      */
 
       save(true);
 
@@ -5570,7 +5566,7 @@ async function getCurrentUser(){
     ){
 
       /*
-        Fallback للـlocalStorage
+        fallback للـlocalStorage
       */
 
       try{
