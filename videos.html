@@ -2,281 +2,5977 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الفيديوهات | د. يوسف نافع</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#07111f;--panel:#0d1b2f;--panel2:#101f36;--line:rgba(255,255,255,.08);--text:#f5f7fb;--muted:#9fb0c8;--blue:#2563eb;--blue2:#3b82f6;--gold:#f5c542;--danger:#ef4444;}
-*{box-sizing:border-box;margin:0;padding:0;font-family:Cairo,sans-serif}html,body{min-height:100%;background:linear-gradient(135deg,#06101d,#0b1727 50%,#101c30);color:var(--text)}body{min-height:100vh;display:flex;overflow-x:hidden}.hidden{display:none!important}
-button,input{font:inherit}.app{width:100%;display:flex;min-height:100vh}.sidebar{width:315px;background:rgba(7,17,31,.96);border-left:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:14px;position:sticky;top:0;height:100vh;overflow:auto;z-index:20}.brand{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:800;color:var(--gold);font-size:22px;padding:8px}.count{color:var(--muted);font-size:13px;text-align:center}.search{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--line);background:#0a1626;color:#fff;outline:none}.search:focus{border-color:rgba(59,130,246,.6)}.videoList{display:flex;flex-direction:column;gap:9px}.videoItem{border:1px solid transparent;background:rgba(255,255,255,.035);padding:13px;border-radius:13px;cursor:pointer;transition:.2s}.videoItem:hover,.videoItem.active{background:rgba(37,99,235,.18);border-color:rgba(59,130,246,.4)}.videoItemTitle{font-size:14px;font-weight:700;line-height:1.65}.videoItemMeta{margin-top:5px;color:var(--muted);font-size:11px}.emptyItem,.loadingItem{color:var(--muted);font-size:13px;padding:18px;text-align:center;background:rgba(255,255,255,.025);border-radius:12px}
-.main{flex:1;padding:18px;min-width:0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.topLeft{display:flex;align-items:center;gap:10px;min-width:0}.pageTitle{font-size:19px;font-weight:800}.studentChip{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.studentName{font-weight:700}.idBadge{padding:4px 9px;border-radius:999px;background:rgba(245,197,66,.12);border:1px solid rgba(245,197,66,.25);color:var(--gold);font-size:11px;font-weight:700}.topActions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:11px;padding:10px 14px;cursor:pointer;font-weight:700;color:#fff;background:var(--blue)}.btn.secondary{background:#17263e}.btn.danger{background:#7f1d1d}.btn:hover{filter:brightness(1.07)}.mobileMenu{display:none}
-.playerCard{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.025));border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.25)}.playerHeader{padding:16px 18px;border-bottom:1px solid var(--line)}#videoTitle{font-size:20px;font-weight:800;line-height:1.6}#videoSubtitle{color:var(--muted);font-size:12px;margin-top:3px}.stage{position:relative;background:#000;aspect-ratio:16/9;min-height:250px;overflow:hidden}.stage video,.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}.ytLayer{position:absolute;inset:0;background:transparent}.ytBlocker{position:absolute;inset:0 0 auto 0;height:62px;background:linear-gradient(#000,rgba(0,0,0,.55),transparent);z-index:6;pointer-events:auto}.ytTitleBlocker{position:absolute;top:0;left:0;right:0;height:86px;background:rgba(0,0,0,.92);z-index:7;pointer-events:none}.ytBottomBlocker{position:absolute;left:0;right:0;bottom:0;height:52px;background:linear-gradient(transparent,rgba(0,0,0,.95));z-index:6;pointer-events:none}.watermark{position:absolute;z-index:8;pointer-events:none;user-select:none;color:rgba(255,255,255,.33);font-size:11px;line-height:1.65;text-shadow:0 1px 3px rgba(0,0,0,.75);white-space:pre-line}.captureShield{position:absolute;inset:0;background:#000;display:none;align-items:center;justify-content:center;text-align:center;padding:25px;z-index:50;color:#fff;font-weight:800}.captureShield.show{display:flex}.captureShield small{display:block;color:#aaa;margin-top:8px;font-weight:500}.playerControls{padding:14px 18px}.controlRow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.speedGroup{display:flex;gap:6px;flex-wrap:wrap}.speedBtn{padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:#12223a;color:#fff;cursor:pointer}.speedBtn.active{background:var(--blue);border-color:var(--blue)}.qualitySelect{padding:8px 10px;background:#12223a;border:1px solid var(--line);border-radius:9px;color:#fff}.completeBtn{margin-inline-start:auto;background:#14532d}.completeBtn:disabled{opacity:.6;cursor:not-allowed}.progressInfo{display:flex;justify-content:space-between;gap:10px;margin-top:12px;color:var(--muted);font-size:12px}.progress{height:7px;background:#172235;border-radius:999px;overflow:hidden;margin-top:7px}.progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--gold));transition:width .2s}.toast{position:fixed;right:18px;bottom:18px;background:#111827;border:1px solid var(--line);padding:11px 14px;border-radius:12px;z-index:100;color:#fff;box-shadow:0 15px 40px rgba(0,0,0,.3)}.antiRecord{position:fixed;inset:0;background:#000;display:none;align-items:center;justify-content:center;z-index:99999;color:#fff;text-align:center;padding:30px}.antiRecord.show{display:flex}.antiBox{max-width:520px}.antiTitle{font-size:20px;font-weight:800}.antiText{margin-top:8px;color:#aaa;font-size:13px;line-height:1.8}
-@media(max-width:1000px){body{display:block}.sidebar{position:fixed;top:0;right:-330px;width:320px;transition:right .25s;height:100vh}.sidebar.open{right:0}.mobileMenu{display:inline-flex}.main{padding:12px}.topbar{align-items:flex-start;flex-wrap:wrap}.topActions{width:100%}.stage{aspect-ratio:16/9;min-height:200px}.completeBtn{margin-inline-start:0}.studentChip{width:100%}}
-@media(max-width:560px){.main{padding:8px}.playerCard{border-radius:14px}.playerHeader{padding:12px}.playerControls{padding:12px}#videoTitle{font-size:16px}.topbar{gap:9px}.topActions .btn{flex:1}.stage{min-height:190px}.watermark{font-size:9px}.videoItem{padding:11px}}
-</style>
-</head>
-<body>
-<div class="app">
-<aside class="sidebar" id="sidebar">
-  <div class="brand">🎬 الفيديوهات</div>
-  <div class="count">عدد الدروس: <span id="videoCount">0</span></div>
-  <input id="searchInput" class="search" type="search" placeholder="ابحث عن درس..." autocomplete="off">
-  <div id="videoList" class="videoList"><div class="loadingItem">جاري تحميل الدروس...</div></div>
-</aside>
-<main class="main">
-  <div class="topbar">
-    <div class="topLeft">
-      <button id="mobileMenu" class="btn secondary mobileMenu" type="button">☰</button>
-      <div>
-        <div class="pageTitle">📚 المحتوى التعليمي</div>
-        <div class="studentChip"><span id="studentName" class="studentName">الطالب</span><span id="studentId" class="idBadge">ID: 000</span></div>
-      </div>
-    </div>
-    <div class="topActions">
-      <button class="btn secondary" type="button" onclick="window.location.href='dashboard.html'">⌂ الرئيسية</button>
-      <button id="logoutBtn" class="btn danger" type="button">تسجيل الخروج</button>
-    </div>
-  </div>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <section class="playerCard">
-    <div class="playerHeader">
-      <div id="videoTitle">اختر درسًا من القائمة</div>
-      <div id="videoSubtitle">سيظهر محتوى الدرس هنا بعد اختياره.</div>
-    </div>
-    <div id="stage" class="stage">
-      <video id="videoPlayer" controls controlsList="nodownload noplaybackrate" playsinline preload="metadata"></video>
-      <div id="youtubePlayer" class="hidden"></div>
-      <div id="ytTitleBlocker" class="ytTitleBlocker hidden"></div>
-      <div id="ytBlocker" class="ytBlocker hidden"></div>
-      <div id="ytBottomBlocker" class="ytBottomBlocker hidden"></div>
-      <div id="watermark" class="watermark"></div>
-      <div id="captureShield" class="captureShield"><div><div>⚠️ تم إيقاف العرض مؤقتًا</div><small>يتم إخفاء المحتوى عند فقدان نافذة الصفحة للتركيز.</small></div></div>
-    </div>
-    <div class="playerControls">
-      <div class="controlRow">
-        <div class="speedGroup" id="speedGroup">
-          <button class="speedBtn active" data-speed="1" type="button">1x</button>
-          <button class="speedBtn" data-speed="1.25" type="button">1.25x</button>
-          <button class="speedBtn" data-speed="1.5" type="button">1.5x</button>
-          <button class="speedBtn" data-speed="2" type="button">2x</button>
-        </div>
-        <select id="qualitySelect" class="qualitySelect hidden" aria-label="جودة الفيديو"><option value="auto">جودة تلقائية</option></select>
-        <button id="completeBtn" class="btn completeBtn" type="button" disabled>✓ تعليم كمكتمل</button>
-      </div>
-      <div class="progressInfo"><span>التقدم</span><span id="percentBox">0%</span></div>
-      <div class="progress"><div id="progressBar" class="progressBar"></div></div>
-    </div>
-  </section>
-</main>
-</div>
-<div id="antiRecord" class="antiRecord"><div class="antiBox"><div class="antiTitle">⚠️ تم إيقاف العرض مؤقتًا</div><div class="antiText">تم إخفاء المحتوى لأن الصفحة فقدت التركيز. ارجع إلى الصفحة لاستكمال المشاهدة.</div></div></div>
-<div id="toast" class="toast hidden"></div>
+<title>الفيديوهات | منصة د. يوسف نافع</title>
+
+<meta name="theme-color" content="#07111f">
+<meta name="description" content="منصة د. يوسف نافع التعليمية">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-"use strict";
 
-const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-const $ = id => document.getElementById(id);
-const videoList = $("videoList"), video = $("videoPlayer"), youtubePlayer = $("youtubePlayer"), stage = $("stage");
-const videoTitle = $("videoTitle"), videoSubtitle = $("videoSubtitle"), videoCount = $("videoCount"), progressBar = $("progressBar"), percentBox = $("percentBox");
-const qualitySelect = $("qualitySelect"), watermark = $("watermark"), toastBox = $("toast"), antiRecord = $("antiRecord"), captureShield = $("captureShield");
-const sidebar = $("sidebar");
-
-let savedUser = {};
-try { savedUser = JSON.parse(localStorage.getItem("user") || "{}") || {}; } catch { savedUser = {}; }
-const user = { id:savedUser.id || "000", name:savedUser.name || savedUser.full_name || "الطالب", email:savedUser.email || "unknown", class_group:savedUser.class_group || "unknown" };
-const state = { all:[], filtered:[], currentVideoId:null, currentVideo:null, lastTime:0, sessionSaved:false, skips:0, watchedRanges:[], yt:null, ytReady:false, ytQuality:"auto", sessionTimer:null, toastTimer:null, watermarkTimer:null, captureShieldActive:false, wasPlayingBeforeShield:false };
-
-function updateUserUI(){ $("studentName").textContent = user.name || "الطالب"; $("studentId").textContent = "ID: " + (user.id || "000"); }
-function toast(msg){ clearTimeout(state.toastTimer); toastBox.textContent=msg; toastBox.classList.remove("hidden"); state.toastTimer=setTimeout(()=>toastBox.classList.add("hidden"),3000); }
-
-async function getCurrentUser(){
-  try{
-    const {data:authData} = await client.auth.getUser();
-    const authUser = authData?.user || null;
-    if(authUser){
-      user.id = authUser.id || user.id;
-      user.email = authUser.email || user.email;
-      try{
-        const {data:studentData} = await client.from("students").select("*").eq("id",authUser.id).maybeSingle();
-        if(studentData){ user.name=studentData.full_name || studentData.name || studentData.phone || user.name; user.class_group=studentData.class_group || user.class_group; }
-      }catch(e){ console.warn("[Student lookup]",e); }
-      try{
-        const {data:profileData} = await client.from("profiles").select("*").eq("id",authUser.id).maybeSingle();
-        if(profileData){ user.name=profileData.full_name || profileData.name || user.name; user.class_group=profileData.class_group || user.class_group; }
-      }catch(e){ console.warn("[Profile lookup]",e); }
-    }
-  }catch(e){ console.warn("[Auth fallback]",e); }
-  updateUserUI();
-  updateWatermark();
+<style>
+:root{
+  --bg:#050b14;
+  --bg2:#07111f;
+  --panel:#0b1626;
+  --panel2:#0e1b2d;
+  --panel3:#111f32;
+  --line:rgba(255,255,255,.085);
+  --line2:rgba(255,255,255,.13);
+  --text:#f6f8fc;
+  --muted:#91a0b4;
+  --blue:#438fff;
+  --blue2:#2364df;
+  --gold:#d9ad55;
+  --green:#31c48d;
+  --red:#ef626d;
+  --shadow:0 22px 70px rgba(0,0,0,.28);
+  --radius:20px;
 }
 
-function updateWatermark(){
-  const t = new Date().toLocaleTimeString("ar-EG");
-  watermark.textContent = `${user.name || "الطالب"}\nID: ${user.id || "000"}\n${t}`;
-}
-function moveWatermark(){
-  const maxX = Math.max(8, stage.clientWidth - 180), maxY = Math.max(8, stage.clientHeight - 55);
-  watermark.style.left = Math.floor(8 + Math.random()*Math.max(1,maxX-8)) + "px";
-  watermark.style.top = Math.floor(8 + Math.random()*Math.max(1,maxY-8)) + "px";
-}
-function startWatermark(){ updateWatermark(); moveWatermark(); state.watermarkTimer=setInterval(()=>{updateWatermark();moveWatermark();},5000); }
-
-function mergeRanges(ranges){
-  const valid = (ranges||[]).filter(r=>Array.isArray(r)&&r.length===2&&Number.isFinite(r[0])&&Number.isFinite(r[1])&&r[1]>r[0]).sort((a,b)=>a[0]-b[0]);
-  const merged=[];
-  for(const r of valid){ const last=merged[merged.length-1]; if(!last || r[0]>last[1]+0.25) merged.push([r[0],r[1]]); else last[1]=Math.max(last[1],r[1]); }
-  return merged;
-}
-function addWatchedRange(start,end){ if(end>start){state.watchedRanges=mergeRanges([...state.watchedRanges,[start,end]]);} }
-function calculateWatchedSeconds(){ return state.watchedRanges.reduce((sum,r)=>sum+(r[1]-r[0]),0); }
-function updateProgressUI(current,duration){ if(!duration||!Number.isFinite(duration)){percentBox.textContent="0%";progressBar.style.width="0%";return;} const watched=Math.min(duration,calculateWatchedSeconds()); const percent=Math.min(100,(watched/duration)*100); percentBox.textContent=percent.toFixed(1)+"%"; progressBar.style.width=percent+"%"; $("completeBtn").disabled=percent<90; }
-
-async function loadSavedSession(videoId){
-  state.lastTime=0; state.watchedRanges=[]; state.skips=0;
-  try{
-    const {data,error}=await client.from("video_sessions").select("*").eq("student_id",String(user.id)).eq("video_id",videoId).maybeSingle();
-    if(error){ console.warn("[Load session]",error); return; }
-    if(data){ const watched=Number(data.watched_seconds)||0; const duration=Number(data.duration)||0; if(watched>0 && duration>0){ state.watchedRanges=[[0,watched]]; } state.lastTime=Math.max(0,Math.min(Number(data.last_time)||0,duration||Number.MAX_SAFE_INTEGER)); state.skips=Number(data.skips)||0; }
-  }catch(e){ console.warn("[Load session]",e); }
+*{
+  box-sizing:border-box;
 }
 
-async function saveSession(){
-  if(!state.currentVideoId || !state.currentVideo) return;
-  let duration=0,current=0;
-  if(state.currentVideo.is_youtube){ try{duration=Number(state.yt?.getDuration?.())||0;current=Number(state.yt?.getCurrentTime?.())||0;}catch{} } else { duration=Number(video.duration)||0; current=Number(video.currentTime)||0; }
-  if(!duration) return;
-  if(!state.currentVideo.is_youtube) addWatchedRange(state.lastTime,current);
-  const watched=Math.min(duration,calculateWatchedSeconds());
-  const percent=Math.min(100,Math.max(0,(watched/duration)*100));
-  const payload={student_id:String(user.id),video_id:state.currentVideoId,class_group:user.class_group,watched_seconds:Math.floor(watched),duration:Math.floor(duration),percent:Number(percent.toFixed(2)),completed:percent>=90,skips:state.skips||0,updated_at:new Date().toISOString()};
-  try{
-    const {error}=await client.from("video_sessions").upsert(payload,{onConflict:"student_id,video_id"});
-    if(error) console.warn("[Save session]",error); else state.sessionSaved=true;
-  }catch(e){ console.warn("[Save session]",e); }
+html{
+  scroll-behavior:smooth;
 }
 
-function getYouTubeId(url){
-  if(!url) return null;
-  try{ const u=new URL(url); if(u.hostname.includes("youtu.be")) return u.pathname.slice(1).split("/")[0]||null; if(u.hostname.includes("youtube.com")){ if(u.pathname==="/watch") return u.searchParams.get("v"); if(u.pathname.startsWith("/embed/")) return u.pathname.split("/")[2]||null; if(u.pathname.startsWith("/shorts/")) return u.pathname.split("/")[2]||null; } }catch{}
-  const m=String(url).match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_-]{6,})/); return m?m[1]:null;
-}
-function isYouTubeUrl(url){ return !!getYouTubeId(url); }
-function setYouTubeActive(active){ youtubePlayer.classList.toggle("hidden",!active); video.classList.toggle("hidden",active); $("ytBlocker").classList.toggle("hidden",!active); $("ytBottomBlocker").classList.toggle("hidden",!active); $("ytTitleBlocker").classList.toggle("hidden",!active); }
-function destroyYouTube(){ try{state.yt?.destroy?.();}catch{} state.yt=null; }
-function clearNativeVideo(){ try{video.pause();}catch{} video.removeAttribute("src"); video.load(); }
-function loadYouTubeAPI(){ if(window.YT?.Player){state.ytReady=true;return;} if(document.querySelector('script[data-yt-api="1"]')) return; const s=document.createElement("script");s.src="https://www.youtube.com/iframe_api";s.dataset.ytApi="1";document.head.appendChild(s); }
-window.onYouTubeIframeAPIReady=function(){state.ytReady=true;if(state.currentVideo?.is_youtube) createYouTubePlayer(state.currentVideo);};
-function fillYouTubeQuality(){ if(!state.yt||!qualitySelect) return; let levels=[]; try{levels=state.yt.getAvailableQualityLevels?.()||[];}catch{} const labels={highres:"1080p",hd1080:"1080p",hd720:"720p",large:"480p",medium:"360p",small:"240p",tiny:"144p",auto:"تلقائية"}; qualitySelect.innerHTML=""; const add=(v)=>{const o=document.createElement("option");o.value=v;o.textContent=labels[v]||v;qualitySelect.appendChild(o)}; add("auto"); [...new Set(levels)].forEach(q=>add(q)); qualitySelect.classList.toggle("hidden",levels.length===0); qualitySelect.value="auto"; }
-function createYouTubePlayer(item){ const id=getYouTubeId(item.url);if(!id||!window.YT?.Player)return; destroyYouTube(); youtubePlayer.innerHTML=""; state.yt=new YT.Player(youtubePlayer,{videoId:id,width:"100%",height:"100%",playerVars:{autoplay:0,controls:1,rel:0,playsinline:1,modestbranding:1,iv_load_policy:3,fs:1,disablekb:1,origin:location.origin},events:{onReady:async()=>{fillYouTubeQuality();await loadSavedSession(item.id); if(state.lastTime>0){try{state.yt.seekTo(state.lastTime,true);}catch{}}},onStateChange:e=>{ if(e.data===YT.PlayerState.PLAYING){} if(e.data===YT.PlayerState.ENDED){saveSession();updateProgressUI(state.yt.getDuration(),state.yt.getDuration());}}}}); }
-
-async function selectVideo(item){
-  if(!item)return;
-  if(!item.url){ toast("هذا الدرس لا يحتوي على رابط فيديو حاليًا."); return; }
-  state.currentVideoId=item.id;state.currentVideo={...item,is_youtube:isYouTubeUrl(item.url)};state.lastTime=0;state.watchedRanges=[];state.skips=0;state.sessionSaved=false;
-  videoTitle.textContent=item.title||"بدون عنوان";videoSubtitle.textContent=item.class_group?`المجموعة: ${item.class_group}`:"درس تعليمي";
-  document.querySelectorAll(".videoItem").forEach(el=>el.classList.toggle("active",String(el.dataset.id)===String(item.id)));
-  state.currentVideo.is_youtube ? (clearNativeVideo(),setYouTubeActive(true),loadYouTubeAPI(),state.ytReady?createYouTubePlayer(item):null) : (setYouTubeActive(false),destroyYouTube(),prepareNativeVideo(item));
-  moveWatermark(); updateProgressUI(0,0);
-}
-function prepareNativeVideo(item){ clearNativeVideo();video.src=item.url;video.load();video.playbackRate=1; video.addEventListener("loadedmetadata",async()=>{await loadSavedSession(item.id); if(state.lastTime>0){try{video.currentTime=state.lastTime;}catch{}} updateProgressUI(video.currentTime,video.duration);},{once:true}); }
-
-function render(){
-  const q=($("searchInput").value||"").trim().toLowerCase();
-  state.filtered=state.all.filter(v=>!q||String(v.title||"").toLowerCase().includes(q)||String(v.class_group||"").toLowerCase().includes(q));
-  videoCount.textContent=String(state.filtered.length);
-  if(!state.filtered.length){videoList.innerHTML='<div class="emptyItem">لا توجد دروس مطابقة.</div>';return;}
-  videoList.innerHTML="";
-  state.filtered.forEach(item=>{
-    const el=document.createElement("div");el.className="videoItem";el.dataset.id=String(item.id);el.tabIndex=0;
-    const title=document.createElement("div");title.className="videoItemTitle";title.textContent=item.title||"بدون عنوان";
-    const meta=document.createElement("div");meta.className="videoItemMeta";meta.textContent=item.class_group||"درس";
-    el.append(title,meta);el.addEventListener("click",()=>selectVideo(item));el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectVideo(item);}});videoList.appendChild(el);
-  });
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  background:
+    radial-gradient(
+      900px 500px at 8% -10%,
+      rgba(67,143,255,.13),
+      transparent 65%
+    ),
+    radial-gradient(
+      800px 500px at 95% 0%,
+      rgba(217,173,85,.08),
+      transparent 65%
+    ),
+    linear-gradient(
+      180deg,
+      #07111f 0%,
+      #050b14 100%
+    );
+  font-family:
+    Tahoma,
+    Arial,
+    "Segoe UI",
+    sans-serif;
 }
 
-async function loadVideos(){
-  videoList.innerHTML='<div class="loadingItem">جاري تحميل الدروس...</div>';
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(255,255,255,.012) 45%,
+      transparent 100%
+    );
+  z-index:-1;
+}
 
-  try{
-    /* الاستعلام الأساسي — لا يعتمد على بيانات الطالب */
-    let result = await client
-      .from('videos')
-      .select('id,title,url,class_group,is_premium')
-      .order('id',{ascending:true});
+button,
+input,
+select{
+  font:inherit;
+}
 
-    /* احتياطي في حالة وجود مشكلة في أعمدة select المحددة */
-    if(result.error){
-      console.warn('[Videos primary query]',result.error);
-      result = await client
-        .from('videos')
-        .select('*')
-        .order('id',{ascending:true});
-    }
+button{
+  cursor:pointer;
+}
 
-    if(result.error){
-      throw result.error;
-    }
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible{
+  outline:2px solid rgba(67,143,255,.7);
+  outline-offset:2px;
+}
 
-    state.all = Array.isArray(result.data) ? result.data : [];
 
-    render();
+/* =========================================================
+   TOP BAR
+========================================================= */
 
-    if(!state.all.length){
-      videoTitle.textContent = "لا توجد فيديوهات متاحة حاليًا";
-      videoSubtitle.textContent = "سيظهر المحتوى هنا عند إضافة الدروس.";
-    }
+.top{
+  position:sticky;
+  top:0;
+  z-index:300;
 
-  }catch(error){
-    console.error('[Videos]',error);
-    const message = error?.message || error?.details || 'خطأ غير معروف';
-    videoList.innerHTML = `<div class="emptyItem">❌ تعذر تحميل الدروس حاليًا.<br><small>${String(message).replace(/[<>]/g,'')}</small></div>`;
-    toast('تعذر تحميل الدروس حاليًا.');
+  height:74px;
+  padding:0 28px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+
+  border-bottom:1px solid var(--line);
+
+  background:
+    rgba(5,11,20,.86);
+
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  min-width:0;
+}
+
+.logo{
+  width:44px;
+  height:44px;
+
+  flex:0 0 44px;
+
+  display:grid;
+  place-items:center;
+
+  border-radius:14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #438fff,
+      #1c4fb5
+    );
+
+  box-shadow:
+    0 12px 35px rgba(67,143,255,.25);
+
+  font-size:21px;
+}
+
+.brandText{
+  min-width:0;
+}
+
+.brandText strong{
+  display:block;
+  font-size:15px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.brandText span{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:10px;
+  white-space:nowrap;
+}
+
+.topActions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.topBtn{
+  min-height:39px;
+  padding:0 14px;
+
+  border:1px solid var(--line);
+  border-radius:11px;
+
+  color:var(--text);
+  background:rgba(255,255,255,.035);
+
+  font-size:11px;
+  font-weight:900;
+
+  transition:.2s ease;
+
+  text-decoration:none;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.topBtn:hover{
+  border-color:rgba(67,143,255,.45);
+  background:rgba(67,143,255,.08);
+  transform:translateY(-1px);
+}
+
+.homeBtn:hover{
+  border-color:rgba(217,173,85,.45);
+  background:rgba(217,173,85,.07);
+}
+
+.mobileMenu{
+  display:none;
+}
+
+
+/* =========================================================
+   MAIN LAYOUT
+========================================================= */
+
+.layout{
+  width:min(
+    1500px,
+    calc(100% - 38px)
+  );
+
+  margin:
+    24px auto 35px;
+
+  display:grid;
+
+  grid-template-columns:
+    340px
+    minmax(0,1fr);
+
+  gap:22px;
+
+  align-items:start;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar{
+  position:sticky;
+  top:96px;
+
+  height:
+    calc(100vh - 120px);
+
+  max-height:
+    calc(100vh - 120px);
+
+  overflow:hidden;
+
+  display:flex;
+  flex-direction:column;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:
+    var(--radius);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.025),
+      rgba(255,255,255,.008)
+    ),
+    var(--panel);
+
+  box-shadow:
+    var(--shadow);
+}
+
+.sideHead{
+  padding:
+    21px 20px 17px;
+
+  border-bottom:
+    1px solid var(--line);
+}
+
+.sideHeadTop{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.sideTitle{
+  font-size:17px;
+  font-weight:900;
+  letter-spacing:-.2px;
+}
+
+.sideCount{
+  min-width:28px;
+  height:28px;
+
+  display:grid;
+  place-items:center;
+
+  padding:0 8px;
+
+  border-radius:9px;
+
+  color:#d9e6f8;
+
+  background:
+    rgba(67,143,255,.09);
+
+  border:
+    1px solid rgba(67,143,255,.15);
+
+  font-size:10px;
+  font-weight:900;
+}
+
+.sideSub{
+  margin-top:7px;
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.75;
+}
+
+.searchBox{
+  position:relative;
+  margin-top:15px;
+}
+
+.searchBox input{
+  width:100%;
+  height:44px;
+
+  padding:
+    0 40px 0 13px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:12px;
+
+  outline:none;
+
+  color:var(--text);
+
+  background:
+    rgba(0,0,0,.18);
+
+  font-size:11px;
+
+  transition:.2s ease;
+}
+
+.searchBox input::placeholder{
+  color:#647388;
+}
+
+.searchBox input:focus{
+  border-color:
+    rgba(67,143,255,.55);
+
+  background:
+    rgba(67,143,255,.035);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(67,143,255,.07);
+}
+
+.searchIcon{
+  position:absolute;
+
+  right:14px;
+  top:50%;
+
+  transform:
+    translateY(-50%);
+
+  color:#718198;
+
+  pointer-events:none;
+
+  font-size:16px;
+}
+
+.list{
+  flex:1;
+  overflow-y:auto;
+  padding:10px;
+}
+
+.list::-webkit-scrollbar{
+  width:6px;
+}
+
+.list::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+.list::-webkit-scrollbar-thumb{
+  background:
+    rgba(255,255,255,.11);
+
+  border-radius:20px;
+}
+
+.videoItem{
+  position:relative;
+
+  width:100%;
+
+  margin-bottom:6px;
+
+  padding:
+    13px 13px 15px;
+
+  text-align:right;
+
+  border:
+    1px solid transparent;
+
+  border-radius:14px;
+
+  color:var(--text);
+
+  background:
+    transparent;
+
+  transition:
+    background .2s ease,
+    border .2s ease,
+    transform .2s ease;
+}
+
+.videoItem:hover{
+  background:
+    rgba(255,255,255,.035);
+
+  border-color:
+    rgba(255,255,255,.06);
+
+  transform:
+    translateX(-1px);
+}
+
+.videoItem.active{
+  background:
+    linear-gradient(
+      135deg,
+      rgba(67,143,255,.13),
+      rgba(217,173,85,.035)
+    );
+
+  border-color:
+    rgba(67,143,255,.25);
+
+  box-shadow:
+    inset 3px 0 0 var(--blue);
+}
+
+.videoItemTitle{
+  padding-left:3px;
+
+  font-size:12px;
+  font-weight:900;
+
+  line-height:1.7;
+}
+
+.videoMeta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:8px;
+
+  margin-top:8px;
+
+  color:var(--muted);
+
+  font-size:9px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+
+  padding:4px 7px;
+
+  border-radius:7px;
+
+  color:#e8c778;
+
+  background:
+    rgba(217,173,85,.1);
+
+  font-size:8px;
+  font-weight:900;
+}
+
+.badge.free{
+  color:#57dbaa;
+
+  background:
+    rgba(49,196,141,.09);
+}
+
+.itemProgress{
+  position:absolute;
+
+  right:12px;
+  left:12px;
+  bottom:3px;
+
+  height:2px;
+
+  overflow:hidden;
+
+  border-radius:20px;
+
+  background:
+    rgba(255,255,255,.055);
+}
+
+.itemProgress i{
+  display:block;
+
+  width:0;
+  height:100%;
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--blue),
+      var(--gold)
+    );
+
+  transition:
+    width .35s ease;
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.mainCard{
+  min-width:0;
+
+  padding:20px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:
+    var(--radius);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.025),
+      rgba(255,255,255,.008)
+    ),
+    var(--panel);
+
+  box-shadow:
+    var(--shadow);
+}
+
+.heading{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+
+  gap:15px;
+
+  margin-bottom:17px;
+}
+
+.heading h1{
+  margin:0;
+
+  font-size:22px;
+  font-weight:900;
+
+  letter-spacing:-.4px;
+
+  line-height:1.45;
+}
+
+.heading p{
+  margin:5px 0 0;
+
+  color:var(--muted);
+
+  font-size:10px;
+
+  line-height:1.8;
+}
+
+
+/* =========================================================
+   PLAYER
+========================================================= */
+
+.player{
+  width:100%;
+}
+
+.stage{
+  position:relative;
+
+  width:100%;
+
+  aspect-ratio:16 / 9;
+
+  min-height:310px;
+
+  overflow:hidden;
+
+  isolation:isolate;
+
+  border:
+    1px solid rgba(255,255,255,.11);
+
+  border-radius:18px;
+
+  background:#000;
+
+  box-shadow:
+    0 25px 70px rgba(0,0,0,.32);
+}
+
+.stage::after{
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  pointer-events:none;
+
+  z-index:2;
+
+  box-shadow:
+    inset 0 0 90px rgba(0,0,0,.18);
+}
+
+.stage video,
+.stage .yt{
+  position:absolute;
+
+  inset:0;
+
+  width:100%;
+  height:100%;
+}
+
+.stage video{
+  display:none;
+
+  background:#000;
+
+  object-fit:contain;
+
+  z-index:1;
+}
+
+.stage.native-active video{
+  display:block;
+}
+
+.stage.native-active .yt{
+  display:none;
+}
+
+.stage.yt-active video{
+  display:none;
+}
+
+.stage.yt-active .yt{
+  display:block;
+  z-index:1;
+}
+
+.yt{
+  display:none;
+}
+
+.yt iframe{
+  width:100%!important;
+  height:100%!important;
+  border:0!important;
+}
+
+
+/* =========================================================
+   WATERMARK
+========================================================= */
+
+.wm{
+  position:absolute;
+
+  top:15px;
+  left:15px;
+
+  z-index:100;
+
+  pointer-events:none;
+
+  padding:
+    7px 10px;
+
+  border:
+    1px solid rgba(255,255,255,.11);
+
+  border-radius:10px;
+
+  color:
+    rgba(255,255,255,.87);
+
+  background:
+    rgba(0,0,0,.32);
+
+  backdrop-filter:blur(9px);
+  -webkit-backdrop-filter:blur(9px);
+
+  font-size:10px;
+  font-weight:900;
+
+  user-select:none;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty{
+  position:absolute;
+
+  inset:0;
+
+  z-index:10;
+
+  display:grid;
+
+  place-items:center;
+
+  text-align:center;
+
+  padding:30px;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(67,143,255,.07),
+      transparent 43%
+    ),
+    #050a12;
+
+  color:var(--muted);
+}
+
+.empty strong{
+  display:block;
+
+  margin-bottom:8px;
+
+  color:var(--text);
+
+  font-size:19px;
+  font-weight:900;
+}
+
+.empty span{
+  font-size:11px;
+
+  line-height:1.9;
+}
+
+
+/* =========================================================
+   YOUTUBE BLOCKING
+========================================================= */
+
+.ytBlocker,
+.ytBrandBlocker,
+.ytTitleBlocker{
+  position:absolute;
+
+  display:none;
+
+  /*
+    0.01 بدل transparent بالكامل:
+    غير ملحوظة بصريًا، ولكنها تساعد المتصفح
+    على اعتبار الطبقة هدفًا حقيقيًا للضغط.
+  */
+  background:rgba(0,0,0,.01);
+
+  pointer-events:auto;
+
+  cursor:not-allowed;
+
+  user-select:none;
+  -webkit-user-select:none;
+
+  touch-action:none;
+
+  -webkit-touch-callout:none;
+
+  -webkit-tap-highlight-color:transparent;
+}
+
+.stage.yt-active .ytBlocker,
+.stage.yt-active .ytBrandBlocker,
+.stage.yt-active .ytTitleBlocker{
+  display:block;
+}
+
+
+/*
+  ---------------------------------------------------------
+  1) WATCH ON YOUTUBE
+  ---------------------------------------------------------
+
+  أكبر من المنطقة الأصلية بقليل لضمان عدم سقوط جزء
+  من النص خارج الـoverlay.
+*/
+
+.ytBlocker{
+  z-index:950;
+
+  left:0;
+  bottom:0;
+
+  width:52%;
+  height:92px;
+}
+
+
+/*
+  ---------------------------------------------------------
+  2) YOUTUBE BRANDING
+  ---------------------------------------------------------
+*/
+
+.ytBrandBlocker{
+  z-index:949;
+
+  right:0;
+  bottom:0;
+
+  width:34%;
+  height:88px;
+}
+
+
+/*
+  ---------------------------------------------------------
+  3) TITLE BLOCKER
+  ---------------------------------------------------------
+
+  يحجب العنوان + منطقة الضغط حوله.
+*/
+
+.ytTitleBlocker{
+  z-index:952;
+
+  top:0;
+  left:0;
+
+  width:82%;
+  height:82px;
+}
+
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+.stage:fullscreen{
+  width:100vw;
+  height:100vh;
+
+  min-height:100vh;
+
+  aspect-ratio:auto;
+
+  border:0;
+
+  border-radius:0;
+
+  background:#000;
+}
+
+.stage:-webkit-full-screen{
+  width:100vw;
+  height:100vh;
+
+  min-height:100vh;
+
+  aspect-ratio:auto;
+
+  border:0;
+
+  border-radius:0;
+
+  background:#000;
+}
+
+.stage:fullscreen video,
+.stage:fullscreen .yt,
+.stage:-webkit-full-screen video,
+.stage:-webkit-full-screen .yt{
+  width:100%;
+  height:100%;
+
+  object-fit:contain;
+}
+
+.stage:fullscreen .wm,
+.stage:-webkit-full-screen .wm{
+  top:22px;
+  left:22px;
+
+  padding:
+    9px 12px;
+
+  border-radius:11px;
+
+  font-size:11px;
+}
+
+
+/*
+  Fullscreen blocker.
+*/
+
+.stage:fullscreen .ytBlocker,
+.stage:-webkit-full-screen .ytBlocker{
+  z-index:950;
+
+  left:0;
+  bottom:0;
+
+  width:52%;
+  height:112px;
+}
+
+.stage:fullscreen .ytBrandBlocker,
+.stage:-webkit-full-screen .ytBrandBlocker{
+  z-index:949;
+
+  right:0;
+  bottom:0;
+
+  width:34%;
+  height:106px;
+}
+
+.stage:fullscreen .ytTitleBlocker,
+.stage:-webkit-full-screen .ytTitleBlocker{
+  z-index:952;
+
+  top:0;
+  left:0;
+
+  width:82%;
+  height:104px;
+}
+
+
+/*
+  Fallback class:
+  بعض المتصفحات تتعامل بشكل مختلف مع :fullscreen.
+*/
+
+.stage.is-fullscreen .ytBlocker{
+  z-index:950;
+
+  width:52%;
+  height:112px;
+}
+
+.stage.is-fullscreen .ytBrandBlocker{
+  z-index:949;
+
+  width:34%;
+  height:106px;
+}
+
+.stage.is-fullscreen .ytTitleBlocker{
+  z-index:952;
+
+  width:82%;
+  height:104px;
+}
+
+
+/* =========================================================
+   TOOLS
+========================================================= */
+
+.tools{
+  display:flex;
+
+  align-items:center;
+  justify-content:flex-start;
+
+  flex-wrap:wrap;
+
+  gap:8px;
+
+  margin-top:13px;
+}
+
+.tool{
+  height:40px;
+
+  padding:
+    0 12px;
+
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:5px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:11px;
+
+  color:var(--text);
+
+  background:
+    rgba(255,255,255,.035);
+
+  font-size:10px;
+  font-weight:900;
+
+  transition:.2s ease;
+}
+
+.tool:hover{
+  background:
+    rgba(67,143,255,.08);
+
+  border-color:
+    rgba(67,143,255,.45);
+
+  box-shadow:
+    0 7px 20px rgba(0,0,0,.13);
+}
+
+.tool select{
+  border:0;
+  outline:0;
+
+  color:inherit;
+
+  background:transparent;
+
+  font-weight:900;
+
+  cursor:pointer;
+}
+
+.tool select option{
+  color:#fff;
+  background:#0b1728;
+}
+
+.fullscreenBtn{
+  min-width:125px;
+
+  white-space:nowrap;
+
+  font-weight:900;
+}
+
+.fullscreenBtn:hover{
+  background:
+    linear-gradient(
+      135deg,
+      rgba(67,143,255,.13),
+      rgba(217,173,85,.08)
+    );
+}
+
+
+/* =========================================================
+   INFO PANEL
+========================================================= */
+
+.info{
+  margin-top:15px;
+
+  padding:18px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:
+    rgba(255,255,255,.018);
+}
+
+.infoTop{
+  display:flex;
+
+  align-items:flex-start;
+  justify-content:space-between;
+
+  gap:15px;
+}
+
+.currentTitle{
+  font-size:17px;
+  font-weight:900;
+
+  line-height:1.65;
+}
+
+.currentGroup{
+  margin-top:4px;
+
+  color:var(--muted);
+
+  font-size:10px;
+}
+
+.completeBtn{
+  min-width:140px;
+  height:41px;
+
+  padding:0 13px;
+
+  border:
+    1px solid rgba(49,196,141,.24);
+
+  border-radius:10px;
+
+  color:#5de0ae;
+
+  background:
+    rgba(49,196,141,.07);
+
+  font-size:10px;
+  font-weight:900;
+
+  transition:.2s ease;
+}
+
+.completeBtn:hover{
+  background:
+    rgba(49,196,141,.12);
+
+  transform:
+    translateY(-1px);
+}
+
+.completeBtn.done{
+  color:#fff;
+
+  border-color:transparent;
+
+  background:
+    linear-gradient(
+      135deg,
+      #208e68,
+      #31c48d
+    );
+
+  box-shadow:
+    0 8px 22px
+    rgba(49,196,141,.15);
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progressWrap{
+  margin-top:16px;
+}
+
+.progressInfo{
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  gap:10px;
+
+  margin-bottom:7px;
+
+  color:var(--muted);
+
+  font-size:10px;
+}
+
+#progressText{
+  color:#cbd8e8;
+  font-weight:900;
+}
+
+.progressBar{
+  height:7px;
+
+  overflow:hidden;
+
+  border-radius:20px;
+
+  background:
+    rgba(255,255,255,.065);
+}
+
+.progressBar i{
+  display:block;
+
+  width:0;
+  height:100%;
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--blue),
+      var(--gold)
+    );
+
+  transition:
+    width .2s linear;
+}
+
+
+/* =========================================================
+   NOTICE
+========================================================= */
+
+.notice{
+  margin-top:13px;
+
+  padding:
+    11px 13px;
+
+  border:
+    1px solid rgba(67,143,255,.13);
+
+  border-radius:11px;
+
+  color:#aebed2;
+
+  background:
+    rgba(67,143,255,.045);
+
+  font-size:9px;
+
+  line-height:1.9;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading{
+  position:fixed;
+
+  inset:0;
+
+  z-index:1000;
+
+  display:none;
+
+  place-items:center;
+
+  padding:20px;
+
+  background:
+    rgba(2,6,12,.78);
+
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+
+.loading.show{
+  display:grid;
+}
+
+.loaderBox{
+  width:min(330px,100%);
+
+  padding:27px 22px;
+
+  text-align:center;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:18px;
+
+  background:
+    #0b1728;
+
+  box-shadow:
+    var(--shadow);
+}
+
+.spinner{
+  width:37px;
+  height:37px;
+
+  margin:
+    0 auto 14px;
+
+  border:
+    3px solid rgba(255,255,255,.1);
+
+  border-top-color:
+    var(--blue);
+
+  border-right-color:
+    var(--gold);
+
+  border-radius:50%;
+
+  animation:
+    spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
   }
 }
 
-let rangeStart=0;
-video.addEventListener("play",()=>{rangeStart=video.currentTime;});
-video.addEventListener("pause",()=>{addWatchedRange(rangeStart,video.currentTime);state.lastTime=video.currentTime;updateProgressUI(video.currentTime,video.duration);saveSession();});
-video.addEventListener("seeked",()=>{state.lastTime=video.currentTime;updateProgressUI(video.currentTime,video.duration);});
-video.addEventListener("timeupdate",()=>{if(!video.duration)return;addWatchedRange(rangeStart,video.currentTime);rangeStart=video.currentTime;state.lastTime=video.currentTime;updateProgressUI(video.currentTime,video.duration);});
-video.addEventListener("ended",()=>saveSession());
-video.addEventListener("ratechange",()=>{document.querySelectorAll(".speedBtn").forEach(b=>b.classList.toggle("active",Number(b.dataset.speed)===video.playbackRate));});
+.loaderBox div:last-child{
+  color:var(--muted);
 
-document.querySelectorAll(".speedBtn").forEach(btn=>btn.addEventListener("click",()=>{const r=Number(btn.dataset.speed);if(state.currentVideo?.is_youtube){try{state.yt?.setPlaybackRate(r);}catch{}}else video.playbackRate=r;document.querySelectorAll(".speedBtn").forEach(b=>b.classList.toggle("active",b===btn));}));
-qualitySelect.addEventListener("change",()=>{if(!state.yt)return;const q=qualitySelect.value;try{if(q==="auto")state.yt.setPlaybackQuality("default");else state.yt.setPlaybackQuality(q);}catch(e){console.warn(e);}});
-$("completeBtn").addEventListener("click",async()=>{if(!state.currentVideoId)return;await saveSession();toast("تم حفظ حالة الدرس.");});
-$("searchInput").addEventListener("input",render);
-$("mobileMenu").addEventListener("click",()=>sidebar.classList.toggle("open"));
-$("logoutBtn").addEventListener("click",async()=>{try{await client.auth.signOut();}catch(e){console.warn(e);} localStorage.removeItem("user");window.location.href="index.html";});
+  font-size:10px;
+}
 
-document.addEventListener("visibilitychange",()=>{ if(document.hidden){showCaptureShield();}else{hideCaptureShield();} });
-window.addEventListener("blur",()=>{ if(document.hidden) showCaptureShield(); });
-window.addEventListener("focus",()=>{ if(!document.hidden) hideCaptureShield(); });
-window.addEventListener("keydown",e=>{if(e.key==="PrintScreen"){showCaptureShield();setTimeout(()=>{if(!document.hidden)hideCaptureShield();},1200);}});
-function showCaptureShield(){ if(state.captureShieldActive)return;state.captureShieldActive=true;state.wasPlayingBeforeShield=!video.paused;if(!video.paused){try{video.pause();}catch{}} antiRecord.classList.add("show");captureShield.classList.add("show"); }
-function hideCaptureShield(){ if(!state.captureShieldActive)return;state.captureShieldActive=false;antiRecord.classList.remove("show");captureShield.classList.remove("show"); }
 
-document.addEventListener("fullscreenchange",()=>{moveWatermark();});
-window.addEventListener("resize",()=>moveWatermark());
-window.addEventListener("beforeunload",()=>{saveSession();});
+/* =========================================================
+   TOAST
+========================================================= */
 
-(async function init(){
-  updateUserUI();
-  startWatermark();
+.toast{
+  position:fixed;
 
-  /* تحميل الفيديوهات مستقل تمامًا عن بيانات البروفايل */
+  left:50%;
+  bottom:25px;
+
+  z-index:1200;
+
+  min-width:240px;
+  max-width:calc(100% - 30px);
+
+  padding:
+    12px 16px;
+
+  transform:
+    translate(-50%,20px);
+
+  opacity:0;
+
+  pointer-events:none;
+
+  text-align:center;
+
+  color:#fff;
+
+  background:
+    #101f33;
+
+  border:
+    1px solid rgba(255,255,255,.1);
+
+  border-radius:12px;
+
+  box-shadow:
+    var(--shadow);
+
+  font-size:10px;
+  font-weight:900;
+
+  transition:.25s ease;
+}
+
+.toast.show{
+  opacity:1;
+
+  transform:
+    translate(-50%,0);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:1050px){
+
+  .layout{
+    grid-template-columns:
+      295px
+      minmax(0,1fr);
+  }
+
+}
+
+
+@media(max-width:800px){
+
+  .top{
+    height:64px;
+
+    padding:
+      0 13px;
+  }
+
+  .brandText span{
+    display:none;
+  }
+
+  .brandText strong{
+    font-size:13px;
+  }
+
+  .topActions{
+    gap:5px;
+  }
+
+  .layout{
+    width:
+      calc(100% - 18px);
+
+    margin:
+      10px auto 25px;
+
+    display:block;
+  }
+
+  .sidebar{
+    position:fixed;
+
+    top:64px;
+    right:0;
+    bottom:0;
+
+    width:
+      min(
+        340px,
+        91vw
+      );
+
+    height:auto;
+    max-height:none;
+
+    z-index:600;
+
+    border-radius:
+      18px 0 0 18px;
+
+    transform:
+      translateX(105%);
+
+    transition:
+      transform .28s ease;
+  }
+
+  .sidebar.open{
+    transform:
+      translateX(0);
+  }
+
+  .mobileMenu{
+    display:inline-flex;
+  }
+
+  .mainCard{
+    padding:11px;
+  }
+
+  .heading{
+    margin-bottom:11px;
+  }
+
+  .heading h1{
+    font-size:17px;
+  }
+
+  .stage{
+    min-height:210px;
+
+    border-radius:13px;
+  }
+
+  .info{
+    padding:14px;
+  }
+
+  .currentTitle{
+    font-size:15px;
+  }
+
+
+  /*
+    MOBILE TITLE BLOCKER
+  */
+
+  .ytTitleBlocker{
+    z-index:952;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:94px;
+  }
+
+
+  /*
+    MOBILE WATCH ON YOUTUBE
+  */
+
+  .ytBlocker{
+    z-index:950;
+
+    left:0;
+    bottom:0;
+
+    width:58%;
+    height:88px;
+  }
+
+  .ytBrandBlocker{
+    z-index:949;
+
+    right:0;
+    bottom:0;
+
+    width:36%;
+    height:82px;
+  }
+
+}
+
+
+@media(max-width:650px){
+
+  .topBtn{
+    min-height:36px;
+
+    padding:
+      0 9px;
+
+    border-radius:10px;
+
+    font-size:10px;
+  }
+
+  .homeBtn{
+    padding:
+      0 10px;
+  }
+
+  .fullscreenBtn{
+    min-width:108px;
+
+    padding:
+      0 9px;
+
+    font-size:9px;
+  }
+
+  .tool{
+    height:37px;
+
+    padding:
+      0 9px;
+
+    font-size:9px;
+  }
+
+  .infoTop{
+    display:block;
+  }
+
+  .completeBtn{
+    width:100%;
+
+    margin-top:10px;
+  }
+
+
+  /*
+    على الهاتف نغطي منطقة العنوان بالكامل.
+  */
+
+  .ytTitleBlocker{
+    z-index:952;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:96px;
+  }
+
+
+  /*
+    حجب Watch on YouTube بالكامل.
+  */
+
+  .ytBlocker{
+    z-index:950;
+
+    left:0;
+    bottom:0;
+
+    width:62%;
+    height:88px;
+  }
+
+
+  /*
+    حجب الـbranding/الخروج في الجهة الأخرى.
+  */
+
+  .ytBrandBlocker{
+    z-index:949;
+
+    right:0;
+    bottom:0;
+
+    width:38%;
+    height:82px;
+  }
+
+
+  /*
+    MOBILE FULLSCREEN
+  */
+
+  .stage:fullscreen .ytTitleBlocker,
+  .stage:-webkit-full-screen .ytTitleBlocker,
+  .stage.is-fullscreen .ytTitleBlocker{
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:108px;
+
+    z-index:952;
+  }
+
+
+  .stage:fullscreen .ytBlocker,
+  .stage:-webkit-full-screen .ytBlocker,
+  .stage.is-fullscreen .ytBlocker{
+
+    left:0;
+    bottom:0;
+
+    width:62%;
+    height:98px;
+
+    z-index:950;
+  }
+
+
+  .stage:fullscreen .ytBrandBlocker,
+  .stage:-webkit-full-screen .ytBrandBlocker,
+  .stage.is-fullscreen .ytBrandBlocker{
+
+    right:0;
+    bottom:0;
+
+    width:38%;
+    height:92px;
+
+    z-index:949;
+  }
+
+
+  .stage:fullscreen .wm,
+  .stage:-webkit-full-screen .wm{
+    top:13px;
+    left:13px;
+
+    padding:
+      7px 9px;
+
+    font-size:9px;
+  }
+
+}
+
+
+@media(max-width:430px){
+
+  .homeBtn{
+    width:38px;
+    min-width:38px;
+
+    padding:0;
+
+    font-size:0;
+  }
+
+  .homeBtn::before{
+    content:"⌂";
+
+    font-size:17px;
+
+    line-height:1;
+  }
+
+  .mobileMenu{
+    width:38px;
+    min-width:38px;
+
+    padding:0;
+
+    font-size:0;
+  }
+
+  .mobileMenu::before{
+    content:"☰";
+
+    font-size:17px;
+
+    line-height:1;
+  }
+
+  .stage{
+    min-height:180px;
+  }
+
+
+  .ytTitleBlocker{
+    height:94px;
+  }
+
+  .ytBlocker{
+    width:64%;
+    height:92px;
+  }
+
+  .ytBrandBlocker{
+    width:40%;
+    height:86px;
+  }
+
+
+  .stage:fullscreen .ytTitleBlocker,
+  .stage:-webkit-full-screen .ytTitleBlocker,
+  .stage.is-fullscreen .ytTitleBlocker{
+    height:106px;
+  }
+
+  .stage:fullscreen .ytBlocker,
+  .stage:-webkit-full-screen .ytBlocker,
+  .stage.is-fullscreen .ytBlocker{
+    width:64%;
+    height:100px;
+  }
+
+  .stage:fullscreen .ytBrandBlocker,
+  .stage:-webkit-full-screen .ytBrandBlocker,
+  .stage.is-fullscreen .ytBrandBlocker{
+    width:40%;
+    height:94px;
+  }
+
+}
+
+
+@media(max-width:350px){
+
+  .brand{
+    gap:8px;
+  }
+
+  .logo{
+    width:38px;
+    height:38px;
+
+    flex-basis:38px;
+
+    font-size:18px;
+  }
+
+  .brandText strong{
+    font-size:11px;
+  }
+
+  .topActions{
+    gap:3px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+
+<!-- =======================================================
+     HEADER
+======================================================= -->
+
+<header class="top">
+
+  <div class="brand">
+
+    <div class="logo">
+      🧬
+    </div>
+
+    <div class="brandText">
+
+      <strong>
+        د. يوسف نافع
+      </strong>
+
+      <span>
+        منصة الأحياء والعلوم المتكاملة
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <div class="topActions">
+
+    <button
+      class="topBtn mobileMenu"
+      id="mobileMenuBtn"
+      type="button"
+      title="قائمة الدروس"
+      aria-label="قائمة الدروس"
+    >
+      ☰ الدروس
+    </button>
+
+
+    <!-- HOME -->
+
+    <a
+      class="topBtn homeBtn"
+      id="homeBtn"
+      href="index.html"
+      title="العودة إلى الصفحة الرئيسية"
+      aria-label="العودة إلى الصفحة الرئيسية"
+    >
+      ⌂ الصفحة الرئيسية
+    </a>
+
+
+    <!-- LOGOUT -->
+
+    <button
+      class="topBtn logoutTop"
+      id="logoutBtn"
+      type="button"
+    >
+      تسجيل الخروج
+    </button>
+
+  </div>
+
+</header>
+
+
+<!-- =======================================================
+     MAIN
+======================================================= -->
+
+<main class="layout">
+
+
+  <!-- =====================================================
+       SIDEBAR
+  ====================================================== -->
+
+  <aside
+    class="sidebar"
+    id="sidebar"
+  >
+
+    <div class="sideHead">
+
+      <div class="sideHeadTop">
+
+        <div>
+
+          <div class="sideTitle">
+            قائمة الدروس
+          </div>
+
+          <div class="sideSub">
+            اختر الدرس لبدء المشاهدة واستكمال تقدمك تلقائيًا.
+          </div>
+
+        </div>
+
+        <div
+          class="sideCount"
+          id="videoCount"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="searchBox">
+
+        <span class="searchIcon">
+          ⌕
+        </span>
+
+        <input
+          id="searchInput"
+          type="search"
+          autocomplete="off"
+          placeholder="ابحث عن درس..."
+          aria-label="البحث عن درس"
+        >
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="list"
+      id="videoList"
+    ></div>
+
+  </aside>
+
+
+  <!-- =====================================================
+       MAIN CARD
+  ====================================================== -->
+
+  <section class="mainCard">
+
+
+    <div class="heading">
+
+      <div>
+
+        <h1>
+          الفيديوهات التعليمية
+        </h1>
+
+        <p id="welcomeText">
+          اختر درسًا من القائمة لبدء المشاهدة.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         PLAYER
+    ==================================================== -->
+
+    <div class="player">
+
+      <div
+        class="stage"
+        id="stage"
+      >
+
+
+        <!-- NATIVE VIDEO -->
+
+        <video
+          id="videoPlayer"
+          playsinline
+          controls
+          preload="metadata"
+          controlsList="nodownload noremoteplayback"
+          disablePictureInPicture
+        ></video>
+
+
+        <!-- YOUTUBE -->
+
+        <div
+          class="yt"
+          id="youtubePlayer"
+        ></div>
+
+
+        <!-- =================================================
+             YOUTUBE BLOCKERS
+        ================================================== -->
+
+        <div
+          class="ytBlocker"
+          id="ytBlocker"
+          aria-hidden="true"
+          title="المشاهدة متاحة داخل منصة د. يوسف نافع فقط"
+        ></div>
+
+
+        <div
+          class="ytBrandBlocker"
+          id="ytBrandBlocker"
+          aria-hidden="true"
+          title="المشاهدة متاحة داخل منصة د. يوسف نافع فقط"
+        ></div>
+
+
+        <!--
+          TITLE BLOCKER
+        -->
+
+        <div
+          class="ytTitleBlocker"
+          id="ytTitleBlocker"
+          aria-hidden="true"
+          title="المشاهدة متاحة داخل منصة د. يوسف نافع فقط"
+        ></div>
+
+
+        <!-- WATERMARK -->
+
+        <div class="wm">
+          د. يوسف نافع
+        </div>
+
+
+        <!-- EMPTY -->
+
+        <div
+          class="empty"
+          id="empty"
+        >
+
+          <div>
+
+            <strong>
+              اختر درسًا للبدء
+            </strong>
+
+            <span>
+              الفيديو سيظهر هنا بعد اختيار الدرس من القائمة.
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         TOOLS
+    ==================================================== -->
+
+    <div class="tools">
+
+      <button
+        class="tool fullscreenBtn"
+        id="fullscreenBtn"
+        type="button"
+        title="ملء الشاشة"
+      >
+        ⛶ ملء الشاشة
+      </button>
+
+
+      <label class="tool">
+
+        السرعة:
+
+        <select id="speedSelect">
+
+          <option value="0.5">
+            0.5×
+          </option>
+
+          <option value="0.75">
+            0.75×
+          </option>
+
+          <option
+            value="1"
+            selected
+          >
+            1×
+          </option>
+
+          <option value="1.25">
+            1.25×
+          </option>
+
+          <option value="1.5">
+            1.5×
+          </option>
+
+          <option value="1.75">
+            1.75×
+          </option>
+
+          <option value="2">
+            2×
+          </option>
+
+        </select>
+
+      </label>
+
+
+      <label
+        class="tool"
+        id="qualityWrap"
+        style="display:none"
+      >
+
+        الجودة:
+
+        <select id="qualitySelect">
+
+          <option value="default">
+            تلقائي
+          </option>
+
+          <option value="small">
+            360p
+          </option>
+
+          <option value="medium">
+            480p
+          </option>
+
+          <option value="hd720">
+            720p
+          </option>
+
+          <option value="hd1080">
+            1080p
+          </option>
+
+        </select>
+
+      </label>
+
+    </div>
+
+
+    <!-- ===================================================
+         INFO
+    ==================================================== -->
+
+    <div class="info">
+
+      <div class="infoTop">
+
+        <div>
+
+          <div
+            class="currentTitle"
+            id="currentTitle"
+          >
+            لم يتم اختيار فيديو
+          </div>
+
+          <div
+            class="currentGroup"
+            id="currentGroup"
+          >
+            —
+          </div>
+
+        </div>
+
+
+        <button
+          class="completeBtn"
+          id="completeBtn"
+          type="button"
+        >
+          ✓ تحديد كمكتمل
+        </button>
+
+      </div>
+
+
+      <div class="progressWrap">
+
+        <div class="progressInfo">
+
+          <span id="progressText">
+            0.0%
+          </span>
+
+          <span id="timeText">
+            00:00 / 00:00
+          </span>
+
+        </div>
+
+
+        <div class="progressBar">
+          <i id="progressFill"></i>
+        </div>
+
+      </div>
+
+
+      <div class="notice">
+        يتم حساب وقت المشاهدة الفعلي فقط. التقديم أو الرجوع داخل الفيديو لا يضيف وقتًا إلى وقت المشاهدة إلا عند تشغيل الجزء فعليًا.
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<!-- =======================================================
+     LOADING
+======================================================= -->
+
+<div
+  class="loading"
+  id="loading"
+>
+
+  <div class="loaderBox">
+
+    <div class="spinner"></div>
+
+    <div>
+      جاري تحميل المنصة...
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =======================================================
+     TOAST
+======================================================= -->
+
+<div
+  class="toast"
+  id="toast"
+></div>
+
+
+<script>
+'use strict';
+
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+  "https://nhdowqzecpwmkunczodl.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+
+const client =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+const $ = id =>
+  document.getElementById(id);
+
+
+function norm(value){
+
+  return String(value ?? '')
+    .trim()
+    .toLowerCase();
+
+}
+
+
+function label(value){
+
+  const v =
+    String(value ?? '').trim();
+
+  return v || 'غير محدد';
+
+}
+
+
+function esc(value){
+
+  return String(value ?? '')
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'","&#039;");
+
+}
+
+
+function number(value){
+
+  const n =
+    Number(value);
+
+  return Number.isFinite(n)
+    ? n
+    : 0;
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const stage =
+  $('stage');
+
+const video =
+  $('videoPlayer');
+
+const youtubePlayer =
+  $('youtubePlayer');
+
+const empty =
+  $('empty');
+
+const videoList =
+  $('videoList');
+
+const searchInput =
+  $('searchInput');
+
+const currentTitle =
+  $('currentTitle');
+
+const currentGroup =
+  $('currentGroup');
+
+const progressText =
+  $('progressText');
+
+const progressFill =
+  $('progressFill');
+
+const timeText =
+  $('timeText');
+
+const completeBtn =
+  $('completeBtn');
+
+const loading =
+  $('loading');
+
+const toastEl =
+  $('toast');
+
+const qualityWrap =
+  $('qualityWrap');
+
+const qualitySelect =
+  $('qualitySelect');
+
+const speedSelect =
+  $('speedSelect');
+
+const fullscreenBtn =
+  $('fullscreenBtn');
+
+const sidebar =
+  $('sidebar');
+
+const mobileMenuBtn =
+  $('mobileMenuBtn');
+
+const logoutBtn =
+  $('logoutBtn');
+
+const welcomeText =
+  $('welcomeText');
+
+const videoCount =
+  $('videoCount');
+
+
+/* =========================================================
+   BLOCKERS
+========================================================= */
+
+const ytBlocker =
+  $('ytBlocker');
+
+const ytBrandBlocker =
+  $('ytBrandBlocker');
+
+const ytTitleBlocker =
+  $('ytTitleBlocker');
+
+
+/* =========================================================
+   USER
+========================================================= */
+
+let me = null;
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+const state = {
+
+  all: [],
+
+  visible: [],
+
+  current: null,
+
+  id: null,
+
+  type: null,
+
+  yt: null,
+
+  ytId: null,
+
+  ytPromise: null,
+
+  ytPromiseResolve: null,
+
+  speed: 1,
+
+  quality: 'default',
+
+  timer: null,
+
+  saveTimer: null,
+
+  sec: 0,
+
+  duration: 0,
+
+  pct: 0,
+
+  watched: 0,
+
+  lastVideoTime: null,
+
+  lastWallTime: null,
+
+  lastSaveWatched: -1,
+
+  completed: false,
+
+  search: '',
+
+  loadingToken: 0,
+
+  watchedRanges: [],
+
+  rangeEpsilon: 0.15
+
+};
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer = null;
+
+
+function toast(message){
+
+  clearTimeout(
+    toastTimer
+  );
+
+  toastEl.textContent =
+    message;
+
+  toastEl.classList.add(
+    'show'
+  );
+
+  toastTimer =
+    setTimeout(
+      ()=>{
+        toastEl.classList.remove(
+          'show'
+        );
+      },
+      2800
+    );
+
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+function showLoading(
+  text='جاري التحميل...'
+){
+
+  const target =
+    loading.querySelector(
+      '.loaderBox div:last-child'
+    );
+
+  if(target){
+    target.textContent =
+      text;
+  }
+
+  loading.classList.add(
+    'show'
+  );
+
+}
+
+
+function hideLoading(){
+
+  loading.classList.remove(
+    'show'
+  );
+
+}
+
+
+/* =========================================================
+   TIME
+========================================================= */
+
+function fmtTime(seconds){
+
+  seconds =
+    Math.max(
+      0,
+      Math.floor(
+        number(seconds)
+      )
+    );
+
+  const h =
+    Math.floor(
+      seconds / 3600
+    );
+
+  const m =
+    Math.floor(
+      (seconds % 3600) / 60
+    );
+
+  const s =
+    seconds % 60;
+
+
+  if(h > 0){
+
+    return [
+      String(h).padStart(2,'0'),
+      String(m).padStart(2,'0'),
+      String(s).padStart(2,'0')
+    ].join(':');
+
+  }
+
+
+  return [
+    String(m).padStart(2,'0'),
+    String(s).padStart(2,'0')
+  ].join(':');
+
+}
+
+
+/* =========================================================
+   YOUTUBE ID
+========================================================= */
+
+function ytId(url){
+
+  if(!url){
+    return null;
+  }
+
+  const value =
+    String(url).trim();
+
+
+  try{
+
+    const u =
+      new URL(value);
+
+
+    if(
+      u.hostname.includes(
+        'youtube.com'
+      )
+    ){
+
+      if(
+        u.pathname === '/watch'
+      ){
+
+        return u.searchParams.get(
+          'v'
+        );
+
+      }
+
+
+      if(
+        u.pathname.startsWith(
+          '/embed/'
+        )
+      ){
+
+        return u.pathname
+          .split('/embed/')[1]
+          .split('/')[0];
+
+      }
+
+
+      if(
+        u.pathname.startsWith(
+          '/shorts/'
+        )
+      ){
+
+        return u.pathname
+          .split('/shorts/')[1]
+          .split('/')[0];
+
+      }
+
+
+      if(
+        u.pathname.startsWith(
+          '/live/'
+        )
+      ){
+
+        return u.pathname
+          .split('/live/')[1]
+          .split('/')[0];
+
+      }
+
+    }
+
+
+    if(
+      u.hostname === 'youtu.be' ||
+      u.hostname.endsWith('.youtu.be')
+    ){
+
+      return u.pathname
+        .replace('/','')
+        .split('/')[0];
+
+    }
+
+  }catch{}
+
+
+  const match =
+    value.match(
+      /(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([A-Za-z0-9_-]{6,})/
+    );
+
+
+  return match
+    ? match[1]
+    : null;
+
+}
+
+
+function isYT(url){
+
+  return !!ytId(url);
+
+}
+
+
+/* =========================================================
+   WATCH RANGE ENGINE
+========================================================= */
+
+function addWatchedRange(
+  start,
+  end
+){
+
+  start =
+    number(start);
+
+  end =
+    number(end);
+
+
+  if(
+    end <= start
+  ){
+
+    return;
+
+  }
+
+
+  const duration =
+    number(state.duration);
+
+
+  if(duration > 0){
+
+    start =
+      Math.max(
+        0,
+        Math.min(
+          start,
+          duration
+        )
+      );
+
+    end =
+      Math.max(
+        0,
+        Math.min(
+          end,
+          duration
+        )
+      );
+
+  }
+
+
+  if(
+    end <= start
+  ){
+
+    return;
+
+  }
+
+
+  const epsilon =
+    state.rangeEpsilon;
+
+
+  let newStart =
+    start;
+
+  let newEnd =
+    end;
+
+  const remaining = [];
+
+
+  for(
+    const range of state.watchedRanges
+  ){
+
+    const a =
+      range[0];
+
+    const b =
+      range[1];
+
+
+    if(
+      newEnd + epsilon < a ||
+      newStart - epsilon > b
+    ){
+
+      remaining.push(
+        range
+      );
+
+      continue;
+
+    }
+
+
+    newStart =
+      Math.min(
+        newStart,
+        a
+      );
+
+    newEnd =
+      Math.max(
+        newEnd,
+        b
+      );
+
+  }
+
+
+  remaining.push([
+    newStart,
+    newEnd
+  ]);
+
+
+  remaining.sort(
+    (a,b)=>a[0]-b[0]
+  );
+
+
+  const merged = [];
+
+
+  for(
+    const range of remaining
+  ){
+
+    const last =
+      merged[
+        merged.length - 1
+      ];
+
+
+    if(
+      !last ||
+      range[0] >
+      last[1] + epsilon
+    ){
+
+      merged.push([
+        range[0],
+        range[1]
+      ]);
+
+    }else{
+
+      last[1] =
+        Math.max(
+          last[1],
+          range[1]
+        );
+
+    }
+
+  }
+
+
+  state.watchedRanges =
+    merged;
+
+
+  state.watched =
+    calculateWatchedSeconds();
+
+}
+
+
+function calculateWatchedSeconds(){
+
+  let total = 0;
+
+
+  for(
+    const range of state.watchedRanges
+  ){
+
+    total +=
+      Math.max(
+        0,
+        range[1] - range[0]
+      );
+
+  }
+
+
+  if(
+    state.duration > 0
+  ){
+
+    total =
+      Math.min(
+        total,
+        state.duration
+      );
+
+  }
+
+
+  return total;
+
+}
+
+
+function recordPlaybackSegment(
+  previous,
+  current
+){
+
+  previous =
+    number(previous);
+
+  current =
+    number(current);
+
+
+  if(
+    current <= previous
+  ){
+
+    return;
+
+  }
+
+
+  const wallDelta =
+    state.lastWallTime === null
+      ? 0
+      :
+        Math.max(
+          0,
+          (
+            performance.now() -
+            state.lastWallTime
+          ) / 1000
+        );
+
+
+  const videoDelta =
+    current - previous;
+
+
+  if(
+    videoDelta <=
+    Math.max(
+      2.5,
+      wallDelta * 2.5
+    )
+  ){
+
+    addWatchedRange(
+      previous,
+      current
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   TRACK ACTUAL WATCH
+========================================================= */
+
+function trackActualWatch(
+  current,
+  duration,
+  playing
+){
+
+  current =
+    number(current);
+
+  duration =
+    number(duration);
+
+
+  if(duration > 0){
+
+    state.duration =
+      duration;
+
+  }
+
+
+  if(!playing){
+
+    state.lastVideoTime =
+      null;
+
+    state.lastWallTime =
+      null;
+
+    updateProgressUI(
+      current,
+      state.duration
+    );
+
+    return;
+
+  }
+
+
+  const now =
+    performance.now();
+
+
+  if(
+    state.lastVideoTime === null ||
+    state.lastWallTime === null
+  ){
+
+    state.lastVideoTime =
+      current;
+
+    state.lastWallTime =
+      now;
+
+    updateProgressUI(
+      current,
+      state.duration
+    );
+
+    return;
+
+  }
+
+
+  const previous =
+    state.lastVideoTime;
+
+
+  const videoDelta =
+    current - previous;
+
+
+  const wallDelta =
+    Math.max(
+      0,
+      (now - state.lastWallTime) / 1000
+    );
+
+
+  if(
+    videoDelta >= 0 &&
+    videoDelta <=
+    Math.max(
+      2.5,
+      wallDelta * 2.5
+    )
+  ){
+
+    const safeEnd =
+      current;
+
+
+    const safeStart =
+      Math.max(
+        0,
+        current -
+        Math.min(
+          videoDelta,
+          wallDelta * 1.5
+        )
+      );
+
+
+    if(
+      safeEnd >
+      safeStart
+    ){
+
+      addWatchedRange(
+        safeStart,
+        safeEnd
+      );
+
+    }
+
+  }
+
+
+  state.lastVideoTime =
+    current;
+
+  state.lastWallTime =
+    now;
+
+
+  updateProgressUI(
+    current,
+    state.duration
+  );
+
+}
+
+
+/* =========================================================
+   UI PROGRESS
+========================================================= */
+
+function updateProgressUI(
+  current,
+  duration
+){
+
+  current =
+    Math.max(
+      0,
+      number(current)
+    );
+
+  duration =
+    Math.max(
+      0,
+      number(duration)
+    );
+
+
+  const watched =
+    Math.max(
+      0,
+      state.watched
+    );
+
+
+  const percent =
+    duration > 0
+      ? Math.min(
+          100,
+          (
+            watched /
+            duration
+          ) * 100
+        )
+      : 0;
+
+
+  state.sec =
+    current;
+
+  state.duration =
+    duration;
+
+  state.pct =
+    percent;
+
+
+  progressFill.style.width =
+    percent + '%';
+
+
+  progressText.textContent =
+    percent.toFixed(1) + '%';
+
+
+  timeText.textContent =
+    fmtTime(current) +
+    ' / ' +
+    fmtTime(duration);
+
+
+  if(state.completed){
+
+    completeBtn.textContent =
+      '✓ مكتمل';
+
+    completeBtn.classList.add(
+      'done'
+    );
+
+  }else{
+
+    completeBtn.textContent =
+      '✓ تحديد كمكتمل';
+
+    completeBtn.classList.remove(
+      'done'
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+async function save(
+  force=false
+){
+
+  if(
+    !state.id ||
+    !me
+  ){
+
+    return;
+
+  }
+
+
+  const watched =
+    Math.floor(
+      Math.max(
+        0,
+        state.watched
+      )
+    );
+
+
+  const duration =
+    Math.floor(
+      Math.max(
+        0,
+        state.duration
+      )
+    );
+
+
+  const percent =
+    duration > 0
+      ? Math.min(
+          100,
+          (
+            watched /
+            duration
+          ) * 100
+        )
+      : 0;
+
+
+  if(
+    !force &&
+    state.lastSaveWatched >= 0 &&
+    Math.abs(
+      watched -
+      state.lastSaveWatched
+    ) < 2
+  ){
+
+    return;
+
+  }
+
+
+  state.lastSaveWatched =
+    watched;
+
+
+  const payload = {
+
+    student_id:
+      String(me.id),
+
+    video_id:
+      String(state.id),
+
+    class_group:
+      me.class_group ?? null,
+
+    watched_seconds:
+      watched,
+
+    duration:
+      duration,
+
+    percent:
+      Number(
+        percent.toFixed(2)
+      ),
+
+    completed:
+      !!state.completed,
+
+    skips:
+      0,
+
+    updated_at:
+      new Date().toISOString()
+
+  };
+
+
+  try{
+
+    const {
+      error
+    } =
+      await client
+        .from('video_sessions')
+        .upsert(
+          payload,
+          {
+            onConflict:
+              'student_id,video_id'
+          }
+        );
+
+
+    if(error){
+
+      console.warn(
+        '[Videos] save:',
+        error.message
+      );
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      '[Videos] save exception:',
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   SAVE TIMER
+========================================================= */
+
+function scheduleSave(){
+
+  clearTimeout(
+    state.saveTimer
+  );
+
+
+  state.saveTimer =
+    setTimeout(
+      ()=>{
+        save(false);
+      },
+      900
+    );
+
+}
+
+
+/* =========================================================
+   TIMER
+========================================================= */
+
+function stopTimer(){
+
+  if(state.timer){
+
+    clearInterval(
+      state.timer
+    );
+
+    state.timer =
+      null;
+
+  }
+
+}
+
+
+/* =========================================================
+   YOUTUBE API
+========================================================= */
+
+function waitYT(){
+
+  if(
+    window.YT &&
+    window.YT.Player
+  ){
+
+    return Promise.resolve();
+
+  }
+
+
+  if(state.ytPromise){
+
+    return state.ytPromise;
+
+  }
+
+
+  state.ytPromise =
+    new Promise(
+      resolve=>{
+
+        state.ytPromiseResolve =
+          resolve;
+
+
+        const oldCallback =
+          window.onYouTubeIframeAPIReady;
+
+
+        window.onYouTubeIframeAPIReady =
+          ()=>{
+
+            if(
+              typeof oldCallback ===
+              'function'
+            ){
+
+              try{
+                oldCallback();
+              }catch{}
+
+            }
+
+
+            if(
+              state.ytPromiseResolve
+            ){
+
+              const resolver =
+                state.ytPromiseResolve;
+
+              state.ytPromiseResolve =
+                null;
+
+              resolver();
+
+            }
+
+          };
+
+
+        const existing =
+          document.getElementById(
+            'youtube-api-script'
+          );
+
+
+        if(existing){
+
+          return;
+
+        }
+
+
+        const script =
+          document.createElement(
+            'script'
+          );
+
+
+        script.id =
+          'youtube-api-script';
+
+        script.src =
+          'https://www.youtube.com/iframe_api';
+
+        script.async =
+          true;
+
+
+        document.head.appendChild(
+          script
+        );
+
+      }
+    );
+
+
+  return state.ytPromise;
+
+}
+
+
+/* =========================================================
+   DESTROY YOUTUBE
+========================================================= */
+
+function destroyYT(){
+
+  stopTimer();
+
+
+  if(state.yt){
+
+    try{
+
+      state.yt.destroy();
+
+    }catch{}
+
+  }
+
+
+  state.yt =
+    null;
+
+  state.ytId =
+    null;
+
+
+  youtubePlayer.innerHTML =
+    '';
+
+
+  stage.classList.remove(
+    'yt-active'
+  );
+
+}
+
+
+/* =========================================================
+   START NATIVE TRACKING
+========================================================= */
+
+function startNative(){
+
+  stopTimer();
+
+
+  state.lastVideoTime =
+    null;
+
+  state.lastWallTime =
+    null;
+
+
+  state.timer =
+    setInterval(
+      ()=>{
+
+        if(
+          !video.paused &&
+          !video.ended
+        ){
+
+          trackActualWatch(
+            video.currentTime,
+            video.duration,
+            true
+          );
+
+          scheduleSave();
+
+        }
+
+      },
+      400
+    );
+
+}
+
+
+/* =========================================================
+   START YOUTUBE TRACKING
+========================================================= */
+
+function startYT(){
+
+  stopTimer();
+
+
+  state.lastVideoTime =
+    null;
+
+  state.lastWallTime =
+    null;
+
+
+  state.timer =
+    setInterval(
+      ()=>{
+
+        if(
+          !state.yt ||
+          typeof state.yt.getCurrentTime !==
+          'function'
+        ){
+
+          return;
+
+        }
+
+
+        try{
+
+          const current =
+            state.yt.getCurrentTime() || 0;
+
+          const duration =
+            state.yt.getDuration() || 0;
+
+          const playerState =
+            state.yt.getPlayerState();
+
+
+          const playing =
+            playerState ===
+            YT.PlayerState.PLAYING;
+
+
+          trackActualWatch(
+            current,
+            duration,
+            playing
+          );
+
+
+          if(playing){
+
+            scheduleSave();
+
+          }
+
+        }catch{}
+
+      },
+      400
+    );
+
+}
+
+
+/* =========================================================
+   LOAD SAVED PROGRESS
+========================================================= */
+
+async function loadSavedProgress(
+  videoId
+){
+
+  state.watchedRanges =
+    [];
+
+  state.watched =
+    0;
+
+  state.duration =
+    0;
+
+  state.completed =
+    false;
+
+
+  if(!me){
+
+    return;
+
+  }
+
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await client
+        .from('video_sessions')
+        .select(
+          'watched_seconds,duration,completed'
+        )
+        .eq(
+          'student_id',
+          String(me.id)
+        )
+        .eq(
+          'video_id',
+          String(videoId)
+        )
+        .maybeSingle();
+
+
+    if(
+      error ||
+      !data
+    ){
+
+      return;
+
+    }
+
+
+    state.watched =
+      Math.max(
+        0,
+        number(
+          data.watched_seconds
+        )
+      );
+
+
+    state.duration =
+      Math.max(
+        0,
+        number(
+          data.duration
+        )
+      );
+
+
+    state.completed =
+      state.duration > 0 &&
+      state.watched >=
+      Math.max(
+        0,
+        state.duration - 1
+      );
+
+
+    updateProgressUI(
+      0,
+      state.duration
+    );
+
+  }catch(error){
+
+    console.warn(
+      '[Saved Progress]',
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   APPLY SPEED
+========================================================= */
+
+function applySpeed(){
+
+  const speed =
+    number(state.speed) || 1;
+
+
+  try{
+
+    video.playbackRate =
+      speed;
+
+  }catch{}
+
+
+  if(
+    state.yt &&
+    typeof state.yt.setPlaybackRate ===
+    'function'
+  ){
+
+    try{
+
+      state.yt.setPlaybackRate(
+        speed
+      );
+
+    }catch{}
+
+  }
+
+}
+
+
+/* =========================================================
+   YOUTUBE QUALITY
+========================================================= */
+
+function setYTQuality(){
+
+  if(
+    !state.yt ||
+    typeof state.yt.setPlaybackQuality !==
+    'function'
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    if(
+      state.quality &&
+      state.quality !== 'default'
+    ){
+
+      state.yt.setPlaybackQuality(
+        state.quality
+      );
+
+    }
+
+  }catch{}
+
+}
+
+
+/* =========================================================
+   LOAD NATIVE
+========================================================= */
+
+async function loadNative(
+  item
+){
+
+  destroyYT();
+
+
+  qualityWrap.style.display =
+    'none';
+
+
+  stage.classList.remove(
+    'yt-active'
+  );
+
+  stage.classList.add(
+    'native-active'
+  );
+
+
+  empty.style.display =
+    'none';
+
+
+  video.src =
+    item.url;
+
+
+  video.load();
+
+
+  video.playbackRate =
+    state.speed;
+
+
+  const metadataHandler =
+    ()=>{
+
+      state.duration =
+        number(
+          video.duration
+        );
+
+
+      if(
+        !state.completed &&
+        state.watched > 2 &&
+        state.duration > 0 &&
+        state.watched <
+        state.duration - 2
+      ){
+
+        try{
+
+          video.currentTime =
+            state.watched;
+
+        }catch{}
+
+      }
+
+
+      state.lastVideoTime =
+        null;
+
+      state.lastWallTime =
+        null;
+
+
+      updateProgressUI(
+        video.currentTime,
+        video.duration
+      );
+
+
+      video.removeEventListener(
+        'loadedmetadata',
+        metadataHandler
+      );
+
+    };
+
+
+  video.addEventListener(
+    'loadedmetadata',
+    metadataHandler
+  );
+
+
+  startNative();
+
+}
+
+
+/* =========================================================
+   LOAD YOUTUBE
+========================================================= */
+
+async function loadYT(
+  item
+){
+
+  const id =
+    ytId(item.url);
+
+
+  if(!id){
+
+    toast(
+      'رابط YouTube غير صحيح.'
+    );
+
+    hideLoading();
+
+    return;
+
+  }
+
+
+  showLoading(
+    'جاري تحميل الفيديو...'
+  );
+
+
+  try{
+
+    await waitYT();
+
+  }catch(error){
+
+    hideLoading();
+
+    toast(
+      'تعذر تحميل مشغل YouTube.'
+    );
+
+    return;
+
+  }
+
+
+  destroyYT();
+
+
+  state.ytId =
+    id;
+
+
+  qualityWrap.style.display =
+    'inline-flex';
+
+
+  stage.classList.remove(
+    'native-active'
+  );
+
+  stage.classList.add(
+    'yt-active'
+  );
+
+
+  empty.style.display =
+    'none';
+
+
+  state.yt =
+    new YT.Player(
+      youtubePlayer,
+      {
+
+        videoId:id,
+
+        width:'100%',
+
+        height:'100%',
+
+        playerVars:{
+
+          autoplay:0,
+
+          controls:1,
+
+          rel:0,
+
+          playsinline:1,
+
+          modestbranding:1,
+
+          iv_load_policy:3,
+
+          fs:1,
+
+          disablekb:1,
+
+          origin:
+            location.origin
+
+        },
+
+        events:{
+
+          onReady:event=>{
+
+            try{
+
+              const iframe =
+                state.yt?.getIframe?.();
+
+
+              if(iframe){
+
+                iframe.setAttribute(
+                  'allowfullscreen',
+                  'true'
+                );
+
+
+                iframe.setAttribute(
+                  'allow',
+                  'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen'
+                );
+
+
+                iframe.setAttribute(
+                  'referrerpolicy',
+                  'strict-origin-when-cross-origin'
+                );
+
+              }
+
+            }catch{}
+
+
+            hideLoading();
+
+
+            applySpeed();
+
+            setYTQuality();
+
+
+            if(
+              !state.completed &&
+              state.watched > 2 &&
+              state.duration > 0 &&
+              state.watched <
+              state.duration - 2
+            ){
+
+              try{
+
+                state.yt.seekTo(
+                  state.watched,
+                  true
+                );
+
+              }catch{}
+
+            }
+
+
+            state.lastVideoTime =
+              null;
+
+            state.lastWallTime =
+              null;
+
+
+            startYT();
+
+          },
+
+
+          onStateChange:event=>{
+
+            if(
+              event.data ===
+              YT.PlayerState.PLAYING
+            ){
+
+              state.lastVideoTime =
+                null;
+
+              state.lastWallTime =
+                null;
+
+            }
+
+
+            if(
+              event.data ===
+              YT.PlayerState.PAUSED
+            ){
+
+              try{
+
+                const current =
+                  state.yt.getCurrentTime();
+
+                const duration =
+                  state.yt.getDuration();
+
+
+                updateProgressUI(
+                  current,
+                  duration
+                );
+
+              }catch{}
+
+
+              save(false);
+
+            }
+
+
+            if(
+              event.data ===
+              YT.PlayerState.ENDED
+            ){
+
+              const duration =
+                state.yt?.getDuration?.() || 0;
+
+
+              if(duration > 0){
+
+                if(
+                  state.lastVideoTime !==
+                  null &&
+                  duration >
+                  state.lastVideoTime
+                ){
+
+                  addWatchedRange(
+                    state.lastVideoTime,
+                    duration
+                  );
+
+                }
+
+
+                state.duration =
+                  duration;
+
+
+                state.watched =
+                  duration;
+
+
+                state.completed =
+                  true;
+
+              }
+
+
+              updateProgressUI(
+                duration,
+                duration
+              );
+
+
+              save(true);
+
+
+              stopTimer();
+
+
+              updateListProgress();
+
+            }
+
+          },
+
+
+          onError:event=>{
+
+            hideLoading();
+
+
+            console.warn(
+              '[YouTube Error]',
+              event.data
+            );
+
+
+            toast(
+              'تعذر تشغيل فيديو YouTube.'
+            );
+
+          }
+
+        }
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   RESET PLAYER
+========================================================= */
+
+function resetPlayer(){
+
+  stopTimer();
+
+
+  destroyYT();
+
+
+  if(
+    document.fullscreenElement ||
+    document.webkitFullscreenElement
+  ){
+
+    exitFullscreen().catch(
+      ()=>{}
+    );
+
+  }
+
+
+  try{
+
+    video.pause();
+
+  }catch{}
+
+
+  video.removeAttribute(
+    'src'
+  );
+
+  video.load();
+
+
+  stage.classList.remove(
+    'native-active',
+    'yt-active',
+    'is-fullscreen'
+  );
+
+
+  empty.style.display =
+    'grid';
+
+
+  qualityWrap.style.display =
+    'none';
+
+}
+
+
+/* =========================================================
+   SELECT VIDEO
+========================================================= */
+
+async function selectVideo(
+  item
+){
+
+  if(!item){
+    return;
+  }
+
+
+  const token =
+    ++state.loadingToken;
+
+
+  resetUI();
+
+
+  state.current =
+    item;
+
+  state.id =
+    item.id;
+
+
+  state.type =
+    isYT(item.url)
+      ? 'youtube'
+      : 'native';
+
+
+  currentTitle.textContent =
+    item.title ||
+    'بدون عنوان';
+
+
+  currentGroup.textContent =
+    label(item.class_group);
+
+
+  document
+    .querySelectorAll(
+      '.videoItem'
+    )
+    .forEach(
+      el=>{
+
+        el.classList.toggle(
+          'active',
+          String(
+            el.dataset.id
+          ) ===
+          String(item.id)
+        );
+
+      }
+    );
+
+
+  showLoading(
+    'جاري تجهيز الفيديو...'
+  );
+
+
+  await loadSavedProgress(
+    item.id
+  );
+
+
+  if(
+    token !==
+    state.loadingToken
+  ){
+
+    return;
+
+  }
+
+
+  resetPlayer();
+
+
+  state.current =
+    item;
+
+  state.id =
+    item.id;
+
+  state.type =
+    isYT(item.url)
+      ? 'youtube'
+      : 'native';
+
+
+  currentTitle.textContent =
+    item.title ||
+    'بدون عنوان';
+
+
+  currentGroup.textContent =
+    label(item.class_group);
+
+
+  updateProgressUI(
+    0,
+    state.duration
+  );
+
+
+  if(
+    state.type ===
+    'youtube'
+  ){
+
+    await loadYT(
+      item
+    );
+
+  }else{
+
+    await loadNative(
+      item
+    );
+
+  }
+
+
+  if(
+    window.innerWidth <= 800
+  ){
+
+    sidebar.classList.remove(
+      'open'
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   RESET UI
+========================================================= */
+
+function resetUI(){
+
+  state.sec =
+    0;
+
+  state.duration =
+    0;
+
+  state.pct =
+    0;
+
+  state.watched =
+    0;
+
+  state.lastVideoTime =
+    null;
+
+  state.lastWallTime =
+    null;
+
+  state.lastSaveWatched =
+    -1;
+
+  state.completed =
+    false;
+
+  state.watchedRanges =
+    [];
+
+
+  updateProgressUI(
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   RENDER VIDEOS
+========================================================= */
+
+function render(){
+
+  const query =
+    norm(
+      state.search
+    );
+
+
+  state.visible =
+    state.all.filter(
+      item=>{
+
+        if(!query){
+          return true;
+        }
+
+
+        return (
+          norm(item.title)
+            .includes(query)
+          ||
+          norm(item.class_group)
+            .includes(query)
+        );
+
+      }
+    );
+
+
+  videoCount.textContent =
+    state.visible.length;
+
+
+  videoList.innerHTML =
+    '';
+
+
+  if(
+    !state.visible.length
+  ){
+
+    videoList.innerHTML =
+      `
+        <div style="
+          padding:28px 12px;
+          text-align:center;
+          color:var(--muted);
+          font-size:10px;
+          line-height:1.8;
+        ">
+          لا توجد نتائج مطابقة.
+        </div>
+      `;
+
+    return;
+
+  }
+
+
+  state.visible.forEach(
+    item=>{
+
+      const button =
+        document.createElement(
+          'button'
+        );
+
+
+      button.type =
+        'button';
+
+      button.className =
+        'videoItem';
+
+      button.dataset.id =
+        String(item.id);
+
+
+      button.innerHTML =
+        `
+          <div class="videoItemTitle">
+            ${esc(
+              item.title ||
+              'بدون عنوان'
+            )}
+          </div>
+
+          <div class="videoMeta">
+
+            <span>
+              ${esc(
+                label(
+                  item.class_group
+                )
+              )}
+            </span>
+
+            <span class="badge ${
+              item.is_premium
+                ? ''
+                : 'free'
+            }">
+              ${
+                item.is_premium
+                  ? '★ Premium'
+                  : 'مجاني'
+              }
+            </span>
+
+          </div>
+
+          <div class="itemProgress">
+            <i></i>
+          </div>
+        `;
+
+
+      button.addEventListener(
+        'click',
+        ()=>{
+          selectVideo(
+            item
+          );
+        }
+      );
+
+
+      videoList.appendChild(
+        button
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   UPDATE LIST PROGRESS
+========================================================= */
+
+async function updateListProgress(){
+
+  if(
+    !me ||
+    !state.all.length
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await client
+        .from('video_sessions')
+        .select(
+          'video_id,percent'
+        )
+        .eq(
+          'student_id',
+          String(me.id)
+        );
+
+
+    if(
+      error ||
+      !data
+    ){
+
+      return;
+
+    }
+
+
+    const map =
+      new Map();
+
+
+    data.forEach(
+      row=>{
+
+        map.set(
+          String(
+            row.video_id
+          ),
+          Math.max(
+            0,
+            Math.min(
+              100,
+              number(
+                row.percent
+              )
+            )
+          )
+        );
+
+      }
+    );
+
+
+    document
+      .querySelectorAll(
+        '.videoItem'
+      )
+      .forEach(
+        item=>{
+
+          const bar =
+            item.querySelector(
+              '.itemProgress i'
+            );
+
+
+          if(!bar){
+            return;
+          }
+
+
+          const percent =
+            map.get(
+              String(
+                item.dataset.id
+              )
+            ) || 0;
+
+
+          bar.style.width =
+            percent + '%';
+
+        }
+      );
+
+  }catch(error){
+
+    console.warn(
+      '[List Progress]',
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD VIDEOS
+========================================================= */
+
+async function loadVideos(){
+
+  showLoading(
+    'جاري تحميل الدروس...'
+  );
+
+
+  try{
+
+    /*
+      نفس Query جدول videos بدون أي تغيير.
+    */
+
+    const {
+      data,
+      error
+    } =
+      await client
+        .from('videos')
+        .select(
+          'id,title,url,class_group,is_premium'
+        )
+        .order(
+          'id',
+          {
+            ascending:true
+          }
+        );
+
+
+    if(error){
+
+      throw error;
+
+    }
+
+
+    state.all =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+    render();
+
+
+    await updateListProgress();
+
+
+    hideLoading();
+
+
+    if(
+      !state.all.length
+    ){
+
+      toast(
+        'لا توجد فيديوهات متاحة حاليًا.'
+      );
+
+    }
+
+  }catch(error){
+
+    console.error(
+      '[Load Videos]',
+      error
+    );
+
+
+    hideLoading();
+
+
+    videoList.innerHTML =
+      `
+        <div style="
+          padding:25px 12px;
+          text-align:center;
+          color:#ef8d96;
+          font-size:10px;
+          line-height:1.9;
+        ">
+          تعذر تحميل الفيديوهات.<br>
+          تأكد من اتصال قاعدة البيانات.
+        </div>
+      `;
+
+
+    toast(
+      'حدث خطأ أثناء تحميل الفيديوهات.'
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   COMPLETE BUTTON
+========================================================= */
+
+async function completeCurrent(){
+
+  if(
+    !state.id ||
+    !state.current
+  ){
+
+    toast(
+      'اختر فيديو أولًا.'
+    );
+
+    return;
+
+  }
+
+
+  state.completed =
+    true;
+
+
+  if(
+    state.duration > 0
+  ){
+
+    state.watched =
+      state.duration;
+
+  }
+
+
+  updateProgressUI(
+    state.duration,
+    state.duration
+  );
+
+
+  try{
+
+    await save(
+      true
+    );
+
+
+    toast(
+      'تم تحديد الدرس كمكتمل ✓'
+    );
+
+
+    await updateListProgress();
+
+  }catch{
+
+    toast(
+      'تعذر حفظ حالة الدرس.'
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+function updateFullscreenButton(){
+
+  if(!fullscreenBtn){
+    return;
+  }
+
+
+  const active =
+    !!document.fullscreenElement ||
+    !!document.webkitFullscreenElement;
+
+
+  stage.classList.toggle(
+    'is-fullscreen',
+    active &&
+    document.fullscreenElement === stage
+  );
+
+
+  fullscreenBtn.textContent =
+    active
+      ? '⛶ خروج من الشاشة'
+      : '⛶ ملء الشاشة';
+
+
+  fullscreenBtn.title =
+    active
+      ? 'الخروج من ملء الشاشة'
+      : 'ملء الشاشة';
+
+}
+
+
+async function enterFullscreen(){
+
+  if(!stage){
+    return;
+  }
+
+
+  try{
+
+    if(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement
+    ){
+
+      await exitFullscreen();
+
+      return;
+
+    }
+
+
+    if(
+      typeof stage.requestFullscreen ===
+      'function'
+    ){
+
+      await stage.requestFullscreen();
+
+      stage.classList.add(
+        'is-fullscreen'
+      );
+
+      updateFullscreenButton();
+
+      return;
+
+    }
+
+
+    if(
+      typeof stage.webkitRequestFullscreen ===
+      'function'
+    ){
+
+      stage.webkitRequestFullscreen();
+
+      stage.classList.add(
+        'is-fullscreen'
+      );
+
+      updateFullscreenButton();
+
+      return;
+
+    }
+
+
+    toast(
+      'ملء الشاشة غير مدعوم في هذا المتصفح.'
+    );
+
+  }catch(error){
+
+    console.warn(
+      '[Fullscreen]',
+      error
+    );
+
+
+    try{
+
+      const iframe =
+        state.yt?.getIframe?.();
+
+
+      if(
+        iframe &&
+        typeof iframe.requestFullscreen ===
+        'function'
+      ){
+
+        iframe.setAttribute(
+          'allowfullscreen',
+          'true'
+        );
+
+
+        await iframe.requestFullscreen();
+
+        updateFullscreenButton();
+
+        return;
+
+      }
+
+    }catch{}
+
+
+    toast(
+      'تعذر تشغيل ملء الشاشة.'
+    );
+
+  }
+
+}
+
+
+async function exitFullscreen(){
+
+  try{
+
+    stage.classList.remove(
+      'is-fullscreen'
+    );
+
+
+    if(
+      document.fullscreenElement &&
+      typeof document.exitFullscreen ===
+      'function'
+    ){
+
+      await document.exitFullscreen();
+
+      return;
+
+    }
+
+
+    if(
+      document.webkitFullscreenElement &&
+      typeof document.webkitExitFullscreen ===
+      'function'
+    ){
+
+      document.webkitExitFullscreen();
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      '[Exit Fullscreen]',
+      error
+    );
+
+  }
+
+}
+
+
+async function toggleFullscreen(){
+
+  if(
+    document.fullscreenElement ||
+    document.webkitFullscreenElement
+  ){
+
+    await exitFullscreen();
+
+  }else{
+
+    await enterFullscreen();
+
+  }
+
+
+  updateFullscreenButton();
+
+}
+
+
+/* =========================================================
+   FULLSCREEN CHANGE
+========================================================= */
+
+function syncFullscreenState(){
+
+  const active =
+    !!document.fullscreenElement ||
+    !!document.webkitFullscreenElement;
+
+
+  /*
+    class fallback للحجب.
+  */
+
+  if(
+    active &&
+    document.fullscreenElement === stage
+  ){
+
+    stage.classList.add(
+      'is-fullscreen'
+    );
+
+  }else{
+
+    stage.classList.remove(
+      'is-fullscreen'
+    );
+
+  }
+
+
+  updateFullscreenButton();
+
+}
+
+
+document.addEventListener(
+  'fullscreenchange',
+  syncFullscreenState
+);
+
+
+document.addEventListener(
+  'webkitfullscreenchange',
+  syncFullscreenState
+);
+
+
+/* =========================================================
+   YOUTUBE BLOCK EVENTS
+========================================================= */
+
+function blockYouTubeNavigation(
+  event
+){
+
+  /*
+    منع الحدث من الوصول إلى YouTube.
+  */
+
+  event.preventDefault();
+
+  event.stopPropagation();
+
+  if(
+    typeof event.stopImmediatePropagation ===
+    'function'
+  ){
+
+    event.stopImmediatePropagation();
+
+  }
+
+
+  toast(
+    'المشاهدة متاحة من داخل منصة د. يوسف نافع فقط'
+  );
+
+
+  return false;
+
+}
+
+
+/*
+  الأحداث المطلوبة للماوس والـtouch.
+*/
+
+const blockedEvents = [
+
+  'click',
+
+  'dblclick',
+
+  'mousedown',
+
+  'mouseup',
+
+  'pointerdown',
+
+  'pointerup',
+
+  'pointermove',
+
+  'touchstart',
+
+  'touchend',
+
+  'contextmenu'
+
+];
+
+
+blockedEvents.forEach(
+  eventName=>{
+
+    ytBlocker.addEventListener(
+      eventName,
+      blockYouTubeNavigation,
+      {
+        capture:true,
+        passive:false
+      }
+    );
+
+
+    ytBrandBlocker.addEventListener(
+      eventName,
+      blockYouTubeNavigation,
+      {
+        capture:true,
+        passive:false
+      }
+    );
+
+
+    /*
+      الحجب الخاص بالعنوان.
+    */
+
+    ytTitleBlocker.addEventListener(
+      eventName,
+      blockYouTubeNavigation,
+      {
+        capture:true,
+        passive:false
+      }
+    );
+
+  }
+);
+
+
+/*
+  أحداث إضافية للموبايل.
+*/
+
+[
+  'touchmove',
+  'pointercancel',
+  'pointerover',
+  'pointerenter'
+].forEach(
+  eventName=>{
+
+    ytBlocker.addEventListener(
+      eventName,
+      blockYouTubeNavigation,
+      {
+        capture:true,
+        passive:false
+      }
+    );
+
+
+    ytBrandBlocker.addEventListener(
+      eventName,
+      blockYouTubeNavigation,
+      {
+        capture:true,
+        passive:false
+      }
+    );
+
+
+    ytTitleBlocker.addEventListener(
+      eventName,
+      blockYouTubeNavigation,
+      {
+        capture:true,
+        passive:false
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   NATIVE EVENTS
+========================================================= */
+
+video.addEventListener(
+  'play',
+  ()=>{
+
+    state.lastVideoTime =
+      null;
+
+    state.lastWallTime =
+      null;
+
+  }
+);
+
+
+video.addEventListener(
+  'pause',
+  ()=>{
+
+    try{
+
+      updateProgressUI(
+        video.currentTime,
+        video.duration
+      );
+
+    }catch{}
+
+
+    save(false);
+
+  }
+);
+
+
+video.addEventListener(
+  'seeking',
+  ()=>{
+
+    state.lastVideoTime =
+      null;
+
+    state.lastWallTime =
+      null;
+
+  }
+);
+
+
+video.addEventListener(
+  'seeked',
+  ()=>{
+
+    state.lastVideoTime =
+      video.currentTime;
+
+    state.lastWallTime =
+      performance.now();
+
+  }
+);
+
+
+video.addEventListener(
+  'timeupdate',
+  ()=>{
+
+    if(
+      !video.paused &&
+      !video.ended
+    ){
+
+      trackActualWatch(
+        video.currentTime,
+        video.duration,
+        true
+      );
+
+    }
+
+  }
+);
+
+
+video.addEventListener(
+  'loadedmetadata',
+  ()=>{
+
+    state.duration =
+      number(
+        video.duration
+      );
+
+
+    updateProgressUI(
+      video.currentTime,
+      video.duration
+    );
+
+  }
+);
+
+
+video.addEventListener(
+  'ended',
+  ()=>{
+
+    const duration =
+      number(
+        video.duration
+      );
+
+
+    if(duration > 0){
+
+      if(
+        state.lastVideoTime !==
+        null &&
+        duration >
+        state.lastVideoTime
+      ){
+
+        addWatchedRange(
+          state.lastVideoTime,
+          duration
+        );
+
+      }
+
+
+      state.duration =
+        duration;
+
+
+      state.watched =
+        duration;
+
+
+      state.completed =
+        true;
+
+    }
+
+
+    updateProgressUI(
+      duration,
+      duration
+    );
+
+
+    save(
+      true
+    );
+
+
+    stopTimer();
+
+
+    updateListProgress();
+
+  }
+);
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+searchInput.addEventListener(
+  'input',
+  ()=>{
+
+    state.search =
+      searchInput.value;
+
+
+    render();
+
+
+    updateListProgress();
+
+  }
+);
+
+
+/* =========================================================
+   SPEED
+========================================================= */
+
+speedSelect.addEventListener(
+  'change',
+  ()=>{
+
+    state.speed =
+      number(
+        speedSelect.value
+      ) || 1;
+
+
+    applySpeed();
+
+  }
+);
+
+
+/* =========================================================
+   QUALITY
+========================================================= */
+
+qualitySelect.addEventListener(
+  'change',
+  ()=>{
+
+    state.quality =
+      qualitySelect.value;
+
+
+    setYTQuality();
+
+  }
+);
+
+
+/* =========================================================
+   COMPLETE
+========================================================= */
+
+completeBtn.addEventListener(
+  'click',
+  completeCurrent
+);
+
+
+/* =========================================================
+   FULLSCREEN BUTTON
+========================================================= */
+
+fullscreenBtn.addEventListener(
+  'click',
+  toggleFullscreen
+);
+
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+mobileMenuBtn.addEventListener(
+  'click',
+  ()=>{
+    sidebar.classList.toggle(
+      'open'
+    );
+  }
+);
+
+
+/*
+  إغلاق قائمة الدروس عند الضغط خارجها.
+*/
+
+document.addEventListener(
+  'click',
+  event=>{
+
+    if(
+      window.innerWidth > 800
+    ){
+
+      return;
+
+    }
+
+
+    if(
+      !sidebar.classList.contains(
+        'open'
+      )
+    ){
+
+      return;
+
+    }
+
+
+    const insideSidebar =
+      sidebar.contains(
+        event.target
+      );
+
+    const insideMenu =
+      mobileMenuBtn.contains(
+        event.target
+      );
+
+
+    if(
+      !insideSidebar &&
+      !insideMenu
+    ){
+
+      sidebar.classList.remove(
+        'open'
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+logoutBtn.addEventListener(
+  'click',
+  async ()=>{
+
+    try{
+
+      await save(
+        true
+      );
+
+    }catch{}
+
+
+    try{
+
+      await client.auth.signOut();
+
+    }catch{}
+
+
+    location.href =
+      'login.html';
+
+  }
+);
+
+
+/* =========================================================
+   BEFORE UNLOAD
+========================================================= */
+
+window.addEventListener(
+  'beforeunload',
+  ()=>{
+    if(
+      state.id &&
+      me
+    ){
+
+      save(true);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   VISIBILITY
+========================================================= */
+
+document.addEventListener(
+  'visibilitychange',
+  ()=>{
+
+    if(
+      document.hidden
+    ){
+
+      save(false);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+async function getCurrentUser(){
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await client.auth.getUser();
+
+
+    if(
+      error ||
+      !data ||
+      !data.user
+    ){
+
+      try{
+
+        const stored =
+          JSON.parse(
+            localStorage.getItem(
+              'user'
+            ) || 'null'
+          );
+
+
+        if(
+          stored &&
+          stored.id
+        ){
+
+          return stored;
+
+        }
+
+      }catch{}
+
+
+      return null;
+
+    }
+
+
+    const authUser =
+      data.user;
+
+
+    let profile =
+      null;
+
+
+    /*
+      students
+    */
+
+    try{
+
+      const result =
+        await client
+          .from('students')
+          .select('*')
+          .eq(
+            'id',
+            authUser.id
+          )
+          .maybeSingle();
+
+
+      if(
+        !result.error &&
+        result.data
+      ){
+
+        profile =
+          result.data;
+
+      }
+
+    }catch{}
+
+
+    /*
+      profiles fallback
+    */
+
+    if(!profile){
+
+      try{
+
+        const result =
+          await client
+            .from('profiles')
+            .select('*')
+            .eq(
+              'id',
+              authUser.id
+            )
+            .maybeSingle();
+
+
+        if(
+          !result.error &&
+          result.data
+        ){
+
+          profile =
+            result.data;
+
+        }
+
+      }catch{}
+
+    }
+
+
+    return {
+
+      id:
+        authUser.id,
+
+      email:
+        authUser.email || '',
+
+      ...(profile || {})
+
+    };
+
+  }catch(error){
+
+    console.warn(
+      '[Auth]',
+      error
+    );
+
+
+    try{
+
+      const stored =
+        JSON.parse(
+          localStorage.getItem(
+            'user'
+          ) || 'null'
+        );
+
+
+      if(
+        stored &&
+        stored.id
+      ){
+
+        return stored;
+
+      }
+
+    }catch{}
+
+
+    return null;
+
+  }
+
+}
+
+
+/* =========================================================
+   PERIODIC SAVE
+========================================================= */
+
+setInterval(
+  ()=>{
+    save(false);
+  },
+  15000
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+async function start(){
+
+  showLoading(
+    'جاري تجهيز المنصة...'
+  );
+
+
+  me =
+    await getCurrentUser();
+
+
+  if(!me){
+
+    hideLoading();
+
+
+    toast(
+      'يجب تسجيل الدخول أولًا.'
+    );
+
+
+    setTimeout(
+      ()=>{
+        location.href =
+          'login.html';
+      },
+      1000
+    );
+
+
+    return;
+
+  }
+
+
+  const displayName =
+    me.full_name ||
+    me.name ||
+    me.email ||
+    'الطالب';
+
+
+  welcomeText.textContent =
+    `مرحبًا ${displayName} — اختر الدرس الذي تريد مشاهدته`;
+
+
   await loadVideos();
 
-  /* تحديث اسم الطالب وبياناته بعد ظهور قائمة الفيديوهات */
-  getCurrentUser();
 
-  setInterval(saveSession,30000);
-})();
+  hideLoading();
+
+}
+
+
+/* =========================================================
+   ERROR HANDLING
+========================================================= */
+
+window.addEventListener(
+  'error',
+  event=>{
+
+    console.warn(
+      '[Videos Error]',
+      event.error ||
+      event.message
+    );
+
+  }
+);
+
+
+window.addEventListener(
+  'unhandledrejection',
+  event=>{
+
+    console.warn(
+      '[Videos Promise]',
+      event.reason
+    );
+
+  }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+start();
+
 </script>
+
 </body>
 </html>
