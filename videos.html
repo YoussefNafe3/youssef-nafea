@@ -24,16 +24,17 @@ button,input,select{font:inherit}.app{width:100%;display:flex;min-height:100vh}
 .btn{border:0;border-radius:11px;padding:10px 14px;cursor:pointer;font-weight:700;color:#fff;background:var(--blue)}.btn.secondary{background:#17263e}.btn.danger{background:#7f1d1d}.btn:hover{filter:brightness(1.07)}.mobileMenu{display:none}
 .playerCard{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.025));border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.25)}
 .playerHeader{padding:16px 18px;border-bottom:1px solid var(--line);background:rgba(7,17,31,.55)}#videoTitle{font-size:20px;font-weight:800;line-height:1.6}#videoSubtitle{color:var(--muted);font-size:12px;margin-top:3px}
-.stage{position:relative;background:#000;aspect-ratio:16/9;min-height:250px;overflow:hidden}.stage video,.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}.ytBlocker{position:absolute;top:0;left:0;right:0;height:76px;background:transparent;z-index:20;pointer-events:auto;cursor:default}.ytTitleBlocker{position:absolute;top:0;left:0;right:0;height:76px;background:transparent;z-index:21;pointer-events:auto;cursor:default}.ytBottomBlocker{position:absolute;left:0;right:0;bottom:0;height:76px;background:transparent;z-index:20;pointer-events:auto;cursor:default}
+.stage{position:relative;background:#000;aspect-ratio:16/9;min-height:250px;overflow:hidden;isolation:isolate}.stage video,.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}.ytBlocker,.ytTitleBlocker,.ytBottomBlocker{position:absolute;left:0;right:0;background:transparent;pointer-events:auto;cursor:default;touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}.ytBlocker{top:0;height:clamp(60px,9vh,92px);z-index:20}.ytTitleBlocker{top:0;height:clamp(60px,9vh,92px);z-index:21}.ytBottomBlocker{bottom:0;height:clamp(60px,10vh,96px);z-index:20}
 .watermark{position:absolute;z-index:12;pointer-events:none;user-select:none;color:rgba(255,255,255,.38);font-size:11px;line-height:1.7;text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:pre-line;direction:rtl;text-align:center;background:rgba(0,0,0,.10);padding:2px 5px;border-radius:5px}
 .captureShield{position:absolute;inset:0;background:#000;display:none;align-items:center;justify-content:center;text-align:center;padding:25px;z-index:100;color:#fff;font-weight:800}.captureShield.show{display:flex}.captureShield small{display:block;color:#aaa;margin-top:8px;font-weight:500}
 .playerControls{padding:14px 18px;background:rgba(8,18,32,.82)}.controlRow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.speedGroup{display:flex;gap:6px;flex-wrap:wrap}.speedBtn{padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:#12223a;color:#fff;cursor:pointer}.speedBtn.active{background:var(--blue);border-color:var(--blue)}
 .qualitySelect{padding:8px 10px;background:#12223a;border:1px solid var(--line);border-radius:9px;color:#fff}.completeBtn{margin-inline-start:auto;background:#14532d}.completeBtn:disabled{opacity:.6;cursor:not-allowed}.fullscreenBtn{background:#17263e}.progressInfo{display:flex;justify-content:space-between;gap:10px;margin-top:12px;color:var(--muted);font-size:12px}.progress{height:7px;background:#172235;border-radius:999px;overflow:hidden;margin-top:7px}.progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--gold));transition:width .2s}
 .toast{position:fixed;right:18px;bottom:18px;background:#111827;border:1px solid var(--line);padding:11px 14px;border-radius:12px;z-index:100000;color:#fff;box-shadow:0 15px 40px rgba(0,0,0,.3)}
 .antiRecord{position:fixed;inset:0;background:#000;display:none;align-items:center;justify-content:center;z-index:99999;color:#fff;text-align:center;padding:30px}.antiRecord.show{display:flex}.antiBox{max-width:520px}.antiTitle{font-size:20px;font-weight:800}.antiText{margin-top:8px;color:#aaa;font-size:13px;line-height:1.8}
-.playerCard:fullscreen{width:100vw;height:100vh;border-radius:0;border:0;display:flex;flex-direction:column;background:#000}.playerCard:fullscreen .playerHeader{flex:0 0 auto}.playerCard:fullscreen .stage{flex:1;min-height:0;height:auto;aspect-ratio:auto}.playerCard:fullscreen .playerControls{flex:0 0 auto}.playerCard:-webkit-full-screen{width:100vw;height:100vh;border-radius:0;border:0;display:flex;flex-direction:column;background:#000}.playerCard:-webkit-full-screen .stage{flex:1;min-height:0;height:auto;aspect-ratio:auto}
+.playerCard:fullscreen,.playerCard:-webkit-full-screen{position:fixed;inset:0;width:100vw;height:100vh;max-width:100vw;max-height:100vh;margin:0;padding:0;border-radius:0;border:0;display:flex;flex-direction:column;background:#000;overflow:hidden}.playerCard:fullscreen .playerHeader,.playerCard:-webkit-full-screen .playerHeader{flex:0 0 auto}.playerCard:fullscreen .stage,.playerCard:-webkit-full-screen .stage{flex:1 1 auto;min-height:0;width:100%;height:auto;aspect-ratio:auto;max-height:none}.playerCard:fullscreen .playerControls,.playerCard:-webkit-full-screen .playerControls{flex:0 0 auto}.playerCard:fullscreen .ytBlocker,.playerCard:fullscreen .ytTitleBlocker,.playerCard:fullscreen .ytBottomBlocker,.playerCard:-webkit-full-screen .ytBlocker,.playerCard:-webkit-full-screen .ytTitleBlocker,.playerCard:-webkit-full-screen .ytBottomBlocker{display:block}
 @media(max-width:1000px){body{display:block}.sidebar{position:fixed;top:0;right:-330px;width:320px;transition:right .25s;height:100vh}.sidebar.open{right:0}.mobileMenu{display:inline-flex}.main{padding:12px}.topbar{align-items:flex-start;flex-wrap:wrap}.topActions{width:100%}.stage{aspect-ratio:16/9;min-height:200px}.completeBtn{margin-inline-start:0}.studentChip{width:100%}}
 @media(max-width:560px){.main{padding:8px}.playerCard{border-radius:14px}.playerHeader{padding:12px}.playerControls{padding:12px}#videoTitle{font-size:16px}.topbar{gap:9px}.topActions .btn{flex:1}.stage{min-height:190px}.watermark{font-size:9px}.videoItem{padding:11px}.fullscreenBtn{min-width:44px}}
+@media (max-width:1000px) and (orientation:landscape){.playerCard:fullscreen .playerHeader,.playerCard:-webkit-full-screen .playerHeader{display:none}.playerCard:fullscreen .playerControls,.playerCard:-webkit-full-screen .playerControls{padding:8px 12px}.playerCard:fullscreen .progressInfo,.playerCard:-webkit-full-screen .progressInfo{margin-top:6px}.playerCard:fullscreen .progress,.playerCard:-webkit-full-screen .progress{margin-top:4px}.playerCard:fullscreen .stage,.playerCard:-webkit-full-screen .stage{height:100%;flex:1 1 auto}}
 </style>
 </head>
 <body>
@@ -127,7 +128,7 @@ const state = {
   lastTime: 0, sessionSaved: false, skips: 0, completedByEnd: false, watchedRanges: [],
   yt: null, ytReady: false, ytQuality: "auto", sessionTimer: null,
   toastTimer: null, watermarkTimer: null, captureShieldActive: false,
-  wasPlayingBeforeShield: false, fullscreenRedirecting: false, securityAcknowledged: false, securityIncidents: 0, blurTimer: null, nativePlaying:false, nativeLastTime:0, nativeLastWall:0
+  wasPlayingBeforeShield: false, fullscreenRedirecting: false, securityAcknowledged: false, securityIncidents: 0, blurTimer: null, nativePlaying:false, nativeLastTime:0, nativeLastWall:0, orientationLocked:false
 };
 
 function updateUserUI(){
@@ -548,17 +549,40 @@ $("logoutBtn").addEventListener("click",async()=>{try{await client.auth.signOut(
    FULLSCREEN — الشاشة الكاملة تشمل العنوان + الفيديو + الشريط السفلي
 ========================================================= */
 function isFullscreen(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+function isMobileViewport(){ return window.matchMedia?.("(max-width:1000px)").matches ?? false; }
+async function lockLandscapeOnMobile(){
+  if(!isMobileViewport()) return;
+  try{
+    if(screen.orientation?.lock){
+      await screen.orientation.lock("landscape");
+      state.orientationLocked=true;
+    }
+  }catch(e){
+    state.orientationLocked=false;
+    console.warn("[Orientation lock]",e);
+  }
+}
+async function unlockOrientation(){
+  if(!state.orientationLocked) return;
+  try{ screen.orientation?.unlock?.(); }catch(e){ console.warn(e); }
+  state.orientationLocked=false;
+}
 async function requestPlayerFullscreen(){
   try{
-    if(playerCard.requestFullscreen) await playerCard.requestFullscreen();
+    if(playerCard.requestFullscreen) await playerCard.requestFullscreen({navigationUI:"hide"});
     else if(playerCard.webkitRequestFullscreen) playerCard.webkitRequestFullscreen();
-    else toast("المتصفح لا يدعم ملء الشاشة الكامل.");
+    else { toast("المتصفح لا يدعم ملء الشاشة الكامل."); return; }
+    await new Promise(r=>setTimeout(r,100));
+    await lockLandscapeOnMobile();
+    updateFullscreenButton();
+    setTimeout(moveWatermark,120);
   }catch(e){ console.warn("[Fullscreen]",e); toast("تعذر تشغيل ملء الشاشة."); }
 }
 async function exitFullscreen(){
   try{
+    await unlockOrientation();
     if(document.exitFullscreen) await document.exitFullscreen();
-    else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
+    else if(document.webkitExitFullscreen) await document.webkitExitFullscreen();
   }catch(e){ console.warn(e); }
 }
 fullscreenBtn.addEventListener("click",async()=>{
@@ -574,13 +598,25 @@ document.addEventListener("fullscreenchange",async()=>{
   const el=document.fullscreenElement;
   if(el && !state.fullscreenRedirecting && (el===video || el===youtubePlayer || el.tagName==="IFRAME")){
     state.fullscreenRedirecting=true;
-    try{await exitFullscreen();await requestPlayerFullscreen();}catch(e){console.warn(e);}
-    setTimeout(()=>state.fullscreenRedirecting=false,500);
+    try{ await exitFullscreen(); await requestPlayerFullscreen(); }catch(e){ console.warn(e); }
+    setTimeout(()=>state.fullscreenRedirecting=false,600);
+    return;
   }
-  moveWatermark();
+  if(el) await lockLandscapeOnMobile();
+  else await unlockOrientation();
+  setTimeout(moveWatermark,100);
 });
-document.addEventListener("webkitfullscreenchange",()=>{updateFullscreenButton();moveWatermark();});
-
+document.addEventListener("webkitfullscreenchange",async()=>{
+  updateFullscreenButton();
+  if(document.webkitFullscreenElement) await lockLandscapeOnMobile();
+  else await unlockOrientation();
+  setTimeout(moveWatermark,100);
+});
+if(screen.orientation?.addEventListener){
+  screen.orientation.addEventListener("change",()=>{
+    if(isFullscreen()) setTimeout(moveWatermark,150);
+  });
+}
 /* =========================================================
    حماية المحتوى — حماية قوية قدر الإمكان من داخل المتصفح
    ملاحظة: المتصفح لا يوفّر API موثوقًا لاكتشاف كل أدوات
@@ -634,7 +670,12 @@ document.addEventListener("visibilitychange",()=>{
 });
 window.addEventListener("pagehide",()=>{ persistLocalProgress(); saveSession(); });
 window.addEventListener("pageshow",()=>{ if(state.captureShieldActive) hideCaptureShield(); });
-window.addEventListener("orientationchange",()=>{ if(state.securityAcknowledged) setTimeout(moveWatermark,100); });
+window.addEventListener("orientationchange",()=>{
+  setTimeout(()=>{ moveWatermark(); updateFullscreenButton(); },150);
+});
+window.addEventListener("resize",()=>{
+  if(isFullscreen()) setTimeout(moveWatermark,80);
+});
 
 /* عند فقدان تركيز النافذة ننتظر قليلًا لتجنب false-positive أثناء انتقالات الواجهة. */
 window.addEventListener("blur",()=>{
@@ -705,7 +746,6 @@ try{
   }
 }catch(e){ console.warn("[Screen Capture Guard]",e); }
 
-window.addEventListener("resize",()=>moveWatermark());
 window.addEventListener("beforeunload",()=>{persistLocalProgress();saveSession();});
 
 /* =========================================================
