@@ -127,7 +127,7 @@ const state = {
   lastTime: 0, sessionSaved: false, skips: 0, completedByEnd: false, watchedRanges: [],
   yt: null, ytReady: false, ytQuality: "auto", sessionTimer: null,
   toastTimer: null, watermarkTimer: null, captureShieldActive: false,
-  wasPlayingBeforeShield: false, fullscreenRedirecting: false, securityAcknowledged: false, securityIncidents: 0, blurTimer: null
+  wasPlayingBeforeShield: false, fullscreenRedirecting: false, securityAcknowledged: false, securityIncidents: 0, blurTimer: null, nativePlaying:false, nativeLastTime:0, nativeLastWall:0
 };
 
 function updateUserUI(){
@@ -220,22 +220,45 @@ function updateProgressUI(current,duration){
 }
 
 async function loadSavedSession(videoId){
-  state.lastTime = 0; state.watchedRanges = []; state.skips = 0; state.completedByEnd = false;
+  state.lastTime=0; state.watchedRanges=[]; state.skips=0; state.completedByEnd=false;
+  const local=loadLocalProgress(videoId);
+  if(local){
+    state.lastTime=Math.max(0,Number(local.lastTime)||0);
+    state.watchedRanges=mergeRanges(local.watchedRanges||[]);
+    state.completedByEnd=local.completed===true;
+  }
   try{
-    const {data,error} = await client.from("video_sessions").select("*").eq("student_id",String(user.id)).eq("video_id",videoId).maybeSingle();
-    if(error){ console.warn("[Load session]", error); return; }
+    const {data,error}=await client.from("video_sessions").select("*").eq("student_id",String(user.id)).eq("video_id",videoId).maybeSingle();
+    if(error){ console.warn("[Load session]",error); return; }
     if(data){
-      const watched = Number(data.watched_seconds) || 0;
-      const duration = Number(data.duration) || 0;
-      if(watched > 0 && duration > 0) state.watchedRanges = [[0, watched]];
-      state.lastTime = Math.max(0, Math.min(Number(data.last_time) || 0, duration || Number.MAX_SAFE_INTEGER));
-      state.skips = Number(data.skips) || 0;
-      state.completedByEnd = data.completed === true;
+      const watched=Number(data.watched_seconds)||0, duration=Number(data.duration)||0;
+      if(!state.watchedRanges.length && watched>0 && duration>0) state.watchedRanges=[[0,Math.min(watched,duration)]];
+      const dbTime=Math.max(0,Number(data.last_time)||0);
+      if(dbTime>0 || !local) state.lastTime=Math.max(state.lastTime,dbTime);
+      state.skips=Number(data.skips)||0;
+      state.completedByEnd=state.completedByEnd || data.completed===true;
     }
-  }catch(e){ console.warn("[Load session]", e); }
+  }catch(e){ console.warn("[Load session]",e); }
 }
 
+function localProgressKey(videoId=state.currentVideoId){ return `video_progress_${String(user.id || "000")}_${String(videoId)}`; }
+function persistLocalProgress(){
+  if(!state.currentVideoId) return;
+  try{
+    const current=state.currentVideo?.is_youtube ? Number(state.yt?.getCurrentTime?.())||state.lastTime||0 : Number(video.currentTime)||state.lastTime||0;
+    localStorage.setItem(localProgressKey(),JSON.stringify({lastTime:current,watchedRanges:state.watchedRanges,completed:!!state.completedByEnd,savedAt:Date.now()}));
+  }catch(e){ console.warn("[Local progress]",e); }
+}
+function loadLocalProgress(videoId){
+  try{
+    const raw=localStorage.getItem(`video_progress_${String(user.id || "000")}_${String(videoId)}`);
+    if(!raw) return null;
+    const data=JSON.parse(raw);
+    return data && typeof data === "object" ? data : null;
+  }catch{return null;}
+}
 async function saveSession(){
+  persistLocalProgress();
   if(!state.currentVideoId || !state.currentVideo) return;
 
   let duration = 0, current = 0;
@@ -262,7 +285,7 @@ async function saveSession(){
     watched_seconds: Math.floor(watched),
     duration: Math.floor(duration),
     percent: Number(percent.toFixed(2)),
-    completed: state.completedByEnd || percent >= 90,
+    completed: state.completedByEnd,
     skips: state.skips || 0,
     updated_at: new Date().toISOString()
   };
@@ -352,29 +375,40 @@ function createYouTubePlayer(item){
 }
 
 let youtubeProgressTimer = null;
+let youtubeLastTime = 0;
+let youtubeLastWall = 0;
 function startYouTubeProgress(){
   clearInterval(youtubeProgressTimer);
+  try{ youtubeLastTime = Number(state.yt?.getCurrentTime?.()) || 0; }catch{ youtubeLastTime=0; }
+  youtubeLastWall = performance.now();
   youtubeProgressTimer = setInterval(()=>{
     if(!state.currentVideo?.is_youtube || !state.yt) return;
     let current=0,duration=0;
     try{ current=Number(state.yt.getCurrentTime?.())||0; duration=Number(state.yt.getDuration?.())||0; }catch{return;}
     if(duration){
-      if(current > state.lastTime) addWatchedRange(state.lastTime,current);
+      const now=performance.now(), previous=youtubeLastTime;
+      const wallDelta=youtubeLastWall ? (now-youtubeLastWall)/1000 : 0;
+      const mediaDelta=current-previous;
+      if(mediaDelta > 0 && mediaDelta <= Math.max(2.5,wallDelta*3+0.75)) addWatchedRange(previous,current);
+      youtubeLastTime=current;
+      youtubeLastWall=now;
       state.lastTime=current;
       updateProgressUI(current,duration);
     }
-  },1000);
+  },500);
 }
 function stopYouTubeProgress(){ clearInterval(youtubeProgressTimer); youtubeProgressTimer=null; }
 
 async function selectVideo(item){
   if(!item) return;
+  sidebar.classList.remove("open");
   if(!item.url){ toast("هذا الدرس لا يحتوي على رابط فيديو حاليًا."); return; }
 
   stopYouTubeProgress();
   state.currentVideoId = item.id;
   state.currentVideo = {...item,is_youtube:isYouTubeUrl(item.url)};
   state.lastTime = 0; state.watchedRanges = []; state.skips = 0; state.completedByEnd = false; state.sessionSaved = false;
+  resetNativeTracking();
   videoTitle.textContent = item.title || "بدون عنوان";
   videoSubtitle.textContent = item.class_group ? `المجموعة: ${item.class_group}` : "درس تعليمي";
   document.querySelectorAll(".videoItem").forEach(el => el.classList.toggle("active", String(el.dataset.id) === String(item.id)));
@@ -389,6 +423,7 @@ async function selectVideo(item){
 }
 
 function prepareNativeVideo(item){
+  resetNativeTracking();
   clearNativeVideo();
   video.src = item.url;
   video.load();
@@ -438,22 +473,56 @@ function render(){
   });
 }
 
-let rangeStart = 0;
-video.addEventListener("play",()=>{ rangeStart = video.currentTime; });
-video.addEventListener("pause",()=>{ addWatchedRange(rangeStart,video.currentTime); state.lastTime=video.currentTime; updateProgressUI(video.currentTime,video.duration); saveSession(); });
-video.addEventListener("seeked",()=>{ state.lastTime=video.currentTime; updateProgressUI(video.currentTime,video.duration); });
-video.addEventListener("timeupdate",()=>{
-  if(!video.duration) return;
-  addWatchedRange(rangeStart,video.currentTime);
-  rangeStart=video.currentTime;
-  state.lastTime=video.currentTime;
+/* =========================================================
+   WATCHED PROGRESS — يتحسب من التشغيل الفعلي فقط
+   الـ seek / تقديم الفيديو / تغيير currentTime لا يضيف تقدمًا.
+   ========================================================= */
+function resetNativeTracking(){
+  state.nativePlaying = false;
+  state.nativeLastTime = Number(video.currentTime) || 0;
+  state.nativeLastWall = 0;
+}
+video.addEventListener("play",()=>{
+  state.nativePlaying = true;
+  state.nativeLastTime = Number(video.currentTime) || 0;
+  state.nativeLastWall = performance.now();
+});
+video.addEventListener("pause",()=>{
+  state.nativePlaying = false;
+  state.lastTime = Number(video.currentTime) || 0;
+  updateProgressUI(video.currentTime,video.duration);
+  saveSession();
+});
+video.addEventListener("seeking",()=>{
+  state.nativeLastTime = Number(video.currentTime) || 0;
+  state.nativeLastWall = performance.now();
+});
+video.addEventListener("seeked",()=>{
+  state.nativeLastTime = Number(video.currentTime) || 0;
+  state.nativeLastWall = performance.now();
+  state.lastTime = Number(video.currentTime) || 0;
   updateProgressUI(video.currentTime,video.duration);
 });
+video.addEventListener("timeupdate",()=>{
+  if(!video.duration || !state.nativePlaying) return;
+  const now = performance.now();
+  const current = Number(video.currentTime) || 0;
+  const previous = Number(state.nativeLastTime) || 0;
+  const wallDelta = state.nativeLastWall ? (now-state.nativeLastWall)/1000 : 0;
+  const mediaDelta = current-previous;
+  if(mediaDelta > 0 && mediaDelta <= Math.max(2.5,wallDelta*3+0.75)) addWatchedRange(previous,current);
+  state.nativeLastTime = current;
+  state.nativeLastWall = now;
+  state.lastTime = current;
+  updateProgressUI(current,video.duration);
+});
 video.addEventListener("ended",()=>{
+  state.nativePlaying = false;
   state.completedByEnd = true;
   if(Number.isFinite(video.duration) && video.duration > 0) addWatchedRange(0,video.duration);
   updateProgressUI(video.duration,video.duration);
   saveSession();
+  persistLocalProgress();
   toast("✓ تم إكمال الدرس تلقائيًا");
 });
 video.addEventListener("ratechange",()=>document.querySelectorAll(".speedBtn").forEach(b=>b.classList.toggle("active",Number(b.dataset.speed)===video.playbackRate)));
@@ -556,11 +625,16 @@ securityAcknowledge.addEventListener("click",()=>{
 /* إيقاف فوري إذا أصبحت الصفحة غير مرئية — يشمل تبديل التبويب/نافذة أخرى. */
 document.addEventListener("visibilitychange",()=>{
   if(document.hidden){
+    persistLocalProgress();
+    saveSession();
     if(state.securityAcknowledged) showCaptureShield("hidden");
   }else if(state.captureShieldActive){
     hideCaptureShield();
   }
 });
+window.addEventListener("pagehide",()=>{ persistLocalProgress(); saveSession(); });
+window.addEventListener("pageshow",()=>{ if(state.captureShieldActive) hideCaptureShield(); });
+window.addEventListener("orientationchange",()=>{ if(state.securityAcknowledged) setTimeout(moveWatermark,100); });
 
 /* عند فقدان تركيز النافذة ننتظر قليلًا لتجنب false-positive أثناء انتقالات الواجهة. */
 window.addEventListener("blur",()=>{
@@ -632,7 +706,7 @@ try{
 }catch(e){ console.warn("[Screen Capture Guard]",e); }
 
 window.addEventListener("resize",()=>moveWatermark());
-window.addEventListener("beforeunload",()=>{saveSession();});
+window.addEventListener("beforeunload",()=>{persistLocalProgress();saveSession();});
 
 /* =========================================================
    INIT — الفيديوهات أولاً حتى لا تتأثر بتحميل بيانات الطالب
@@ -643,7 +717,7 @@ window.addEventListener("beforeunload",()=>{saveSession();});
   await loadVideos();
   getCurrentUser();
   updateFullscreenButton();
-  setInterval(saveSession,30000);
+  setInterval(saveSession,10000);
 })();
 </script>
 </body>
