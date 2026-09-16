@@ -71,7 +71,7 @@ button,input,select{font:inherit}.app{width:100%;display:flex;min-height:100vh}
       <div id="ytBlocker" class="ytBlocker hidden"></div>
       <div id="ytBottomBlocker" class="ytBottomBlocker hidden"></div>
       <div id="watermark" class="watermark"></div>
-      <div id="captureShield" class="captureShield"><div><div>⚠️ تم إيقاف العرض</div><small>تم إخفاء المحتوى لحماية الدرس.</small></div></div>
+      <div id="captureShield" class="captureShield"><div><div>⚠️ تم إيقاف العرض</div><small>تم إخفاء المحتوى لحماية الدرس. لا يمكن للصفحة ضمان منع أدوات التصوير الخارجية.</small></div></div>
     </div>
     <div class="playerControls">
       <div class="controlRow">
@@ -90,6 +90,7 @@ button,input,select{font:inherit}.app{width:100%;display:flex;min-height:100vh}
   </section>
 </main>
 </div>
+<div id="securityWarning" class="antiRecord show"><div class="antiBox securityWarningBox"><div class="antiTitle">🔒 تنبيه حماية المحتوى</div><div class="antiText">هذا المحتوى تعليمي ومخصص للحساب المسجل فقط. يُمنع تصوير الشاشة أو تسجيل الفيديو أو مشاركة المحتوى. عند اكتشاف محاولة تصوير أو فقدان تركيز الصفحة سيتم إيقاف الفيديو وإخفاء المحتوى.</div><button id="securityAcknowledge" class="btn" type="button" style="margin-top:18px">فهمت وأوافق</button></div></div>
 <div id="antiRecord" class="antiRecord"><div class="antiBox"><div class="antiTitle">⚠️ تم إيقاف العرض مؤقتًا</div><div class="antiText">تم إخفاء المحتوى لحماية الدرس. عند استعادة الصفحة يمكنك المتابعة.</div></div></div>
 <div id="toast" class="toast hidden"></div>
 
@@ -126,7 +127,7 @@ const state = {
   lastTime: 0, sessionSaved: false, skips: 0, completedByEnd: false, watchedRanges: [],
   yt: null, ytReady: false, ytQuality: "auto", sessionTimer: null,
   toastTimer: null, watermarkTimer: null, captureShieldActive: false,
-  wasPlayingBeforeShield: false, fullscreenRedirecting: false
+  wasPlayingBeforeShield: false, fullscreenRedirecting: false, securityAcknowledged: false, securityIncidents: 0, blurTimer: null
 };
 
 function updateUserUI(){
@@ -512,16 +513,34 @@ document.addEventListener("fullscreenchange",async()=>{
 document.addEventListener("webkitfullscreenchange",()=>{updateFullscreenButton();moveWatermark();});
 
 /* =========================================================
-   حماية المحتوى — أفضل حماية ممكنة من داخل المتصفح
+   حماية المحتوى — حماية قوية قدر الإمكان من داخل المتصفح
+   ملاحظة: المتصفح لا يوفّر API موثوقًا لاكتشاف كل أدوات
+   Screen Recording / Screenshot الخاصة بنظام التشغيل. لذلك
+   نستخدم عدة طبقات: تحذير قبل التشغيل + إيقاف عند إخفاء الصفحة
+   + كشف PrintScreen عندما يرسل المتصفح الحدث + منع بعض أوامر
+   النسخ/الحفظ + طبقة سوداء فوق الفيديو عند الاشتباه.
 ========================================================= */
-function showCaptureShield(){
-  if(state.captureShieldActive)return;
+const securityWarning = $("securityWarning"), securityAcknowledge = $("securityAcknowledge");
+
+function pauseCurrentMedia(){
+  try{
+    if(state.currentVideo?.is_youtube) state.yt?.pauseVideo?.();
+    else video.pause();
+  }catch{}
+}
+
+function showCaptureShield(reason="capture"){
+  state.securityIncidents++;
   state.captureShieldActive=true;
   state.wasPlayingBeforeShield=state.currentVideo?.is_youtube ? true : !video.paused;
-  try{ if(state.currentVideo?.is_youtube) state.yt?.pauseVideo?.(); else video.pause(); }catch{}
+  pauseCurrentMedia();
   antiRecord.classList.add("show");
   captureShield.classList.add("show");
+  if(reason === "printscr") toast("⚠️ تم اكتشاف محاولة تصوير الشاشة وتم إيقاف الفيديو.");
+  else if(reason === "blur") toast("⚠️ تم إيقاف الفيديو مؤقتًا لحماية المحتوى.");
+  else toast("⚠️ تم إخفاء المحتوى لحماية الدرس.");
 }
+
 function hideCaptureShield(){
   if(!state.captureShieldActive)return;
   state.captureShieldActive=false;
@@ -529,18 +548,88 @@ function hideCaptureShield(){
   captureShield.classList.remove("show");
 }
 
-document.addEventListener("visibilitychange",()=>{
-  if(document.hidden) showCaptureShield();
-  else hideCaptureShield();
+securityAcknowledge.addEventListener("click",()=>{
+  state.securityAcknowledged=true;
+  securityWarning.classList.remove("show");
 });
-window.addEventListener("blur",()=>{ if(document.hidden) showCaptureShield(); });
-window.addEventListener("focus",()=>{ if(!document.hidden) hideCaptureShield(); });
-window.addEventListener("keydown",e=>{
-  if(e.key === "PrintScreen"){
-    showCaptureShield();
-    setTimeout(()=>{if(!document.hidden)hideCaptureShield();},1500);
+
+/* إيقاف فوري إذا أصبحت الصفحة غير مرئية — يشمل تبديل التبويب/نافذة أخرى. */
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){
+    if(state.securityAcknowledged) showCaptureShield("hidden");
+  }else if(state.captureShieldActive){
+    hideCaptureShield();
   }
 });
+
+/* عند فقدان تركيز النافذة ننتظر قليلًا لتجنب false-positive أثناء انتقالات الواجهة. */
+window.addEventListener("blur",()=>{
+  if(!state.securityAcknowledged)return;
+  clearTimeout(state.blurTimer);
+  state.blurTimer=setTimeout(()=>{
+    if(document.hidden || !document.hasFocus()) showCaptureShield("blur");
+  },180);
+});
+window.addEventListener("focus",()=>{ clearTimeout(state.blurTimer); });
+
+/* PrintScreen: يمكن لبعض المتصفحات تمرير هذا الحدث للصفحة. */
+window.addEventListener("keydown",e=>{
+  const k=(e.key||"").toLowerCase();
+  if(e.key === "PrintScreen" || k === "printscreen") {
+    e.preventDefault();
+    e.stopPropagation();
+    if(state.securityAcknowledged){
+      showCaptureShield("printscr");
+      setTimeout(()=>{
+        if(!document.hidden){
+          hideCaptureShield();
+        }
+      },3000);
+    }
+    try{ navigator.clipboard?.writeText(""); }catch{}
+    return false;
+  }
+  /* اختصارات الحفظ/الطباعة/عرض المصدر */
+  if((e.ctrlKey||e.metaKey) && ["s","p","u"].includes(k)){
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+  if(e.key === "F12" || (e.ctrlKey && e.shiftKey && ["i","j","c"].includes(k))){
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+});
+
+/* منع قائمة الزر الأيمن والنسخ والسحب من صفحة المحتوى. */
+document.addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("dragstart",e=>e.preventDefault());
+document.addEventListener("copy",e=>e.preventDefault());
+
+/* عند الطباعة أو قبل مغادرة الصفحة نخفي المحتوى. */
+window.addEventListener("beforeprint",()=>{ if(state.securityAcknowledged) showCaptureShield("print"); });
+
+/* إذا بدأ التقاط شاشة عبر API من داخل الصفحة نفسها، نخفي الفيديو فورًا.
+   هذا لا يستطيع اكتشاف مسجل النظام الخارجي الذي يعمل خارج الصفحة. */
+try{
+  if(navigator.mediaDevices?.getDisplayMedia){
+    const originalGetDisplayMedia=navigator.mediaDevices.getDisplayMedia.bind(navigator.mediaDevices);
+    navigator.mediaDevices.getDisplayMedia=async function(...args){
+      if(state.securityAcknowledged) showCaptureShield("displaymedia");
+      try{
+        const stream=await originalGetDisplayMedia(...args);
+        stream?.getTracks?.().forEach(track=>track.addEventListener("ended",()=>{
+          if(!document.hidden) hideCaptureShield();
+        }));
+        return stream;
+      }catch(err){
+        if(state.securityAcknowledged) hideCaptureShield();
+        throw err;
+      }
+    };
+  }
+}catch(e){ console.warn("[Screen Capture Guard]",e); }
 
 window.addEventListener("resize",()=>moveWatermark());
 window.addEventListener("beforeunload",()=>{saveSession();});
