@@ -1,0 +1,2784 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>إدارة النتائج | د. يوسف نافع</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --bg1:#07111f;
+    --bg2:#0f172a;
+    --card:rgba(255,255,255,.055);
+    --card2:rgba(255,255,255,.075);
+    --border:rgba(255,255,255,.11);
+
+    --gold:#FFD700;
+    --gold2:#ffb300;
+
+    --blue:#3b82f6;
+    --green:#22c55e;
+    --red:#ef4444;
+    --purple:#8b5cf6;
+
+    --text:#fff;
+    --muted:#94a3b8;
+
+    --shadow:0 20px 60px rgba(0,0,0,.35);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Cairo',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    color:var(--text);
+    background:
+        radial-gradient(circle at 10% 10%,rgba(37,99,235,.12),transparent 30%),
+        radial-gradient(circle at 90% 20%,rgba(124,58,237,.12),transparent 30%),
+        linear-gradient(135deg,var(--bg1),var(--bg2));
+    padding:20px;
+}
+
+/* ================================
+   TOP BAR
+================================ */
+
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+
+    padding:16px 20px;
+
+    background:rgba(255,255,255,.055);
+    border:1px solid var(--border);
+    backdrop-filter:blur(20px);
+
+    border-radius:20px;
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:25px;
+
+    position:sticky;
+    top:15px;
+    z-index:50;
+}
+
+.logo{
+    color:var(--gold);
+    font-size:22px;
+    font-weight:800;
+}
+
+.admin-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+
+    background:rgba(255,215,0,.09);
+    border:1px solid rgba(255,215,0,.25);
+
+    color:var(--gold);
+
+    padding:7px 12px;
+    border-radius:10px;
+
+    font-size:13px;
+    font-weight:700;
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:none;
+    cursor:pointer;
+
+    padding:10px 15px;
+
+    border-radius:12px;
+
+    font-weight:700;
+    font-size:13px;
+
+    transition:.25s;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+
+    text-decoration:none;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+.home-btn{
+    color:#60a5fa;
+    background:rgba(37,99,235,.12);
+    border:1px solid rgba(37,99,235,.3);
+}
+
+.logout-btn{
+    color:#f87171;
+    background:rgba(239,68,68,.1);
+    border:1px solid rgba(239,68,68,.3);
+}
+
+/* ================================
+   PAGE HEADER
+================================ */
+
+.page-header{
+    margin-bottom:25px;
+}
+
+.page-header h1{
+    font-size:30px;
+    font-weight:800;
+    margin-bottom:7px;
+}
+
+.page-header p{
+    color:var(--muted);
+    font-size:14px;
+}
+
+/* ================================
+   STATS
+================================ */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.stat{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:20px;
+
+    backdrop-filter:blur(18px);
+
+    box-shadow:0 10px 30px rgba(0,0,0,.18);
+}
+
+.stat-icon{
+    font-size:25px;
+    margin-bottom:8px;
+}
+
+.stat-title{
+    color:var(--muted);
+    font-size:13px;
+    margin-bottom:4px;
+}
+
+.stat-value{
+    font-size:27px;
+    font-weight:800;
+}
+
+/* ================================
+   LAYOUT
+================================ */
+
+.grid{
+    display:grid;
+    grid-template-columns:380px 1fr;
+    gap:20px;
+    align-items:start;
+}
+
+/* ================================
+   CARD
+================================ */
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+
+    border-radius:22px;
+
+    padding:22px;
+
+    backdrop-filter:blur(18px);
+
+    box-shadow:var(--shadow);
+}
+
+.card-title{
+    font-size:19px;
+    font-weight:800;
+
+    display:flex;
+    align-items:center;
+    gap:9px;
+
+    margin-bottom:18px;
+}
+
+/* ================================
+   TABS
+================================ */
+
+.tabs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+
+    background:rgba(255,255,255,.04);
+
+    border:1px solid var(--border);
+
+    padding:5px;
+
+    border-radius:14px;
+
+    margin-bottom:20px;
+}
+
+.tab{
+    border:none;
+    background:transparent;
+
+    color:#94a3b8;
+
+    padding:11px;
+
+    border-radius:10px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.tab.active{
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+    color:white;
+}
+
+/* ================================
+   FORM
+================================ */
+
+.form-group{
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+
+    font-size:13px;
+    font-weight:700;
+
+    color:#cbd5e1;
+
+    margin-bottom:7px;
+}
+
+input,
+select,
+textarea{
+
+    width:100%;
+
+    border:1px solid rgba(255,255,255,.1);
+
+    outline:none;
+
+    background:rgba(255,255,255,.06);
+
+    color:white;
+
+    padding:12px 13px;
+
+    border-radius:12px;
+
+    font-size:13px;
+
+    transition:.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+
+    border-color:rgba(59,130,246,.7);
+
+    background:rgba(255,255,255,.08);
+
+    box-shadow:0 0 0 3px rgba(59,130,246,.08);
+}
+
+select option{
+    background:#0f172a;
+    color:white;
+}
+
+textarea{
+    resize:vertical;
+    min-height:80px;
+}
+
+.row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.submit-btn{
+
+    width:100%;
+
+    padding:13px;
+
+    border:none;
+
+    border-radius:13px;
+
+    cursor:pointer;
+
+    background:linear-gradient(135deg,var(--gold),var(--gold2));
+
+    color:#111;
+
+    font-size:15px;
+
+    font-weight:800;
+
+    transition:.25s;
+}
+
+.submit-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 25px rgba(255,193,7,.2);
+}
+
+.submit-btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+    transform:none;
+}
+
+/* ================================
+   SEARCH
+================================ */
+
+.search-box{
+    margin-bottom:15px;
+}
+
+.search-box input{
+    padding:13px 15px;
+}
+
+/* ================================
+   RESULT TABS
+================================ */
+
+.result-tabs{
+    display:flex;
+    gap:8px;
+
+    margin-bottom:15px;
+
+    overflow:auto;
+}
+
+.result-tab{
+
+    border:1px solid var(--border);
+
+    background:rgba(255,255,255,.04);
+
+    color:#94a3b8;
+
+    padding:9px 14px;
+
+    border-radius:11px;
+
+    cursor:pointer;
+
+    white-space:nowrap;
+
+    font-weight:700;
+}
+
+.result-tab.active{
+    background:rgba(59,130,246,.15);
+    border-color:rgba(59,130,246,.4);
+    color:#60a5fa;
+}
+
+/* ================================
+   TABLE
+================================ */
+
+.table-wrap{
+    overflow-x:auto;
+    border:1px solid var(--border);
+    border-radius:16px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:850px;
+}
+
+thead{
+    background:rgba(255,255,255,.05);
+}
+
+th{
+    text-align:right;
+    padding:14px;
+
+    font-size:12px;
+
+    color:#94a3b8;
+
+    white-space:nowrap;
+}
+
+td{
+    padding:14px;
+
+    border-top:1px solid rgba(255,255,255,.06);
+
+    font-size:13px;
+
+    vertical-align:middle;
+}
+
+tr{
+    transition:.2s;
+}
+
+tbody tr:hover{
+    background:rgba(255,255,255,.025);
+}
+
+/* ================================
+   STUDENT
+================================ */
+
+.student-name{
+    font-weight:800;
+}
+
+.student-phone{
+    color:#94a3b8;
+    font-size:11px;
+    margin-top:2px;
+}
+
+/* ================================
+   SCORE
+================================ */
+
+.score{
+    font-size:17px;
+    font-weight:800;
+}
+
+.percentage{
+    display:inline-flex;
+
+    padding:5px 9px;
+
+    border-radius:8px;
+
+    font-weight:800;
+
+    font-size:11px;
+}
+
+.percentage.high{
+    color:#4ade80;
+    background:rgba(34,197,94,.1);
+}
+
+.percentage.medium{
+    color:#facc15;
+    background:rgba(250,204,21,.1);
+}
+
+.percentage.low{
+    color:#f87171;
+    background:rgba(239,68,68,.1);
+}
+
+/* ================================
+   BADGE
+================================ */
+
+.badge{
+    display:inline-flex;
+
+    padding:5px 9px;
+
+    border-radius:8px;
+
+    font-size:11px;
+
+    font-weight:700;
+}
+
+.exam-badge{
+    color:#60a5fa;
+    background:rgba(59,130,246,.1);
+}
+
+.recitation-badge{
+    color:#c084fc;
+    background:rgba(139,92,246,.1);
+}
+
+/* ================================
+   DELETE
+================================ */
+
+.delete-btn{
+
+    border:1px solid rgba(239,68,68,.25);
+
+    background:rgba(239,68,68,.08);
+
+    color:#f87171;
+
+    padding:7px 10px;
+
+    border-radius:9px;
+
+    cursor:pointer;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    transition:.2s;
+}
+
+.delete-btn:hover{
+    background:rgba(239,68,68,.18);
+}
+
+/* ================================
+   EMPTY
+================================ */
+
+.empty{
+    padding:50px 20px;
+
+    text-align:center;
+
+    color:#64748b;
+}
+
+.empty-icon{
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+/* ================================
+   LOADING
+================================ */
+
+.loading{
+    padding:40px;
+    text-align:center;
+    color:#94a3b8;
+}
+
+/* ================================
+   MESSAGE
+================================ */
+
+.message{
+    margin-top:13px;
+
+    min-height:22px;
+
+    text-align:center;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    line-height:1.7;
+}
+
+.message.success{
+    color:#4ade80;
+}
+
+.message.error{
+    color:#f87171;
+}
+
+/* ================================
+   MODAL
+================================ */
+
+.modal{
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.7);
+
+    backdrop-filter:blur(8px);
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    z-index:999;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+
+    width:100%;
+    max-width:430px;
+
+    background:#0f172a;
+
+    border:1px solid var(--border);
+
+    border-radius:22px;
+
+    padding:25px;
+
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+
+    text-align:center;
+}
+
+.modal-icon{
+    font-size:45px;
+    margin-bottom:12px;
+}
+
+.modal-box h3{
+    margin-bottom:8px;
+}
+
+.modal-box p{
+    color:#94a3b8;
+    font-size:13px;
+    line-height:1.8;
+    margin-bottom:20px;
+}
+
+.modal-actions{
+    display:flex;
+    gap:10px;
+}
+
+.modal-actions button{
+    flex:1;
+    padding:12px;
+
+    border:none;
+
+    border-radius:11px;
+
+    cursor:pointer;
+
+    font-weight:800;
+}
+
+.cancel-btn{
+    background:rgba(255,255,255,.07);
+    color:white;
+}
+
+.confirm-delete{
+    background:#ef4444;
+    color:white;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media(max-width:1050px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:800px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .topbar{
+        position:relative;
+        top:0;
+        flex-wrap:wrap;
+    }
+
+}
+
+@media(max-width:550px){
+
+    body{
+        padding:10px;
+    }
+
+    .page-header h1{
+        font-size:24px;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .row{
+        grid-template-columns:1fr;
+    }
+
+    .card{
+        padding:17px;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+
+    .admin-badge{
+        font-size:11px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     TOPBAR
+===================================================== -->
+
+<div class="topbar">
+
+    <div class="logo">
+        Dr Youssef Nafea
+    </div>
+
+    <div class="admin-badge">
+        🛡️ لوحة إدارة النتائج
+    </div>
+
+    <div class="actions">
+
+        <a href="admin.html" class="btn home-btn">
+            ← لوحة التحكم
+        </a>
+
+        <button
+            class="btn logout-btn"
+            onclick="logout()"
+        >
+            🚪 خروج
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<div class="page-header">
+
+    <h1>
+        🏆 إدارة النتائج
+    </h1>
+
+    <p>
+        إضافة وإدارة نتائج الامتحانات والتسميعات الخاصة بالطلاب
+    </p>
+
+</div>
+
+
+<!-- =====================================================
+     STATS
+===================================================== -->
+
+<div class="stats">
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            👨‍🎓
+        </div>
+
+        <div class="stat-title">
+            عدد الطلاب
+        </div>
+
+        <div
+            class="stat-value"
+            id="studentsCount"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            📝
+        </div>
+
+        <div class="stat-title">
+            نتائج الامتحانات
+        </div>
+
+        <div
+            class="stat-value"
+            id="examCount"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            🎤
+        </div>
+
+        <div class="stat-title">
+            نتائج التسميع
+        </div>
+
+        <div
+            class="stat-value"
+            id="recitationCount"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            🔔
+        </div>
+
+        <div class="stat-title">
+            الإشعارات
+        </div>
+
+        <div
+            class="stat-value"
+            id="notificationCount"
+        >
+            0
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN GRID
+===================================================== -->
+
+<div class="grid">
+
+
+<!-- =====================================================
+     ADD RESULT
+===================================================== -->
+
+<div class="card">
+
+    <div class="card-title">
+        ➕ إضافة نتيجة
+    </div>
+
+
+    <div class="tabs">
+
+        <button
+            class="tab active"
+            id="examTab"
+            onclick="switchForm('exam')"
+        >
+            📝 امتحان
+        </button>
+
+        <button
+            class="tab"
+            id="recitationTab"
+            onclick="switchForm('recitation')"
+        >
+            🎤 تسميع
+        </button>
+
+    </div>
+
+
+    <!-- ================= EXAM FORM ================= -->
+
+    <form
+        id="examForm"
+        onsubmit="addExamResult(event)"
+    >
+
+        <div class="form-group">
+
+            <label>
+                الطالب
+            </label>
+
+            <select
+                id="examStudent"
+                required
+            >
+
+                <option value="">
+                    اختر الطالب
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                اسم الامتحان
+            </label>
+
+            <input
+                id="examTitle"
+                type="text"
+                placeholder="مثال: امتحان الباب الأول"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                المادة
+            </label>
+
+            <input
+                id="examSubject"
+                type="text"
+                value="أحياء"
+                placeholder="أحياء"
+            >
+
+        </div>
+
+
+        <div class="row">
+
+            <div class="form-group">
+
+                <label>
+                    الدرجة
+                </label>
+
+                <input
+                    id="examScore"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="85"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    الدرجة النهائية
+                </label>
+
+                <input
+                    id="examTotal"
+                    type="number"
+                    min="1"
+                    step="0.01"
+                    value="100"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            <div class="form-group">
+
+                <label>
+                    تاريخ الامتحان
+                </label>
+
+                <input
+                    id="examDate"
+                    type="date"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    مدة الامتحان بالدقائق
+                </label>
+
+                <input
+                    id="examDuration"
+                    type="number"
+                    min="0"
+                    placeholder="60"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                ملاحظات
+            </label>
+
+            <textarea
+                id="examNotes"
+                placeholder="ملاحظات اختيارية للطالب..."
+            ></textarea>
+
+        </div>
+
+
+        <button
+            class="submit-btn"
+            id="examSubmit"
+            type="submit"
+        >
+            💾 حفظ نتيجة الامتحان
+        </button>
+
+
+        <div
+            id="examMessage"
+            class="message"
+        ></div>
+
+    </form>
+
+
+    <!-- ================= RECITATION FORM ================= -->
+
+    <form
+        id="recitationForm"
+        onsubmit="addRecitationResult(event)"
+        style="display:none"
+    >
+
+        <div class="form-group">
+
+            <label>
+                الطالب
+            </label>
+
+            <select
+                id="recitationStudent"
+                required
+            >
+
+                <option value="">
+                    اختر الطالب
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                اسم التسميع
+            </label>
+
+            <input
+                id="recitationTitle"
+                type="text"
+                placeholder="مثال: تسميع الباب الأول"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                المادة
+            </label>
+
+            <input
+                id="recitationSubject"
+                type="text"
+                value="أحياء"
+                placeholder="أحياء"
+            >
+
+        </div>
+
+
+        <div class="row">
+
+            <div class="form-group">
+
+                <label>
+                    الدرجة
+                </label>
+
+                <input
+                    id="recitationScore"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="18"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    الدرجة النهائية
+                </label>
+
+                <input
+                    id="recitationTotal"
+                    type="number"
+                    min="1"
+                    step="0.01"
+                    value="20"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                تاريخ التسميع
+            </label>
+
+            <input
+                id="recitationDate"
+                type="date"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                ملاحظات
+            </label>
+
+            <textarea
+                id="recitationNotes"
+                placeholder="ملاحظات اختيارية للطالب..."
+            ></textarea>
+
+        </div>
+
+
+        <button
+            class="submit-btn"
+            id="recitationSubmit"
+            type="submit"
+        >
+            💾 حفظ نتيجة التسميع
+        </button>
+
+
+        <div
+            id="recitationMessage"
+            class="message"
+        ></div>
+
+    </form>
+
+</div>
+
+
+<!-- =====================================================
+     RESULTS LIST
+===================================================== -->
+
+<div class="card">
+
+    <div class="card-title">
+        📊 النتائج المسجلة
+    </div>
+
+
+    <div class="search-box">
+
+        <input
+            id="search"
+            type="search"
+            placeholder="🔎 ابحث باسم الطالب أو رقم الهاتف أو اسم الامتحان..."
+            oninput="renderResults()"
+        >
+
+    </div>
+
+
+    <div class="result-tabs">
+
+        <button
+            class="result-tab active"
+            id="showExamBtn"
+            onclick="switchResults('exam')"
+        >
+            📝 نتائج الامتحانات
+        </button>
+
+        <button
+            class="result-tab"
+            id="showRecitationBtn"
+            onclick="switchResults('recitation')"
+        >
+            🎤 نتائج التسميع
+        </button>
+
+    </div>
+
+
+    <div
+        id="resultsContainer"
+        class="loading"
+    >
+        جاري تحميل النتائج...
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     DELETE MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="deleteModal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-icon">
+            🗑️
+        </div>
+
+        <h3>
+            حذف النتيجة؟
+        </h3>
+
+        <p>
+            سيتم حذف النتيجة نهائيًا من قاعدة البيانات.
+            لا يمكن التراجع عن هذا الإجراء.
+        </p>
+
+        <div class="modal-actions">
+
+            <button
+                class="cancel-btn"
+                onclick="closeDeleteModal()"
+            >
+                إلغاء
+            </button>
+
+            <button
+                class="confirm-delete"
+                onclick="confirmDelete()"
+            >
+                حذف نهائي
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+"https://nhdowqzecpwmkunczodl.supabase.co";
+
+const SUPABASE_ANON_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+
+/*
+   ضع هنا نفس SUPABASE_ANON_KEY الموجود
+   في login.html إذا كان مختلفًا.
+*/
+
+const client =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
+
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+let user = null;
+
+let students = [];
+
+let examResults = [];
+
+let recitationResults = [];
+
+let currentResultType = "exam";
+
+let deleteType = null;
+
+let deleteId = null;
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function escapeHTML(value){
+
+    if(value === null || value === undefined){
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+function formatDate(date){
+
+    if(!date){
+        return "-";
+    }
+
+    try{
+
+        return new Intl.DateTimeFormat(
+            "ar-EG",
+            {
+                year:"numeric",
+                month:"short",
+                day:"numeric"
+            }
+        ).format(new Date(date));
+
+    }catch{
+
+        return date;
+
+    }
+
+}
+
+
+function getPercentage(score,total){
+
+    score = Number(score);
+    total = Number(total);
+
+    if(!total || total <= 0){
+        return 0;
+    }
+
+    return Math.round(
+        (score / total) * 100
+    );
+
+}
+
+
+function percentageClass(value){
+
+    if(value >= 80){
+        return "high";
+    }
+
+    if(value >= 60){
+        return "medium";
+    }
+
+    return "low";
+
+}
+
+
+/* =====================================================
+   AUTH / ADMIN CHECK
+===================================================== */
+
+async function checkAdmin(){
+
+    const localUser =
+        localStorage.getItem("user");
+
+    const sessionId =
+        localStorage.getItem("platform_session_id");
+
+    if(!localUser || !sessionId){
+
+        window.location.replace("login.html");
+
+        return false;
+
+    }
+
+
+    try{
+
+        user =
+            JSON.parse(localUser);
+
+    }catch{
+
+        localStorage.removeItem("user");
+
+        window.location.replace("login.html");
+
+        return false;
+
+    }
+
+
+    if(
+        !user ||
+        user.role !== "admin"
+    ){
+
+        alert("غير مصرح لك بالدخول إلى لوحة الإدارة.");
+
+        window.location.replace("dashboard.html");
+
+        return false;
+
+    }
+
+
+    /*
+       التأكد من Supabase Auth
+    */
+
+    const {
+        data,
+        error
+    } =
+    await client.auth.getUser();
+
+
+    if(
+        error ||
+        !data ||
+        !data.user
+    ){
+
+        localStorage.removeItem("user");
+        localStorage.removeItem("platform_session_id");
+
+        window.location.replace("login.html");
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+/* =====================================================
+   LOAD STUDENTS
+===================================================== */
+
+async function loadStudents(){
+
+    const {
+        data,
+        error
+    } =
+    await client
+        .from("students")
+        .select("id,full_name,phone,role,activated")
+        .order("full_name",{ascending:true});
+
+
+    if(error){
+
+        console.error(error);
+
+        alert(
+            "تعذر تحميل قائمة الطلاب:\n" +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    students = data || [];
+
+    document.getElementById("studentsCount")
+        .innerText =
+        students.filter(
+            s => s.role !== "admin"
+        ).length;
+
+
+    populateStudentSelects();
+
+}
+
+
+/* =====================================================
+   POPULATE STUDENTS
+===================================================== */
+
+function populateStudentSelects(){
+
+    const examSelect =
+        document.getElementById("examStudent");
+
+    const recitationSelect =
+        document.getElementById("recitationStudent");
+
+
+    const studentOptions =
+        students
+            .filter(s => s.role !== "admin")
+            .map(s => {
+
+                return `
+                    <option value="${escapeHTML(s.id)}">
+                        ${escapeHTML(s.full_name)}
+                        — ${escapeHTML(s.phone || "")}
+                    </option>
+                `;
+
+            })
+            .join("");
+
+
+    examSelect.innerHTML =
+        `<option value="">اختر الطالب</option>` +
+        studentOptions;
+
+
+    recitationSelect.innerHTML =
+        `<option value="">اختر الطالب</option>` +
+        studentOptions;
+
+}
+
+
+/* =====================================================
+   LOAD RESULTS
+===================================================== */
+
+async function loadResults(){
+
+    document.getElementById("resultsContainer")
+        .innerHTML =
+        `<div class="loading">جاري تحميل النتائج...</div>`;
+
+
+    const examRequest =
+        client
+            .from("exam_results")
+            .select("*")
+            .order("exam_date",{ascending:false});
+
+
+    const recitationRequest =
+        client
+            .from("recitation_results")
+            .select("*")
+            .order("recitation_date",{ascending:false});
+
+
+    const [
+        examResponse,
+        recitationResponse
+    ] =
+    await Promise.all([
+        examRequest,
+        recitationRequest
+    ]);
+
+
+    if(examResponse.error){
+
+        console.error(
+            "Exam results error:",
+            examResponse.error
+        );
+
+    }
+
+
+    if(recitationResponse.error){
+
+        console.error(
+            "Recitation results error:",
+            recitationResponse.error
+        );
+
+    }
+
+
+    examResults =
+        examResponse.data || [];
+
+
+    recitationResults =
+        recitationResponse.data || [];
+
+
+    document.getElementById("examCount")
+        .innerText =
+        examResults.length;
+
+
+    document.getElementById("recitationCount")
+        .innerText =
+        recitationResults.length;
+
+
+    renderResults();
+
+    await loadNotificationCount();
+
+}
+
+
+/* =====================================================
+   LOAD NOTIFICATION COUNT
+===================================================== */
+
+async function loadNotificationCount(){
+
+    const {
+        count,
+        error
+    } =
+    await client
+        .from("notifications")
+        .select("*",{count:"exact",head:true});
+
+
+    if(error){
+
+        console.error(error);
+
+        return;
+
+    }
+
+
+    document.getElementById("notificationCount")
+        .innerText =
+        count || 0;
+
+}
+
+
+/* =====================================================
+   GET STUDENT
+===================================================== */
+
+function getStudent(studentId){
+
+    return students.find(
+        s => String(s.id) === String(studentId)
+    );
+
+}
+
+
+/* =====================================================
+   RENDER RESULTS
+===================================================== */
+
+function renderResults(){
+
+    const container =
+        document.getElementById("resultsContainer");
+
+
+    const search =
+        document.getElementById("search")
+            .value
+            .trim()
+            .toLowerCase();
+
+
+    let data =
+        currentResultType === "exam"
+            ? examResults
+            : recitationResults;
+
+
+    data =
+        data.filter(result => {
+
+            const student =
+                getStudent(result.student_id);
+
+
+            const studentName =
+                student?.full_name || "";
+
+
+            const studentPhone =
+                student?.phone || "";
+
+
+            const title =
+                result.title || "";
+
+
+            const subject =
+                result.subject || "";
+
+
+            const text =
+                (
+                    studentName +
+                    " " +
+                    studentPhone +
+                    " " +
+                    title +
+                    " " +
+                    subject
+                )
+                .toLowerCase();
+
+
+            return text.includes(search);
+
+        });
+
+
+    if(!data.length){
+
+        container.innerHTML = `
+            <div class="empty">
+
+                <div class="empty-icon">
+                    ${
+                        currentResultType === "exam"
+                        ? "📝"
+                        : "🎤"
+                    }
+                </div>
+
+                <div>
+                    لا توجد نتائج مطابقة
+                </div>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML = `
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            الطالب
+                        </th>
+
+                        <th>
+                            ${
+                                currentResultType === "exam"
+                                ? "الامتحان"
+                                : "التسميع"
+                            }
+                        </th>
+
+                        <th>
+                            المادة
+                        </th>
+
+                        <th>
+                            الدرجة
+                        </th>
+
+                        <th>
+                            النسبة
+                        </th>
+
+                        <th>
+                            التاريخ
+                        </th>
+
+                        <th>
+                            الإجراء
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${
+                        data.map(result => {
+
+                            const student =
+                                getStudent(result.student_id);
+
+
+                            const percentage =
+                                getPercentage(
+                                    result.score,
+                                    result.total
+                                );
+
+
+                            const date =
+                                currentResultType === "exam"
+                                    ? result.exam_date
+                                    : result.recitation_date;
+
+
+                            return `
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="student-name">
+                                            ${escapeHTML(
+                                                student?.full_name ||
+                                                "طالب غير معروف"
+                                            )}
+                                        </div>
+
+                                        <div class="student-phone">
+                                            ${escapeHTML(
+                                                student?.phone || ""
+                                            )}
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="badge ${
+                                            currentResultType === "exam"
+                                            ? "exam-badge"
+                                            : "recitation-badge"
+                                        }">
+
+                                            ${
+                                                currentResultType === "exam"
+                                                ? "📝 امتحان"
+                                                : "🎤 تسميع"
+                                            }
+
+                                        </span>
+
+                                        <div style="margin-top:7px;font-weight:700">
+
+                                            ${escapeHTML(
+                                                result.title
+                                            )}
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        ${escapeHTML(
+                                            result.subject || "-"
+                                        )}
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="score">
+
+                                            ${escapeHTML(result.score)}
+
+                                            /
+                                            
+                                            ${escapeHTML(result.total)}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="percentage ${
+                                            percentageClass(percentage)
+                                        }">
+
+                                            ${percentage}%
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+                                        ${formatDate(date)}
+                                    </td>
+
+
+                                    <td>
+
+                                        <button
+                                            class="delete-btn"
+                                            onclick="openDeleteModal(
+                                                '${currentResultType}',
+                                                '${result.id}'
+                                            )"
+                                        >
+                                            🗑️ حذف
+                                        </button>
+
+                                    </td>
+
+                                </tr>
+
+                            `;
+
+                        }).join("")
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   SWITCH ADD FORM
+===================================================== */
+
+function switchForm(type){
+
+    const examForm =
+        document.getElementById("examForm");
+
+    const recitationForm =
+        document.getElementById("recitationForm");
+
+
+    const examTab =
+        document.getElementById("examTab");
+
+    const recitationTab =
+        document.getElementById("recitationTab");
+
+
+    if(type === "exam"){
+
+        examForm.style.display = "block";
+        recitationForm.style.display = "none";
+
+        examTab.classList.add("active");
+        recitationTab.classList.remove("active");
+
+    }else{
+
+        examForm.style.display = "none";
+        recitationForm.style.display = "block";
+
+        examTab.classList.remove("active");
+        recitationTab.classList.add("active");
+
+    }
+
+}
+
+
+/* =====================================================
+   SWITCH RESULT TABLE
+===================================================== */
+
+function switchResults(type){
+
+    currentResultType = type;
+
+
+    document
+        .getElementById("showExamBtn")
+        .classList.toggle(
+            "active",
+            type === "exam"
+        );
+
+
+    document
+        .getElementById("showRecitationBtn")
+        .classList.toggle(
+            "active",
+            type === "recitation"
+        );
+
+
+    renderResults();
+
+}
+
+
+/* =====================================================
+   ADD EXAM RESULT
+===================================================== */
+
+async function addExamResult(event){
+
+    event.preventDefault();
+
+
+    const btn =
+        document.getElementById("examSubmit");
+
+    const message =
+        document.getElementById("examMessage");
+
+
+    const studentId =
+        document.getElementById("examStudent")
+            .value;
+
+
+    const title =
+        document.getElementById("examTitle")
+            .value
+            .trim();
+
+
+    const subject =
+        document.getElementById("examSubject")
+            .value
+            .trim() ||
+        "أحياء";
+
+
+    const score =
+        Number(
+            document.getElementById("examScore")
+                .value
+        );
+
+
+    const total =
+        Number(
+            document.getElementById("examTotal")
+                .value
+        );
+
+
+    const date =
+        document.getElementById("examDate")
+            .value;
+
+
+    const duration =
+        document.getElementById("examDuration")
+            .value;
+
+
+    const notes =
+        document.getElementById("examNotes")
+            .value
+            .trim();
+
+
+    if(!studentId){
+
+        showMessage(
+            message,
+            "اختر الطالب أولًا",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(score < 0 || score > total){
+
+        showMessage(
+            message,
+            "الدرجة يجب أن تكون بين 0 والدرجة النهائية",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    btn.disabled = true;
+
+    btn.innerText =
+        "⏳ جاري الحفظ...";
+
+
+    const payload = {
+
+        student_id:
+            Number(studentId),
+
+        title:
+
+            title,
+
+        subject:
+
+            subject,
+
+        score:
+
+            score,
+
+        total:
+
+            total,
+
+        duration_minutes:
+
+            duration
+                ? Number(duration)
+                : null,
+
+        notes:
+
+            notes || null
+
+    };
+
+
+    if(date){
+
+        payload.exam_date =
+            date + "T12:00:00";
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+    await client
+        .from("exam_results")
+        .insert(payload)
+        .select()
+        .single();
+
+
+    if(error){
+
+        console.error(error);
+
+        showMessage(
+            message,
+            "❌ تعذر حفظ النتيجة: " +
+            error.message,
+            "error"
+        );
+
+        btn.disabled = false;
+
+        btn.innerText =
+            "💾 حفظ نتيجة الامتحان";
+
+        return;
+
+    }
+
+
+    showMessage(
+        message,
+        "✅ تم حفظ نتيجة الامتحان وإرسال إشعار للطالب",
+        "success"
+    );
+
+
+    document
+        .getElementById("examTitle")
+        .value = "";
+
+
+    document
+        .getElementById("examScore")
+        .value = "";
+
+
+    document
+        .getElementById("examDuration")
+        .value = "";
+
+
+    document
+        .getElementById("examNotes")
+        .value = "";
+
+
+    btn.disabled = false;
+
+    btn.innerText =
+        "💾 حفظ نتيجة الامتحان";
+
+
+    await loadResults();
+
+}
+
+
+/* =====================================================
+   ADD RECITATION RESULT
+===================================================== */
+
+async function addRecitationResult(event){
+
+    event.preventDefault();
+
+
+    const btn =
+        document.getElementById("recitationSubmit");
+
+    const message =
+        document.getElementById("recitationMessage");
+
+
+    const studentId =
+        document.getElementById("recitationStudent")
+            .value;
+
+
+    const title =
+        document.getElementById("recitationTitle")
+            .value
+            .trim();
+
+
+    const subject =
+        document.getElementById("recitationSubject")
+            .value
+            .trim() ||
+        "أحياء";
+
+
+    const score =
+        Number(
+            document.getElementById("recitationScore")
+                .value
+        );
+
+
+    const total =
+        Number(
+            document.getElementById("recitationTotal")
+                .value
+        );
+
+
+    const date =
+        document.getElementById("recitationDate")
+            .value;
+
+
+    const notes =
+        document.getElementById("recitationNotes")
+            .value
+            .trim();
+
+
+    if(!studentId){
+
+        showMessage(
+            message,
+            "اختر الطالب أولًا",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(score < 0 || score > total){
+
+        showMessage(
+            message,
+            "الدرجة يجب أن تكون بين 0 والدرجة النهائية",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    btn.disabled = true;
+
+    btn.innerText =
+        "⏳ جاري الحفظ...";
+
+
+    const payload = {
+
+        student_id:
+            Number(studentId),
+
+        title:
+
+            title,
+
+        subject:
+
+            subject,
+
+        score:
+
+            score,
+
+        total:
+
+            total,
+
+        notes:
+
+            notes || null
+
+    };
+
+
+    if(date){
+
+        payload.recitation_date =
+            date + "T12:00:00";
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+    await client
+        .from("recitation_results")
+        .insert(payload)
+        .select()
+        .single();
+
+
+    if(error){
+
+        console.error(error);
+
+        showMessage(
+            message,
+            "❌ تعذر حفظ النتيجة: " +
+            error.message,
+            "error"
+        );
+
+        btn.disabled = false;
+
+        btn.innerText =
+            "💾 حفظ نتيجة التسميع";
+
+        return;
+
+    }
+
+
+    showMessage(
+        message,
+        "✅ تم حفظ نتيجة التسميع وإرسال إشعار للطالب",
+        "success"
+    );
+
+
+    document
+        .getElementById("recitationTitle")
+        .value = "";
+
+
+    document
+        .getElementById("recitationScore")
+        .value = "";
+
+
+    document
+        .getElementById("recitationNotes")
+        .value = "";
+
+
+    btn.disabled = false;
+
+    btn.innerText =
+        "💾 حفظ نتيجة التسميع";
+
+
+    await loadResults();
+
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(
+    element,
+    text,
+    type
+){
+
+    element.innerText = text;
+
+    element.className =
+        "message " +
+        type;
+
+
+    setTimeout(() => {
+
+        element.innerText = "";
+
+    },5000);
+
+}
+
+
+/* =====================================================
+   DELETE MODAL
+===================================================== */
+
+function openDeleteModal(
+    type,
+    id
+){
+
+    deleteType = type;
+
+    deleteId = id;
+
+
+    document
+        .getElementById("deleteModal")
+        .classList.add("show");
+
+}
+
+
+function closeDeleteModal(){
+
+    deleteType = null;
+
+    deleteId = null;
+
+
+    document
+        .getElementById("deleteModal")
+        .classList.remove("show");
+
+}
+
+
+/* =====================================================
+   CONFIRM DELETE
+===================================================== */
+
+async function confirmDelete(){
+
+    if(!deleteType || !deleteId){
+
+        closeDeleteModal();
+
+        return;
+
+    }
+
+
+    const table =
+        deleteType === "exam"
+            ? "exam_results"
+            : "recitation_results";
+
+
+    const {
+        error
+    } =
+    await client
+        .from(table)
+        .delete()
+        .eq("id",deleteId);
+
+
+    if(error){
+
+        console.error(error);
+
+        alert(
+            "تعذر حذف النتيجة:\n" +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    closeDeleteModal();
+
+
+    await loadResults();
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logout(){
+
+    try{
+
+        const sessionId =
+            localStorage.getItem(
+                "platform_session_id"
+            );
+
+
+        if(sessionId){
+
+            await client.rpc(
+                "release_student_session",
+                {
+                    p_session_id:sessionId
+                }
+            );
+
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+
+    try{
+
+        await client.auth.signOut();
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+
+    localStorage.removeItem(
+        "platform_session_id"
+    );
+
+    localStorage.removeItem(
+        "user"
+    );
+
+
+    window.location.replace(
+        "login.html"
+    );
+
+}
+
+
+/* =====================================================
+   DEFAULT DATES
+===================================================== */
+
+function setDefaultDates(){
+
+    const today =
+        new Date();
+
+    const localDate =
+        today.getFullYear() +
+        "-" +
+        String(
+            today.getMonth()+1
+        ).padStart(2,"0") +
+        "-" +
+        String(
+            today.getDate()
+        ).padStart(2,"0");
+
+
+    document.getElementById("examDate")
+        .value = localDate;
+
+
+    document.getElementById("recitationDate")
+        .value = localDate;
+
+}
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+(async function(){
+
+    const allowed =
+        await checkAdmin();
+
+
+    if(!allowed){
+        return;
+    }
+
+
+    setDefaultDates();
+
+
+    await loadStudents();
+
+    await loadResults();
+
+})();
+
+</script>
+
+</body>
+
+</html>
