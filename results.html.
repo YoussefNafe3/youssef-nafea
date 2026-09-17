@@ -1,0 +1,2803 @@
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>النتائج | د. يوسف نافع</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+
+/* =========================================================
+   ROOT
+========================================================= */
+
+:root{
+
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --card2:#f8fafc;
+
+    --text:#101828;
+    --muted:#667085;
+
+    --primary:#2563eb;
+    --primary2:#1d4ed8;
+
+    --success:#12b76a;
+    --danger:#f04438;
+    --warning:#f79009;
+
+    --border:#e4e7ec;
+
+    --shadow:
+        0 15px 40px rgba(16,24,40,.07);
+
+    --shadow-hover:
+        0 22px 55px rgba(16,24,40,.12);
+
+    --radius:24px;
+
+    --sidebar-width:260px;
+
+    --transition:.3s ease;
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+body.dark{
+
+    --bg:#07111f;
+    --card:#0d1a2b;
+    --card2:#101f32;
+
+    --text:#f8fafc;
+    --muted:#98a2b3;
+
+    --border:#1d3047;
+
+    --shadow:
+        0 15px 40px rgba(0,0,0,.25);
+
+    --shadow-hover:
+        0 22px 55px rgba(0,0,0,.4);
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    font-family:'Cairo',sans-serif;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(37,99,235,.05),
+            transparent 25%
+        ),
+        var(--bg);
+
+    color:var(--text);
+
+    min-height:100vh;
+
+    transition:
+        background var(--transition),
+        color var(--transition);
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar{
+
+    position:fixed;
+
+    right:0;
+    top:0;
+
+    width:var(--sidebar-width);
+    height:100vh;
+
+    background:var(--card);
+
+    border-left:1px solid var(--border);
+
+    padding:25px 18px;
+
+    z-index:1000;
+
+    transition:var(--transition);
+}
+
+
+.logo{
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    padding:5px 8px 25px;
+
+    border-bottom:1px solid var(--border);
+
+    margin-bottom:20px;
+}
+
+
+.logo-icon{
+
+    width:48px;
+    height:48px;
+
+    border-radius:16px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#fff;
+
+    font-size:22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #7c3aed
+        );
+
+    box-shadow:
+        0 10px 25px rgba(37,99,235,.25);
+}
+
+
+.logo-text strong{
+
+    display:block;
+
+    font-size:15px;
+
+    font-weight:800;
+}
+
+.logo-text span{
+
+    display:block;
+
+    color:var(--muted);
+
+    font-size:11px;
+
+    margin-top:2px;
+}
+
+
+/* NAV */
+
+.nav{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:7px;
+}
+
+
+.nav a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:13px 14px;
+
+    border-radius:14px;
+
+    color:var(--muted);
+
+    text-decoration:none;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    transition:var(--transition);
+}
+
+
+.nav a:hover{
+
+    background:rgba(37,99,235,.07);
+
+    color:var(--primary);
+
+    transform:translateX(-3px);
+}
+
+
+.nav a.active{
+
+    color:#fff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    box-shadow:
+        0 8px 22px rgba(37,99,235,.25);
+}
+
+
+.nav-icon{
+
+    width:22px;
+
+    text-align:center;
+
+    font-size:18px;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main{
+
+    margin-right:var(--sidebar-width);
+
+    min-height:100vh;
+
+    padding:30px 35px 50px;
+
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.topbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+}
+
+
+.page-title h1{
+
+    font-size:28px;
+
+    font-weight:900;
+
+    letter-spacing:-.5px;
+}
+
+
+.page-title p{
+
+    color:var(--muted);
+
+    font-size:13px;
+
+    margin-top:5px;
+}
+
+
+.top-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+}
+
+
+/* BUTTON */
+
+.icon-btn{
+
+    width:46px;
+    height:46px;
+
+    border-radius:15px;
+
+    border:1px solid var(--border);
+
+    background:var(--card);
+
+    color:var(--text);
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:19px;
+
+    position:relative;
+
+    transition:var(--transition);
+}
+
+
+.icon-btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:var(--shadow);
+}
+
+
+/* notification badge */
+
+.notification-badge{
+
+    position:absolute;
+
+    top:5px;
+    right:5px;
+
+    min-width:17px;
+    height:17px;
+
+    border-radius:50%;
+
+    background:#ef4444;
+
+    color:#fff;
+
+    border:2px solid var(--card);
+
+    font-size:9px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-weight:800;
+}
+
+
+/* =========================================================
+   NOTIFICATION PANEL
+========================================================= */
+
+.notification-panel{
+
+    position:fixed;
+
+    top:85px;
+    left:35px;
+
+    width:360px;
+
+    max-width:calc(100vw - 30px);
+
+    background:var(--card);
+
+    border:1px solid var(--border);
+
+    border-radius:22px;
+
+    box-shadow:var(--shadow-hover);
+
+    z-index:2000;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transform:translateY(-10px) scale(.97);
+
+    transition:var(--transition);
+
+    overflow:hidden;
+}
+
+
+.notification-panel.show{
+
+    opacity:1;
+
+    visibility:visible;
+
+    transform:translateY(0) scale(1);
+}
+
+
+.notification-head{
+
+    padding:18px;
+
+    border-bottom:1px solid var(--border);
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+}
+
+
+.notification-head strong{
+
+    font-size:15px;
+}
+
+
+.notification-head button{
+
+    border:none;
+
+    background:none;
+
+    color:var(--primary);
+
+    font-family:inherit;
+
+    cursor:pointer;
+
+    font-size:11px;
+}
+
+
+.notification{
+
+    display:flex;
+
+    gap:12px;
+
+    padding:15px 18px;
+
+    border-bottom:1px solid var(--border);
+
+    transition:var(--transition);
+}
+
+
+.notification:hover{
+
+    background:var(--card2);
+}
+
+
+.notification-icon{
+
+    width:38px;
+    height:38px;
+
+    flex:none;
+
+    border-radius:12px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(37,99,235,.1);
+
+    color:var(--primary);
+}
+
+
+.notification strong{
+
+    display:block;
+
+    font-size:12px;
+
+    margin-bottom:3px;
+}
+
+
+.notification p{
+
+    color:var(--muted);
+
+    font-size:11px;
+
+    line-height:1.7;
+}
+
+
+.notification time{
+
+    display:block;
+
+    color:var(--muted);
+
+    font-size:9px;
+
+    margin-top:3px;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+
+    position:relative;
+
+    overflow:hidden;
+
+    padding:30px;
+
+    border-radius:28px;
+
+    color:#fff;
+
+    margin-bottom:25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1d4ed8,
+            #2563eb 50%,
+            #4f46e5
+        );
+
+    box-shadow:
+        0 20px 45px rgba(37,99,235,.2);
+}
+
+
+.hero::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:260px;
+    height:260px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.08);
+
+    top:-100px;
+    left:-60px;
+}
+
+
+.hero::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:180px;
+    height:180px;
+
+    border-radius:50%;
+
+    border:35px solid rgba(255,255,255,.05);
+
+    bottom:-80px;
+    right:10%;
+}
+
+
+.hero-content{
+
+    position:relative;
+
+    z-index:2;
+}
+
+
+.hero small{
+
+    font-size:12px;
+
+    opacity:.8;
+}
+
+
+.hero h2{
+
+    margin-top:5px;
+
+    font-size:25px;
+
+    font-weight:900;
+}
+
+
+.hero p{
+
+    margin-top:6px;
+
+    font-size:13px;
+
+    opacity:.85;
+}
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:16px;
+
+    margin-bottom:30px;
+}
+
+
+.stat-card{
+
+    background:var(--card);
+
+    border:1px solid var(--border);
+
+    border-radius:22px;
+
+    padding:20px;
+
+    box-shadow:var(--shadow);
+
+    transition:var(--transition);
+}
+
+
+.stat-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:var(--shadow-hover);
+}
+
+
+.stat-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+}
+
+
+.stat-icon{
+
+    width:45px;
+    height:45px;
+
+    border-radius:15px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:19px;
+}
+
+
+.blue{
+    background:rgba(37,99,235,.1);
+    color:#2563eb;
+}
+
+.green{
+    background:rgba(18,183,106,.1);
+    color:#12b76a;
+}
+
+.orange{
+    background:rgba(247,144,9,.1);
+    color:#f79009;
+}
+
+.purple{
+    background:rgba(124,58,237,.1);
+    color:#7c3aed;
+}
+
+
+.stat-title{
+
+    color:var(--muted);
+
+    font-size:11px;
+
+    margin-top:15px;
+}
+
+
+.stat-value{
+
+    font-size:25px;
+
+    font-weight:900;
+
+    margin-top:2px;
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.section{
+
+    margin-top:30px;
+}
+
+
+.section-header{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:15px;
+}
+
+
+.section-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+}
+
+
+.section-title .section-icon{
+
+    width:42px;
+    height:42px;
+
+    border-radius:13px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(37,99,235,.1);
+
+    color:var(--primary);
+
+    font-size:18px;
+}
+
+
+.section-title h2{
+
+    font-size:19px;
+
+    font-weight:900;
+}
+
+
+.section-title p{
+
+    font-size:10px;
+
+    color:var(--muted);
+
+    margin-top:2px;
+}
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+.filters{
+
+    display:flex;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+}
+
+
+.filter-btn{
+
+    border:1px solid var(--border);
+
+    background:var(--card);
+
+    color:var(--muted);
+
+    padding:8px 13px;
+
+    border-radius:11px;
+
+    font-family:inherit;
+
+    font-size:10px;
+
+    cursor:pointer;
+
+    transition:var(--transition);
+}
+
+
+.filter-btn:hover{
+
+    color:var(--primary);
+
+    border-color:var(--primary);
+}
+
+
+.filter-btn.active{
+
+    background:var(--primary);
+
+    color:#fff;
+
+    border-color:var(--primary);
+}
+
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+.results-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:15px;
+}
+
+
+.result-card{
+
+    background:var(--card);
+
+    border:1px solid var(--border);
+
+    border-radius:22px;
+
+    padding:20px;
+
+    box-shadow:var(--shadow);
+
+    transition:var(--transition);
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+
+.result-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:var(--shadow-hover);
+}
+
+
+.result-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    right:0;
+    top:0;
+
+    width:4px;
+    height:100%;
+
+    background:var(--primary);
+}
+
+
+.result-card.excellent::before{
+
+    background:var(--success);
+}
+
+
+.result-card.warning::before{
+
+    background:var(--warning);
+}
+
+
+.result-head{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:15px;
+}
+
+
+.result-info h3{
+
+    font-size:15px;
+
+    font-weight:800;
+}
+
+
+.result-info p{
+
+    font-size:10px;
+
+    color:var(--muted);
+
+    margin-top:4px;
+}
+
+
+.result-badge{
+
+    padding:5px 9px;
+
+    border-radius:9px;
+
+    font-size:9px;
+
+    font-weight:800;
+
+    white-space:nowrap;
+}
+
+
+.badge-success{
+
+    background:rgba(18,183,106,.1);
+
+    color:var(--success);
+}
+
+
+.badge-warning{
+
+    background:rgba(247,144,9,.1);
+
+    color:var(--warning);
+}
+
+
+.badge-danger{
+
+    background:rgba(240,68,56,.1);
+
+    color:var(--danger);
+}
+
+
+.score-row{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-top:20px;
+}
+
+
+.score{
+
+    display:flex;
+
+    align-items:baseline;
+
+    gap:3px;
+}
+
+
+.score strong{
+
+    font-size:27px;
+
+    font-weight:900;
+}
+
+
+.score span{
+
+    color:var(--muted);
+
+    font-size:11px;
+}
+
+
+.percent{
+
+    font-size:14px;
+
+    font-weight:800;
+
+    color:var(--primary);
+}
+
+
+/* PROGRESS */
+
+.progress{
+
+    width:100%;
+
+    height:7px;
+
+    background:var(--border);
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    margin-top:10px;
+}
+
+
+.progress-bar{
+
+    height:100%;
+
+    width:0;
+
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #2563eb,
+            #4f46e5
+        );
+
+    transition:
+        width 1s cubic-bezier(.2,.8,.2,1);
+}
+
+
+.result-footer{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-top:15px;
+
+    padding-top:13px;
+
+    border-top:1px solid var(--border);
+
+    color:var(--muted);
+
+    font-size:9px;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty{
+
+    text-align:center;
+
+    padding:50px 20px;
+
+    background:var(--card);
+
+    border:1px dashed var(--border);
+
+    border-radius:22px;
+
+    color:var(--muted);
+}
+
+
+.empty-icon{
+
+    font-size:40px;
+
+    margin-bottom:10px;
+
+    opacity:.5;
+}
+
+
+.empty strong{
+
+    display:block;
+
+    color:var(--text);
+
+    margin-bottom:4px;
+}
+
+
+.empty span{
+
+    font-size:11px;
+}
+
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+.mobile-menu{
+
+    display:none;
+
+    width:46px;
+    height:46px;
+
+    border-radius:15px;
+
+    border:1px solid var(--border);
+
+    background:var(--card);
+
+    color:var(--text);
+
+    cursor:pointer;
+
+    font-size:20px;
+}
+
+
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.overlay{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.4);
+
+    backdrop-filter:blur(3px);
+
+    z-index:900;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1100px){
+
+    .stats{
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+}
+
+
+@media(max-width:850px){
+
+    .sidebar{
+
+        transform:translateX(100%);
+    }
+
+    .sidebar.open{
+
+        transform:translateX(0);
+    }
+
+    .overlay.show{
+
+        display:block;
+    }
+
+    .main{
+
+        margin-right:0;
+
+        padding:
+            20px
+            15px
+            40px;
+    }
+
+    .mobile-menu{
+
+        display:flex;
+
+        align-items:center;
+        justify-content:center;
+    }
+
+    .topbar{
+
+        gap:10px;
+    }
+
+    .page-title h1{
+
+        font-size:22px;
+    }
+
+    .page-title p{
+
+        font-size:11px;
+    }
+
+    .results-grid{
+
+        grid-template-columns:1fr;
+    }
+
+}
+
+
+@media(max-width:600px){
+
+    .stats{
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+        gap:10px;
+    }
+
+    .stat-card{
+
+        padding:15px;
+    }
+
+    .stat-value{
+
+        font-size:21px;
+    }
+
+    .stat-icon{
+
+        width:38px;
+        height:38px;
+
+        font-size:16px;
+    }
+
+    .hero{
+
+        padding:23px;
+
+        border-radius:22px;
+    }
+
+    .hero h2{
+
+        font-size:20px;
+    }
+
+    .notification-panel{
+
+        left:15px;
+
+        top:75px;
+    }
+
+}
+
+
+@media(max-width:390px){
+
+    .stats{
+
+        grid-template-columns:1fr;
+    }
+
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(15px);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+    }
+}
+
+
+.animate{
+
+    animation:
+        fadeUp .6s ease both;
+}
+
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     SIDEBAR
+======================================================= -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            🧬
+        </div>
+
+        <div class="logo-text">
+
+            <strong>د. يوسف نافع</strong>
+
+            <span>المنصة التعليمية</span>
+
+        </div>
+
+    </div>
+
+
+    <nav class="nav">
+
+        <a href="dashboard.html">
+
+            <span class="nav-icon">⌂</span>
+
+            الرئيسية
+
+        </a>
+
+
+        <a href="videos.html">
+
+            <span class="nav-icon">▶</span>
+
+            الفيديوهات
+
+        </a>
+
+
+        <a href="files.html">
+
+            <span class="nav-icon">📚</span>
+
+            الملفات
+
+        </a>
+
+
+        <a href="results.html" class="active">
+
+            <span class="nav-icon">🏆</span>
+
+            النتائج
+
+        </a>
+
+
+        <a href="#">
+
+            <span class="nav-icon">💬</span>
+
+            الدعم
+
+        </a>
+
+
+    </nav>
+
+</aside>
+
+
+<div class="overlay" id="overlay"></div>
+
+
+<!-- ======================================================
+     MAIN
+======================================================= -->
+
+<main class="main">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+
+        <div style="display:flex;align-items:center;gap:10px;">
+
+            <button
+                class="mobile-menu"
+                id="mobileMenu"
+                aria-label="القائمة">
+                ☰
+            </button>
+
+
+            <div class="page-title">
+
+                <h1>النتائج</h1>
+
+                <p>
+                    تابع مستواك ونتائجك أولًا بأول
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="top-actions">
+
+
+            <button
+                class="icon-btn"
+                id="themeBtn"
+                title="الوضع الليلي">
+
+                🌙
+
+            </button>
+
+
+            <button
+                class="icon-btn"
+                id="notificationBtn"
+                title="الإشعارات">
+
+                🔔
+
+                <span
+                    class="notification-badge"
+                    id="notificationBadge">
+                    3
+                </span>
+
+            </button>
+
+
+        </div>
+
+    </header>
+
+
+    <!-- ==================================================
+         NOTIFICATION PANEL
+    =================================================== -->
+
+    <div
+        class="notification-panel"
+        id="notificationPanel">
+
+
+        <div class="notification-head">
+
+            <strong>
+                الإشعارات
+            </strong>
+
+            <button id="markRead">
+                تحديد الكل كمقروء
+            </button>
+
+        </div>
+
+
+        <div id="notificationList">
+
+            <div class="notification">
+
+                <div class="notification-icon">
+                    🏆
+                </div>
+
+                <div>
+
+                    <strong>
+                        نتيجة جديدة
+                    </strong>
+
+                    <p>
+                        تم إضافة نتيجة امتحان جديدة لك.
+                    </p>
+
+                    <time>
+                        منذ قليل
+                    </time>
+
+                </div>
+
+            </div>
+
+
+            <div class="notification">
+
+                <div class="notification-icon">
+                    📝
+                </div>
+
+                <div>
+
+                    <strong>
+                        تم تصحيح التسميع
+                    </strong>
+
+                    <p>
+                        ظهرت نتيجة آخر تسميع لك.
+                    </p>
+
+                    <time>
+                        منذ ساعتين
+                    </time>
+
+                </div>
+
+            </div>
+
+
+            <div class="notification">
+
+                <div class="notification-icon">
+                    📢
+                </div>
+
+                <div>
+
+                    <strong>
+                        تنبيه
+                    </strong>
+
+                    <p>
+                        تابع صفحة النتائج لمعرفة آخر درجاتك.
+                    </p>
+
+                    <time>
+                        اليوم
+                    </time>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         HERO
+    =================================================== -->
+
+    <section class="hero animate">
+
+        <div class="hero-content">
+
+            <small>
+                لوحة متابعة الأداء
+            </small>
+
+            <h2>
+                نتائجك الدراسية
+            </h2>
+
+            <p>
+                هنا تقدر تتابع أداءك في الامتحانات والتسميعات
+                وتعرف تطور مستواك باستمرار.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         STATS
+    =================================================== -->
+
+    <section class="stats">
+
+
+        <div class="stat-card animate">
+
+            <div class="stat-top">
+
+                <div class="stat-icon blue">
+                    📝
+                </div>
+
+            </div>
+
+            <div class="stat-title">
+                إجمالي الامتحانات
+            </div>
+
+            <div class="stat-value" id="examCount">
+                8
+            </div>
+
+        </div>
+
+
+        <div class="stat-card animate">
+
+            <div class="stat-top">
+
+                <div class="stat-icon green">
+                    ✓
+                </div>
+
+            </div>
+
+            <div class="stat-title">
+                متوسط الامتحانات
+            </div>
+
+            <div class="stat-value">
+                <span id="examAverage">
+                    86
+                </span>%
+            </div>
+
+        </div>
+
+
+        <div class="stat-card animate">
+
+            <div class="stat-top">
+
+                <div class="stat-icon orange">
+                    🎤
+                </div>
+
+            </div>
+
+            <div class="stat-title">
+                إجمالي التسميعات
+            </div>
+
+            <div class="stat-value" id="recitationCount">
+                12
+            </div>
+
+        </div>
+
+
+        <div class="stat-card animate">
+
+            <div class="stat-top">
+
+                <div class="stat-icon purple">
+                    ⭐
+                </div>
+
+            </div>
+
+            <div class="stat-title">
+                أعلى نتيجة
+            </div>
+
+            <div class="stat-value">
+                <span id="highestScore">
+                    96
+                </span>%
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- ==================================================
+         EXAMS
+    =================================================== -->
+
+    <section class="section">
+
+
+        <div class="section-header">
+
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    📝
+                </div>
+
+                <div>
+
+                    <h2>
+                        نتائج الامتحانات
+                    </h2>
+
+                    <p>
+                        درجات الاختبارات والامتحانات
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="filters">
+
+                <button
+                    class="filter-btn active"
+                    data-filter="all"
+                    data-target="exam">
+
+                    الكل
+
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="excellent"
+                    data-target="exam">
+
+                    ممتاز
+
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="needs"
+                    data-target="exam">
+
+                    يحتاج مراجعة
+
+                </button>
+
+            </div>
+
+
+        </div>
+
+
+        <div
+            class="results-grid"
+            id="examResults">
+
+
+            <!-- EXAM 1 -->
+
+            <article
+                class="result-card excellent"
+                data-status="excellent">
+
+
+                <div class="result-head">
+
+                    <div class="result-info">
+
+                        <h3>
+                            امتحان الفصل الأول
+                        </h3>
+
+                        <p>
+                            الأحياء — الوحدة الأولى
+                        </p>
+
+                    </div>
+
+
+                    <span class="result-badge badge-success">
+                        ممتاز
+                    </span>
+
+                </div>
+
+
+                <div class="score-row">
+
+                    <div class="score">
+
+                        <strong>
+                            92
+                        </strong>
+
+                        <span>
+                            / 100
+                        </span>
+
+                    </div>
+
+
+                    <div class="percent">
+                        92%
+                    </div>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        data-width="92%">
+                    </div>
+
+                </div>
+
+
+                <div class="result-footer">
+
+                    <span>
+                        📅 15 سبتمبر 2026
+                    </span>
+
+                    <span>
+                        زمن الامتحان: 45 دقيقة
+                    </span>
+
+                </div>
+
+
+            </article>
+
+
+            <!-- EXAM 2 -->
+
+            <article
+                class="result-card excellent"
+                data-status="excellent">
+
+
+                <div class="result-head">
+
+                    <div class="result-info">
+
+                        <h3>
+                            امتحان الجهاز العصبي
+                        </h3>
+
+                        <p>
+                            الأحياء — الوحدة الثانية
+                        </p>
+
+                    </div>
+
+
+                    <span class="result-badge badge-success">
+                        ممتاز
+                    </span>
+
+                </div>
+
+
+                <div class="score-row">
+
+                    <div class="score">
+
+                        <strong>
+                            96
+                        </strong>
+
+                        <span>
+                            / 100
+                        </span>
+
+                    </div>
+
+
+                    <div class="percent">
+                        96%
+                    </div>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        data-width="96%">
+                    </div>
+
+                </div>
+
+
+                <div class="result-footer">
+
+                    <span>
+                        📅 12 سبتمبر 2026
+                    </span>
+
+                    <span>
+                        زمن الامتحان: 50 دقيقة
+                    </span>
+
+                </div>
+
+
+            </article>
+
+
+            <!-- EXAM 3 -->
+
+            <article
+                class="result-card warning"
+                data-status="needs">
+
+
+                <div class="result-head">
+
+                    <div class="result-info">
+
+                        <h3>
+                            امتحان الوراثة
+                        </h3>
+
+                        <p>
+                            الأحياء — الوحدة الثالثة
+                        </p>
+
+                    </div>
+
+
+                    <span class="result-badge badge-warning">
+                        يحتاج مراجعة
+                    </span>
+
+                </div>
+
+
+                <div class="score-row">
+
+                    <div class="score">
+
+                        <strong>
+                            71
+                        </strong>
+
+                        <span>
+                            / 100
+                        </span>
+
+                    </div>
+
+
+                    <div class="percent">
+                        71%
+                    </div>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        data-width="71%">
+                    </div>
+
+                </div>
+
+
+                <div class="result-footer">
+
+                    <span>
+                        📅 8 سبتمبر 2026
+                    </span>
+
+                    <span>
+                        زمن الامتحان: 40 دقيقة
+                    </span>
+
+                </div>
+
+
+            </article>
+
+
+            <!-- EXAM 4 -->
+
+            <article
+                class="result-card excellent"
+                data-status="excellent">
+
+
+                <div class="result-head">
+
+                    <div class="result-info">
+
+                        <h3>
+                            امتحان الدعامة والحركة
+                        </h3>
+
+                        <p>
+                            الأحياء — الوحدة الرابعة
+                        </p>
+
+                    </div>
+
+
+                    <span class="result-badge badge-success">
+                        ممتاز
+                    </span>
+
+                </div>
+
+
+                <div class="score-row">
+
+                    <div class="score">
+
+                        <strong>
+                            89
+                        </strong>
+
+                        <span>
+                            / 100
+                        </span>
+
+                    </div>
+
+
+                    <div class="percent">
+                        89%
+                    </div>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        data-width="89%">
+                    </div>
+
+                </div>
+
+
+                <div class="result-footer">
+
+                    <span>
+                        📅 3 سبتمبر 2026
+                    </span>
+
+                    <span>
+                        زمن الامتحان: 45 دقيقة
+                    </span>
+
+                </div>
+
+
+            </article>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- ==================================================
+         RECITATION
+    =================================================== -->
+
+    <section class="section">
+
+
+        <div class="section-header">
+
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    🎤
+                </div>
+
+                <div>
+
+                    <h2>
+                        نتائج التسميعات
+                    </h2>
+
+                    <p>
+                        متابعة الحفظ والفهم والتسميع
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="results-grid">
+
+
+            <!-- RECITATION 1 -->
+
+            <article
+                class="result-card excellent">
+
+
+                <div class="result-head">
+
+                    <div class="result-info">
+
+                        <h3>
+                            تسميع الجهاز العصبي
+                        </h3>
+
+                        <p>
+                            شفوي — أحياء
+                        </p>
+
+                    </div>
+
+
+                    <span class="result-badge badge-success">
+                        ممتاز
+                    </span>
+
+                </div>
+
+
+                <div class="score-row">
+
+                    <div class="score">
+
+                        <strong>
+                            18
+                        </strong>
+
+                        <span>
+                            / 20
+                        </span>
+
+                    </div>
+
+
+                    <div class="percent">
+                        90%
+                    </div>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        data-width="90%">
+                    </div>
+
+                </div>
+
+
+                <div class="result-footer">
+
+                    <span>
+                        📅 16 سبتمبر 2026
+                    </span>
+
+                    <span>
+                        شفوي
+                    </span>
+
+                </div>
+
+
+            </article>
+
+
+            <!-- RECITATION 2 -->
+
+            <article
+                class="result-card excellent">
+
+
+                <div class="result-head">
+
+                    <div class="result-info">
+
+                        <h3>
+                            تسميع الوراثة
+                        </h3>
+
+                        <p>
+                            شفوي — أحياء
+                        </p>
+
+                    </div>
+
+
+                    <span class="result-badge badge-success">
+                        ممتاز
+                    </span>
+
+                </div>
+
+
+                <div class="score-row">
+
+                    <div class="score">
+
+                        <strong>
+                            19
+                        </strong>
+
+                        <span>
+                            / 20
+                        </span>
+
+                    </div>
+
+
+                    <div class="percent">
+                        95%
+                    </div>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        data-width="95%">
+                    </div>
+
+                </div>
+
+
+                <div class="result-footer">
+
+                    <span>
+                        📅 10 سبتمبر 2026
+                    </span>
+
+                    <span>
+                        شفوي
+                    </span>
+
+                </div>
+
+
+            </article>
+
+
+            <!-- RECITATION 3 -->
+
+            <article
+                class="result-card warning">
+
+
+                <div class="result-head">
+
+                    <div class="result-info">
+
+                        <h3>
+                            تسميع الدعامة والحركة
+                        </h3>
+
+                        <p>
+                            شفوي — أحياء
+                        </p>
+
+                    </div>
+
+
+                    <span class="result-badge badge-warning">
+                        جيد جدًا
+                    </span>
+
+                </div>
+
+
+                <div class="score-row">
+
+                    <div class="score">
+
+                        <strong>
+                            16
+                        </strong>
+
+                        <span>
+                            / 20
+                        </span>
+
+                    </div>
+
+
+                    <div class="percent">
+                        80%
+                    </div>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        data-width="80%">
+                    </div>
+
+                </div>
+
+
+                <div class="result-footer">
+
+                    <span>
+                        📅 5 سبتمبر 2026
+                    </span>
+
+                    <span>
+                        شفوي
+                    </span>
+
+                </div>
+
+
+            </article>
+
+
+            <!-- RECITATION 4 -->
+
+            <article
+                class="result-card excellent">
+
+
+                <div class="result-head">
+
+                    <div class="result-info">
+
+                        <h3>
+                            تسميع الوحدة الأولى
+                        </h3>
+
+                        <p>
+                            علوم متكاملة
+                        </p>
+
+                    </div>
+
+
+                    <span class="result-badge badge-success">
+                        ممتاز
+                    </span>
+
+                </div>
+
+
+                <div class="score-row">
+
+                    <div class="score">
+
+                        <strong>
+                            20
+                        </strong>
+
+                        <span>
+                            / 20
+                        </span>
+
+                    </div>
+
+
+                    <div class="percent">
+                        100%
+                    </div>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        data-width="100%">
+                    </div>
+
+                </div>
+
+
+                <div class="result-footer">
+
+                    <span>
+                        📅 1 سبتمبر 2026
+                    </span>
+
+                    <span>
+                        شفوي
+                    </span>
+
+                </div>
+
+
+            </article>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   MOBILE SIDEBAR
+========================================================= */
+
+const mobileMenu =
+    document.getElementById('mobileMenu');
+
+const sidebar =
+    document.getElementById('sidebar');
+
+const overlay =
+    document.getElementById('overlay');
+
+
+mobileMenu.addEventListener('click',()=>{
+
+    sidebar.classList.toggle('open');
+
+    overlay.classList.toggle('show');
+
+});
+
+
+overlay.addEventListener('click',()=>{
+
+    sidebar.classList.remove('open');
+
+    overlay.classList.remove('show');
+
+});
+
+
+/* =========================================================
+   THEME
+========================================================= */
+
+const themeBtn =
+    document.getElementById('themeBtn');
+
+
+const savedTheme =
+    localStorage.getItem('platform-theme');
+
+
+if(savedTheme === 'dark'){
+
+    document.body.classList.add('dark');
+
+    themeBtn.textContent='☀️';
+
+}
+
+
+themeBtn.addEventListener('click',()=>{
+
+    document.body.classList.toggle('dark');
+
+
+    const dark =
+        document.body.classList.contains('dark');
+
+
+    localStorage.setItem(
+        'platform-theme',
+        dark ? 'dark' : 'light'
+    );
+
+
+    themeBtn.textContent =
+        dark ? '☀️' : '🌙';
+
+});
+
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+const notificationBtn =
+    document.getElementById('notificationBtn');
+
+const notificationPanel =
+    document.getElementById('notificationPanel');
+
+const notificationBadge =
+    document.getElementById('notificationBadge');
+
+
+notificationBtn.addEventListener('click',(e)=>{
+
+    e.stopPropagation();
+
+    notificationPanel.classList.toggle('show');
+
+});
+
+
+document.addEventListener('click',(e)=>{
+
+    if(
+        !notificationPanel.contains(e.target) &&
+        !notificationBtn.contains(e.target)
+    ){
+
+        notificationPanel.classList.remove('show');
+
+    }
+
+});
+
+
+/* MARK ALL READ */
+
+document
+    .getElementById('markRead')
+    .addEventListener('click',()=>{
+
+        notificationBadge.style.display='none';
+
+        localStorage.setItem(
+            'notifications-read',
+            'true'
+        );
+
+    });
+
+
+if(
+    localStorage.getItem('notifications-read')
+    ===
+    'true'
+){
+
+    notificationBadge.style.display='none';
+
+}
+
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+document
+.querySelectorAll('.filter-btn')
+.forEach(button=>{
+
+    button.addEventListener('click',()=>{
+
+
+        const target =
+            button.dataset.target;
+
+        const filter =
+            button.dataset.filter;
+
+
+        document
+        .querySelectorAll(
+            `.filter-btn[data-target="${target}"]`
+        )
+        .forEach(btn=>{
+
+            btn.classList.remove('active');
+
+        });
+
+
+        button.classList.add('active');
+
+
+        if(target === 'exam'){
+
+            document
+            .querySelectorAll(
+                '#examResults .result-card'
+            )
+            .forEach(card=>{
+
+                if(
+                    filter === 'all' ||
+                    card.dataset.status === filter
+                ){
+
+                    card.style.display='block';
+
+                }else{
+
+                    card.style.display='none';
+
+                }
+
+            });
+
+        }
+
+    });
+
+});
+
+
+/* =========================================================
+   PROGRESS ANIMATION
+========================================================= */
+
+window.addEventListener('load',()=>{
+
+
+    document
+    .querySelectorAll('.progress-bar')
+    .forEach(bar=>{
+
+        const width =
+            bar.dataset.width;
+
+        setTimeout(()=>{
+
+            bar.style.width=width;
+
+        },200);
+
+    });
+
+});
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+function calculateStatistics(){
+
+    const exams =
+        [...document.querySelectorAll(
+            '#examResults .result-card'
+        )];
+
+
+    const scores =
+        exams.map(card=>{
+
+            const value =
+                card.querySelector(
+                    '.score strong'
+                ).textContent;
+
+            return Number(value);
+
+        });
+
+
+    if(!scores.length) return;
+
+
+    const average =
+        Math.round(
+            scores.reduce(
+                (a,b)=>a+b,
+                0
+            ) / scores.length
+        );
+
+
+    const highest =
+        Math.max(...scores);
+
+
+    document
+        .getElementById('examCount')
+        .textContent =
+        scores.length;
+
+
+    document
+        .getElementById('examAverage')
+        .textContent =
+        average;
+
+
+    document
+        .getElementById('highestScore')
+        .textContent =
+        highest;
+
+}
+
+
+calculateStatistics();
+
+
+</script>
+
+</body>
+</html>
+```
