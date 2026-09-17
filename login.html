@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
+
 <title>تسجيل الدخول</title>
 
 <style>
+
 *{
 margin:0;
 padding:0;
@@ -58,7 +62,7 @@ color:white;
 font-size:15px;
 margin-bottom:15px;
 text-align:right;
-direction:rtl
+direction:rtl;
 }
 
 input::placeholder{
@@ -96,11 +100,18 @@ button:hover{
 transform:translateY(-2px);
 }
 
+button:disabled{
+opacity:.6;
+cursor:not-allowed;
+transform:none;
+}
+
 #msg{
 margin-top:15px;
 text-align:center;
 font-weight:700;
 min-height:24px;
+line-height:1.7;
 }
 
 .signup-link{
@@ -115,143 +126,469 @@ font-weight:700;
 }
 
 .home-btn{
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 10px 14px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.12);
-  color: #e5e7eb;
-  text-decoration: none;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 600;
-  backdrop-filter: blur(10px);
-  transition: .3s;
+position:absolute;
+top:20px;
+right:20px;
+padding:10px 14px;
+background:rgba(255,255,255,.06);
+border:1px solid rgba(255,255,255,.12);
+color:#e5e7eb;
+text-decoration:none;
+border-radius:12px;
+font-size:13px;
+font-weight:600;
+backdrop-filter:blur(10px);
+transition:.3s;
 }
 
 .home-btn:hover{
-  background: #2563eb;
-  border-color: #2563eb;
-  transform: translateY(-2px);
+background:#2563eb;
+border-color:#2563eb;
+transform:translateY(-2px);
 }
+
 </style>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
 </head>
 
+
 <body>
+
 <a href="index.html" class="home-btn">
-  ← العودة للصفحة الرئيسية
+← العودة للصفحة الرئيسية
 </a>
+
+
 <div class="container">
+
 <div class="logo">🧬</div>
 
 <h2>تسجيل الدخول</h2>
 
-<input id="phone" type="tel" inputmode="numeric" placeholder="رقم التليفون">
+
+<input
+id="phone"
+type="tel"
+inputmode="numeric"
+autocomplete="tel"
+placeholder="رقم التليفون"
+>
+
 
 <div class="password-box">
-<input id="password" type="password" placeholder="كلمة المرور">
-<span class="eye" onclick="togglePassword()">👁</span>
+
+<input
+id="password"
+type="password"
+autocomplete="current-password"
+placeholder="كلمة المرور"
+>
+
+<span
+class="eye"
+onclick="togglePassword()"
+>
+👁
+</span>
+
 </div>
 
-<button onclick="login()">دخول</button>
+
+<button
+id="loginBtn"
+onclick="login()"
+>
+دخول
+</button>
+
 
 <div id="msg"></div>
 
+
 <div class="signup-link">
+
 ليس لديك حساب؟
-<a href="signup.html">إنشاء حساب</a>
-</div>
+
+<a href="signup.html">
+إنشاء حساب
+</a>
 
 </div>
 
-<!-- Supabase -->
+</div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+
 <script>
-  if(localStorage.getItem("user")){
-  const user = JSON.parse(localStorage.getItem("user"));
 
-  if(user.role === "admin"){
-    window.location.replace("admin.html");
-  }else{
-    window.location.replace("dashboard.html");
-  }
-}
-const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const SUPABASE_URL =
+"https://nhdowqzecpwmkunczodl.supabase.co";
 
-const client = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
+const SUPABASE_ANON_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+
+
+const client =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
 );
 
-window.login = async function () {
 
-  const phone = document.getElementById("phone").value.trim();
-  const password = document.getElementById("password").value;
-  const msg = document.getElementById("msg");
+/* =====================================================
+   DEVICE ID
+===================================================== */
 
-  msg.innerText = "جاري تسجيل الدخول...";
+function getDeviceId(){
 
-  try {
+let deviceId =
+localStorage.getItem("platform_device_id");
 
-    // 1️⃣ هات الطالب من الجدول
-    const { data: student, error: dbError } = await client
-      .from("students")
-      .select("*")
-      .eq("phone", phone)
-      .single();
+if(!deviceId){
 
-    if (dbError || !student) {
-      msg.innerText = "الرقم غير مسجل";
-      return;
-    }
+deviceId =
+"device_" +
+crypto.randomUUID();
 
-    // 2️⃣ تسجيل دخول Supabase Auth
-    const { error } = await client.auth.signInWithPassword({
-      email: phone + "@phone.com",
-      password: password
-    });
+localStorage.setItem(
+"platform_device_id",
+deviceId
+);
 
-    if (error) {
-      msg.innerText = "كلمة المرور خطأ";
-      return;
-    }
-
-    // 3️⃣ check activation
-    if (!student.activated) {
-      msg.innerText = "الحساب غير مفعل";
-      return;
-    }
-
-    // 4️⃣ save session
-   localStorage.setItem("user", JSON.stringify({
-  id: student.id,
-  name: student.full_name,
-  phone: student.phone,
-  email: phone + "@phone.com",
-  role: student.role,
-  class_group: student.class_group
-}));
-  history.replaceState(null, "", location.href);
-
-    // 5️⃣ redirect
-   if (student.role === "admin") {
-  window.location.replace("admin.html");
-} else {
-  window.location.replace("dashboard.html");
 }
-  } catch (err) {
-    console.log(err);
-    msg.innerText = "حدث خطأ غير متوقع";
-  }
+
+return deviceId;
+
+}
+
+
+/* =====================================================
+   SESSION ID
+===================================================== */
+
+function createSessionId(){
+
+return crypto.randomUUID();
+
+}
+
+
+/* =====================================================
+   EXISTING LOCAL USER
+===================================================== */
+
+const oldUser =
+localStorage.getItem("user");
+
+if(oldUser){
+
+try{
+
+const user =
+JSON.parse(oldUser);
+
+if(user.role === "admin"){
+
+window.location.replace("admin.html");
+
+}else{
+
+window.location.replace("dashboard.html");
+
+}
+
+}catch(e){
+
+localStorage.removeItem("user");
+
+}
+
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+window.login = async function(){
+
+const phone =
+document.getElementById("phone")
+.value
+.trim();
+
+const password =
+document.getElementById("password")
+.value;
+
+const msg =
+document.getElementById("msg");
+
+const btn =
+document.getElementById("loginBtn");
+
+
+if(!phone || !password){
+
+msg.innerText =
+"من فضلك أدخل رقم التليفون وكلمة المرور";
+
+return;
+
+}
+
+
+btn.disabled = true;
+
+msg.innerText =
+"جاري تسجيل الدخول...";
+
+
+try{
+
+
+/* =====================================================
+   1. FIND STUDENT
+===================================================== */
+
+const {
+data: student,
+error: dbError
+} = await client
+.from("students")
+.select("*")
+.eq("phone", phone)
+.single();
+
+
+if(dbError || !student){
+
+msg.innerText =
+"الرقم غير مسجل";
+
+btn.disabled = false;
+
+return;
+
+}
+
+
+/* =====================================================
+   2. ACTIVATION
+===================================================== */
+
+if(!student.activated){
+
+msg.innerText =
+"الحساب غير مفعل";
+
+btn.disabled = false;
+
+return;
+
+}
+
+
+/* =====================================================
+   3. SUPABASE AUTH
+===================================================== */
+
+const {
+data: authData,
+error: authError
+} = await client.auth.signInWithPassword({
+
+email:
+phone + "@phone.com",
+
+password:
+password
+
+});
+
+
+if(authError){
+
+msg.innerText =
+"كلمة المرور خطأ";
+
+btn.disabled = false;
+
+return;
+
+}
+
+
+/* =====================================================
+   4. CREATE SESSION
+===================================================== */
+
+const sessionId =
+createSessionId();
+
+const deviceId =
+getDeviceId();
+
+
+const {
+data: sessionResult,
+error: sessionError
+} = await client.rpc(
+"acquire_student_session",
+{
+p_session_id: sessionId,
+p_device_id: deviceId
+}
+);
+
+
+if(sessionError){
+
+console.error(sessionError);
+
+await client.auth.signOut();
+
+msg.innerText =
+"تعذر إنشاء جلسة الدخول، حاول مرة أخرى";
+
+btn.disabled = false;
+
+return;
+
+}
+
+
+/* =====================================================
+   5. SECOND DEVICE
+===================================================== */
+
+if(
+!sessionResult ||
+!sessionResult.success
+){
+
+await client.auth.signOut();
+
+
+if(
+sessionResult?.reason ===
+"already_active"
+){
+
+msg.innerHTML =
+"🔒 <br>هذا الحساب مستخدم حاليًا على جهاز آخر.<br>يرجى تسجيل الخروج من الجهاز السابق أولًا.";
+
+}else{
+
+msg.innerText =
+"تعذر تسجيل الدخول حاليًا";
+
+}
+
+
+btn.disabled = false;
+
+return;
+
+}
+
+
+/* =====================================================
+   6. SAVE LOCAL SESSION
+===================================================== */
+
+localStorage.setItem(
+"platform_session_id",
+sessionId
+);
+
+
+localStorage.setItem(
+"platform_device_id",
+deviceId
+);
+
+
+localStorage.setItem(
+"user",
+JSON.stringify({
+
+id:
+student.id,
+
+name:
+student.full_name,
+
+full_name:
+student.full_name,
+
+phone:
+student.phone,
+
+email:
+phone + "@phone.com",
+
+role:
+student.role,
+
+class_group:
+student.class_group
+
+})
+);
+
+
+/* =====================================================
+   7. REDIRECT
+===================================================== */
+
+if(student.role === "admin"){
+
+window.location.replace(
+"admin.html"
+);
+
+}else{
+
+window.location.replace(
+"dashboard.html"
+);
+
+}
+
+
+}catch(err){
+
+console.error(err);
+
+msg.innerText =
+"حدث خطأ غير متوقع";
+
+btn.disabled = false;
+
+}
+
 };
 
-function togglePassword() {
-  const pass = document.getElementById("password");
-  pass.type = pass.type === "password" ? "text" : "password";
+
+/* =====================================================
+   PASSWORD
+===================================================== */
+
+function togglePassword(){
+
+const pass =
+document.getElementById("password");
+
+pass.type =
+pass.type === "password"
+? "text"
+: "password";
+
 }
 
 </script>
