@@ -650,7 +650,50 @@ qualitySelect.addEventListener("change",()=>{
 
 $("searchInput").addEventListener("input",render);
 $("mobileMenu").addEventListener("click",()=>sidebar.classList.toggle("open"));
-$("logoutBtn").addEventListener("click",async()=>{try{await client.auth.signOut();}catch(e){console.warn(e);}localStorage.removeItem("user");window.location.href="index.html";});
+$("logoutBtn").addEventListener("click",async function logout(){
+
+try{
+
+await client.rpc(
+"release_student_session",
+{
+p_session_id:
+localStorage.getItem("platform_session_id")
+}
+);
+
+}catch(e){
+
+console.error(e);
+
+}
+
+
+try{
+
+await client.auth.signOut();
+
+}catch(e){
+
+console.error(e);
+
+}
+
+
+localStorage.removeItem(
+"platform_session_id"
+);
+
+localStorage.removeItem(
+"user"
+);
+
+
+window.location.replace(
+"login.html"
+);
+
+}
 
 /* =========================================================
    FULLSCREEN — الشاشة الكاملة تشمل العنوان + الفيديو + الشريط السفلي
