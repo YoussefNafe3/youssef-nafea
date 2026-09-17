@@ -254,9 +254,58 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ================= LOGOUT ================= */
-function logout(){
-localStorage.removeItem("user");
-window.location.href="login.html";
+async function logout(){
+
+const sessionId =
+localStorage.getItem(
+"platform_session_id"
+);
+
+
+try{
+
+if(sessionId){
+
+await client.rpc(
+"release_student_session",
+{
+p_session_id:sessionId
+}
+);
+
+}
+
+}catch(e){
+
+console.error(e);
+
+}
+
+
+try{
+
+await client.auth.signOut();
+
+}catch(e){
+
+console.error(e);
+
+}
+
+
+localStorage.removeItem(
+"platform_session_id"
+);
+
+localStorage.removeItem(
+"user"
+);
+
+
+window.location.replace(
+"login.html"
+);
+
 }
 
 /* ================= LOAD ================= */
