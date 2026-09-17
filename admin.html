@@ -6,13 +6,7 @@
 <title>لوحة التحكم | د. يوسف نافع</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-<td>
-<button
-onclick="forceStudentLogout('${s.id}')"
->
-🔓 فصل الجهاز
-</button>
-</td>
+
 <style>
 
 /* ================= BASE ================= */
@@ -193,10 +187,20 @@ transform:scale(1.05);
 </div>
 
 <div class="menu">
+  <td>
+<button
+onclick="forceStudentLogout('${s.id}')"
+>
+🔓 فصل الجهاز
+</button>
+</td>
 <a href="admin.html">🏠 الرئيسية</a>
 <a href="admin-videos.html">🎥 الفيديوهات</a>
 <a href="admin-analytics.html">📊 التحليلات</a>
 <a href="admin-files.html">📁 الملفات</a>
+<a href="admin-results.html">
+    🏆 النتائج
+</a>
 </div>
 
 </div>
