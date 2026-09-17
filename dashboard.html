@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -34,7 +36,6 @@ color:var(--text);
 padding:20px;
 }
 
-/* ================= TOPBAR ================= */
 .topbar{
 display:flex;
 justify-content:space-between;
@@ -68,7 +69,6 @@ transition:.3s;
 color:var(--gold);
 }
 
-/* ================= BUTTONS ================= */
 .actions{
 display:flex;
 gap:10px;
@@ -106,7 +106,6 @@ transform:translateY(-2px);
 box-shadow:0 10px 25px rgba(0,0,0,.25);
 }
 
-/* ================= HERO ================= */
 .hero{
 position:relative;
 overflow:hidden;
@@ -150,7 +149,6 @@ opacity:.9;
 font-size:16px;
 }
 
-/* ================= CARDS ================= */
 .cards{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
@@ -175,7 +173,7 @@ box-shadow:0 10px 30px rgba(0,0,0,.2);
 content:'';
 position:absolute;
 inset:0;
-background:radial-gradient(circle at top left, rgba(255,215,0,.12), transparent 40%);
+background:radial-gradient(circle at top left,rgba(255,215,0,.12),transparent 40%);
 opacity:0;
 transition:.3s;
 }
@@ -204,7 +202,6 @@ opacity:.75;
 font-size:14px;
 }
 
-/* ================= FOOTER ================= */
 .footer{
 text-align:center;
 margin-top:40px;
@@ -212,7 +209,15 @@ opacity:.6;
 font-size:13px;
 }
 
-/* ================= MOBILE ================= */
+#sessionStatus{
+position:fixed;
+bottom:15px;
+left:15px;
+font-size:11px;
+opacity:.35;
+pointer-events:none;
+}
+
 @media(max-width:768px){
 
 .topbar{
@@ -231,97 +236,421 @@ justify-content:center;
 .card{
 padding:20px;
 }
+
 }
 
 </style>
+
 </head>
+
 
 <body>
 
+
 <div class="topbar">
 
-<div class="logo">Dr Youssef Nafea</div>
+<div class="logo">
+Dr Youssef Nafea
+</div>
 
-<div class="user-name" id="userName" onclick="goDashboard()">
+<div
+class="user-name"
+id="userName"
+onclick="goDashboard()"
+>
 مرحباً
 </div>
 
 <div class="actions">
-<a href="index.html" class="btn home-btn">🏠 الرئيسية</a>
-<button class="btn logout-btn" onclick="logout()">🚪 خروج</button>
-</div>
+
+<a
+href="index.html"
+class="btn home-btn"
+>
+🏠 الرئيسية
+</a>
+
+<button
+class="btn logout-btn"
+onclick="logout()"
+>
+🚪 خروج
+</button>
 
 </div>
 
-<!-- HERO -->
+</div>
+
+
 <div class="hero">
-<h1>منصة د. يوسف نافع</h1>
-<p>كل محاضراتك وملفاتك وحصصك في مكان واحد بشكل منظم</p>
+
+<h1>
+منصة د. يوسف نافع
+</h1>
+
+<p>
+كل محاضراتك وملفاتك وحصصك في مكان واحد بشكل منظم
+</p>
+
 </div>
 
-<!-- CARDS -->
+
 <div class="cards">
 
-<div class="card" onclick="window.location.href='videos.html'">
+<div
+class="card"
+onclick="window.location.href='videos.html'"
+>
+
 <div class="icon">🎥</div>
+
 <h3>الفيديوهات</h3>
-<p>مشاهدة المحاضرات المسجلة</p>
+
+<p>
+مشاهدة المحاضرات المسجلة
+</p>
+
 </div>
 
+
 <div class="card">
+
 <div class="icon">📅</div>
+
 <h3>الحصص</h3>
-<p>جدول الحصص</p>
+
+<p>
+جدول الحصص
+</p>
+
 </div>
 
-<div class="card" onclick="window.location.href='files.html'">
+
+<div
+class="card"
+onclick="window.location.href='files.html'"
+>
+
 <div class="icon">📚</div>
+
 <h3>الملفات التعليمية</h3>
-<p>ملازم + ملفات PDF</p>
+
+<p>
+ملازم + ملفات PDF
+</p>
+
 </div>
 
+
 <div class="card">
+
 <div class="icon">📝</div>
+
 <h3>الواجبات</h3>
-<p>متابعة التكليفات</p>
+
+<p>
+متابعة التكليفات
+</p>
+
 </div>
 
+
 <div class="card">
+
 <div class="icon">🏆</div>
+
 <h3>النتائج</h3>
-<p>نتائج الاختبارات</p>
+
+<p>
+نتائج الاختبارات
+</p>
+
 </div>
+
 
 <div class="card">
+
 <div class="icon">📢</div>
+
 <h3>الإعلانات</h3>
-<p>آخر التنبيهات</p>
+
+<p>
+آخر التنبيهات
+</p>
+
 </div>
 
 </div>
+
 
 <div class="footer">
 © 2026 Dr Youssef Nafea
 </div>
 
+
+<div id="sessionStatus"></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
 <script>
-const user = JSON.parse(localStorage.getItem("user"));
 
-if(!user){
-window.location.href = "login.html";
+const SUPABASE_URL =
+"https://nhdowqzecpwmkunczodl.supabase.co";
+
+const SUPABASE_ANON_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+
+
+const client =
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+
+/* =====================================================
+   SESSION
+===================================================== */
+
+const sessionId =
+localStorage.getItem(
+"platform_session_id"
+);
+
+const user =
+JSON.parse(
+localStorage.getItem("user") || "null"
+);
+
+
+if(!user || !sessionId){
+
+window.location.replace(
+"login.html"
+);
+
+throw new Error(
+"NO_SESSION"
+);
+
 }
 
-document.getElementById("userName").innerHTML =
-"👋 " + (user.full_name || user.name);
 
-function logout(){
-localStorage.clear();
-window.location.href = "login.html";
+/* =====================================================
+   USER NAME
+===================================================== */
+
+document.getElementById(
+"userName"
+).innerHTML =
+"👋 " +
+(user.full_name || user.name || "الطالب");
+
+
+/* =====================================================
+   HEARTBEAT
+===================================================== */
+
+let sessionAlive = true;
+
+
+async function refreshSession(){
+
+if(!sessionAlive) return;
+
+
+try{
+
+const {
+data,
+error
+} =
+await client.rpc(
+"refresh_student_session",
+{
+p_session_id:sessionId
 }
+);
+
+
+if(error){
+
+console.error(error);
+
+return;
+
+}
+
+
+if(
+!data ||
+!data.success
+){
+
+sessionAlive = false;
+
+await forceLogout(
+"انتهت جلسة الدخول أو تم تسجيل الدخول من جهاز آخر."
+);
+
+}
+
+}catch(err){
+
+console.error(
+"Session heartbeat error:",
+err
+);
+
+}
+
+}
+
+
+/* =====================================================
+   CHECK IMMEDIATELY
+===================================================== */
+
+refreshSession();
+
+
+/* =====================================================
+   EVERY 30 SECONDS
+===================================================== */
+
+const heartbeatTimer =
+setInterval(
+refreshSession,
+30000
+);
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logout(){
+
+sessionAlive = false;
+
+clearInterval(
+heartbeatTimer
+);
+
+
+try{
+
+await client.rpc(
+"release_student_session",
+{
+p_session_id:sessionId
+}
+);
+
+}catch(e){
+
+console.error(e);
+
+}
+
+
+try{
+
+await client.auth.signOut();
+
+}catch(e){
+
+console.error(e);
+
+}
+
+
+localStorage.removeItem(
+"platform_session_id"
+);
+
+localStorage.removeItem(
+"user"
+);
+
+
+window.location.replace(
+"login.html"
+);
+
+}
+
+
+/* =====================================================
+   FORCE LOGOUT
+===================================================== */
+
+async function forceLogout(message){
+
+clearInterval(
+heartbeatTimer
+);
+
+localStorage.removeItem(
+"platform_session_id"
+);
+
+localStorage.removeItem(
+"user"
+);
+
+try{
+
+await client.auth.signOut();
+
+}catch(e){}
+
+
+alert(
+"🔒 " + message
+);
+
+window.location.replace(
+"login.html"
+);
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
 
 function goDashboard(){
-window.location.href = "dashboard.html";
+
+window.location.href =
+"dashboard.html";
+
 }
+
+
+/* =====================================================
+   BEFORE LEAVING
+===================================================== */
+
+window.addEventListener(
+"pagehide",
+function(){
+
+/*
+Do NOT release session here.
+
+Because pagehide may happen simply
+when moving from Dashboard to Videos.
+
+The heartbeat keeps the session alive.
+*/
+
+}
+);
+
 </script>
 
 </body>
