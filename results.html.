@@ -1,17 +1,22 @@
 ```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0"
+>
 
 <title>النتائج | د. يوسف نافع</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link
+href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap"
+rel="stylesheet"
+>
 
 <style>
 
@@ -21,56 +26,56 @@
 
 :root{
 
-    --bg:#f5f7fb;
-    --card:#ffffff;
-    --card2:#f8fafc;
+--bg:#f4f7fb;
 
-    --text:#101828;
-    --muted:#667085;
+--card:#ffffff;
 
-    --primary:#2563eb;
-    --primary2:#1d4ed8;
+--card2:#f8fafc;
 
-    --success:#12b76a;
-    --danger:#f04438;
-    --warning:#f79009;
+--text:#101828;
 
-    --border:#e4e7ec;
+--muted:#667085;
 
-    --shadow:
-        0 15px 40px rgba(16,24,40,.07);
+--border:#e4e7ec;
 
-    --shadow-hover:
-        0 22px 55px rgba(16,24,40,.12);
+--primary:#2563eb;
 
-    --radius:24px;
+--primary2:#4f46e5;
 
-    --sidebar-width:260px;
+--success:#12b76a;
 
-    --transition:.3s ease;
+--warning:#f79009;
+
+--danger:#f04438;
+
+--shadow:
+0 15px 45px rgba(16,24,40,.07);
+
+--shadow2:
+0 25px 70px rgba(16,24,40,.13);
+
 }
-
-
-/* =========================================================
-   DARK MODE
-========================================================= */
 
 body.dark{
 
-    --bg:#07111f;
-    --card:#0d1a2b;
-    --card2:#101f32;
+--bg:#07111f;
 
-    --text:#f8fafc;
-    --muted:#98a2b3;
+--card:#0d1a2b;
 
-    --border:#1d3047;
+--card2:#101f32;
 
-    --shadow:
-        0 15px 40px rgba(0,0,0,.25);
+--text:#f8fafc;
 
-    --shadow-hover:
-        0 22px 55px rgba(0,0,0,.4);
+--muted:#98a2b3;
+
+--border:#1d3047;
+
+--shadow:
+0 15px 45px rgba(0,0,0,.25);
+
+--shadow2:
+0 25px 70px rgba(0,0,0,.4);
+
 }
 
 
@@ -79,194 +84,370 @@ body.dark{
 ========================================================= */
 
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
 
-html{
-    scroll-behavior:smooth;
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
+
+font-family:'Cairo',sans-serif;
+
 }
 
 body{
 
-    font-family:'Cairo',sans-serif;
+background:
+radial-gradient(
+circle at 10% 5%,
+rgba(37,99,235,.08),
+transparent 25%
+),
+var(--bg);
 
-    background:
-        radial-gradient(
-            circle at 10% 10%,
-            rgba(37,99,235,.05),
-            transparent 25%
-        ),
-        var(--bg);
+color:var(--text);
 
-    color:var(--text);
+min-height:100vh;
 
-    min-height:100vh;
+transition:.3s;
 
-    transition:
-        background var(--transition),
-        color var(--transition);
+}
+
+button{
+
+font-family:inherit;
+
 }
 
 
 /* =========================================================
-   SIDEBAR
+   TOPBAR
 ========================================================= */
 
-.sidebar{
+.topbar{
 
-    position:fixed;
+display:flex;
 
-    right:0;
-    top:0;
+align-items:center;
 
-    width:var(--sidebar-width);
-    height:100vh;
+justify-content:space-between;
 
-    background:var(--card);
+gap:15px;
 
-    border-left:1px solid var(--border);
+padding:18px 25px;
 
-    padding:25px 18px;
+margin:18px;
 
-    z-index:1000;
+border-radius:22px;
 
-    transition:var(--transition);
+background:var(--card);
+
+border:1px solid var(--border);
+
+box-shadow:var(--shadow);
+
 }
 
+.brand{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+}
 
 .logo{
 
-    display:flex;
-    align-items:center;
-    gap:12px;
+width:48px;
 
-    padding:5px 8px 25px;
+height:48px;
 
-    border-bottom:1px solid var(--border);
+display:flex;
 
-    margin-bottom:20px;
+align-items:center;
+
+justify-content:center;
+
+border-radius:16px;
+
+background:
+linear-gradient(
+135deg,
+#2563eb,
+#7c3aed
+);
+
+color:white;
+
+font-size:22px;
+
+}
+
+.brand-text strong{
+
+display:block;
+
+font-size:15px;
+
+font-weight:900;
+
+}
+
+.brand-text span{
+
+display:block;
+
+font-size:10px;
+
+color:var(--muted);
+
+margin-top:2px;
+
+}
+
+.actions{
+
+display:flex;
+
+gap:8px;
+
+align-items:center;
+
+}
+
+.icon-btn{
+
+width:45px;
+
+height:45px;
+
+border-radius:14px;
+
+border:1px solid var(--border);
+
+background:var(--card);
+
+color:var(--text);
+
+cursor:pointer;
+
+position:relative;
+
+font-size:18px;
+
+transition:.3s;
+
+}
+
+.icon-btn:hover{
+
+transform:translateY(-2px);
+
+box-shadow:var(--shadow);
+
+}
+
+.badge{
+
+position:absolute;
+
+top:3px;
+
+right:3px;
+
+min-width:17px;
+
+height:17px;
+
+border-radius:50%;
+
+background:#ef4444;
+
+color:white;
+
+font-size:9px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+border:2px solid var(--card);
+
 }
 
 
-.logo-icon{
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
 
-    width:48px;
-    height:48px;
+.notification-panel{
 
-    border-radius:16px;
+position:fixed;
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
+top:85px;
 
-    color:#fff;
+left:25px;
 
-    font-size:22px;
+width:370px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #7c3aed
-        );
+max-width:calc(100vw - 30px);
 
-    box-shadow:
-        0 10px 25px rgba(37,99,235,.25);
+background:var(--card);
+
+border:1px solid var(--border);
+
+border-radius:22px;
+
+box-shadow:var(--shadow2);
+
+z-index:9999;
+
+overflow:hidden;
+
+opacity:0;
+
+visibility:hidden;
+
+transform:translateY(-12px);
+
+transition:.3s;
+
 }
 
+.notification-panel.show{
 
-.logo-text strong{
+opacity:1;
 
-    display:block;
+visibility:visible;
 
-    font-size:15px;
+transform:translateY(0);
 
-    font-weight:800;
 }
 
-.logo-text span{
+.notification-head{
 
-    display:block;
+padding:17px 18px;
 
-    color:var(--muted);
+display:flex;
 
-    font-size:11px;
+justify-content:space-between;
 
-    margin-top:2px;
+align-items:center;
+
+border-bottom:1px solid var(--border);
+
 }
 
+.notification-head strong{
 
-/* NAV */
+font-size:14px;
 
-.nav{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:7px;
 }
 
+.read-all{
 
-.nav a{
+border:none;
 
-    display:flex;
+background:none;
 
-    align-items:center;
+color:var(--primary);
 
-    gap:12px;
+cursor:pointer;
 
-    padding:13px 14px;
+font-size:10px;
 
-    border-radius:14px;
-
-    color:var(--muted);
-
-    text-decoration:none;
-
-    font-size:14px;
-
-    font-weight:600;
-
-    transition:var(--transition);
 }
 
+.notification-list{
 
-.nav a:hover{
+max-height:430px;
 
-    background:rgba(37,99,235,.07);
+overflow-y:auto;
 
-    color:var(--primary);
-
-    transform:translateX(-3px);
 }
 
+.notification{
 
-.nav a.active{
+display:flex;
 
-    color:#fff;
+gap:11px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #1d4ed8
-        );
+padding:15px 17px;
 
-    box-shadow:
-        0 8px 22px rgba(37,99,235,.25);
+border-bottom:1px solid var(--border);
+
+transition:.2s;
+
 }
 
+.notification:hover{
 
-.nav-icon{
+background:var(--card2);
 
-    width:22px;
+}
 
-    text-align:center;
+.notification.unread{
 
-    font-size:18px;
+background:rgba(37,99,235,.045);
+
+}
+
+.notification-icon{
+
+width:38px;
+
+height:38px;
+
+flex:none;
+
+border-radius:12px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+background:rgba(37,99,235,.1);
+
+color:var(--primary);
+
+}
+
+.notification strong{
+
+font-size:11px;
+
+display:block;
+
+margin-bottom:3px;
+
+}
+
+.notification p{
+
+font-size:10px;
+
+color:var(--muted);
+
+line-height:1.7;
+
+}
+
+.notification time{
+
+font-size:8px;
+
+color:var(--muted);
+
+display:block;
+
+margin-top:4px;
+
 }
 
 
@@ -274,285 +455,14 @@ body{
    MAIN
 ========================================================= */
 
-.main{
+.container{
 
-    margin-right:var(--sidebar-width);
+max-width:1250px;
 
-    min-height:100vh;
+margin:auto;
 
-    padding:30px 35px 50px;
+padding:0 18px 50px;
 
-}
-
-
-/* =========================================================
-   TOP BAR
-========================================================= */
-
-.topbar{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:30px;
-}
-
-
-.page-title h1{
-
-    font-size:28px;
-
-    font-weight:900;
-
-    letter-spacing:-.5px;
-}
-
-
-.page-title p{
-
-    color:var(--muted);
-
-    font-size:13px;
-
-    margin-top:5px;
-}
-
-
-.top-actions{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-}
-
-
-/* BUTTON */
-
-.icon-btn{
-
-    width:46px;
-    height:46px;
-
-    border-radius:15px;
-
-    border:1px solid var(--border);
-
-    background:var(--card);
-
-    color:var(--text);
-
-    cursor:pointer;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    font-size:19px;
-
-    position:relative;
-
-    transition:var(--transition);
-}
-
-
-.icon-btn:hover{
-
-    transform:translateY(-2px);
-
-    box-shadow:var(--shadow);
-}
-
-
-/* notification badge */
-
-.notification-badge{
-
-    position:absolute;
-
-    top:5px;
-    right:5px;
-
-    min-width:17px;
-    height:17px;
-
-    border-radius:50%;
-
-    background:#ef4444;
-
-    color:#fff;
-
-    border:2px solid var(--card);
-
-    font-size:9px;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    font-weight:800;
-}
-
-
-/* =========================================================
-   NOTIFICATION PANEL
-========================================================= */
-
-.notification-panel{
-
-    position:fixed;
-
-    top:85px;
-    left:35px;
-
-    width:360px;
-
-    max-width:calc(100vw - 30px);
-
-    background:var(--card);
-
-    border:1px solid var(--border);
-
-    border-radius:22px;
-
-    box-shadow:var(--shadow-hover);
-
-    z-index:2000;
-
-    opacity:0;
-
-    visibility:hidden;
-
-    transform:translateY(-10px) scale(.97);
-
-    transition:var(--transition);
-
-    overflow:hidden;
-}
-
-
-.notification-panel.show{
-
-    opacity:1;
-
-    visibility:visible;
-
-    transform:translateY(0) scale(1);
-}
-
-
-.notification-head{
-
-    padding:18px;
-
-    border-bottom:1px solid var(--border);
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-}
-
-
-.notification-head strong{
-
-    font-size:15px;
-}
-
-
-.notification-head button{
-
-    border:none;
-
-    background:none;
-
-    color:var(--primary);
-
-    font-family:inherit;
-
-    cursor:pointer;
-
-    font-size:11px;
-}
-
-
-.notification{
-
-    display:flex;
-
-    gap:12px;
-
-    padding:15px 18px;
-
-    border-bottom:1px solid var(--border);
-
-    transition:var(--transition);
-}
-
-
-.notification:hover{
-
-    background:var(--card2);
-}
-
-
-.notification-icon{
-
-    width:38px;
-    height:38px;
-
-    flex:none;
-
-    border-radius:12px;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    background:rgba(37,99,235,.1);
-
-    color:var(--primary);
-}
-
-
-.notification strong{
-
-    display:block;
-
-    font-size:12px;
-
-    margin-bottom:3px;
-}
-
-
-.notification p{
-
-    color:var(--muted);
-
-    font-size:11px;
-
-    line-height:1.7;
-}
-
-
-.notification time{
-
-    display:block;
-
-    color:var(--muted);
-
-    font-size:9px;
-
-    margin-top:3px;
 }
 
 
@@ -562,208 +472,219 @@ body{
 
 .hero{
 
-    position:relative;
+position:relative;
 
-    overflow:hidden;
+overflow:hidden;
 
-    padding:30px;
+border-radius:28px;
 
-    border-radius:28px;
+padding:35px;
 
-    color:#fff;
+color:white;
 
-    margin-bottom:25px;
+background:
+linear-gradient(
+135deg,
+#1d4ed8,
+#2563eb 45%,
+#7c3aed
+);
 
-    background:
-        linear-gradient(
-            135deg,
-            #1d4ed8,
-            #2563eb 50%,
-            #4f46e5
-        );
+box-shadow:
 
-    box-shadow:
-        0 20px 45px rgba(37,99,235,.2);
+0 25px 60px
+rgba(37,99,235,.2);
+
+margin-bottom:20px;
+
 }
-
 
 .hero::before{
 
-    content:"";
+content:"";
 
-    position:absolute;
+position:absolute;
 
-    width:260px;
-    height:260px;
+width:280px;
 
-    border-radius:50%;
+height:280px;
 
-    background:rgba(255,255,255,.08);
+border-radius:50%;
 
-    top:-100px;
-    left:-60px;
+background:rgba(255,255,255,.08);
+
+left:-100px;
+
+top:-130px;
+
 }
-
 
 .hero::after{
 
-    content:"";
+content:"";
 
-    position:absolute;
+position:absolute;
 
-    width:180px;
-    height:180px;
+width:220px;
 
-    border-radius:50%;
+height:220px;
 
-    border:35px solid rgba(255,255,255,.05);
+border-radius:50%;
 
-    bottom:-80px;
-    right:10%;
+border:35px solid rgba(255,255,255,.05);
+
+right:5%;
+
+bottom:-130px;
+
 }
-
 
 .hero-content{
 
-    position:relative;
+position:relative;
 
-    z-index:2;
+z-index:2;
+
 }
-
 
 .hero small{
 
-    font-size:12px;
+font-size:11px;
 
-    opacity:.8;
+opacity:.8;
+
 }
 
+.hero h1{
 
-.hero h2{
+font-size:27px;
 
-    margin-top:5px;
+font-weight:900;
 
-    font-size:25px;
+margin-top:4px;
 
-    font-weight:900;
 }
-
 
 .hero p{
 
-    margin-top:6px;
+font-size:12px;
 
-    font-size:13px;
+opacity:.85;
 
-    opacity:.85;
+margin-top:5px;
+
 }
 
 
 /* =========================================================
-   STATISTICS
+   STATS
 ========================================================= */
 
 .stats{
 
-    display:grid;
+display:grid;
 
-    grid-template-columns:
-        repeat(4,1fr);
+grid-template-columns:
+repeat(4,1fr);
 
-    gap:16px;
+gap:14px;
 
-    margin-bottom:30px;
+margin-bottom:28px;
+
 }
 
+.stat{
 
-.stat-card{
+background:var(--card);
 
-    background:var(--card);
+border:1px solid var(--border);
 
-    border:1px solid var(--border);
+border-radius:20px;
 
-    border-radius:22px;
+padding:19px;
 
-    padding:20px;
+box-shadow:var(--shadow);
 
-    box-shadow:var(--shadow);
+transition:.3s;
 
-    transition:var(--transition);
 }
 
+.stat:hover{
 
-.stat-card:hover{
+transform:translateY(-4px);
 
-    transform:translateY(-5px);
+box-shadow:var(--shadow2);
 
-    box-shadow:var(--shadow-hover);
 }
-
-
-.stat-top{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-}
-
 
 .stat-icon{
 
-    width:45px;
-    height:45px;
+width:42px;
 
-    border-radius:15px;
+height:42px;
 
-    display:flex;
+border-radius:14px;
 
-    align-items:center;
-    justify-content:center;
+display:flex;
 
-    font-size:19px;
+align-items:center;
+
+justify-content:center;
+
+font-size:18px;
+
+margin-bottom:13px;
+
 }
 
-
 .blue{
-    background:rgba(37,99,235,.1);
-    color:#2563eb;
+
+background:rgba(37,99,235,.1);
+
+color:#2563eb;
+
 }
 
 .green{
-    background:rgba(18,183,106,.1);
-    color:#12b76a;
+
+background:rgba(18,183,106,.1);
+
+color:#12b76a;
+
 }
 
 .orange{
-    background:rgba(247,144,9,.1);
-    color:#f79009;
+
+background:rgba(247,144,9,.1);
+
+color:#f79009;
+
 }
 
 .purple{
-    background:rgba(124,58,237,.1);
-    color:#7c3aed;
+
+background:rgba(124,58,237,.1);
+
+color:#7c3aed;
+
 }
 
+.stat-label{
 
-.stat-title{
+font-size:10px;
 
-    color:var(--muted);
+color:var(--muted);
 
-    font-size:11px;
-
-    margin-top:15px;
 }
-
 
 .stat-value{
 
-    font-size:25px;
+font-size:25px;
 
-    font-weight:900;
+font-weight:900;
 
-    margin-top:2px;
+margin-top:2px;
+
 }
 
 
@@ -773,121 +694,111 @@ body{
 
 .section{
 
-    margin-top:30px;
+margin-top:28px;
+
 }
 
+.section-head{
 
-.section-header{
+display:flex;
 
-    display:flex;
+align-items:center;
 
-    align-items:center;
+justify-content:space-between;
 
-    justify-content:space-between;
+gap:10px;
 
-    margin-bottom:15px;
+margin-bottom:14px;
+
 }
-
 
 .section-title{
 
-    display:flex;
+display:flex;
 
-    align-items:center;
+align-items:center;
 
-    gap:10px;
+gap:10px;
+
 }
 
+.section-title-icon{
 
-.section-title .section-icon{
+width:42px;
 
-    width:42px;
-    height:42px;
+height:42px;
 
-    border-radius:13px;
+border-radius:13px;
 
-    display:flex;
+display:flex;
 
-    align-items:center;
-    justify-content:center;
+align-items:center;
 
-    background:rgba(37,99,235,.1);
+justify-content:center;
 
-    color:var(--primary);
+background:rgba(37,99,235,.1);
 
-    font-size:18px;
+color:var(--primary);
+
+font-size:18px;
+
 }
-
 
 .section-title h2{
 
-    font-size:19px;
+font-size:18px;
 
-    font-weight:900;
+font-weight:900;
+
 }
-
 
 .section-title p{
 
-    font-size:10px;
+font-size:9px;
 
-    color:var(--muted);
+color:var(--muted);
 
-    margin-top:2px;
 }
 
 
 /* =========================================================
-   FILTER
+   FILTERS
 ========================================================= */
 
 .filters{
 
-    display:flex;
+display:flex;
 
-    gap:8px;
+gap:6px;
 
-    flex-wrap:wrap;
 }
 
+.filter{
 
-.filter-btn{
+padding:7px 12px;
 
-    border:1px solid var(--border);
+border:1px solid var(--border);
 
-    background:var(--card);
+border-radius:10px;
 
-    color:var(--muted);
+background:var(--card);
 
-    padding:8px 13px;
+color:var(--muted);
 
-    border-radius:11px;
+font-size:9px;
 
-    font-family:inherit;
+cursor:pointer;
 
-    font-size:10px;
-
-    cursor:pointer;
-
-    transition:var(--transition);
 }
 
+.filter.active{
 
-.filter-btn:hover{
+background:var(--primary);
 
-    color:var(--primary);
+border-color:var(--primary);
 
-    border-color:var(--primary);
-}
+color:white;
 
-
-.filter-btn.active{
-
-    background:var(--primary);
-
-    color:#fff;
-
-    border-color:var(--primary);
 }
 
 
@@ -895,467 +806,380 @@ body{
    RESULTS
 ========================================================= */
 
-.results-grid{
+.results{
 
-    display:grid;
+display:grid;
 
-    grid-template-columns:
-        repeat(2,1fr);
+grid-template-columns:
+repeat(2,1fr);
 
-    gap:15px;
+gap:14px;
+
 }
 
+.result{
 
-.result-card{
+background:var(--card);
 
-    background:var(--card);
+border:1px solid var(--border);
 
-    border:1px solid var(--border);
+border-radius:21px;
 
-    border-radius:22px;
+padding:19px;
 
-    padding:20px;
+box-shadow:var(--shadow);
 
-    box-shadow:var(--shadow);
+position:relative;
 
-    transition:var(--transition);
+overflow:hidden;
 
-    position:relative;
+transition:.3s;
 
-    overflow:hidden;
 }
 
+.result:hover{
 
-.result-card:hover{
+transform:translateY(-4px);
 
-    transform:translateY(-4px);
+box-shadow:var(--shadow2);
 
-    box-shadow:var(--shadow-hover);
 }
 
+.result::before{
 
-.result-card::before{
+content:"";
 
-    content:"";
+position:absolute;
 
-    position:absolute;
+right:0;
 
-    right:0;
-    top:0;
+top:0;
 
-    width:4px;
-    height:100%;
+bottom:0;
 
-    background:var(--primary);
+width:4px;
+
+background:var(--primary);
+
 }
 
+.result.excellent::before{
 
-.result-card.excellent::before{
+background:var(--success);
 
-    background:var(--success);
 }
 
+.result.warning::before{
 
-.result-card.warning::before{
+background:var(--warning);
 
-    background:var(--warning);
 }
-
 
 .result-head{
 
-    display:flex;
+display:flex;
 
-    justify-content:space-between;
+justify-content:space-between;
 
-    align-items:flex-start;
+gap:10px;
 
-    gap:15px;
 }
 
+.result-title{
 
-.result-info h3{
+font-size:14px;
 
-    font-size:15px;
+font-weight:800;
 
-    font-weight:800;
 }
 
+.result-subtitle{
 
-.result-info p{
+font-size:9px;
 
-    font-size:10px;
+color:var(--muted);
 
-    color:var(--muted);
+margin-top:4px;
 
-    margin-top:4px;
 }
 
+.status{
 
-.result-badge{
+padding:5px 9px;
 
-    padding:5px 9px;
+border-radius:8px;
 
-    border-radius:9px;
+font-size:8px;
 
-    font-size:9px;
+font-weight:800;
 
-    font-weight:800;
+white-space:nowrap;
 
-    white-space:nowrap;
+height:max-content;
+
 }
 
+.status.good{
 
-.badge-success{
+color:var(--success);
 
-    background:rgba(18,183,106,.1);
+background:rgba(18,183,106,.1);
 
-    color:var(--success);
 }
 
+.status.mid{
 
-.badge-warning{
+color:var(--warning);
 
-    background:rgba(247,144,9,.1);
+background:rgba(247,144,9,.1);
 
-    color:var(--warning);
 }
 
+.status.bad{
 
-.badge-danger{
+color:var(--danger);
 
-    background:rgba(240,68,56,.1);
+background:rgba(240,68,56,.1);
 
-    color:var(--danger);
 }
-
 
 .score-row{
 
-    display:flex;
+display:flex;
 
-    align-items:center;
+align-items:center;
 
-    justify-content:space-between;
+justify-content:space-between;
 
-    margin-top:20px;
+margin-top:18px;
+
 }
-
-
-.score{
-
-    display:flex;
-
-    align-items:baseline;
-
-    gap:3px;
-}
-
 
 .score strong{
 
-    font-size:27px;
+font-size:28px;
 
-    font-weight:900;
+font-weight:900;
+
 }
-
 
 .score span{
 
-    color:var(--muted);
+font-size:10px;
 
-    font-size:11px;
+color:var(--muted);
+
 }
-
 
 .percent{
 
-    font-size:14px;
+font-size:14px;
 
-    font-weight:800;
+font-weight:900;
 
-    color:var(--primary);
+color:var(--primary);
+
 }
-
-
-/* PROGRESS */
 
 .progress{
 
-    width:100%;
+height:7px;
 
-    height:7px;
+border-radius:20px;
 
-    background:var(--border);
+background:var(--border);
 
-    border-radius:20px;
+overflow:hidden;
 
-    overflow:hidden;
+margin-top:9px;
 
-    margin-top:10px;
 }
-
 
 .progress-bar{
 
-    height:100%;
+height:100%;
 
-    width:0;
+border-radius:20px;
 
-    border-radius:20px;
+width:0;
 
-    background:
-        linear-gradient(
-            90deg,
-            #2563eb,
-            #4f46e5
-        );
+background:
+linear-gradient(
+90deg,
+#2563eb,
+#7c3aed
+);
 
-    transition:
-        width 1s cubic-bezier(.2,.8,.2,1);
+transition:
+width 1s cubic-bezier(.2,.8,.2,1);
+
 }
-
 
 .result-footer{
 
-    display:flex;
+display:flex;
 
-    justify-content:space-between;
+justify-content:space-between;
 
-    align-items:center;
+gap:10px;
 
-    margin-top:15px;
+padding-top:12px;
 
-    padding-top:13px;
+margin-top:13px;
 
-    border-top:1px solid var(--border);
+border-top:1px solid var(--border);
 
-    color:var(--muted);
+font-size:8px;
 
-    font-size:9px;
+color:var(--muted);
+
 }
 
 
 /* =========================================================
-   EMPTY
+   EMPTY / LOADING
 ========================================================= */
 
+.loading,
 .empty{
 
-    text-align:center;
+padding:50px 20px;
 
-    padding:50px 20px;
+text-align:center;
 
-    background:var(--card);
+background:var(--card);
 
-    border:1px dashed var(--border);
+border:1px dashed var(--border);
 
-    border-radius:22px;
+border-radius:20px;
 
-    color:var(--muted);
+color:var(--muted);
+
+grid-column:1/-1;
+
 }
 
-
+.loading-icon,
 .empty-icon{
 
-    font-size:40px;
+font-size:35px;
 
-    margin-bottom:10px;
+margin-bottom:8px;
 
-    opacity:.5;
 }
 
-
+.loading-text,
 .empty strong{
 
-    display:block;
+display:block;
 
-    color:var(--text);
+font-size:12px;
 
-    margin-bottom:4px;
+color:var(--text);
+
 }
-
 
 .empty span{
 
-    font-size:11px;
+display:block;
+
+font-size:9px;
+
+margin-top:4px;
+
 }
 
 
 /* =========================================================
-   MOBILE MENU
+   MOBILE
 ========================================================= */
 
-.mobile-menu{
+@media(max-width:900px){
 
-    display:none;
+.stats{
 
-    width:46px;
-    height:46px;
-
-    border-radius:15px;
-
-    border:1px solid var(--border);
-
-    background:var(--card);
-
-    color:var(--text);
-
-    cursor:pointer;
-
-    font-size:20px;
-}
-
-
-/* =========================================================
-   OVERLAY
-========================================================= */
-
-.overlay{
-
-    display:none;
-
-    position:fixed;
-
-    inset:0;
-
-    background:rgba(0,0,0,.4);
-
-    backdrop-filter:blur(3px);
-
-    z-index:900;
-}
-
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media(max-width:1100px){
-
-    .stats{
-
-        grid-template-columns:
-            repeat(2,1fr);
-    }
+grid-template-columns:
+repeat(2,1fr);
 
 }
 
+.results{
 
-@media(max-width:850px){
-
-    .sidebar{
-
-        transform:translateX(100%);
-    }
-
-    .sidebar.open{
-
-        transform:translateX(0);
-    }
-
-    .overlay.show{
-
-        display:block;
-    }
-
-    .main{
-
-        margin-right:0;
-
-        padding:
-            20px
-            15px
-            40px;
-    }
-
-    .mobile-menu{
-
-        display:flex;
-
-        align-items:center;
-        justify-content:center;
-    }
-
-    .topbar{
-
-        gap:10px;
-    }
-
-    .page-title h1{
-
-        font-size:22px;
-    }
-
-    .page-title p{
-
-        font-size:11px;
-    }
-
-    .results-grid{
-
-        grid-template-columns:1fr;
-    }
+grid-template-columns:1fr;
 
 }
 
+}
 
 @media(max-width:600px){
 
-    .stats{
+.topbar{
 
-        grid-template-columns:
-            repeat(2,1fr);
+margin:10px;
 
-        gap:10px;
-    }
-
-    .stat-card{
-
-        padding:15px;
-    }
-
-    .stat-value{
-
-        font-size:21px;
-    }
-
-    .stat-icon{
-
-        width:38px;
-        height:38px;
-
-        font-size:16px;
-    }
-
-    .hero{
-
-        padding:23px;
-
-        border-radius:22px;
-    }
-
-    .hero h2{
-
-        font-size:20px;
-    }
-
-    .notification-panel{
-
-        left:15px;
-
-        top:75px;
-    }
+padding:13px;
 
 }
 
+.brand-text{
 
-@media(max-width:390px){
+display:none;
 
-    .stats{
+}
 
-        grid-template-columns:1fr;
-    }
+.container{
+
+padding:0 10px 40px;
+
+}
+
+.hero{
+
+padding:27px 20px;
+
+border-radius:23px;
+
+}
+
+.hero h1{
+
+font-size:21px;
+
+}
+
+.stats{
+
+gap:9px;
+
+}
+
+.stat{
+
+padding:14px;
+
+}
+
+.stat-value{
+
+font-size:21px;
+
+}
+
+.section-head{
+
+align-items:flex-start;
+
+flex-direction:column;
+
+}
+
+.notification-panel{
+
+left:15px;
+
+top:75px;
+
+}
 
 }
 
@@ -1366,1177 +1190,489 @@ body{
 
 @keyframes fadeUp{
 
-    from{
+from{
 
-        opacity:0;
+opacity:0;
 
-        transform:translateY(15px);
-    }
+transform:translateY(12px);
 
-    to{
-
-        opacity:1;
-
-        transform:translateY(0);
-    }
 }
 
+to{
 
-.animate{
+opacity:1;
 
-    animation:
-        fadeUp .6s ease both;
+transform:translateY(0);
+
 }
 
+}
+
+.fade{
+
+animation:fadeUp .5s ease both;
+
+}
 
 </style>
+
 </head>
 
 
 <body>
 
 
-<!-- ======================================================
-     SIDEBAR
-======================================================= -->
+<!-- =====================================================
+     TOPBAR
+====================================================== -->
 
-<aside class="sidebar" id="sidebar">
+<header class="topbar">
 
-    <div class="logo">
+<div class="brand">
 
-        <div class="logo-icon">
-            🧬
-        </div>
+<div class="logo">
+🧬
+</div>
 
-        <div class="logo-text">
+<div class="brand-text">
 
-            <strong>د. يوسف نافع</strong>
+<strong>
+د. يوسف نافع
+</strong>
 
-            <span>المنصة التعليمية</span>
+<span>
+المنصة التعليمية
+</span>
 
-        </div>
+</div>
 
-    </div>
-
-
-    <nav class="nav">
-
-        <a href="dashboard.html">
-
-            <span class="nav-icon">⌂</span>
-
-            الرئيسية
-
-        </a>
+</div>
 
 
-        <a href="videos.html">
-
-            <span class="nav-icon">▶</span>
-
-            الفيديوهات
-
-        </a>
-
-
-        <a href="files.html">
-
-            <span class="nav-icon">📚</span>
-
-            الملفات
-
-        </a>
+<div
+style="
+font-size:13px;
+font-weight:800;
+"
+id="welcomeName"
+>
+مرحباً
+</div>
 
 
-        <a href="results.html" class="active">
+<div class="actions">
 
-            <span class="nav-icon">🏆</span>
+<button
+class="icon-btn"
+id="themeBtn"
+title="الوضع الليلي"
+>
+🌙
+</button>
 
-            النتائج
+<button
+class="icon-btn"
+id="notificationBtn"
+title="الإشعارات"
+>
 
-        </a>
+🔔
+
+<span
+class="badge"
+id="notificationBadge"
+style="display:none"
+>
+0
+</span>
+
+</button>
+
+<a
+href="dashboard.html"
+class="icon-btn"
+style="
+display:flex;
+align-items:center;
+justify-content:center;
+text-decoration:none;
+"
+>
+⌂
+</a>
+
+</div>
+
+</header>
 
 
-        <a href="#">
+<!-- =====================================================
+     NOTIFICATIONS
+====================================================== -->
 
-            <span class="nav-icon">💬</span>
+<div
+class="notification-panel"
+id="notificationPanel"
+>
 
-            الدعم
+<div class="notification-head">
 
-        </a>
+<strong>
+الإشعارات
+</strong>
+
+<button
+class="read-all"
+id="readAll"
+>
+تحديد الكل كمقروء
+</button>
+
+</div>
+
+<div
+class="notification-list"
+id="notificationList"
+>
+
+<div class="loading">
+
+<div class="loading-icon">
+⏳
+</div>
+
+<div class="loading-text">
+جاري تحميل الإشعارات...
+</div>
+
+</div>
+
+</div>
+
+</div>
 
 
-    </nav>
-
-</aside>
-
-
-<div class="overlay" id="overlay"></div>
-
-
-<!-- ======================================================
+<!-- =====================================================
      MAIN
-======================================================= -->
+====================================================== -->
 
-<main class="main">
+<main class="container">
 
 
-    <!-- TOPBAR -->
+<section class="hero fade">
 
-    <header class="topbar">
+<div class="hero-content">
 
+<small>
+لوحة متابعة الأداء
+</small>
 
-        <div style="display:flex;align-items:center;gap:10px;">
+<h1>
+نتائجك الدراسية 🏆
+</h1>
 
-            <button
-                class="mobile-menu"
-                id="mobileMenu"
-                aria-label="القائمة">
-                ☰
-            </button>
+<p>
+تابع مستواك في الامتحانات والتسميعات واعرف تطورك باستمرار.
+</p>
 
+</div>
 
-            <div class="page-title">
+</section>
 
-                <h1>النتائج</h1>
 
-                <p>
-                    تابع مستواك ونتائجك أولًا بأول
-                </p>
+<!-- =====================================================
+     STATS
+====================================================== -->
 
-            </div>
+<section class="stats">
 
-        </div>
 
+<div class="stat fade">
 
-        <div class="top-actions">
+<div class="stat-icon blue">
+📝
+</div>
 
+<div class="stat-label">
+عدد الامتحانات
+</div>
 
-            <button
-                class="icon-btn"
-                id="themeBtn"
-                title="الوضع الليلي">
+<div
+class="stat-value"
+id="examCount"
+>
+0
+</div>
 
-                🌙
+</div>
 
-            </button>
 
+<div class="stat fade">
 
-            <button
-                class="icon-btn"
-                id="notificationBtn"
-                title="الإشعارات">
+<div class="stat-icon green">
+📊
+</div>
 
-                🔔
+<div class="stat-label">
+متوسط الامتحانات
+</div>
 
-                <span
-                    class="notification-badge"
-                    id="notificationBadge">
-                    3
-                </span>
+<div class="stat-value">
+<span id="examAverage">0</span>%
+</div>
 
-            </button>
+</div>
 
 
-        </div>
+<div class="stat fade">
 
-    </header>
+<div class="stat-icon orange">
+🎤
+</div>
 
+<div class="stat-label">
+عدد التسميعات
+</div>
 
-    <!-- ==================================================
-         NOTIFICATION PANEL
-    =================================================== -->
+<div
+class="stat-value"
+id="recitationCount"
+>
+0
+</div>
 
-    <div
-        class="notification-panel"
-        id="notificationPanel">
+</div>
 
 
-        <div class="notification-head">
+<div class="stat fade">
 
-            <strong>
-                الإشعارات
-            </strong>
+<div class="stat-icon purple">
+⭐
+</div>
 
-            <button id="markRead">
-                تحديد الكل كمقروء
-            </button>
+<div class="stat-label">
+أعلى نتيجة
+</div>
 
-        </div>
+<div class="stat-value">
+<span id="highestScore">0</span>%
+</div>
 
+</div>
 
-        <div id="notificationList">
 
-            <div class="notification">
+</section>
 
-                <div class="notification-icon">
-                    🏆
-                </div>
 
-                <div>
+<!-- =====================================================
+     EXAMS
+====================================================== -->
 
-                    <strong>
-                        نتيجة جديدة
-                    </strong>
+<section class="section">
 
-                    <p>
-                        تم إضافة نتيجة امتحان جديدة لك.
-                    </p>
 
-                    <time>
-                        منذ قليل
-                    </time>
+<div class="section-head">
 
-                </div>
+<div class="section-title">
 
-            </div>
+<div class="section-title-icon">
+📝
+</div>
 
+<div>
 
-            <div class="notification">
+<h2>
+نتائج الامتحانات
+</h2>
 
-                <div class="notification-icon">
-                    📝
-                </div>
+<p>
+جميع نتائج الاختبارات الخاصة بك
+</p>
 
-                <div>
+</div>
 
-                    <strong>
-                        تم تصحيح التسميع
-                    </strong>
+</div>
 
-                    <p>
-                        ظهرت نتيجة آخر تسميع لك.
-                    </p>
 
-                    <time>
-                        منذ ساعتين
-                    </time>
+<div class="filters">
 
-                </div>
+<button
+class="filter active"
+data-filter="all"
+>
+الكل
+</button>
 
-            </div>
+<button
+class="filter"
+data-filter="excellent"
+>
+ممتاز
+</button>
 
+<button
+class="filter"
+data-filter="needs"
+>
+يحتاج مراجعة
+</button>
 
-            <div class="notification">
+</div>
 
-                <div class="notification-icon">
-                    📢
-                </div>
+</div>
 
-                <div>
 
-                    <strong>
-                        تنبيه
-                    </strong>
+<div
+class="results"
+id="examResults"
+>
 
-                    <p>
-                        تابع صفحة النتائج لمعرفة آخر درجاتك.
-                    </p>
+<div class="loading">
 
-                    <time>
-                        اليوم
-                    </time>
+<div class="loading-icon">
+⏳
+</div>
 
-                </div>
+<div class="loading-text">
+جاري تحميل النتائج...
+</div>
 
-            </div>
+</div>
 
-        </div>
+</div>
 
-    </div>
 
+</section>
 
-    <!-- ==================================================
-         HERO
-    =================================================== -->
 
-    <section class="hero animate">
+<!-- =====================================================
+     RECITATIONS
+====================================================== -->
 
-        <div class="hero-content">
+<section class="section">
 
-            <small>
-                لوحة متابعة الأداء
-            </small>
 
-            <h2>
-                نتائجك الدراسية
-            </h2>
+<div class="section-head">
 
-            <p>
-                هنا تقدر تتابع أداءك في الامتحانات والتسميعات
-                وتعرف تطور مستواك باستمرار.
-            </p>
+<div class="section-title">
 
-        </div>
+<div class="section-title-icon">
+🎤
+</div>
 
-    </section>
+<div>
 
+<h2>
+نتائج التسميعات
+</h2>
 
-    <!-- ==================================================
-         STATS
-    =================================================== -->
+<p>
+متابعة نتائج التسميع الخاصة بك
+</p>
 
-    <section class="stats">
+</div>
 
+</div>
 
-        <div class="stat-card animate">
+</div>
 
-            <div class="stat-top">
 
-                <div class="stat-icon blue">
-                    📝
-                </div>
+<div
+class="results"
+id="recitationResults"
+>
 
-            </div>
+<div class="loading">
 
-            <div class="stat-title">
-                إجمالي الامتحانات
-            </div>
+<div class="loading-icon">
+⏳
+</div>
 
-            <div class="stat-value" id="examCount">
-                8
-            </div>
+<div class="loading-text">
+جاري تحميل النتائج...
+</div>
 
-        </div>
+</div>
 
+</div>
 
-        <div class="stat-card animate">
 
-            <div class="stat-top">
-
-                <div class="stat-icon green">
-                    ✓
-                </div>
-
-            </div>
-
-            <div class="stat-title">
-                متوسط الامتحانات
-            </div>
-
-            <div class="stat-value">
-                <span id="examAverage">
-                    86
-                </span>%
-            </div>
-
-        </div>
-
-
-        <div class="stat-card animate">
-
-            <div class="stat-top">
-
-                <div class="stat-icon orange">
-                    🎤
-                </div>
-
-            </div>
-
-            <div class="stat-title">
-                إجمالي التسميعات
-            </div>
-
-            <div class="stat-value" id="recitationCount">
-                12
-            </div>
-
-        </div>
-
-
-        <div class="stat-card animate">
-
-            <div class="stat-top">
-
-                <div class="stat-icon purple">
-                    ⭐
-                </div>
-
-            </div>
-
-            <div class="stat-title">
-                أعلى نتيجة
-            </div>
-
-            <div class="stat-value">
-                <span id="highestScore">
-                    96
-                </span>%
-            </div>
-
-        </div>
-
-
-    </section>
-
-
-    <!-- ==================================================
-         EXAMS
-    =================================================== -->
-
-    <section class="section">
-
-
-        <div class="section-header">
-
-
-            <div class="section-title">
-
-                <div class="section-icon">
-                    📝
-                </div>
-
-                <div>
-
-                    <h2>
-                        نتائج الامتحانات
-                    </h2>
-
-                    <p>
-                        درجات الاختبارات والامتحانات
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="filters">
-
-                <button
-                    class="filter-btn active"
-                    data-filter="all"
-                    data-target="exam">
-
-                    الكل
-
-                </button>
-
-                <button
-                    class="filter-btn"
-                    data-filter="excellent"
-                    data-target="exam">
-
-                    ممتاز
-
-                </button>
-
-                <button
-                    class="filter-btn"
-                    data-filter="needs"
-                    data-target="exam">
-
-                    يحتاج مراجعة
-
-                </button>
-
-            </div>
-
-
-        </div>
-
-
-        <div
-            class="results-grid"
-            id="examResults">
-
-
-            <!-- EXAM 1 -->
-
-            <article
-                class="result-card excellent"
-                data-status="excellent">
-
-
-                <div class="result-head">
-
-                    <div class="result-info">
-
-                        <h3>
-                            امتحان الفصل الأول
-                        </h3>
-
-                        <p>
-                            الأحياء — الوحدة الأولى
-                        </p>
-
-                    </div>
-
-
-                    <span class="result-badge badge-success">
-                        ممتاز
-                    </span>
-
-                </div>
-
-
-                <div class="score-row">
-
-                    <div class="score">
-
-                        <strong>
-                            92
-                        </strong>
-
-                        <span>
-                            / 100
-                        </span>
-
-                    </div>
-
-
-                    <div class="percent">
-                        92%
-                    </div>
-
-                </div>
-
-
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        data-width="92%">
-                    </div>
-
-                </div>
-
-
-                <div class="result-footer">
-
-                    <span>
-                        📅 15 سبتمبر 2026
-                    </span>
-
-                    <span>
-                        زمن الامتحان: 45 دقيقة
-                    </span>
-
-                </div>
-
-
-            </article>
-
-
-            <!-- EXAM 2 -->
-
-            <article
-                class="result-card excellent"
-                data-status="excellent">
-
-
-                <div class="result-head">
-
-                    <div class="result-info">
-
-                        <h3>
-                            امتحان الجهاز العصبي
-                        </h3>
-
-                        <p>
-                            الأحياء — الوحدة الثانية
-                        </p>
-
-                    </div>
-
-
-                    <span class="result-badge badge-success">
-                        ممتاز
-                    </span>
-
-                </div>
-
-
-                <div class="score-row">
-
-                    <div class="score">
-
-                        <strong>
-                            96
-                        </strong>
-
-                        <span>
-                            / 100
-                        </span>
-
-                    </div>
-
-
-                    <div class="percent">
-                        96%
-                    </div>
-
-                </div>
-
-
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        data-width="96%">
-                    </div>
-
-                </div>
-
-
-                <div class="result-footer">
-
-                    <span>
-                        📅 12 سبتمبر 2026
-                    </span>
-
-                    <span>
-                        زمن الامتحان: 50 دقيقة
-                    </span>
-
-                </div>
-
-
-            </article>
-
-
-            <!-- EXAM 3 -->
-
-            <article
-                class="result-card warning"
-                data-status="needs">
-
-
-                <div class="result-head">
-
-                    <div class="result-info">
-
-                        <h3>
-                            امتحان الوراثة
-                        </h3>
-
-                        <p>
-                            الأحياء — الوحدة الثالثة
-                        </p>
-
-                    </div>
-
-
-                    <span class="result-badge badge-warning">
-                        يحتاج مراجعة
-                    </span>
-
-                </div>
-
-
-                <div class="score-row">
-
-                    <div class="score">
-
-                        <strong>
-                            71
-                        </strong>
-
-                        <span>
-                            / 100
-                        </span>
-
-                    </div>
-
-
-                    <div class="percent">
-                        71%
-                    </div>
-
-                </div>
-
-
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        data-width="71%">
-                    </div>
-
-                </div>
-
-
-                <div class="result-footer">
-
-                    <span>
-                        📅 8 سبتمبر 2026
-                    </span>
-
-                    <span>
-                        زمن الامتحان: 40 دقيقة
-                    </span>
-
-                </div>
-
-
-            </article>
-
-
-            <!-- EXAM 4 -->
-
-            <article
-                class="result-card excellent"
-                data-status="excellent">
-
-
-                <div class="result-head">
-
-                    <div class="result-info">
-
-                        <h3>
-                            امتحان الدعامة والحركة
-                        </h3>
-
-                        <p>
-                            الأحياء — الوحدة الرابعة
-                        </p>
-
-                    </div>
-
-
-                    <span class="result-badge badge-success">
-                        ممتاز
-                    </span>
-
-                </div>
-
-
-                <div class="score-row">
-
-                    <div class="score">
-
-                        <strong>
-                            89
-                        </strong>
-
-                        <span>
-                            / 100
-                        </span>
-
-                    </div>
-
-
-                    <div class="percent">
-                        89%
-                    </div>
-
-                </div>
-
-
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        data-width="89%">
-                    </div>
-
-                </div>
-
-
-                <div class="result-footer">
-
-                    <span>
-                        📅 3 سبتمبر 2026
-                    </span>
-
-                    <span>
-                        زمن الامتحان: 45 دقيقة
-                    </span>
-
-                </div>
-
-
-            </article>
-
-
-        </div>
-
-
-    </section>
-
-
-    <!-- ==================================================
-         RECITATION
-    =================================================== -->
-
-    <section class="section">
-
-
-        <div class="section-header">
-
-
-            <div class="section-title">
-
-                <div class="section-icon">
-                    🎤
-                </div>
-
-                <div>
-
-                    <h2>
-                        نتائج التسميعات
-                    </h2>
-
-                    <p>
-                        متابعة الحفظ والفهم والتسميع
-                    </p>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-        <div class="results-grid">
-
-
-            <!-- RECITATION 1 -->
-
-            <article
-                class="result-card excellent">
-
-
-                <div class="result-head">
-
-                    <div class="result-info">
-
-                        <h3>
-                            تسميع الجهاز العصبي
-                        </h3>
-
-                        <p>
-                            شفوي — أحياء
-                        </p>
-
-                    </div>
-
-
-                    <span class="result-badge badge-success">
-                        ممتاز
-                    </span>
-
-                </div>
-
-
-                <div class="score-row">
-
-                    <div class="score">
-
-                        <strong>
-                            18
-                        </strong>
-
-                        <span>
-                            / 20
-                        </span>
-
-                    </div>
-
-
-                    <div class="percent">
-                        90%
-                    </div>
-
-                </div>
-
-
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        data-width="90%">
-                    </div>
-
-                </div>
-
-
-                <div class="result-footer">
-
-                    <span>
-                        📅 16 سبتمبر 2026
-                    </span>
-
-                    <span>
-                        شفوي
-                    </span>
-
-                </div>
-
-
-            </article>
-
-
-            <!-- RECITATION 2 -->
-
-            <article
-                class="result-card excellent">
-
-
-                <div class="result-head">
-
-                    <div class="result-info">
-
-                        <h3>
-                            تسميع الوراثة
-                        </h3>
-
-                        <p>
-                            شفوي — أحياء
-                        </p>
-
-                    </div>
-
-
-                    <span class="result-badge badge-success">
-                        ممتاز
-                    </span>
-
-                </div>
-
-
-                <div class="score-row">
-
-                    <div class="score">
-
-                        <strong>
-                            19
-                        </strong>
-
-                        <span>
-                            / 20
-                        </span>
-
-                    </div>
-
-
-                    <div class="percent">
-                        95%
-                    </div>
-
-                </div>
-
-
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        data-width="95%">
-                    </div>
-
-                </div>
-
-
-                <div class="result-footer">
-
-                    <span>
-                        📅 10 سبتمبر 2026
-                    </span>
-
-                    <span>
-                        شفوي
-                    </span>
-
-                </div>
-
-
-            </article>
-
-
-            <!-- RECITATION 3 -->
-
-            <article
-                class="result-card warning">
-
-
-                <div class="result-head">
-
-                    <div class="result-info">
-
-                        <h3>
-                            تسميع الدعامة والحركة
-                        </h3>
-
-                        <p>
-                            شفوي — أحياء
-                        </p>
-
-                    </div>
-
-
-                    <span class="result-badge badge-warning">
-                        جيد جدًا
-                    </span>
-
-                </div>
-
-
-                <div class="score-row">
-
-                    <div class="score">
-
-                        <strong>
-                            16
-                        </strong>
-
-                        <span>
-                            / 20
-                        </span>
-
-                    </div>
-
-
-                    <div class="percent">
-                        80%
-                    </div>
-
-                </div>
-
-
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        data-width="80%">
-                    </div>
-
-                </div>
-
-
-                <div class="result-footer">
-
-                    <span>
-                        📅 5 سبتمبر 2026
-                    </span>
-
-                    <span>
-                        شفوي
-                    </span>
-
-                </div>
-
-
-            </article>
-
-
-            <!-- RECITATION 4 -->
-
-            <article
-                class="result-card excellent">
-
-
-                <div class="result-head">
-
-                    <div class="result-info">
-
-                        <h3>
-                            تسميع الوحدة الأولى
-                        </h3>
-
-                        <p>
-                            علوم متكاملة
-                        </p>
-
-                    </div>
-
-
-                    <span class="result-badge badge-success">
-                        ممتاز
-                    </span>
-
-                </div>
-
-
-                <div class="score-row">
-
-                    <div class="score">
-
-                        <strong>
-                            20
-                        </strong>
-
-                        <span>
-                            / 20
-                        </span>
-
-                    </div>
-
-
-                    <div class="percent">
-                        100%
-                    </div>
-
-                </div>
-
-
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        data-width="100%">
-                    </div>
-
-                </div>
-
-
-                <div class="result-footer">
-
-                    <span>
-                        📅 1 سبتمبر 2026
-                    </span>
-
-                    <span>
-                        شفوي
-                    </span>
-
-                </div>
-
-
-            </article>
-
-
-        </div>
-
-
-    </section>
+</section>
 
 
 </main>
 
 
+<script
+src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
+
 <script>
 
 /* =========================================================
-   MOBILE SIDEBAR
+   SUPABASE
 ========================================================= */
 
-const mobileMenu =
-    document.getElementById('mobileMenu');
+const SUPABASE_URL =
+"https://nhdowqzecpwmkunczodl.supabase.co";
 
-const sidebar =
-    document.getElementById('sidebar');
-
-const overlay =
-    document.getElementById('overlay');
+const SUPABASE_ANON_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
 
-mobileMenu.addEventListener('click',()=>{
-
-    sidebar.classList.toggle('open');
-
-    overlay.classList.toggle('show');
-
-});
+const client =
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
 
 
-overlay.addEventListener('click',()=>{
+/* =========================================================
+   SESSION
+========================================================= */
 
-    sidebar.classList.remove('open');
+const sessionId =
+localStorage.getItem(
+"platform_session_id"
+);
 
-    overlay.classList.remove('show');
+const user =
+JSON.parse(
+localStorage.getItem("user") || "null"
+);
 
-});
+
+if(!user || !sessionId){
+
+window.location.replace(
+"login.html"
+);
+
+throw new Error(
+"NO_SESSION"
+);
+
+}
+
+
+/* =========================================================
+   USER
+========================================================= */
+
+const studentId =
+user.id;
+
+
+document.getElementById(
+"welcomeName"
+).textContent =
+"👋 " +
+(
+user.full_name ||
+user.name ||
+"الطالب"
+);
 
 
 /* =========================================================
@@ -2544,39 +1680,695 @@ overlay.addEventListener('click',()=>{
 ========================================================= */
 
 const themeBtn =
-    document.getElementById('themeBtn');
+document.getElementById("themeBtn");
 
 
-const savedTheme =
-    localStorage.getItem('platform-theme');
+if(
+localStorage.getItem("platform-theme")
+===
+"dark"
+){
 
+document.body.classList.add("dark");
 
-if(savedTheme === 'dark'){
-
-    document.body.classList.add('dark');
-
-    themeBtn.textContent='☀️';
+themeBtn.textContent="☀️";
 
 }
 
 
-themeBtn.addEventListener('click',()=>{
+themeBtn.onclick=()=>{
 
-    document.body.classList.toggle('dark');
+document.body.classList.toggle("dark");
+
+const dark =
+document.body.classList.contains("dark");
+
+localStorage.setItem(
+"platform-theme",
+dark ? "dark" : "light"
+);
+
+themeBtn.textContent =
+dark ? "☀️" : "🌙";
+
+};
 
 
-    const dark =
-        document.body.classList.contains('dark');
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function percentage(score,total){
+
+if(!total || total <= 0)
+return 0;
+
+return Math.round(
+(Number(score) /
+Number(total)) * 100
+);
+
+}
 
 
-    localStorage.setItem(
-        'platform-theme',
-        dark ? 'dark' : 'light'
-    );
+function statusInfo(percent){
+
+if(percent >= 85){
+
+return {
+
+className:"excellent",
+
+badge:"ممتاز",
+
+badgeClass:"good"
+
+};
+
+}
+
+if(percent >= 70){
+
+return {
+
+className:"warning",
+
+badge:"جيد جدًا",
+
+badgeClass:"mid"
+
+};
+
+}
+
+return {
+
+className:"warning",
+
+badge:"يحتاج مراجعة",
+
+badgeClass:"bad"
+
+};
+
+}
 
 
-    themeBtn.textContent =
-        dark ? '☀️' : '🌙';
+function formatDate(date){
+
+if(!date)
+return "-";
+
+return new Intl.DateTimeFormat(
+"ar-EG",
+{
+day:"numeric",
+month:"long",
+year:"numeric"
+}
+).format(
+new Date(date)
+);
+
+}
+
+
+/* =========================================================
+   EXAM RESULTS
+========================================================= */
+
+let examData=[];
+
+
+async function loadExamResults(){
+
+const container =
+document.getElementById(
+"examResults"
+);
+
+
+const {
+data,
+error
+} =
+await client
+.from("exam_results")
+.select("*")
+.eq("student_id",studentId)
+.order(
+"exam_date",
+{
+ascending:false
+}
+);
+
+
+if(error){
+
+console.error(error);
+
+container.innerHTML=`
+
+<div class="empty">
+
+<div class="empty-icon">
+⚠️
+</div>
+
+<strong>
+تعذر تحميل نتائج الامتحانات
+</strong>
+
+<span>
+حدث خطأ أثناء الاتصال بقاعدة البيانات.
+</span>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+examData=data || [];
+
+
+renderExams(
+examData
+);
+
+updateStatistics();
+
+}
+
+
+function renderExams(data){
+
+const container =
+document.getElementById(
+"examResults"
+);
+
+
+if(!data.length){
+
+container.innerHTML=`
+
+<div class="empty">
+
+<div class="empty-icon">
+📚
+</div>
+
+<strong>
+لا توجد نتائج امتحانات حتى الآن
+</strong>
+
+<span>
+ستظهر نتائجك هنا بمجرد إضافة أول نتيجة.
+</span>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+container.innerHTML =
+data.map(result=>{
+
+const percent =
+percentage(
+result.score,
+result.total
+);
+
+
+const status =
+statusInfo(percent);
+
+
+return `
+
+<article
+class="result ${status.className} fade"
+data-percent="${percent}"
+>
+
+<div class="result-head">
+
+<div>
+
+<div class="result-title">
+${escapeHTML(result.title)}
+</div>
+
+<div class="result-subtitle">
+${escapeHTML(result.subject || "أحياء")}
+</div>
+
+</div>
+
+<span
+class="status ${status.badgeClass}"
+>
+${status.badge}
+</span>
+
+</div>
+
+
+<div class="score-row">
+
+<div class="score">
+
+<strong>
+${result.score}
+</strong>
+
+<span>
+/
+${result.total}
+</span>
+
+</div>
+
+<div class="percent">
+${percent}%
+</div>
+
+</div>
+
+
+<div class="progress">
+
+<div
+class="progress-bar"
+data-width="${percent}%"
+>
+</div>
+
+</div>
+
+
+<div class="result-footer">
+
+<span>
+📅
+${formatDate(result.exam_date)}
+</span>
+
+<span>
+${
+result.duration_minutes
+?
+"⏱ " +
+result.duration_minutes +
+" دقيقة"
+:
+""
+}
+</span>
+
+</div>
+
+</article>
+
+`;
+
+}).join("");
+
+
+animateProgress();
+
+}
+
+
+/* =========================================================
+   RECITATION RESULTS
+========================================================= */
+
+let recitationData=[];
+
+
+async function loadRecitationResults(){
+
+const container =
+document.getElementById(
+"recitationResults"
+);
+
+
+const {
+data,
+error
+} =
+await client
+.from("recitation_results")
+.select("*")
+.eq("student_id",studentId)
+.order(
+"recitation_date",
+{
+ascending:false
+}
+);
+
+
+if(error){
+
+console.error(error);
+
+container.innerHTML=`
+
+<div class="empty">
+
+<div class="empty-icon">
+⚠️
+</div>
+
+<strong>
+تعذر تحميل نتائج التسميعات
+</strong>
+
+<span>
+حدث خطأ أثناء الاتصال بقاعدة البيانات.
+</span>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+recitationData=data || [];
+
+
+renderRecitations(
+recitationData
+);
+
+updateStatistics();
+
+}
+
+
+function renderRecitations(data){
+
+const container =
+document.getElementById(
+"recitationResults"
+);
+
+
+if(!data.length){
+
+container.innerHTML=`
+
+<div class="empty">
+
+<div class="empty-icon">
+🎤
+</div>
+
+<strong>
+لا توجد نتائج تسميعات حتى الآن
+</strong>
+
+<span>
+ستظهر نتائج التسميع هنا بمجرد إضافتها.
+</span>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+container.innerHTML =
+data.map(result=>{
+
+const percent =
+percentage(
+result.score,
+result.total
+);
+
+
+const status =
+statusInfo(percent);
+
+
+return `
+
+<article
+class="result ${status.className} fade"
+>
+
+<div class="result-head">
+
+<div>
+
+<div class="result-title">
+${escapeHTML(result.title)}
+</div>
+
+<div class="result-subtitle">
+${escapeHTML(result.subject || "أحياء")}
+</div>
+
+</div>
+
+<span
+class="status ${status.badgeClass}"
+>
+${status.badge}
+</span>
+
+</div>
+
+
+<div class="score-row">
+
+<div class="score">
+
+<strong>
+${result.score}
+</strong>
+
+<span>
+/
+${result.total}
+</span>
+
+</div>
+
+<div class="percent">
+${percent}%
+</div>
+
+</div>
+
+
+<div class="progress">
+
+<div
+class="progress-bar"
+data-width="${percent}%"
+>
+</div>
+
+</div>
+
+
+<div class="result-footer">
+
+<span>
+📅
+${formatDate(result.recitation_date)}
+</span>
+
+<span>
+تسميع
+</span>
+
+</div>
+
+</article>
+
+`;
+
+}).join("");
+
+
+animateProgress();
+
+}
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+function updateStatistics(){
+
+document.getElementById(
+"examCount"
+).textContent =
+examData.length;
+
+
+document.getElementById(
+"recitationCount"
+).textContent =
+recitationData.length;
+
+
+const percentages =
+examData.map(
+r =>
+percentage(
+r.score,
+r.total
+)
+);
+
+
+if(percentages.length){
+
+const average =
+Math.round(
+percentages.reduce(
+(a,b)=>a+b,
+0
+) /
+percentages.length
+);
+
+
+const highest =
+Math.max(...percentages);
+
+
+document.getElementById(
+"examAverage"
+).textContent =
+average;
+
+
+document.getElementById(
+"highestScore"
+).textContent =
+highest;
+
+}else{
+
+document.getElementById(
+"examAverage"
+).textContent=0;
+
+document.getElementById(
+"highestScore"
+).textContent=0;
+
+}
+
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+function animateProgress(){
+
+setTimeout(()=>{
+
+document
+.querySelectorAll(".progress-bar")
+.forEach(bar=>{
+
+bar.style.width =
+bar.dataset.width;
+
+});
+
+},100);
+
+}
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+document
+.querySelectorAll(".filter")
+.forEach(button=>{
+
+button.onclick=()=>{
+
+document
+.querySelectorAll(".filter")
+.forEach(
+b=>b.classList.remove("active")
+);
+
+button.classList.add("active");
+
+const filter =
+button.dataset.filter;
+
+
+if(filter==="all"){
+
+renderExams(
+examData
+);
+
+return;
+
+}
+
+
+const filtered =
+examData.filter(result=>{
+
+const percent =
+percentage(
+result.score,
+result.total
+);
+
+
+if(filter==="excellent")
+return percent >= 85;
+
+
+if(filter==="needs")
+return percent < 85;
+
+
+return true;
+
+});
+
+
+renderExams(filtered);
+
+};
 
 });
 
@@ -2586,218 +2378,323 @@ themeBtn.addEventListener('click',()=>{
 ========================================================= */
 
 const notificationBtn =
-    document.getElementById('notificationBtn');
+document.getElementById(
+"notificationBtn"
+);
 
 const notificationPanel =
-    document.getElementById('notificationPanel');
+document.getElementById(
+"notificationPanel"
+);
 
 const notificationBadge =
-    document.getElementById('notificationBadge');
+document.getElementById(
+"notificationBadge"
+);
+
+const notificationList =
+document.getElementById(
+"notificationList"
+);
 
 
-notificationBtn.addEventListener('click',(e)=>{
-
-    e.stopPropagation();
-
-    notificationPanel.classList.toggle('show');
-
-});
+let notifications=[];
 
 
-document.addEventListener('click',(e)=>{
+notificationBtn.onclick=(e)=>{
 
-    if(
-        !notificationPanel.contains(e.target) &&
-        !notificationBtn.contains(e.target)
-    ){
+e.stopPropagation();
 
-        notificationPanel.classList.remove('show');
+notificationPanel
+.classList.toggle("show");
 
-    }
-
-});
+};
 
 
-/* MARK ALL READ */
-
-document
-    .getElementById('markRead')
-    .addEventListener('click',()=>{
-
-        notificationBadge.style.display='none';
-
-        localStorage.setItem(
-            'notifications-read',
-            'true'
-        );
-
-    });
-
+document.addEventListener(
+"click",
+e=>{
 
 if(
-    localStorage.getItem('notifications-read')
-    ===
-    'true'
+!notificationPanel.contains(e.target) &&
+!notificationBtn.contains(e.target)
 ){
 
-    notificationBadge.style.display='none';
+notificationPanel
+.classList.remove("show");
+
+}
+
+});
+
+
+async function loadNotifications(){
+
+const {
+data,
+error
+} =
+await client
+.from("notifications")
+.select("*")
+.eq("student_id",studentId)
+.order(
+"created_at",
+{
+ascending:false
+}
+)
+.limit(30);
+
+
+if(error){
+
+console.error(error);
+
+return;
+
+}
+
+
+notifications =
+data || [];
+
+
+renderNotifications();
+
+}
+
+
+function renderNotifications(){
+
+if(!notifications.length){
+
+notificationList.innerHTML=`
+
+<div class="empty">
+
+<div class="empty-icon">
+🔔
+</div>
+
+<strong>
+لا توجد إشعارات
+</strong>
+
+<span>
+ستظهر إشعاراتك هنا.
+</span>
+
+</div>
+
+`;
+
+notificationBadge.style.display="none";
+
+return;
+
+}
+
+
+const unread =
+notifications.filter(
+n=>!n.is_read
+).length;
+
+
+if(unread){
+
+notificationBadge.textContent =
+unread;
+
+notificationBadge.style.display =
+"flex";
+
+}else{
+
+notificationBadge.style.display =
+"none";
+
+}
+
+
+notificationList.innerHTML =
+notifications.map(n=>`
+
+<div
+class="notification
+${n.is_read ? "" : "unread"}"
+>
+
+<div class="notification-icon">
+
+${
+n.type === "exam_result"
+?
+"🏆"
+:
+n.type === "recitation_result"
+?
+"🎤"
+:
+"📢"
+}
+
+</div>
+
+<div>
+
+<strong>
+${escapeHTML(n.title)}
+</strong>
+
+<p>
+${escapeHTML(n.message)}
+</p>
+
+<time>
+${formatDate(n.created_at)}
+</time>
+
+</div>
+
+</div>
+
+`).join("");
 
 }
 
 
 /* =========================================================
-   FILTERS
+   MARK ALL READ
 ========================================================= */
 
-document
-.querySelectorAll('.filter-btn')
-.forEach(button=>{
+document.getElementById(
+"readAll"
+).onclick=async()=>{
 
-    button.addEventListener('click',()=>{
-
-
-        const target =
-            button.dataset.target;
-
-        const filter =
-            button.dataset.filter;
+const unread =
+notifications.filter(
+n=>!n.is_read
+);
 
 
-        document
-        .querySelectorAll(
-            `.filter-btn[data-target="${target}"]`
-        )
-        .forEach(btn=>{
-
-            btn.classList.remove('active');
-
-        });
+if(!unread.length)
+return;
 
 
-        button.classList.add('active');
+const {
+error
+} =
+await client
+.from("notifications")
+.update({
+is_read:true
+})
+.eq("student_id",studentId)
+.eq("is_read",false);
 
 
-        if(target === 'exam'){
+if(error){
 
-            document
-            .querySelectorAll(
-                '#examResults .result-card'
-            )
-            .forEach(card=>{
+console.error(error);
 
-                if(
-                    filter === 'all' ||
-                    card.dataset.status === filter
-                ){
-
-                    card.style.display='block';
-
-                }else{
-
-                    card.style.display='none';
-
-                }
-
-            });
-
-        }
-
-    });
-
-});
-
-
-/* =========================================================
-   PROGRESS ANIMATION
-========================================================= */
-
-window.addEventListener('load',()=>{
-
-
-    document
-    .querySelectorAll('.progress-bar')
-    .forEach(bar=>{
-
-        const width =
-            bar.dataset.width;
-
-        setTimeout(()=>{
-
-            bar.style.width=width;
-
-        },200);
-
-    });
-
-});
-
-
-/* =========================================================
-   STATISTICS
-========================================================= */
-
-function calculateStatistics(){
-
-    const exams =
-        [...document.querySelectorAll(
-            '#examResults .result-card'
-        )];
-
-
-    const scores =
-        exams.map(card=>{
-
-            const value =
-                card.querySelector(
-                    '.score strong'
-                ).textContent;
-
-            return Number(value);
-
-        });
-
-
-    if(!scores.length) return;
-
-
-    const average =
-        Math.round(
-            scores.reduce(
-                (a,b)=>a+b,
-                0
-            ) / scores.length
-        );
-
-
-    const highest =
-        Math.max(...scores);
-
-
-    document
-        .getElementById('examCount')
-        .textContent =
-        scores.length;
-
-
-    document
-        .getElementById('examAverage')
-        .textContent =
-        average;
-
-
-    document
-        .getElementById('highestScore')
-        .textContent =
-        highest;
+return;
 
 }
 
 
-calculateStatistics();
+notifications =
+notifications.map(
+n=>({
+...n,
+is_read:true
+})
+);
+
+
+renderNotifications();
+
+};
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value){
+
+return String(
+value ?? ""
+)
+.replace(
+/[&<>"']/g,
+char =>
+({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
+}[char])
+);
+
+}
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+async function init(){
+
+await Promise.all([
+
+loadExamResults(),
+
+loadRecitationResults(),
+
+loadNotifications()
+
+]);
+
+}
+
+
+init();
+
+
+/* =========================================================
+   REALTIME NOTIFICATIONS
+========================================================= */
+
+client
+.channel("student-notifications")
+.on(
+"postgres_changes",
+{
+event:"INSERT",
+schema:"public",
+table:"notifications",
+filter:
+`student_id=eq.${studentId}`
+},
+payload=>{
+
+notifications.unshift(
+payload.new
+);
+
+renderNotifications();
+
+}
+)
+.subscribe();
 
 
 </script>
 
 </body>
+
 </html>
 ```
