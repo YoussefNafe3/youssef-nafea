@@ -4,220 +4,1249 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>الفيديوهات | د. يوسف نافع</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
 :root{
-  --bg:#07111f;--panel:#0d1b2f;--panel2:#101f36;--line:rgba(255,255,255,.08);
-  --text:#f5f7fb;--muted:#9fb0c8;--blue:#2563eb;--blue2:#3b82f6;
-  --gold:#f5c542;--danger:#ef4444;
+  --bg:#07111f;
+  --panel:#0d1b2f;
+  --panel2:#101f36;
+  --line:rgba(255,255,255,.08);
+  --text:#f5f7fb;
+  --muted:#9fb0c8;
+  --blue:#2563eb;
+  --blue2:#3b82f6;
+  --gold:#f5c542;
+  --danger:#ef4444;
 }
-*{box-sizing:border-box;margin:0;padding:0;font-family:Cairo,sans-serif}
-html,body{min-height:100%;background:linear-gradient(135deg,#06101d,#0b1727 50%,#101c30);color:var(--text)}
-body{min-height:100vh;display:flex;overflow-x:hidden}.hidden{display:none!important}
-button,input,select{font:inherit}.app{width:100%;display:flex;min-height:100vh}
-.sidebar{width:315px;background:rgba(7,17,31,.96);border-left:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:14px;position:sticky;top:0;height:100vh;overflow:auto;z-index:20}
-.brand{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:800;color:var(--gold);font-size:22px;padding:8px}
-.count{color:var(--muted);font-size:13px;text-align:center}.search{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--line);background:#0a1626;color:#fff;outline:none}.search:focus{border-color:rgba(59,130,246,.6)}
-.videoList{display:flex;flex-direction:column;gap:9px}.videoItem{border:1px solid transparent;background:rgba(255,255,255,.035);padding:13px;border-radius:13px;cursor:pointer;transition:.2s}.videoItem:hover,.videoItem.active{background:rgba(37,99,235,.18);border-color:rgba(59,130,246,.4)}
-.videoItemTitle{font-size:14px;font-weight:700;line-height:1.65}.videoItemMeta{margin-top:5px;color:var(--muted);font-size:11px}.emptyItem,.loadingItem{color:var(--muted);font-size:13px;padding:18px;text-align:center;background:rgba(255,255,255,.025);border-radius:12px}
-.main{flex:1;padding:18px;min-width:0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.topLeft{display:flex;align-items:center;gap:10px;min-width:0}.pageTitle{font-size:19px;font-weight:800}.studentChip{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.studentName{font-weight:700}.idBadge{padding:4px 9px;border-radius:999px;background:rgba(245,197,66,.12);border:1px solid rgba(245,197,66,.25);color:var(--gold);font-size:11px;font-weight:700}.topActions{display:flex;gap:8px;flex-wrap:wrap}
-.btn{border:0;border-radius:11px;padding:10px 14px;cursor:pointer;font-weight:700;color:#fff;background:var(--blue)}.btn.secondary{background:#17263e}.btn.danger{background:#7f1d1d}.btn:hover{filter:brightness(1.07)}.mobileMenu{display:none}
-.playerCard{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.025));border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.25)}
-.playerHeader{padding:16px 18px;border-bottom:1px solid var(--line);background:rgba(7,17,31,.55)}#videoTitle{font-size:20px;font-weight:800;line-height:1.6}#videoSubtitle{color:var(--muted);font-size:12px;margin-top:3px}
-.stage{position:relative;background:#000;aspect-ratio:16/9;min-height:250px;overflow:hidden;isolation:isolate}.stage video,.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}.ytBlocker,.ytTitleBlocker,.ytBottomBlocker{position:absolute;left:0;right:0;background:transparent;pointer-events:auto;cursor:default;touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}.ytBlocker{top:0;height:clamp(60px,9vh,92px);z-index:20}.ytTitleBlocker{top:0;height:clamp(60px,9vh,92px);z-index:21}.ytBottomBlocker{bottom:0;height:clamp(60px,10vh,96px);z-index:20}
-.watermark{position:absolute;z-index:12;pointer-events:none;user-select:none;color:rgba(255,255,255,.38);font-size:11px;line-height:1.7;text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:pre-line;direction:rtl;text-align:center;background:rgba(0,0,0,.10);padding:2px 5px;border-radius:5px}
-.captureShield{position:absolute;inset:0;background:#000;display:none;align-items:center;justify-content:center;text-align:center;padding:25px;z-index:100;color:#fff;font-weight:800}.captureShield.show{display:flex}.captureShield small{display:block;color:#aaa;margin-top:8px;font-weight:500}
-.playerControls{padding:14px 18px;background:rgba(8,18,32,.82)}.controlRow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.speedGroup{display:flex;gap:6px;flex-wrap:wrap}.speedBtn{padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:#12223a;color:#fff;cursor:pointer}.speedBtn.active{background:var(--blue);border-color:var(--blue)}
-.qualitySelect{padding:8px 10px;background:#12223a;border:1px solid var(--line);border-radius:9px;color:#fff}.completeBtn{margin-inline-start:auto;background:#14532d}.completeBtn:disabled{opacity:.6;cursor:not-allowed}.fullscreenBtn{background:#17263e}.progressInfo{display:flex;justify-content:space-between;gap:10px;margin-top:12px;color:var(--muted);font-size:12px}.progress{height:7px;background:#172235;border-radius:999px;overflow:hidden;margin-top:7px}.progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--gold));transition:width .2s}
-.toast{position:fixed;right:18px;bottom:18px;background:#111827;border:1px solid var(--line);padding:11px 14px;border-radius:12px;z-index:100000;color:#fff;box-shadow:0 15px 40px rgba(0,0,0,.3)}
-.antiRecord{position:fixed;inset:0;background:#000;display:none;align-items:center;justify-content:center;z-index:99999;color:#fff;text-align:center;padding:30px}.antiRecord.show{display:flex}.antiBox{max-width:520px}.antiTitle{font-size:20px;font-weight:800}.antiText{margin-top:8px;color:#aaa;font-size:13px;line-height:1.8}
-.playerCard:fullscreen,.playerCard:-webkit-full-screen{position:fixed;inset:0;width:100vw;height:100vh;max-width:100vw;max-height:100vh;margin:0;padding:0;border-radius:0;border:0;display:flex;flex-direction:column;background:#000;overflow:hidden}.playerCard:fullscreen .playerHeader,.playerCard:-webkit-full-screen .playerHeader{flex:0 0 auto}.playerCard:fullscreen .stage,.playerCard:-webkit-full-screen .stage{flex:1 1 auto;min-height:0;width:100%;height:auto;aspect-ratio:auto;max-height:none}.playerCard:fullscreen .playerControls,.playerCard:-webkit-full-screen .playerControls{flex:0 0 auto}.playerCard:fullscreen .ytBlocker,.playerCard:fullscreen .ytTitleBlocker,.playerCard:fullscreen .ytBottomBlocker,.playerCard:-webkit-full-screen .ytBlocker,.playerCard:-webkit-full-screen .ytTitleBlocker,.playerCard:-webkit-full-screen .ytBottomBlocker{display:block}
-@media(max-width:1000px){body{display:block}.sidebar{position:fixed;top:0;right:-330px;width:320px;transition:right .25s;height:100vh}.sidebar.open{right:0}.mobileMenu{display:inline-flex}.main{padding:12px}.topbar{align-items:flex-start;flex-wrap:wrap}.topActions{width:100%}.stage{aspect-ratio:16/9;min-height:200px}.completeBtn{margin-inline-start:0}.studentChip{width:100%}}
-@media(max-width:560px){.main{padding:8px}.playerCard{border-radius:14px}.playerHeader{padding:12px}.playerControls{padding:12px}#videoTitle{font-size:16px}.topbar{gap:9px}.topActions .btn{flex:1}.stage{min-height:190px}.watermark{font-size:9px}.videoItem{padding:11px}.fullscreenBtn{min-width:44px}}
-@media (max-width:1000px) and (orientation:landscape){.playerCard:fullscreen .playerHeader,.playerCard:-webkit-full-screen .playerHeader{display:none}.playerCard:fullscreen .playerControls,.playerCard:-webkit-full-screen .playerControls{padding:8px 12px}.playerCard:fullscreen .progressInfo,.playerCard:-webkit-full-screen .progressInfo{margin-top:6px}.playerCard:fullscreen .progress,.playerCard:-webkit-full-screen .progress{margin-top:4px}.playerCard:fullscreen .stage,.playerCard:-webkit-full-screen .stage{height:100%;flex:1 1 auto}}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Cairo,sans-serif
+}
+
+html,body{
+  min-height:100%;
+  background:linear-gradient(135deg,#06101d,#0b1727 50%,#101c30);
+  color:var(--text)
+}
+
+body{
+  min-height:100vh;
+  display:flex;
+  overflow-x:hidden
+}
+
+.hidden{
+  display:none!important
+}
+
+button,input,select{
+  font:inherit
+}
+
+.app{
+  width:100%;
+  display:flex;
+  min-height:100vh
+}
+
+.sidebar{
+  width:315px;
+  background:rgba(7,17,31,.96);
+  border-left:1px solid var(--line);
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:auto;
+  z-index:20
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  font-weight:800;
+  color:var(--gold);
+  font-size:22px;
+  padding:8px
+}
+
+.count{
+  color:var(--muted);
+  font-size:13px;
+  text-align:center
+}
+
+.search{
+  width:100%;
+  padding:11px 13px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#0a1626;
+  color:#fff;
+  outline:none
+}
+
+.search:focus{
+  border-color:rgba(59,130,246,.6)
+}
+
+.videoList{
+  display:flex;
+  flex-direction:column;
+  gap:9px
+}
+
+.videoItem{
+  border:1px solid transparent;
+  background:rgba(255,255,255,.035);
+  padding:13px;
+  border-radius:13px;
+  cursor:pointer;
+  transition:.2s
+}
+
+.videoItem:hover,
+.videoItem.active{
+  background:rgba(37,99,235,.18);
+  border-color:rgba(59,130,246,.4)
+}
+
+.videoItemTitle{
+  font-size:14px;
+  font-weight:700;
+  line-height:1.65
+}
+
+.videoItemMeta{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:11px
+}
+
+.emptyItem,
+.loadingItem{
+  color:var(--muted);
+  font-size:13px;
+  padding:18px;
+  text-align:center;
+  background:rgba(255,255,255,.025);
+  border-radius:12px
+}
+
+.main{
+  flex:1;
+  padding:18px;
+  min-width:0
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px
+}
+
+.topLeft{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0
+}
+
+.pageTitle{
+  font-size:19px;
+  font-weight:800
+}
+
+.studentChip{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  flex-wrap:wrap
+}
+
+.studentName{
+  font-weight:700
+}
+
+.idBadge{
+  padding:4px 9px;
+  border-radius:999px;
+  background:rgba(245,197,66,.12);
+  border:1px solid rgba(245,197,66,.25);
+  color:var(--gold);
+  font-size:11px;
+  font-weight:700
+}
+
+.topActions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap
+}
+
+.btn{
+  border:0;
+  border-radius:11px;
+  padding:10px 14px;
+  cursor:pointer;
+  font-weight:700;
+  color:#fff;
+  background:var(--blue)
+}
+
+.btn.secondary{
+  background:#17263e
+}
+
+.btn.danger{
+  background:#7f1d1d
+}
+
+.btn:hover{
+  filter:brightness(1.07)
+}
+
+.mobileMenu{
+  display:none
+}
+
+.playerCard{
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,.04),
+    rgba(255,255,255,.025)
+  );
+  border:1px solid var(--line);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 18px 50px rgba(0,0,0,.25)
+}
+
+.playerHeader{
+  padding:16px 18px;
+  border-bottom:1px solid var(--line);
+  background:rgba(7,17,31,.55)
+}
+
+#videoTitle{
+  font-size:20px;
+  font-weight:800;
+  line-height:1.6
+}
+
+#videoSubtitle{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px
+}
+
+.stage{
+  position:relative;
+  background:#000;
+  aspect-ratio:16/9;
+  min-height:250px;
+  overflow:hidden;
+  isolation:isolate
+}
+
+.stage video,
+.stage iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+  background:#000
+}
+
+.ytBlocker,
+.ytTitleBlocker,
+.ytBottomBlocker{
+  position:absolute;
+  left:0;
+  right:0;
+  background:transparent;
+  pointer-events:auto;
+  cursor:default;
+  touch-action:none;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  -webkit-user-select:none
+}
+
+.ytBlocker{
+  top:0;
+  height:clamp(60px,9vh,92px);
+  z-index:20
+}
+
+.ytTitleBlocker{
+  top:0;
+  height:clamp(60px,9vh,92px);
+  z-index:21
+}
+
+.ytBottomBlocker{
+  bottom:0;
+  height:clamp(60px,10vh,96px);
+  z-index:20
+}
+
+.watermark{
+  position:absolute;
+  z-index:12;
+  pointer-events:none;
+  user-select:none;
+  color:rgba(255,255,255,.38);
+  font-size:11px;
+  line-height:1.7;
+  text-shadow:0 1px 3px rgba(0,0,0,.9);
+  white-space:pre-line;
+  direction:rtl;
+  text-align:center;
+  background:rgba(0,0,0,.10);
+  padding:2px 5px;
+  border-radius:5px
+}
+
+.captureShield{
+  position:absolute;
+  inset:0;
+  background:#000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:25px;
+  z-index:100;
+  color:#fff;
+  font-weight:800
+}
+
+.captureShield.show{
+  display:flex
+}
+
+.captureShield small{
+  display:block;
+  color:#aaa;
+  margin-top:8px;
+  font-weight:500
+}
+
+.playerControls{
+  padding:14px 18px;
+  background:rgba(8,18,32,.82)
+}
+
+.controlRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center
+}
+
+.speedGroup{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap
+}
+
+.speedBtn{
+  padding:7px 10px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#12223a;
+  color:#fff;
+  cursor:pointer
+}
+
+.speedBtn.active{
+  background:var(--blue);
+  border-color:var(--blue)
+}
+
+.qualitySelect{
+  padding:8px 10px;
+  background:#12223a;
+  border:1px solid var(--line);
+  border-radius:9px;
+  color:#fff
+}
+
+.completeBtn{
+  margin-inline-start:auto;
+  background:#14532d
+}
+
+.completeBtn:disabled{
+  opacity:.6;
+  cursor:not-allowed
+}
+
+.fullscreenBtn{
+  background:#17263e
+}
+
+.progressInfo{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:12px;
+  color:var(--muted);
+  font-size:12px
+}
+
+.progress{
+  height:7px;
+  background:#172235;
+  border-radius:999px;
+  overflow:hidden;
+  margin-top:7px
+}
+
+.progressBar{
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,var(--blue),var(--gold));
+  transition:width .2s
+}
+
+.toast{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  background:#111827;
+  border:1px solid var(--line);
+  padding:11px 14px;
+  border-radius:12px;
+  z-index:100000;
+  color:#fff;
+  box-shadow:0 15px 40px rgba(0,0,0,.3)
+}
+
+.antiRecord{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  color:#fff;
+  text-align:center;
+  padding:30px
+}
+
+.antiRecord.show{
+  display:flex
+}
+
+.antiBox{
+  max-width:520px
+}
+
+.antiTitle{
+  font-size:20px;
+  font-weight:800
+}
+
+.antiText{
+  margin-top:8px;
+  color:#aaa;
+  font-size:13px;
+  line-height:1.8
+}
+
+/* =========================================================
+   تنبيه حماية المحتوى
+========================================================= */
+
+#securityWarning{
+  pointer-events:auto;
+  opacity:1;
+  visibility:visible;
+  transition:opacity .18s ease,visibility .18s ease
+}
+
+#securityWarning.closed{
+  display:none!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important
+}
+
+#securityAcknowledge{
+  position:relative;
+  z-index:100000;
+  pointer-events:auto;
+  touch-action:manipulation
+}
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+.playerCard:fullscreen,
+.playerCard:-webkit-full-screen{
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  max-width:100vw;
+  max-height:100vh;
+  margin:0;
+  padding:0;
+  border-radius:0;
+  border:0;
+  display:flex;
+  flex-direction:column;
+  background:#000;
+  overflow:hidden
+}
+
+.playerCard:fullscreen .playerHeader,
+.playerCard:-webkit-full-screen .playerHeader{
+  flex:0 0 auto
+}
+
+.playerCard:fullscreen .stage,
+.playerCard:-webkit-full-screen .stage{
+  flex:1 1 auto;
+  min-height:0;
+  width:100%;
+  height:auto;
+  aspect-ratio:auto;
+  max-height:none
+}
+
+.playerCard:fullscreen .playerControls,
+.playerCard:-webkit-full-screen .playerControls{
+  flex:0 0 auto
+}
+
+.playerCard:fullscreen .ytBlocker,
+.playerCard:fullscreen .ytTitleBlocker,
+.playerCard:fullscreen .ytBottomBlocker,
+.playerCard:-webkit-full-screen .ytBlocker,
+.playerCard:-webkit-full-screen .ytTitleBlocker,
+.playerCard:-webkit-full-screen .ytBottomBlocker{
+  display:block
+}
+
+@media(max-width:1000px){
+
+  body{
+    display:block
+  }
+
+  .sidebar{
+    position:fixed;
+    top:0;
+    right:-330px;
+    width:320px;
+    transition:right .25s;
+    height:100vh
+  }
+
+  .sidebar.open{
+    right:0
+  }
+
+  .mobileMenu{
+    display:inline-flex
+  }
+
+  .main{
+    padding:12px
+  }
+
+  .topbar{
+    align-items:flex-start;
+    flex-wrap:wrap
+  }
+
+  .topActions{
+    width:100%
+  }
+
+  .stage{
+    aspect-ratio:16/9;
+    min-height:200px
+  }
+
+  .completeBtn{
+    margin-inline-start:0
+  }
+
+  .studentChip{
+    width:100%
+  }
+}
+
+@media(max-width:560px){
+
+  .main{
+    padding:8px
+  }
+
+  .playerCard{
+    border-radius:14px
+  }
+
+  .playerHeader{
+    padding:12px
+  }
+
+  .playerControls{
+    padding:12px
+  }
+
+  #videoTitle{
+    font-size:16px
+  }
+
+  .topbar{
+    gap:9px
+  }
+
+  .topActions .btn{
+    flex:1
+  }
+
+  .stage{
+    min-height:190px
+  }
+
+  .watermark{
+    font-size:9px
+  }
+
+  .videoItem{
+    padding:11px
+  }
+
+  .fullscreenBtn{
+    min-width:44px
+  }
+}
+
+@media (max-width:1000px) and (orientation:landscape){
+
+  .playerCard:fullscreen .playerHeader,
+  .playerCard:-webkit-full-screen .playerHeader{
+    display:none
+  }
+
+  .playerCard:fullscreen .playerControls,
+  .playerCard:-webkit-full-screen .playerControls{
+    padding:8px 12px
+  }
+
+  .playerCard:fullscreen .progressInfo,
+  .playerCard:-webkit-full-screen .progressInfo{
+    margin-top:6px
+  }
+
+  .playerCard:fullscreen .progress,
+  .playerCard:-webkit-full-screen .progress{
+    margin-top:4px
+  }
+
+  .playerCard:fullscreen .stage,
+  .playerCard:-webkit-full-screen .stage{
+    height:100%;
+    flex:1 1 auto
+  }
+}
 </style>
 </head>
+
 <body>
+
 <div class="app">
+
 <aside class="sidebar" id="sidebar">
+
   <div class="brand">🎬 الفيديوهات</div>
-  <div class="count">عدد الدروس: <span id="videoCount">0</span></div>
-  <input id="searchInput" class="search" type="search" placeholder="ابحث عن درس..." autocomplete="off">
-  <div id="videoList" class="videoList"><div class="loadingItem">جاري تحميل الدروس...</div></div>
-</aside>
-<main class="main">
-  <div class="topbar">
-    <div class="topLeft">
-      <button id="mobileMenu" class="btn secondary mobileMenu" type="button">☰</button>
-      <div>
-        <div class="pageTitle">📚 المحتوى التعليمي</div>
-        <div class="studentChip"><span id="studentName" class="studentName">الطالب</span><span id="studentId" class="idBadge">ID: 000</span></div>
-      </div>
-    </div>
-    <div class="topActions">
-      <button class="btn secondary" type="button" onclick="window.location.href='dashboard.html'">⌂ الرئيسية</button>
-      <button id="logoutBtn" class="btn danger" type="button">تسجيل الخروج</button>
-    </div>
+
+  <div class="count">
+    عدد الدروس:
+    <span id="videoCount">0</span>
   </div>
 
-  <section class="playerCard" id="playerCard">
-    <div class="playerHeader">
-      <div id="videoTitle">اختر درسًا من القائمة</div>
-      <div id="videoSubtitle">سيظهر محتوى الدرس هنا بعد اختياره.</div>
-    </div>
-    <div id="stage" class="stage">
-      <video id="videoPlayer" controls controlsList="nodownload noplaybackrate nofullscreen" playsinline webkit-playsinline preload="metadata"></video>
-      <div id="youtubePlayer" class="hidden"></div>
-      <div id="ytTitleBlocker" class="ytTitleBlocker hidden"></div>
-      <div id="ytBlocker" class="ytBlocker hidden"></div>
-      <div id="ytBottomBlocker" class="ytBottomBlocker hidden"></div>
-      <div id="watermark" class="watermark"></div>
-      <div id="captureShield" class="captureShield"><div><div>⚠️ تم إيقاف العرض</div><small>تم إخفاء المحتوى لحماية الدرس. لا يمكن للصفحة ضمان منع أدوات التصوير الخارجية.</small></div></div>
-    </div>
-    <div class="playerControls">
-      <div class="controlRow">
-        <div class="speedGroup" id="speedGroup">
-          <button class="speedBtn active" data-speed="1" type="button">1x</button>
-          <button class="speedBtn" data-speed="1.25" type="button">1.25x</button>
-          <button class="speedBtn" data-speed="1.5" type="button">1.5x</button>
-          <button class="speedBtn" data-speed="2" type="button">2x</button>
+  <input
+    id="searchInput"
+    class="search"
+    type="search"
+    placeholder="ابحث عن درس..."
+    autocomplete="off"
+  >
+
+  <div id="videoList" class="videoList">
+    <div class="loadingItem">جاري تحميل الدروس...</div>
+  </div>
+
+</aside>
+
+<main class="main">
+
+  <div class="topbar">
+
+    <div class="topLeft">
+
+      <button
+        id="mobileMenu"
+        class="btn secondary mobileMenu"
+        type="button"
+      >
+        ☰
+      </button>
+
+      <div>
+
+        <div class="pageTitle">
+          📚 المحتوى التعليمي
         </div>
-        <select id="qualitySelect" class="qualitySelect hidden" aria-label="جودة الفيديو"><option value="auto">جودة تلقائية</option></select>
-        <button id="fullscreenBtn" class="btn fullscreenBtn" type="button">⛶ ملء الشاشة</button>
+
+        <div class="studentChip">
+
+          <span
+            id="studentName"
+            class="studentName"
+          >
+            الطالب
+          </span>
+
+          <span
+            id="studentId"
+            class="idBadge"
+          >
+            ID: 000
+          </span>
+
+        </div>
+
       </div>
-      <div class="progressInfo"><span>التقدم</span><span id="percentBox">0%</span></div>
-      <div class="progress"><div id="progressBar" class="progressBar"></div></div>
+
     </div>
+
+    <div class="topActions">
+
+      <button
+        class="btn secondary"
+        type="button"
+        onclick="window.location.href='dashboard.html'"
+      >
+        ⌂ الرئيسية
+      </button>
+
+      <button
+        id="logoutBtn"
+        class="btn danger"
+        type="button"
+      >
+        تسجيل الخروج
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <section
+    class="playerCard"
+    id="playerCard"
+  >
+
+    <div class="playerHeader">
+
+      <div id="videoTitle">
+        اختر درسًا من القائمة
+      </div>
+
+      <div id="videoSubtitle">
+        سيظهر محتوى الدرس هنا بعد اختياره.
+      </div>
+
+    </div>
+
+
+    <div id="stage" class="stage">
+
+      <video
+        id="videoPlayer"
+        controls
+        controlsList="nodownload noplaybackrate nofullscreen"
+        playsinline
+        webkit-playsinline
+        preload="metadata"
+      ></video>
+
+      <div
+        id="youtubePlayer"
+        class="hidden"
+      ></div>
+
+      <div
+        id="ytTitleBlocker"
+        class="ytTitleBlocker hidden"
+      ></div>
+
+      <div
+        id="ytBlocker"
+        class="ytBlocker hidden"
+      ></div>
+
+      <div
+        id="ytBottomBlocker"
+        class="ytBottomBlocker hidden"
+      ></div>
+
+      <div
+        id="watermark"
+        class="watermark"
+      ></div>
+
+      <div
+        id="captureShield"
+        class="captureShield"
+      >
+        <div>
+          <div>⚠️ تم إيقاف العرض</div>
+          <small>
+            تم إخفاء المحتوى لحماية الدرس.
+            لا يمكن للصفحة ضمان منع أدوات التصوير الخارجية.
+          </small>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="playerControls">
+
+      <div class="controlRow">
+
+        <div
+          class="speedGroup"
+          id="speedGroup"
+        >
+
+          <button
+            class="speedBtn active"
+            data-speed="1"
+            type="button"
+          >
+            1x
+          </button>
+
+          <button
+            class="speedBtn"
+            data-speed="1.25"
+            type="button"
+          >
+            1.25x
+          </button>
+
+          <button
+            class="speedBtn"
+            data-speed="1.5"
+            type="button"
+          >
+            1.5x
+          </button>
+
+          <button
+            class="speedBtn"
+            data-speed="2"
+            type="button"
+          >
+            2x
+          </button>
+
+        </div>
+
+
+        <select
+          id="qualitySelect"
+          class="qualitySelect hidden"
+          aria-label="جودة الفيديو"
+        >
+          <option value="auto">
+            جودة تلقائية
+          </option>
+        </select>
+
+
+        <button
+          id="fullscreenBtn"
+          class="btn fullscreenBtn"
+          type="button"
+        >
+          ⛶ ملء الشاشة
+        </button>
+
+      </div>
+
+
+      <div class="progressInfo">
+
+        <span>
+          التقدم
+        </span>
+
+        <span id="percentBox">
+          0%
+        </span>
+
+      </div>
+
+
+      <div class="progress">
+        <div
+          id="progressBar"
+          class="progressBar"
+        ></div>
+      </div>
+
+    </div>
+
   </section>
+
 </main>
+
 </div>
-<div id="securityWarning" class="antiRecord show"><div class="antiBox securityWarningBox"><div class="antiTitle">🔒 تنبيه حماية المحتوى</div><div class="antiText">هذا المحتوى تعليمي ومخصص للحساب المسجل فقط. يُمنع تصوير الشاشة أو تسجيل الفيديو أو مشاركة المحتوى. عند اكتشاف محاولة تصوير فيديو او لقطة شاشة (اسكرين شوت) للصفحة سيتم حظر الحساب وإخفاء المحتوى.</div><button id="securityAcknowledge" class="btn" type="button" style="margin-top:18px">فهمت وأوافق</button></div></div>
-<div id="antiRecord" class="antiRecord"><div class="antiBox"><div class="antiTitle">⚠️ تم إيقاف العرض مؤقتًا</div><div class="antiText">تم إخفاء المحتوى لحماية الدرس. عند استعادة الصفحة يمكنك المتابعة.</div></div></div>
-<div id="toast" class="toast hidden"></div>
+
+
+<!-- =========================================================
+     تحذير حماية المحتوى
+========================================================= -->
+
+<div
+  id="securityWarning"
+  class="antiRecord show"
+>
+
+  <div class="antiBox securityWarningBox">
+
+    <div class="antiTitle">
+      🔒 تنبيه حماية المحتوى
+    </div>
+
+    <div class="antiText">
+      هذا المحتوى تعليمي ومخصص للحساب المسجل فقط.
+      يُمنع تصوير الشاشة أو تسجيل الفيديو أو مشاركة المحتوى.
+      عند اكتشاف محاولة تصوير فيديو او لقطة شاشة (اسكرين شوت)
+      للصفحة سيتم حظر الحساب وإخفاء المحتوى.
+    </div>
+
+    <button
+      id="securityAcknowledge"
+      class="btn"
+      type="button"
+      style="margin-top:18px"
+    >
+      فهمت وأوافق
+    </button>
+
+  </div>
+
+</div>
+
+
+<div
+  id="antiRecord"
+  class="antiRecord"
+>
+
+  <div class="antiBox">
+
+    <div class="antiTitle">
+      ⚠️ تم إيقاف العرض مؤقتًا
+    </div>
+
+    <div class="antiText">
+      تم إخفاء المحتوى لحماية الدرس.
+      عند استعادة الصفحة يمكنك المتابعة.
+    </div>
+
+  </div>
+
+</div>
+
+
+<div
+  id="toast"
+  class="toast hidden"
+></div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 "use strict";
 
 /* =========================================================
-   SUPABASE — نفس بيانات الصفحة الحالية
+   SUPABASE
 ========================================================= */
-const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const $ = id => document.getElementById(id);
-const videoList = $("videoList"), video = $("videoPlayer"), youtubePlayer = $("youtubePlayer"), stage = $("stage"), playerCard = $("playerCard");
-const videoTitle = $("videoTitle"), videoSubtitle = $("videoSubtitle"), videoCount = $("videoCount"), progressBar = $("progressBar"), percentBox = $("percentBox");
-const qualitySelect = $("qualitySelect"), watermark = $("watermark"), toastBox = $("toast"), antiRecord = $("antiRecord"), captureShield = $("captureShield"), fullscreenBtn = $("fullscreenBtn");
-const sidebar = $("sidebar");
+const SUPABASE_URL =
+  "https://nhdowqzecpwmkunczodl.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+
+const client =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const $ = id =>
+  document.getElementById(id);
+
+const videoList =
+  $("videoList");
+
+const video =
+  $("videoPlayer");
+
+const youtubePlayer =
+  $("youtubePlayer");
+
+const stage =
+  $("stage");
+
+const playerCard =
+  $("playerCard");
+
+const videoTitle =
+  $("videoTitle");
+
+const videoSubtitle =
+  $("videoSubtitle");
+
+const videoCount =
+  $("videoCount");
+
+const progressBar =
+  $("progressBar");
+
+const percentBox =
+  $("percentBox");
+
+const qualitySelect =
+  $("qualitySelect");
+
+const watermark =
+  $("watermark");
+
+const toastBox =
+  $("toast");
+
+const antiRecord =
+  $("antiRecord");
+
+const captureShield =
+  $("captureShield");
+
+const fullscreenBtn =
+  $("fullscreenBtn");
+
+const sidebar =
+  $("sidebar");
+
+const securityWarning =
+  $("securityWarning");
+
+const securityAcknowledge =
+  $("securityAcknowledge");
+
+
+/* =========================================================
+   USER
+========================================================= */
 
 let savedUser = {};
-try { savedUser = JSON.parse(localStorage.getItem("user") || "{}") || {}; } catch { savedUser = {}; }
+
+try{
+
+  savedUser =
+    JSON.parse(
+      localStorage.getItem("user") || "{}"
+    ) || {};
+
+}catch{
+
+  savedUser = {};
+
+}
+
 
 const user = {
-  id: savedUser.id || "000",
-  name: savedUser.name || savedUser.full_name || "الطالب",
-  email: savedUser.email || "unknown",
-  phone: savedUser.phone || savedUser.mobile || "غير مسجل",
-  class_group: savedUser.class_group || "unknown"
+
+  id:
+    savedUser.id || "000",
+
+  name:
+    savedUser.name ||
+    savedUser.full_name ||
+    "الطالب",
+
+  email:
+    savedUser.email ||
+    "unknown",
+
+  phone:
+    savedUser.phone ||
+    savedUser.mobile ||
+    "غير مسجل",
+
+  class_group:
+    savedUser.class_group ||
+    "unknown"
+
 };
+
+
+/* =========================================================
+   ACTIVE PLATFORM SESSION
+========================================================= */
+
 const platformSessionId =
-localStorage.getItem("platform_session_id");
+  localStorage.getItem(
+    "platform_session_id"
+  );
 
 const platformUser =
-JSON.parse(
-localStorage.getItem("user") || "null"
-);
+  JSON.parse(
+    localStorage.getItem("user") ||
+    "null"
+  );
 
 
 if(
-!platformUser ||
-!platformSessionId
+  !platformUser ||
+  !platformSessionId
 ){
 
-window.location.replace("login.html");
+  window.location.replace(
+    "login.html"
+  );
 
-throw new Error(
-"NO_ACTIVE_PLATFORM_SESSION"
-);
+  throw new Error(
+    "NO_ACTIVE_PLATFORM_SESSION"
+  );
+
 }
 
 
 let videoSessionAlive = true;
 
 
+/* =========================================================
+   VERIFY SESSION
+========================================================= */
+
 async function verifyPlatformSession(){
 
-if(!videoSessionAlive) return;
+  if(!videoSessionAlive)
+    return;
 
 
-try{
+  try{
 
-const {
-data,
-error
-} =
-await client.rpc(
-"refresh_student_session",
-{
-p_session_id:platformSessionId
-}
-);
-
-
-if(error){
-
-console.error(
-"Session verification error:",
-error
-);
-
-return;
-
-}
+    const {
+      data,
+      error
+    } =
+      await client.rpc(
+        "refresh_student_session",
+        {
+          p_session_id:
+            platformSessionId
+        }
+      );
 
 
-if(
-!data ||
-!data.success
-){
+    if(error){
 
-videoSessionAlive = false;
+      console.error(
+        "Session verification error:",
+        error
+      );
 
+      return;
 
-try{
-
-await client.auth.signOut();
-
-}catch(e){}
+    }
 
 
-localStorage.removeItem(
-"platform_session_id"
-);
+    if(
+      !data ||
+      !data.success
+    ){
 
-localStorage.removeItem(
-"user"
-);
-
-
-alert(
-"🔒 انتهت جلسة الدخول أو تم تسجيل الدخول من جهاز آخر."
-);
+      videoSessionAlive =
+        false;
 
 
-window.location.replace(
-"login.html"
-);
+      try{
 
-}
+        await client.auth.signOut();
 
-}catch(err){
+      }catch(e){
 
-console.error(err);
+        console.error(e);
 
-}
+      }
+
+
+      localStorage.removeItem(
+        "platform_session_id"
+      );
+
+      localStorage.removeItem(
+        "user"
+      );
+
+
+      alert(
+        "🔒 انتهت جلسة الدخول أو تم تسجيل الدخول من جهاز آخر."
+      );
+
+
+      window.location.replace(
+        "login.html"
+      );
+
+    }
+
+  }catch(err){
+
+    console.error(
+      "Platform session error:",
+      err
+    );
+
+  }
 
 }
 
@@ -226,689 +1255,3385 @@ verifyPlatformSession();
 
 
 const videoSessionHeartbeat =
-setInterval(
-verifyPlatformSession,
-30000
-);
+  setInterval(
+    verifyPlatformSession,
+    30000
+  );
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
 const state = {
-  all: [], filtered: [], currentVideoId: null, currentVideo: null,
-  lastTime: 0, sessionSaved: false, skips: 0, completedByEnd: false, watchedRanges: [],
-  yt: null, ytReady: false, ytQuality: "auto", sessionTimer: null,
-  toastTimer: null, watermarkTimer: null, captureShieldActive: false,
-  wasPlayingBeforeShield: false, fullscreenRedirecting: false, securityAcknowledged: false, securityIncidents: 0, blurTimer: null, nativePlaying:false, nativeLastTime:0, nativeLastWall:0, orientationLocked:false
+
+  all: [],
+
+  filtered: [],
+
+  currentVideoId: null,
+
+  currentVideo: null,
+
+  lastTime: 0,
+
+  sessionSaved: false,
+
+  skips: 0,
+
+  completedByEnd: false,
+
+  watchedRanges: [],
+
+  yt: null,
+
+  ytReady: false,
+
+  ytQuality: "auto",
+
+  sessionTimer: null,
+
+  toastTimer: null,
+
+  watermarkTimer: null,
+
+  captureShieldActive: false,
+
+  wasPlayingBeforeShield: false,
+
+  fullscreenRedirecting: false,
+
+  securityAcknowledged: false,
+
+  securityIncidents: 0,
+
+  blurTimer: null,
+
+  nativePlaying:false,
+
+  nativeLastTime:0,
+
+  nativeLastWall:0,
+
+  orientationLocked:false,
+
+  /* مهم لمنع blur من إعادة إظهار الحماية أثناء الضغط */
+  securityButtonLock:false
+
 };
 
-function updateUserUI(){
-  $("studentName").textContent = user.name || "الطالب";
-  $("studentId").textContent = "ID: " + (user.id || "000");
+
+/* =========================================================
+   SECURITY WARNING
+   إصلاح مشكلة زر "فهمت وأوافق"
+========================================================= */
+
+function closeSecurityWarning(){
+
+  state.securityAcknowledged = true;
+
+  state.securityButtonLock = true;
+
+  clearTimeout(
+    state.blurTimer
+  );
+
+
+  /*
+    إغلاق كامل وليس فقط إزالة show
+  */
+
+  securityWarning.classList.remove(
+    "show"
+  );
+
+  securityWarning.classList.add(
+    "closed"
+  );
+
+
+  securityWarning.style.display =
+    "none";
+
+  securityWarning.style.pointerEvents =
+    "none";
+
+  securityWarning.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+
+  /*
+    بعد لحظة بسيطة نسمح للحماية
+    الطبيعية بالعمل مرة أخرى
+  */
+
+  setTimeout(
+    () => {
+      state.securityButtonLock =
+        false;
+    },
+    700
+  );
+
 }
+
+
+/*
+  click
+*/
+
+securityAcknowledge.addEventListener(
+  "click",
+  function(e){
+
+    e.preventDefault();
+
+    e.stopPropagation();
+
+    closeSecurityWarning();
+
+  },
+  true
+);
+
+
+/*
+  touch على الموبايل
+*/
+
+securityAcknowledge.addEventListener(
+  "touchend",
+  function(e){
+
+    e.preventDefault();
+
+    e.stopPropagation();
+
+    closeSecurityWarning();
+
+  },
+  {
+    passive:false,
+    capture:true
+  }
+);
+
+
+/*
+  تأكيد إضافي:
+  لو المتصفح تجاهل event لأي سبب
+*/
+
+window.closeSecurityWarning =
+  closeSecurityWarning;
+
+
+/* =========================================================
+   USER UI
+========================================================= */
+
+function updateUserUI(){
+
+  $("studentName").textContent =
+    user.name ||
+    "الطالب";
+
+  $("studentId").textContent =
+    "ID: " +
+    (user.id || "000");
+
+}
+
 
 function toast(msg){
-  clearTimeout(state.toastTimer);
-  toastBox.textContent = msg;
-  toastBox.classList.remove("hidden");
-  state.toastTimer = setTimeout(() => toastBox.classList.add("hidden"), 3000);
+
+  clearTimeout(
+    state.toastTimer
+  );
+
+  toastBox.textContent =
+    msg;
+
+  toastBox.classList.remove(
+    "hidden"
+  );
+
+  state.toastTimer =
+    setTimeout(
+      () =>
+        toastBox.classList.add(
+          "hidden"
+        ),
+      3000
+    );
+
 }
+
+
+/* =========================================================
+   CURRENT USER
+========================================================= */
 
 async function getCurrentUser(){
+
   try{
-    const {data: authData} = await client.auth.getUser();
-    const authUser = authData?.user || null;
+
+    const {
+      data:authData
+    } =
+      await client.auth.getUser();
+
+    const authUser =
+      authData?.user || null;
+
+
     if(authUser){
-      user.id = authUser.id || user.id;
-      user.email = authUser.email || user.email;
-      user.phone = authUser.phone || user.phone;
+
+      /*
+        لا نغير user.id الخاص بالطالب
+        إلا إذا كان Auth ID متوافقًا.
+      */
+
+      user.email =
+        authUser.email ||
+        user.email;
+
+
+      user.phone =
+        authUser.phone ||
+        user.phone;
+
 
       try{
-        const {data: studentData} = await client.from("students").select("*").eq("id", authUser.id).maybeSingle();
+
+        const {
+          data:studentData
+        } =
+          await client
+            .from("students")
+            .select("*")
+            .eq(
+              "phone",
+              user.phone
+            )
+            .maybeSingle();
+
+
         if(studentData){
-          user.name = studentData.full_name || studentData.name || studentData.phone || user.name;
-          user.phone = studentData.phone || user.phone;
-          user.class_group = studentData.class_group || user.class_group;
+
+          user.name =
+            studentData.full_name ||
+            studentData.name ||
+            studentData.phone ||
+            user.name;
+
+          user.phone =
+            studentData.phone ||
+            user.phone;
+
+          user.class_group =
+            studentData.class_group ||
+            user.class_group;
+
         }
-      }catch(e){ console.warn("[Student lookup]", e); }
+
+      }catch(e){
+
+        console.warn(
+          "[Student lookup]",
+          e
+        );
+
+      }
+
 
       try{
-        const {data: profileData} = await client.from("profiles").select("*").eq("id", authUser.id).maybeSingle();
+
+        const {
+          data:profileData
+        } =
+          await client
+            .from("profiles")
+            .select("*")
+            .eq(
+              "id",
+              authUser.id
+            )
+            .maybeSingle();
+
+
         if(profileData){
-          user.name = profileData.full_name || profileData.name || user.name;
-          user.phone = profileData.phone || user.phone;
-          user.class_group = profileData.class_group || user.class_group;
+
+          user.name =
+            profileData.full_name ||
+            profileData.name ||
+            user.name;
+
+          user.phone =
+            profileData.phone ||
+            user.phone;
+
+          user.class_group =
+            profileData.class_group ||
+            user.class_group;
+
         }
-      }catch(e){ console.warn("[Profile lookup]", e); }
+
+      }catch(e){
+
+        console.warn(
+          "[Profile lookup]",
+          e
+        );
+
+      }
+
     }
-  }catch(e){ console.warn("[Auth fallback]", e); }
+
+  }catch(e){
+
+    console.warn(
+      "[Auth fallback]",
+      e
+    );
+
+  }
+
+
   updateUserUI();
+
   updateWatermark();
+
 }
+
+
+/* =========================================================
+   WATERMARK
+========================================================= */
 
 function updateWatermark(){
-  watermark.textContent = `${user.name || "الطالب"}\n${user.phone || "غير مسجل"}`;
+
+  watermark.textContent =
+    `${user.name || "الطالب"}\n${user.phone || "غير مسجل"}`;
+
 }
+
 
 function moveWatermark(){
-  const wmWidth = Math.min(210, Math.max(110, stage.clientWidth * .32));
-  const wmHeight = 55;
-  const maxX = Math.max(8, stage.clientWidth - wmWidth - 8);
-  const maxY = Math.max(8, stage.clientHeight - wmHeight - 8);
-  watermark.style.left = Math.floor(8 + Math.random() * Math.max(1, maxX - 8)) + "px";
-  watermark.style.top = Math.floor(8 + Math.random() * Math.max(1, maxY - 8)) + "px";
+
+  const wmWidth =
+    Math.min(
+      210,
+      Math.max(
+        110,
+        stage.clientWidth * .32
+      )
+    );
+
+  const wmHeight =
+    55;
+
+  const maxX =
+    Math.max(
+      8,
+      stage.clientWidth -
+      wmWidth -
+      8
+    );
+
+  const maxY =
+    Math.max(
+      8,
+      stage.clientHeight -
+      wmHeight -
+      8
+    );
+
+
+  watermark.style.left =
+    Math.floor(
+      8 +
+      Math.random() *
+      Math.max(
+        1,
+        maxX - 8
+      )
+    ) + "px";
+
+
+  watermark.style.top =
+    Math.floor(
+      8 +
+      Math.random() *
+      Math.max(
+        1,
+        maxY - 8
+      )
+    ) + "px";
+
 }
+
 
 function startWatermark(){
+
   updateWatermark();
+
   moveWatermark();
-  clearInterval(state.watermarkTimer);
-  state.watermarkTimer = setInterval(() => { updateWatermark(); moveWatermark(); }, 5000);
+
+  clearInterval(
+    state.watermarkTimer
+  );
+
+  state.watermarkTimer =
+    setInterval(
+      () => {
+
+        updateWatermark();
+
+        moveWatermark();
+
+      },
+      5000
+    );
+
 }
+
+
+/* =========================================================
+   WATCHED RANGES
+========================================================= */
 
 function mergeRanges(ranges){
-  const valid = (ranges || [])
-    .filter(r => Array.isArray(r) && r.length === 2 && Number.isFinite(r[0]) && Number.isFinite(r[1]) && r[1] > r[0])
-    .sort((a,b) => a[0] - b[0]);
+
+  const valid =
+    (ranges || [])
+
+      .filter(
+        r =>
+          Array.isArray(r) &&
+          r.length === 2 &&
+          Number.isFinite(r[0]) &&
+          Number.isFinite(r[1]) &&
+          r[1] > r[0]
+      )
+
+      .sort(
+        (a,b) =>
+          a[0] - b[0]
+      );
+
+
   const merged = [];
-  for(const r of valid){
-    const last = merged[merged.length - 1];
-    if(!last || r[0] > last[1] + 0.25) merged.push([r[0], r[1]]);
-    else last[1] = Math.max(last[1], r[1]);
-  }
-  return merged;
-}
 
-function addWatchedRange(start,end){
-  if(Number.isFinite(start) && Number.isFinite(end) && end > start) state.watchedRanges = mergeRanges([...state.watchedRanges, [start,end]]);
-}
-function calculateWatchedSeconds(){ return state.watchedRanges.reduce((sum,r) => sum + (r[1]-r[0]), 0); }
-function updateProgressUI(current,duration){
-  if(!duration || !Number.isFinite(duration)){ percentBox.textContent = "0%"; progressBar.style.width = "0%"; return; }
-  const watched = Math.min(duration, calculateWatchedSeconds());
-  const percent = Math.min(100, (watched / duration) * 100);
-  percentBox.textContent = percent.toFixed(1) + "%";
-  progressBar.style.width = percent + "%";
-}
 
-async function loadSavedSession(videoId){
-  state.lastTime=0; state.watchedRanges=[]; state.skips=0; state.completedByEnd=false;
-  const local=loadLocalProgress(videoId);
-  if(local){
-    state.lastTime=Math.max(0,Number(local.lastTime)||0);
-    state.watchedRanges=mergeRanges(local.watchedRanges||[]);
-    state.completedByEnd=local.completed===true;
-  }
-  try{
-    const {data,error}=await client.from("video_sessions").select("*").eq("student_id",String(user.id)).eq("video_id",videoId).maybeSingle();
-    if(error){ console.warn("[Load session]",error); return; }
-    if(data){
-      const watched=Number(data.watched_seconds)||0, duration=Number(data.duration)||0;
-      if(!state.watchedRanges.length && watched>0 && duration>0) state.watchedRanges=[[0,Math.min(watched,duration)]];
-      const dbTime=Math.max(0,Number(data.last_time)||0);
-      if(dbTime>0 || !local) state.lastTime=Math.max(state.lastTime,dbTime);
-      state.skips=Number(data.skips)||0;
-      state.completedByEnd=state.completedByEnd || data.completed===true;
+  for(
+    const r of valid
+  ){
+
+    const last =
+      merged[
+        merged.length - 1
+      ];
+
+
+    if(
+      !last ||
+      r[0] >
+      last[1] + .25
+    ){
+
+      merged.push([
+        r[0],
+        r[1]
+      ]);
+
+    }else{
+
+      last[1] =
+        Math.max(
+          last[1],
+          r[1]
+        );
+
     }
-  }catch(e){ console.warn("[Load session]",e); }
-}
 
-function localProgressKey(videoId=state.currentVideoId){ return `video_progress_${String(user.id || "000")}_${String(videoId)}`; }
-function persistLocalProgress(){
-  if(!state.currentVideoId) return;
-  try{
-    const current=state.currentVideo?.is_youtube ? Number(state.yt?.getCurrentTime?.())||state.lastTime||0 : Number(video.currentTime)||state.lastTime||0;
-    localStorage.setItem(localProgressKey(),JSON.stringify({lastTime:current,watchedRanges:state.watchedRanges,completed:!!state.completedByEnd,savedAt:Date.now()}));
-  }catch(e){ console.warn("[Local progress]",e); }
-}
-function loadLocalProgress(videoId){
-  try{
-    const raw=localStorage.getItem(`video_progress_${String(user.id || "000")}_${String(videoId)}`);
-    if(!raw) return null;
-    const data=JSON.parse(raw);
-    return data && typeof data === "object" ? data : null;
-  }catch{return null;}
-}
-async function saveSession(){
-  persistLocalProgress();
-  if(!state.currentVideoId || !state.currentVideo) return;
-
-  let duration = 0, current = 0;
-  if(state.currentVideo.is_youtube){
-    try{
-      duration = Number(state.yt?.getDuration?.()) || 0;
-      current = Number(state.yt?.getCurrentTime?.()) || 0;
-    }catch{}
-  }else{
-    duration = Number(video.duration) || 0;
-    current = Number(video.currentTime) || 0;
   }
-  if(!duration) return;
 
-  if(!state.currentVideo.is_youtube) addWatchedRange(state.lastTime, current);
-  state.lastTime = current;
 
-  const watched = Math.min(duration, calculateWatchedSeconds());
-  const percent = Math.min(100, Math.max(0, (watched / duration) * 100));
+  return merged;
+
+}
+
+
+function addWatchedRange(
+  start,
+  end
+){
+
+  if(
+    Number.isFinite(start) &&
+    Number.isFinite(end) &&
+    end > start
+  ){
+
+    state.watchedRanges =
+      mergeRanges([
+        ...state.watchedRanges,
+        [start,end]
+      ]);
+
+  }
+
+}
+
+
+function calculateWatchedSeconds(){
+
+  return state.watchedRanges.reduce(
+    (sum,r) =>
+      sum +
+      (r[1]-r[0]),
+    0
+  );
+
+}
+
+
+function updateProgressUI(
+  current,
+  duration
+){
+
+  if(
+    !duration ||
+    !Number.isFinite(duration)
+  ){
+
+    percentBox.textContent =
+      "0%";
+
+    progressBar.style.width =
+      "0%";
+
+    return;
+
+  }
+
+
+  const watched =
+    Math.min(
+      duration,
+      calculateWatchedSeconds()
+    );
+
+
+  const percent =
+    Math.min(
+      100,
+      (watched / duration) * 100
+    );
+
+
+  percentBox.textContent =
+    percent.toFixed(1) +
+    "%";
+
+
+  progressBar.style.width =
+    percent + "%";
+
+}
+
+
+/* =========================================================
+   LOCAL PROGRESS
+========================================================= */
+
+function localProgressKey(
+  videoId=state.currentVideoId
+){
+
+  return `video_progress_${String(
+    user.id || "000"
+  )}_${String(videoId)}`;
+
+}
+
+
+function persistLocalProgress(){
+
+  if(!state.currentVideoId)
+    return;
+
+
+  try{
+
+    const current =
+      state.currentVideo?.is_youtube
+        ? Number(
+            state.yt?.getCurrentTime?.()
+          ) ||
+          state.lastTime ||
+          0
+
+        : Number(
+            video.currentTime
+          ) ||
+          state.lastTime ||
+          0;
+
+
+    localStorage.setItem(
+      localProgressKey(),
+      JSON.stringify({
+
+        lastTime:current,
+
+        watchedRanges:
+          state.watchedRanges,
+
+        completed:
+          !!state.completedByEnd,
+
+        savedAt:
+          Date.now()
+
+      })
+    );
+
+  }catch(e){
+
+    console.warn(
+      "[Local progress]",
+      e
+    );
+
+  }
+
+}
+
+
+function loadLocalProgress(
+  videoId
+){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        `video_progress_${String(
+          user.id || "000"
+        )}_${String(videoId)}`
+      );
+
+
+    if(!raw)
+      return null;
+
+
+    const data =
+      JSON.parse(raw);
+
+
+    return data &&
+      typeof data === "object"
+        ? data
+        : null;
+
+  }catch{
+
+    return null;
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD SAVED SESSION
+========================================================= */
+
+async function loadSavedSession(
+  videoId
+){
+
+  state.lastTime = 0;
+
+  state.watchedRanges = [];
+
+  state.skips = 0;
+
+  state.completedByEnd = false;
+
+
+  const local =
+    loadLocalProgress(
+      videoId
+    );
+
+
+  if(local){
+
+    state.lastTime =
+      Math.max(
+        0,
+        Number(local.lastTime) || 0
+      );
+
+
+    state.watchedRanges =
+      mergeRanges(
+        local.watchedRanges || []
+      );
+
+
+    state.completedByEnd =
+      local.completed === true;
+
+  }
+
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await client
+        .from("video_sessions")
+        .select("*")
+        .eq(
+          "student_id",
+          String(user.id)
+        )
+        .eq(
+          "video_id",
+          videoId
+        )
+        .maybeSingle();
+
+
+    if(error){
+
+      console.warn(
+        "[Load session]",
+        error
+      );
+
+      return;
+
+    }
+
+
+    if(data){
+
+      const watched =
+        Number(
+          data.watched_seconds
+        ) || 0;
+
+      const duration =
+        Number(
+          data.duration
+        ) || 0;
+
+
+      if(
+        !state.watchedRanges.length &&
+        watched > 0 &&
+        duration > 0
+      ){
+
+        state.watchedRanges =
+          [[
+            0,
+            Math.min(
+              watched,
+              duration
+            )
+          ]];
+
+      }
+
+
+      const dbTime =
+        Math.max(
+          0,
+          Number(
+            data.last_time
+          ) || 0
+        );
+
+
+      if(
+        dbTime > 0 ||
+        !local
+      ){
+
+        state.lastTime =
+          Math.max(
+            state.lastTime,
+            dbTime
+          );
+
+      }
+
+
+      state.skips =
+        Number(
+          data.skips
+        ) || 0;
+
+
+      state.completedByEnd =
+        state.completedByEnd ||
+        data.completed === true;
+
+    }
+
+  }catch(e){
+
+    console.warn(
+      "[Load session]",
+      e
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   SAVE SESSION
+========================================================= */
+
+async function saveSession(){
+
+  persistLocalProgress();
+
+
+  if(
+    !state.currentVideoId ||
+    !state.currentVideo
+  )
+    return;
+
+
+  let duration = 0;
+
+  let current = 0;
+
+
+  if(
+    state.currentVideo.is_youtube
+  ){
+
+    try{
+
+      duration =
+        Number(
+          state.yt?.getDuration?.()
+        ) || 0;
+
+      current =
+        Number(
+          state.yt?.getCurrentTime?.()
+        ) || 0;
+
+    }catch{}
+
+  }else{
+
+    duration =
+      Number(
+        video.duration
+      ) || 0;
+
+    current =
+      Number(
+        video.currentTime
+      ) || 0;
+
+  }
+
+
+  if(!duration)
+    return;
+
+
+  if(
+    !state.currentVideo.is_youtube
+  ){
+
+    addWatchedRange(
+      state.lastTime,
+      current
+    );
+
+  }
+
+
+  state.lastTime =
+    current;
+
+
+  const watched =
+    Math.min(
+      duration,
+      calculateWatchedSeconds()
+    );
+
+
+  const percent =
+    Math.min(
+      100,
+      Math.max(
+        0,
+        (watched / duration) * 100
+      )
+    );
+
+
   const payload = {
-    student_id: String(user.id),
-    video_id: state.currentVideoId,
-    class_group: user.class_group,
-    watched_seconds: Math.floor(watched),
-    duration: Math.floor(duration),
-    percent: Number(percent.toFixed(2)),
-    completed: state.completedByEnd,
-    skips: state.skips || 0,
-    updated_at: new Date().toISOString()
+
+    student_id:
+      String(user.id),
+
+    video_id:
+      state.currentVideoId,
+
+    class_group:
+      user.class_group,
+
+    watched_seconds:
+      Math.floor(watched),
+
+    duration:
+      Math.floor(duration),
+
+    percent:
+      Number(
+        percent.toFixed(2)
+      ),
+
+    completed:
+      state.completedByEnd,
+
+    skips:
+      state.skips || 0,
+
+    updated_at:
+      new Date().toISOString()
+
   };
 
+
   try{
-    const {error} = await client.from("video_sessions").upsert(payload,{onConflict:"student_id,video_id"});
-    if(error) console.warn("[Save session]", error);
-    else state.sessionSaved = true;
-  }catch(e){ console.warn("[Save session]", e); }
+
+    const {
+      error
+    } =
+      await client
+        .from("video_sessions")
+        .upsert(
+          payload,
+          {
+            onConflict:
+              "student_id,video_id"
+          }
+        );
+
+
+    if(error){
+
+      console.warn(
+        "[Save session]",
+        error
+      );
+
+    }else{
+
+      state.sessionSaved =
+        true;
+
+    }
+
+  }catch(e){
+
+    console.warn(
+      "[Save session]",
+      e
+    );
+
+  }
+
 }
+
+
+/* =========================================================
+   YOUTUBE
+========================================================= */
 
 function getYouTubeId(url){
-  if(!url) return null;
-  try{
-    const u = new URL(url);
-    if(u.hostname.includes("youtu.be")) return u.pathname.slice(1).split("/")[0] || null;
-    if(u.hostname.includes("youtube.com")){
-      if(u.pathname === "/watch") return u.searchParams.get("v");
-      if(u.pathname.startsWith("/embed/")) return u.pathname.split("/")[2] || null;
-      if(u.pathname.startsWith("/shorts/")) return u.pathname.split("/")[2] || null;
-    }
-  }catch{}
-  const m = String(url).match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_-]{6,})/);
-  return m ? m[1] : null;
-}
-function isYouTubeUrl(url){ return !!getYouTubeId(url); }
 
-function setYouTubeActive(active){
-  youtubePlayer.classList.toggle("hidden", !active);
-  video.classList.toggle("hidden", active);
-  $("ytBlocker").classList.toggle("hidden", !active);
-  $("ytBottomBlocker").classList.toggle("hidden", !active);
-  $("ytTitleBlocker").classList.toggle("hidden", !active);
+  if(!url)
+    return null;
+
+
+  try{
+
+    const u =
+      new URL(url);
+
+
+    if(
+      u.hostname.includes(
+        "youtu.be"
+      )
+    ){
+
+      return (
+        u.pathname
+          .slice(1)
+          .split("/")[0]
+        ||
+        null
+      );
+
+    }
+
+
+    if(
+      u.hostname.includes(
+        "youtube.com"
+      )
+    ){
+
+      if(
+        u.pathname ===
+        "/watch"
+      ){
+
+        return u.searchParams.get(
+          "v"
+        );
+
+      }
+
+
+      if(
+        u.pathname.startsWith(
+          "/embed/"
+        )
+      ){
+
+        return (
+          u.pathname
+            .split("/")[2]
+          ||
+          null
+        );
+
+      }
+
+
+      if(
+        u.pathname.startsWith(
+          "/shorts/"
+        )
+      ){
+
+        return (
+          u.pathname
+            .split("/")[2]
+          ||
+          null
+        );
+
+      }
+
+    }
+
+  }catch{}
+
+
+  const m =
+    String(url).match(
+      /(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_-]{6,})/
+    );
+
+
+  return m
+    ? m[1]
+    : null;
+
 }
-function destroyYouTube(){ try{ state.yt?.destroy?.(); }catch{} state.yt = null; }
-function clearNativeVideo(){ try{ video.pause(); }catch{} video.removeAttribute("src"); video.load(); }
+
+
+function isYouTubeUrl(url){
+
+  return !!getYouTubeId(url);
+
+}
+
+
+function setYouTubeActive(
+  active
+){
+
+  youtubePlayer.classList.toggle(
+    "hidden",
+    !active
+  );
+
+  video.classList.toggle(
+    "hidden",
+    active
+  );
+
+  $("ytBlocker").classList.toggle(
+    "hidden",
+    !active
+  );
+
+  $("ytBottomBlocker").classList.toggle(
+    "hidden",
+    !active
+  );
+
+  $("ytTitleBlocker").classList.toggle(
+    "hidden",
+    !active
+  );
+
+}
+
+
+function destroyYouTube(){
+
+  try{
+
+    state.yt?.destroy?.();
+
+  }catch{}
+
+  state.yt =
+    null;
+
+}
+
+
+function clearNativeVideo(){
+
+  try{
+
+    video.pause();
+
+  }catch{}
+
+
+  video.removeAttribute(
+    "src"
+  );
+
+  video.load();
+
+}
+
+
 function loadYouTubeAPI(){
-  if(window.YT?.Player){ state.ytReady = true; return; }
-  if(document.querySelector('script[data-yt-api="1"]')) return;
-  const s = document.createElement("script");
-  s.src = "https://www.youtube.com/iframe_api"; s.dataset.ytApi = "1";
-  document.head.appendChild(s);
+
+  if(
+    window.YT?.Player
+  ){
+
+    state.ytReady =
+      true;
+
+    return;
+
+  }
+
+
+  if(
+    document.querySelector(
+      'script[data-yt-api="1"]'
+    )
+  )
+    return;
+
+
+  const s =
+    document.createElement(
+      "script"
+    );
+
+
+  s.src =
+    "https://www.youtube.com/iframe_api";
+
+
+  s.dataset.ytApi =
+    "1";
+
+
+  document.head.appendChild(
+    s
+  );
+
 }
-window.onYouTubeIframeAPIReady = function(){ state.ytReady = true; if(state.currentVideo?.is_youtube) createYouTubePlayer(state.currentVideo); };
+
+
+window.onYouTubeIframeAPIReady =
+function(){
+
+  state.ytReady =
+    true;
+
+
+  if(
+    state.currentVideo?.is_youtube
+  ){
+
+    createYouTubePlayer(
+      state.currentVideo
+    );
+
+  }
+
+};
+
 
 function fillYouTubeQuality(){
-  if(!state.yt || !qualitySelect) return;
+
+  if(
+    !state.yt ||
+    !qualitySelect
+  )
+    return;
+
+
   let levels = [];
-  try{ levels = state.yt.getAvailableQualityLevels?.() || []; }catch{}
-  const labels = {highres:"1080p",hd1080:"1080p",hd720:"720p",large:"480p",medium:"360p",small:"240p",tiny:"144p",auto:"تلقائية"};
-  qualitySelect.innerHTML = "";
-  const add = v => { const o = document.createElement("option"); o.value = v; o.textContent = labels[v] || v; qualitySelect.appendChild(o); };
-  add("auto"); [...new Set(levels)].forEach(q => add(q));
-  qualitySelect.classList.toggle("hidden", levels.length === 0);
-  qualitySelect.value = "auto";
+
+
+  try{
+
+    levels =
+      state.yt
+        .getAvailableQualityLevels?.()
+      || [];
+
+  }catch{}
+
+
+  const labels = {
+
+    highres:"1080p",
+    hd1080:"1080p",
+    hd720:"720p",
+    large:"480p",
+    medium:"360p",
+    small:"240p",
+    tiny:"144p",
+    auto:"تلقائية"
+
+  };
+
+
+  qualitySelect.innerHTML =
+    "";
+
+
+  const add =
+    v => {
+
+      const o =
+        document.createElement(
+          "option"
+        );
+
+      o.value =
+        v;
+
+      o.textContent =
+        labels[v] || v;
+
+      qualitySelect.appendChild(
+        o
+      );
+
+    };
+
+
+  add("auto");
+
+
+  [
+    ...new Set(levels)
+  ].forEach(
+    q => add(q)
+  );
+
+
+  qualitySelect.classList.toggle(
+    "hidden",
+    levels.length === 0
+  );
+
+
+  qualitySelect.value =
+    "auto";
+
 }
 
-function createYouTubePlayer(item){
-  const id = getYouTubeId(item.url);
-  if(!id || !window.YT?.Player) return;
+
+function createYouTubePlayer(
+  item
+){
+
+  const id =
+    getYouTubeId(
+      item.url
+    );
+
+
+  if(
+    !id ||
+    !window.YT?.Player
+  )
+    return;
+
+
   destroyYouTube();
-  youtubePlayer.innerHTML = "";
-  state.yt = new YT.Player(youtubePlayer,{
-    videoId:id,width:"100%",height:"100%",
-    playerVars:{autoplay:0,controls:1,rel:0,playsinline:1,modestbranding:1,iv_load_policy:3,fs:0,disablekb:1,origin:location.origin},
-    events:{
-      onReady:async()=>{
-        fillYouTubeQuality();
-        await loadSavedSession(item.id);
-        if(state.lastTime > 0){ try{ state.yt.seekTo(state.lastTime,true); }catch{} }
-        updateProgressUI(state.lastTime,state.yt.getDuration?.() || 0);
-      },
-      onStateChange:e=>{
-        if(e.data === YT.PlayerState.PLAYING) startYouTubeProgress();
-        if(e.data === YT.PlayerState.PAUSED) saveSession();
-        if(e.data === YT.PlayerState.ENDED){
-          state.completedByEnd = true;
-          const d = Number(state.yt.getDuration?.()) || 0;
-          if(d > 0) addWatchedRange(0,d);
-          updateProgressUI(d,d);
-          saveSession();
-          toast("✓ تم إكمال الدرس تلقائيًا");
+
+
+  youtubePlayer.innerHTML =
+    "";
+
+
+  state.yt =
+    new YT.Player(
+      youtubePlayer,
+      {
+
+        videoId:id,
+
+        width:"100%",
+
+        height:"100%",
+
+        playerVars:{
+
+          autoplay:0,
+
+          controls:1,
+
+          rel:0,
+
+          playsinline:1,
+
+          modestbranding:1,
+
+          iv_load_policy:3,
+
+          fs:0,
+
+          disablekb:1,
+
+          origin:
+            location.origin
+
+        },
+
+        events:{
+
+          onReady:
+            async()=>{
+
+              fillYouTubeQuality();
+
+              await loadSavedSession(
+                item.id
+              );
+
+
+              if(
+                state.lastTime > 0
+              ){
+
+                try{
+
+                  state.yt.seekTo(
+                    state.lastTime,
+                    true
+                  );
+
+                }catch{}
+
+              }
+
+
+              updateProgressUI(
+                state.lastTime,
+                state.yt.getDuration?.() ||
+                0
+              );
+
+            },
+
+
+          onStateChange:
+            e=>{
+
+              if(
+                e.data ===
+                YT.PlayerState.PLAYING
+              ){
+
+                startYouTubeProgress();
+
+              }
+
+
+              if(
+                e.data ===
+                YT.PlayerState.PAUSED
+              ){
+
+                saveSession();
+
+              }
+
+
+              if(
+                e.data ===
+                YT.PlayerState.ENDED
+              ){
+
+                state.completedByEnd =
+                  true;
+
+
+                const d =
+                  Number(
+                    state.yt.getDuration?.()
+                  ) || 0;
+
+
+                if(d > 0){
+
+                  addWatchedRange(
+                    0,
+                    d
+                  );
+
+                }
+
+
+                updateProgressUI(
+                  d,
+                  d
+                );
+
+
+                saveSession();
+
+
+                toast(
+                  "✓ تم إكمال الدرس تلقائيًا"
+                );
+
+              }
+
+            }
+
         }
+
       }
-    }
-  });
+
+    );
+
 }
 
-let youtubeProgressTimer = null;
-let youtubeLastTime = 0;
-let youtubeLastWall = 0;
+
+/* =========================================================
+   YOUTUBE PROGRESS
+========================================================= */
+
+let youtubeProgressTimer =
+  null;
+
+let youtubeLastTime =
+  0;
+
+let youtubeLastWall =
+  0;
+
+
 function startYouTubeProgress(){
-  clearInterval(youtubeProgressTimer);
-  try{ youtubeLastTime = Number(state.yt?.getCurrentTime?.()) || 0; }catch{ youtubeLastTime=0; }
-  youtubeLastWall = performance.now();
-  youtubeProgressTimer = setInterval(()=>{
-    if(!state.currentVideo?.is_youtube || !state.yt) return;
-    let current=0,duration=0;
-    try{ current=Number(state.yt.getCurrentTime?.())||0; duration=Number(state.yt.getDuration?.())||0; }catch{return;}
-    if(duration){
-      const now=performance.now(), previous=youtubeLastTime;
-      const wallDelta=youtubeLastWall ? (now-youtubeLastWall)/1000 : 0;
-      const mediaDelta=current-previous;
-      if(mediaDelta > 0 && mediaDelta <= Math.max(2.5,wallDelta*3+0.75)) addWatchedRange(previous,current);
-      youtubeLastTime=current;
-      youtubeLastWall=now;
-      state.lastTime=current;
-      updateProgressUI(current,duration);
-    }
-  },500);
-}
-function stopYouTubeProgress(){ clearInterval(youtubeProgressTimer); youtubeProgressTimer=null; }
 
-async function selectVideo(item){
-  if(!item) return;
-  sidebar.classList.remove("open");
-  if(!item.url){ toast("هذا الدرس لا يحتوي على رابط فيديو حاليًا."); return; }
+  clearInterval(
+    youtubeProgressTimer
+  );
+
+
+  try{
+
+    youtubeLastTime =
+      Number(
+        state.yt?.getCurrentTime?.()
+      ) || 0;
+
+  }catch{
+
+    youtubeLastTime =
+      0;
+
+  }
+
+
+  youtubeLastWall =
+    performance.now();
+
+
+  youtubeProgressTimer =
+    setInterval(
+      ()=>{
+
+        if(
+          !state.currentVideo?.is_youtube ||
+          !state.yt
+        )
+          return;
+
+
+        let current = 0;
+
+        let duration = 0;
+
+
+        try{
+
+          current =
+            Number(
+              state.yt.getCurrentTime?.()
+            ) || 0;
+
+          duration =
+            Number(
+              state.yt.getDuration?.()
+            ) || 0;
+
+        }catch{
+
+          return;
+
+        }
+
+
+        if(duration){
+
+          const now =
+            performance.now();
+
+
+          const previous =
+            youtubeLastTime;
+
+
+          const wallDelta =
+            youtubeLastWall
+              ? (now-youtubeLastWall)/1000
+              : 0;
+
+
+          const mediaDelta =
+            current-previous;
+
+
+          if(
+            mediaDelta > 0 &&
+            mediaDelta <=
+            Math.max(
+              2.5,
+              wallDelta*3+.75
+            )
+          ){
+
+            addWatchedRange(
+              previous,
+              current
+            );
+
+          }
+
+
+          youtubeLastTime =
+            current;
+
+          youtubeLastWall =
+            now;
+
+          state.lastTime =
+            current;
+
+
+          updateProgressUI(
+            current,
+            duration
+          );
+
+        }
+
+      },
+      500
+    );
+
+}
+
+
+function stopYouTubeProgress(){
+
+  clearInterval(
+    youtubeProgressTimer
+  );
+
+  youtubeProgressTimer =
+    null;
+
+}
+
+
+/* =========================================================
+   SELECT VIDEO
+========================================================= */
+
+async function selectVideo(
+  item
+){
+
+  if(!item)
+    return;
+
+
+  sidebar.classList.remove(
+    "open"
+  );
+
+
+  if(!item.url){
+
+    toast(
+      "هذا الدرس لا يحتوي على رابط فيديو حاليًا."
+    );
+
+    return;
+
+  }
+
+
+  /*
+    تأكد من أن الجلسة ما زالت صالحة
+    قبل تشغيل الفيديو
+  */
+
+  await verifyPlatformSession();
+
+
+  if(!videoSessionAlive)
+    return;
+
 
   stopYouTubeProgress();
-  state.currentVideoId = item.id;
-  state.currentVideo = {...item,is_youtube:isYouTubeUrl(item.url)};
-  state.lastTime = 0; state.watchedRanges = []; state.skips = 0; state.completedByEnd = false; state.sessionSaved = false;
-  resetNativeTracking();
-  videoTitle.textContent = item.title || "بدون عنوان";
-  videoSubtitle.textContent = item.class_group ? `المجموعة: ${item.class_group}` : "درس تعليمي";
-  document.querySelectorAll(".videoItem").forEach(el => el.classList.toggle("active", String(el.dataset.id) === String(item.id)));
 
-  if(state.currentVideo.is_youtube){
-    clearNativeVideo(); setYouTubeActive(true); loadYouTubeAPI();
-    if(state.ytReady) createYouTubePlayer(item);
+
+  state.currentVideoId =
+    item.id;
+
+
+  state.currentVideo =
+    {
+      ...item,
+      is_youtube:
+        isYouTubeUrl(
+          item.url
+        )
+    };
+
+
+  state.lastTime =
+    0;
+
+  state.watchedRanges =
+    [];
+
+  state.skips =
+    0;
+
+  state.completedByEnd =
+    false;
+
+  state.sessionSaved =
+    false;
+
+
+  resetNativeTracking();
+
+
+  videoTitle.textContent =
+    item.title ||
+    "بدون عنوان";
+
+
+  videoSubtitle.textContent =
+    item.class_group
+      ? `المجموعة: ${item.class_group}`
+      : "درس تعليمي";
+
+
+  document
+    .querySelectorAll(
+      ".videoItem"
+    )
+    .forEach(
+      el =>
+        el.classList.toggle(
+          "active",
+          String(
+            el.dataset.id
+          ) ===
+          String(item.id)
+        )
+    );
+
+
+  if(
+    state.currentVideo.is_youtube
+  ){
+
+    clearNativeVideo();
+
+    setYouTubeActive(
+      true
+    );
+
+    loadYouTubeAPI();
+
+
+    if(state.ytReady){
+
+      createYouTubePlayer(
+        item
+      );
+
+    }
+
   }else{
-    setYouTubeActive(false); destroyYouTube(); prepareNativeVideo(item);
+
+    setYouTubeActive(
+      false
+    );
+
+    destroyYouTube();
+
+    prepareNativeVideo(
+      item
+    );
+
   }
-  moveWatermark(); updateProgressUI(0,0);
+
+
+  moveWatermark();
+
+  updateProgressUI(
+    0,
+    0
+  );
+
 }
 
-function prepareNativeVideo(item){
-  resetNativeTracking();
-  clearNativeVideo();
-  video.src = item.url;
-  video.load();
-  video.playbackRate = 1;
-  video.addEventListener("loadedmetadata",async()=>{
-    await loadSavedSession(item.id);
-    if(state.lastTime > 0){ try{ video.currentTime = state.lastTime; }catch{} }
-    updateProgressUI(video.currentTime,video.duration);
-  },{once:true});
-}
 
 /* =========================================================
-   تحميل الفيديوهات — لا يتم ربطه ببيانات البروفايل أو getCurrentUser
+   NATIVE VIDEO
 ========================================================= */
-async function loadVideos(){
-  videoList.innerHTML = '<div class="loadingItem">جاري تحميل الدروس...</div>';
-  try{
-    const {data,error} = await client.from('videos').select('id,title,url,class_group,is_premium').order('id',{ascending:true});
-    if(error) throw error;
-    state.all = Array.isArray(data) ? data : [];
-    render();
-    if(!state.all.length){
-      videoTitle.textContent = "لا توجد فيديوهات متاحة حاليًا";
-      videoSubtitle.textContent = "سيظهر المحتوى هنا عند إضافة الدروس.";
+
+function prepareNativeVideo(
+  item
+){
+
+  resetNativeTracking();
+
+  clearNativeVideo();
+
+
+  video.src =
+    item.url;
+
+
+  video.load();
+
+  video.playbackRate =
+    1;
+
+
+  video.addEventListener(
+    "loadedmetadata",
+    async()=>{
+
+      await loadSavedSession(
+        item.id
+      );
+
+
+      if(
+        state.lastTime > 0
+      ){
+
+        try{
+
+          video.currentTime =
+            state.lastTime;
+
+        }catch{}
+
+      }
+
+
+      updateProgressUI(
+        video.currentTime,
+        video.duration
+      );
+
+    },
+    {
+      once:true
     }
-  }catch(error){
-    console.error('[Videos]',error);
-    videoList.innerHTML = '<div class="emptyItem">❌ تعذر تحميل الدروس حاليًا.</div>';
-    toast('تعذر تحميل الدروس حاليًا.');
-  }
+  );
+
 }
+
+
+/* =========================================================
+   LOAD VIDEOS
+========================================================= */
+
+async function loadVideos(){
+
+  videoList.innerHTML =
+    '<div class="loadingItem">جاري تحميل الدروس...</div>';
+
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await client
+        .from("videos")
+        .select(
+          "id,title,url,class_group,is_premium"
+        )
+        .order(
+          "id",
+          {
+            ascending:true
+          }
+        );
+
+
+    if(error)
+      throw error;
+
+
+    state.all =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+    render();
+
+
+    if(
+      !state.all.length
+    ){
+
+      videoTitle.textContent =
+        "لا توجد فيديوهات متاحة حاليًا";
+
+
+      videoSubtitle.textContent =
+        "سيظهر المحتوى هنا عند إضافة الدروس.";
+
+    }
+
+  }catch(error){
+
+    console.error(
+      "[Videos]",
+      error
+    );
+
+
+    videoList.innerHTML =
+      '<div class="emptyItem">❌ تعذر تحميل الدروس حاليًا.</div>';
+
+
+    toast(
+      "تعذر تحميل الدروس حاليًا."
+    );
+
+  }
+
+}
+
 
 function render(){
-  const q = ($("searchInput").value || "").trim().toLowerCase();
-  state.filtered = state.all.filter(v => !q || String(v.title || "").toLowerCase().includes(q) || String(v.class_group || "").toLowerCase().includes(q));
-  videoCount.textContent = String(state.filtered.length);
-  if(!state.filtered.length){ videoList.innerHTML = '<div class="emptyItem">لا توجد دروس مطابقة.</div>'; return; }
-  videoList.innerHTML = "";
-  state.filtered.forEach(item=>{
-    const el = document.createElement("div"); el.className="videoItem"; el.dataset.id=String(item.id); el.tabIndex=0;
-    const title=document.createElement("div"); title.className="videoItemTitle"; title.textContent=item.title || "بدون عنوان";
-    const meta=document.createElement("div"); meta.className="videoItemMeta"; meta.textContent=item.class_group || "درس";
-    el.append(title,meta);
-    el.addEventListener("click",()=>selectVideo(item));
-    el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectVideo(item);}});
-    videoList.appendChild(el);
-  });
-}
 
-/* =========================================================
-   WATCHED PROGRESS — يتحسب من التشغيل الفعلي فقط
-   الـ seek / تقديم الفيديو / تغيير currentTime لا يضيف تقدمًا.
-   ========================================================= */
-function resetNativeTracking(){
-  state.nativePlaying = false;
-  state.nativeLastTime = Number(video.currentTime) || 0;
-  state.nativeLastWall = 0;
-}
-video.addEventListener("play",()=>{
-  state.nativePlaying = true;
-  state.nativeLastTime = Number(video.currentTime) || 0;
-  state.nativeLastWall = performance.now();
-});
-video.addEventListener("pause",()=>{
-  state.nativePlaying = false;
-  state.lastTime = Number(video.currentTime) || 0;
-  updateProgressUI(video.currentTime,video.duration);
-  saveSession();
-});
-video.addEventListener("seeking",()=>{
-  state.nativeLastTime = Number(video.currentTime) || 0;
-  state.nativeLastWall = performance.now();
-});
-video.addEventListener("seeked",()=>{
-  state.nativeLastTime = Number(video.currentTime) || 0;
-  state.nativeLastWall = performance.now();
-  state.lastTime = Number(video.currentTime) || 0;
-  updateProgressUI(video.currentTime,video.duration);
-});
-video.addEventListener("timeupdate",()=>{
-  if(!video.duration || !state.nativePlaying) return;
-  const now = performance.now();
-  const current = Number(video.currentTime) || 0;
-  const previous = Number(state.nativeLastTime) || 0;
-  const wallDelta = state.nativeLastWall ? (now-state.nativeLastWall)/1000 : 0;
-  const mediaDelta = current-previous;
-  if(mediaDelta > 0 && mediaDelta <= Math.max(2.5,wallDelta*3+0.75)) addWatchedRange(previous,current);
-  state.nativeLastTime = current;
-  state.nativeLastWall = now;
-  state.lastTime = current;
-  updateProgressUI(current,video.duration);
-});
-video.addEventListener("ended",()=>{
-  state.nativePlaying = false;
-  state.completedByEnd = true;
-  if(Number.isFinite(video.duration) && video.duration > 0) addWatchedRange(0,video.duration);
-  updateProgressUI(video.duration,video.duration);
-  saveSession();
-  persistLocalProgress();
-  toast("✓ تم إكمال الدرس تلقائيًا");
-});
-video.addEventListener("ratechange",()=>document.querySelectorAll(".speedBtn").forEach(b=>b.classList.toggle("active",Number(b.dataset.speed)===video.playbackRate)));
-
-document.querySelectorAll(".speedBtn").forEach(btn=>btn.addEventListener("click",()=>{
-  const r=Number(btn.dataset.speed);
-  if(state.currentVideo?.is_youtube){ try{state.yt?.setPlaybackRate(r);}catch{} }
-  else video.playbackRate=r;
-  document.querySelectorAll(".speedBtn").forEach(b=>b.classList.toggle("active",b===btn));
-}));
-
-qualitySelect.addEventListener("change",()=>{
-  if(!state.yt)return;
-  const q=qualitySelect.value;
-  try{if(q==="auto")state.yt.setPlaybackQuality("default");else state.yt.setPlaybackQuality(q);}catch(e){console.warn(e);}
-});
-
-$("searchInput").addEventListener("input",render);
-$("mobileMenu").addEventListener("click",()=>sidebar.classList.toggle("open"));
-$("logoutBtn").addEventListener("click",async function logout(){
-
-try{
-
-await client.rpc(
-"release_student_session",
-{
-p_session_id:
-localStorage.getItem("platform_session_id")
-}
-);
-
-}catch(e){
-
-console.error(e);
-
-}
+  const q =
+    (
+      $("searchInput").value ||
+      ""
+    )
+      .trim()
+      .toLowerCase();
 
 
-try{
+  state.filtered =
+    state.all.filter(
+      v =>
+        !q ||
+        String(
+          v.title || ""
+        )
+          .toLowerCase()
+          .includes(q) ||
 
-await client.auth.signOut();
-
-}catch(e){
-
-console.error(e);
-
-}
-
-
-localStorage.removeItem(
-"platform_session_id"
-);
-
-localStorage.removeItem(
-"user"
-);
+        String(
+          v.class_group || ""
+        )
+          .toLowerCase()
+          .includes(q)
+    );
 
 
-window.location.replace(
-"login.html"
-);
+  videoCount.textContent =
+    String(
+      state.filtered.length
+    );
 
-}
 
-/* =========================================================
-   FULLSCREEN — الشاشة الكاملة تشمل العنوان + الفيديو + الشريط السفلي
-========================================================= */
-function isFullscreen(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
-function isMobileViewport(){ return window.matchMedia?.("(max-width:1000px)").matches ?? false; }
-async function lockLandscapeOnMobile(){
-  if(!isMobileViewport()) return;
-  try{
-    if(screen.orientation?.lock){
-      await screen.orientation.lock("landscape");
-      state.orientationLocked=true;
-    }
-  }catch(e){
-    state.orientationLocked=false;
-    console.warn("[Orientation lock]",e);
-  }
-}
-async function unlockOrientation(){
-  if(!state.orientationLocked) return;
-  try{ screen.orientation?.unlock?.(); }catch(e){ console.warn(e); }
-  state.orientationLocked=false;
-}
-async function requestPlayerFullscreen(){
-  try{
-    if(playerCard.requestFullscreen) await playerCard.requestFullscreen({navigationUI:"hide"});
-    else if(playerCard.webkitRequestFullscreen) playerCard.webkitRequestFullscreen();
-    else { toast("المتصفح لا يدعم ملء الشاشة الكامل."); return; }
-    await new Promise(r=>setTimeout(r,100));
-    await lockLandscapeOnMobile();
-    updateFullscreenButton();
-    setTimeout(moveWatermark,120);
-  }catch(e){ console.warn("[Fullscreen]",e); toast("تعذر تشغيل ملء الشاشة."); }
-}
-async function exitFullscreen(){
-  try{
-    await unlockOrientation();
-    if(document.exitFullscreen) await document.exitFullscreen();
-    else if(document.webkitExitFullscreen) await document.webkitExitFullscreen();
-  }catch(e){ console.warn(e); }
-}
-fullscreenBtn.addEventListener("click",async()=>{
-  if(isFullscreen()) await exitFullscreen();
-  else await requestPlayerFullscreen();
-});
+  if(
+    !state.filtered.length
+  ){
 
-function updateFullscreenButton(){ fullscreenBtn.textContent = isFullscreen() ? "⛶ إغلاق ملء الشاشة" : "⛶ ملء الشاشة"; }
+    videoList.innerHTML =
+      '<div class="emptyItem">لا توجد دروس مطابقة.</div>';
 
-/* إذا فتح المتصفح fullscreen للفيديو نفسه، نعيده فورًا إلى playerCard حتى لا يختفي العنوان والشريط. */
-document.addEventListener("fullscreenchange",async()=>{
-  updateFullscreenButton();
-  const el=document.fullscreenElement;
-  if(el && !state.fullscreenRedirecting && (el===video || el===youtubePlayer || el.tagName==="IFRAME")){
-    state.fullscreenRedirecting=true;
-    try{ await exitFullscreen(); await requestPlayerFullscreen(); }catch(e){ console.warn(e); }
-    setTimeout(()=>state.fullscreenRedirecting=false,600);
     return;
+
   }
-  if(el) await lockLandscapeOnMobile();
-  else await unlockOrientation();
-  setTimeout(moveWatermark,100);
-});
-document.addEventListener("webkitfullscreenchange",async()=>{
-  updateFullscreenButton();
-  if(document.webkitFullscreenElement) await lockLandscapeOnMobile();
-  else await unlockOrientation();
-  setTimeout(moveWatermark,100);
-});
-if(screen.orientation?.addEventListener){
-  screen.orientation.addEventListener("change",()=>{
-    if(isFullscreen()) setTimeout(moveWatermark,150);
-  });
+
+
+  videoList.innerHTML =
+    "";
+
+
+  state.filtered.forEach(
+    item=>{
+
+      const el =
+        document.createElement(
+          "div"
+        );
+
+
+      el.className =
+        "videoItem";
+
+
+      el.dataset.id =
+        String(item.id);
+
+
+      el.tabIndex =
+        0;
+
+
+      const title =
+        document.createElement(
+          "div"
+        );
+
+
+      title.className =
+        "videoItemTitle";
+
+
+      title.textContent =
+        item.title ||
+        "بدون عنوان";
+
+
+      const meta =
+        document.createElement(
+          "div"
+        );
+
+
+      meta.className =
+        "videoItemMeta";
+
+
+      meta.textContent =
+        item.class_group ||
+        "درس";
+
+
+      el.append(
+        title,
+        meta
+      );
+
+
+      el.addEventListener(
+        "click",
+        () =>
+          selectVideo(item)
+      );
+
+
+      el.addEventListener(
+        "keydown",
+        e=>{
+
+          if(
+            e.key === "Enter" ||
+            e.key === " "
+          ){
+
+            e.preventDefault();
+
+            selectVideo(item);
+
+          }
+
+        }
+      );
+
+
+      videoList.appendChild(
+        el
+      );
+
+    }
+  );
+
 }
+
+
 /* =========================================================
-   حماية المحتوى — حماية قوية قدر الإمكان من داخل المتصفح
-   ملاحظة: المتصفح لا يوفّر API موثوقًا لاكتشاف كل أدوات
-   Screen Recording / Screenshot الخاصة بنظام التشغيل. لذلك
-   نستخدم عدة طبقات: تحذير قبل التشغيل + إيقاف عند إخفاء الصفحة
-   + كشف PrintScreen عندما يرسل المتصفح الحدث + منع بعض أوامر
-   النسخ/الحفظ + طبقة سوداء فوق الفيديو عند الاشتباه.
+   NATIVE WATCH PROGRESS
 ========================================================= */
-const securityWarning = $("securityWarning"), securityAcknowledge = $("securityAcknowledge");
+
+function resetNativeTracking(){
+
+  state.nativePlaying =
+    false;
+
+  state.nativeLastTime =
+    Number(
+      video.currentTime
+    ) || 0;
+
+  state.nativeLastWall =
+    0;
+
+}
+
+
+video.addEventListener(
+  "play",
+  ()=>{
+
+    state.nativePlaying =
+      true;
+
+    state.nativeLastTime =
+      Number(
+        video.currentTime
+      ) || 0;
+
+    state.nativeLastWall =
+      performance.now();
+
+  }
+);
+
+
+video.addEventListener(
+  "pause",
+  ()=>{
+
+    state.nativePlaying =
+      false;
+
+    state.lastTime =
+      Number(
+        video.currentTime
+      ) || 0;
+
+
+    updateProgressUI(
+      video.currentTime,
+      video.duration
+    );
+
+
+    saveSession();
+
+  }
+);
+
+
+video.addEventListener(
+  "seeking",
+  ()=>{
+
+    state.nativeLastTime =
+      Number(
+        video.currentTime
+      ) || 0;
+
+    state.nativeLastWall =
+      performance.now();
+
+  }
+);
+
+
+video.addEventListener(
+  "seeked",
+  ()=>{
+
+    state.nativeLastTime =
+      Number(
+        video.currentTime
+      ) || 0;
+
+    state.nativeLastWall =
+      performance.now();
+
+    state.lastTime =
+      Number(
+        video.currentTime
+      ) || 0;
+
+
+    updateProgressUI(
+      video.currentTime,
+      video.duration
+    );
+
+  }
+);
+
+
+video.addEventListener(
+  "timeupdate",
+  ()=>{
+
+    if(
+      !video.duration ||
+      !state.nativePlaying
+    )
+      return;
+
+
+    const now =
+      performance.now();
+
+
+    const current =
+      Number(
+        video.currentTime
+      ) || 0;
+
+
+    const previous =
+      Number(
+        state.nativeLastTime
+      ) || 0;
+
+
+    const wallDelta =
+      state.nativeLastWall
+        ? (
+            now -
+            state.nativeLastWall
+          ) / 1000
+        : 0;
+
+
+    const mediaDelta =
+      current -
+      previous;
+
+
+    if(
+      mediaDelta > 0 &&
+      mediaDelta <=
+      Math.max(
+        2.5,
+        wallDelta * 3 +
+        .75
+      )
+    ){
+
+      addWatchedRange(
+        previous,
+        current
+      );
+
+    }
+
+
+    state.nativeLastTime =
+      current;
+
+    state.nativeLastWall =
+      now;
+
+    state.lastTime =
+      current;
+
+
+    updateProgressUI(
+      current,
+      video.duration
+    );
+
+  }
+);
+
+
+video.addEventListener(
+  "ended",
+  ()=>{
+
+    state.nativePlaying =
+      false;
+
+    state.completedByEnd =
+      true;
+
+
+    if(
+      Number.isFinite(
+        video.duration
+      ) &&
+      video.duration > 0
+    ){
+
+      addWatchedRange(
+        0,
+        video.duration
+      );
+
+    }
+
+
+    updateProgressUI(
+      video.duration,
+      video.duration
+    );
+
+
+    saveSession();
+
+    persistLocalProgress();
+
+
+    toast(
+      "✓ تم إكمال الدرس تلقائيًا"
+    );
+
+  }
+);
+
+
+video.addEventListener(
+  "ratechange",
+  () =>
+    document
+      .querySelectorAll(
+        ".speedBtn"
+      )
+      .forEach(
+        b =>
+          b.classList.toggle(
+            "active",
+            Number(
+              b.dataset.speed
+            ) ===
+            video.playbackRate
+          )
+      )
+);
+
+
+/* =========================================================
+   SPEED
+========================================================= */
+
+document
+  .querySelectorAll(
+    ".speedBtn"
+  )
+  .forEach(
+    btn =>
+      btn.addEventListener(
+        "click",
+        ()=>{
+
+          const r =
+            Number(
+              btn.dataset.speed
+            );
+
+
+          if(
+            state.currentVideo?.is_youtube
+          ){
+
+            try{
+
+              state.yt?.setPlaybackRate(
+                r
+              );
+
+            }catch{}
+
+          }else{
+
+            video.playbackRate =
+              r;
+
+          }
+
+
+          document
+            .querySelectorAll(
+              ".speedBtn"
+            )
+            .forEach(
+              b =>
+                b.classList.toggle(
+                  "active",
+                  b === btn
+                )
+            );
+
+        }
+      )
+  );
+
+
+/* =========================================================
+   QUALITY
+========================================================= */
+
+qualitySelect.addEventListener(
+  "change",
+  ()=>{
+
+    if(!state.yt)
+      return;
+
+
+    const q =
+      qualitySelect.value;
+
+
+    try{
+
+      if(q === "auto"){
+
+        state.yt.setPlaybackQuality(
+          "default"
+        );
+
+      }else{
+
+        state.yt.setPlaybackQuality(
+          q
+        );
+
+      }
+
+    }catch(e){
+
+      console.warn(e);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   SEARCH / MENU
+========================================================= */
+
+$("searchInput")
+  .addEventListener(
+    "input",
+    render
+  );
+
+
+$("mobileMenu")
+  .addEventListener(
+    "click",
+    () =>
+      sidebar.classList.toggle(
+        "open"
+      )
+  );
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+$("logoutBtn")
+  .addEventListener(
+    "click",
+    async function(){
+
+      try{
+
+        await client.rpc(
+          "release_student_session",
+          {
+            p_session_id:
+              localStorage.getItem(
+                "platform_session_id"
+              )
+          }
+        );
+
+      }catch(e){
+
+        console.error(e);
+
+      }
+
+
+      try{
+
+        await client.auth.signOut();
+
+      }catch(e){
+
+        console.error(e);
+
+      }
+
+
+      localStorage.removeItem(
+        "platform_session_id"
+      );
+
+      localStorage.removeItem(
+        "user"
+      );
+
+
+      window.location.replace(
+        "login.html"
+      );
+
+    }
+  );
+
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+function isFullscreen(){
+
+  return !!(
+    document.fullscreenElement ||
+    document.webkitFullscreenElement
+  );
+
+}
+
+
+function isMobileViewport(){
+
+  return (
+    window.matchMedia?.(
+      "(max-width:1000px)"
+    ).matches ??
+    false
+  );
+
+}
+
+
+async function lockLandscapeOnMobile(){
+
+  if(
+    !isMobileViewport()
+  )
+    return;
+
+
+  try{
+
+    if(
+      screen.orientation?.lock
+    ){
+
+      await screen.orientation.lock(
+        "landscape"
+      );
+
+      state.orientationLocked =
+        true;
+
+    }
+
+  }catch(e){
+
+    state.orientationLocked =
+      false;
+
+    console.warn(
+      "[Orientation lock]",
+      e
+    );
+
+  }
+
+}
+
+
+async function unlockOrientation(){
+
+  if(
+    !state.orientationLocked
+  )
+    return;
+
+
+  try{
+
+    screen.orientation?.unlock?.();
+
+  }catch(e){
+
+    console.warn(e);
+
+  }
+
+
+  state.orientationLocked =
+    false;
+
+}
+
+
+async function requestPlayerFullscreen(){
+
+  try{
+
+    if(
+      playerCard.requestFullscreen
+    ){
+
+      await playerCard.requestFullscreen(
+        {
+          navigationUI:"hide"
+        }
+      );
+
+    }else if(
+      playerCard.webkitRequestFullscreen
+    ){
+
+      playerCard.webkitRequestFullscreen();
+
+    }else{
+
+      toast(
+        "المتصفح لا يدعم ملء الشاشة الكامل."
+      );
+
+      return;
+
+    }
+
+
+    await new Promise(
+      r =>
+        setTimeout(
+          r,
+          100
+        )
+    );
+
+
+    await lockLandscapeOnMobile();
+
+    updateFullscreenButton();
+
+
+    setTimeout(
+      moveWatermark,
+      120
+    );
+
+  }catch(e){
+
+    console.warn(
+      "[Fullscreen]",
+      e
+    );
+
+
+    toast(
+      "تعذر تشغيل ملء الشاشة."
+    );
+
+  }
+
+}
+
+
+async function exitFullscreen(){
+
+  try{
+
+    await unlockOrientation();
+
+
+    if(
+      document.exitFullscreen
+    ){
+
+      await document.exitFullscreen();
+
+    }else if(
+      document.webkitExitFullscreen
+    ){
+
+      await document.webkitExitFullscreen();
+
+    }
+
+  }catch(e){
+
+    console.warn(e);
+
+  }
+
+}
+
+
+fullscreenBtn.addEventListener(
+  "click",
+  async()=>{
+
+    if(
+      isFullscreen()
+    ){
+
+      await exitFullscreen();
+
+    }else{
+
+      await requestPlayerFullscreen();
+
+    }
+
+  }
+);
+
+
+function updateFullscreenButton(){
+
+  fullscreenBtn.textContent =
+    isFullscreen()
+      ? "⛶ إغلاق ملء الشاشة"
+      : "⛶ ملء الشاشة";
+
+}
+
+
+document.addEventListener(
+  "fullscreenchange",
+  async()=>{
+
+    updateFullscreenButton();
+
+
+    const el =
+      document.fullscreenElement;
+
+
+    if(
+      el &&
+      !state.fullscreenRedirecting &&
+      (
+        el === video ||
+        el === youtubePlayer ||
+        el.tagName === "IFRAME"
+      )
+    ){
+
+      state.fullscreenRedirecting =
+        true;
+
+
+      try{
+
+        await exitFullscreen();
+
+        await requestPlayerFullscreen();
+
+      }catch(e){
+
+        console.warn(e);
+
+      }
+
+
+      setTimeout(
+        () =>
+          state.fullscreenRedirecting =
+            false,
+        600
+      );
+
+
+      return;
+
+    }
+
+
+    if(el)
+      await lockLandscapeOnMobile();
+    else
+      await unlockOrientation();
+
+
+    setTimeout(
+      moveWatermark,
+      100
+    );
+
+  }
+);
+
+
+document.addEventListener(
+  "webkitfullscreenchange",
+  async()=>{
+
+    updateFullscreenButton();
+
+
+    if(
+      document.webkitFullscreenElement
+    ){
+
+      await lockLandscapeOnMobile();
+
+    }else{
+
+      await unlockOrientation();
+
+    }
+
+
+    setTimeout(
+      moveWatermark,
+      100
+    );
+
+  }
+);
+
+
+if(
+  screen.orientation?.addEventListener
+){
+
+  screen.orientation.addEventListener(
+    "change",
+    ()=>{
+
+      if(
+        isFullscreen()
+      ){
+
+        setTimeout(
+          moveWatermark,
+          150
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+window.addEventListener(
+  "orientationchange",
+  ()=>{
+
+    setTimeout(
+      ()=>{
+        moveWatermark();
+        updateFullscreenButton();
+      },
+      150
+    );
+
+  }
+);
+
+
+window.addEventListener(
+  "resize",
+  ()=>{
+
+    if(
+      isFullscreen()
+    ){
+
+      setTimeout(
+        moveWatermark,
+        80
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   CONTENT PROTECTION
+========================================================= */
 
 function pauseCurrentMedia(){
+
   try{
-    if(state.currentVideo?.is_youtube) state.yt?.pauseVideo?.();
-    else video.pause();
+
+    if(
+      state.currentVideo?.is_youtube
+    ){
+
+      state.yt?.pauseVideo?.();
+
+    }else{
+
+      video.pause();
+
+    }
+
   }catch{}
+
 }
 
-function showCaptureShield(reason="capture"){
+
+function showCaptureShield(
+  reason="capture"
+){
+
   state.securityIncidents++;
-  state.captureShieldActive=true;
-  state.wasPlayingBeforeShield=state.currentVideo?.is_youtube ? true : !video.paused;
+
+  state.captureShieldActive =
+    true;
+
+
+  state.wasPlayingBeforeShield =
+    state.currentVideo?.is_youtube
+      ? true
+      : !video.paused;
+
+
   pauseCurrentMedia();
-  antiRecord.classList.add("show");
-  captureShield.classList.add("show");
-  if(reason === "printscr") toast("⚠️ تم اكتشاف محاولة تصوير الشاشة وتم إيقاف الفيديو.");
-  else if(reason === "blur") toast("⚠️ تم إيقاف الفيديو مؤقتًا لحماية المحتوى.");
-  else toast("⚠️ تم إخفاء المحتوى لحماية الدرس.");
+
+
+  antiRecord.classList.add(
+    "show"
+  );
+
+  captureShield.classList.add(
+    "show"
+  );
+
+
+  if(
+    reason === "printscr"
+  ){
+
+    toast(
+      "⚠️ تم اكتشاف محاولة تصوير الشاشة وتم إيقاف الفيديو."
+    );
+
+  }else if(
+    reason === "blur"
+  ){
+
+    toast(
+      "⚠️ تم إيقاف الفيديو مؤقتًا لحماية المحتوى."
+    );
+
+  }else{
+
+    toast(
+      "⚠️ تم إخفاء المحتوى لحماية الدرس."
+    );
+
+  }
+
 }
+
 
 function hideCaptureShield(){
-  if(!state.captureShieldActive)return;
-  state.captureShieldActive=false;
-  antiRecord.classList.remove("show");
-  captureShield.classList.remove("show");
+
+  if(
+    !state.captureShieldActive
+  )
+    return;
+
+
+  state.captureShieldActive =
+    false;
+
+
+  antiRecord.classList.remove(
+    "show"
+  );
+
+
+  captureShield.classList.remove(
+    "show"
+  );
+
 }
 
-securityAcknowledge.addEventListener("click",()=>{
-  state.securityAcknowledged=true;
-  securityWarning.classList.remove("show");
-});
-
-/* إيقاف فوري إذا أصبحت الصفحة غير مرئية — يشمل تبديل التبويب/نافذة أخرى. */
-document.addEventListener("visibilitychange",()=>{
-  if(document.hidden){
-    persistLocalProgress();
-    saveSession();
-    if(state.securityAcknowledged) showCaptureShield("hidden");
-  }else if(state.captureShieldActive){
-    hideCaptureShield();
-  }
-});
-window.addEventListener("pagehide",()=>{ persistLocalProgress(); saveSession(); });
-window.addEventListener("pageshow",()=>{ if(state.captureShieldActive) hideCaptureShield(); });
-window.addEventListener("orientationchange",()=>{
-  setTimeout(()=>{ moveWatermark(); updateFullscreenButton(); },150);
-});
-window.addEventListener("resize",()=>{
-  if(isFullscreen()) setTimeout(moveWatermark,80);
-});
-
-/* عند فقدان تركيز النافذة ننتظر قليلًا لتجنب false-positive أثناء انتقالات الواجهة. */
-window.addEventListener("blur",()=>{
-  if(!state.securityAcknowledged)return;
-  clearTimeout(state.blurTimer);
-  state.blurTimer=setTimeout(()=>{
-    if(document.hidden || !document.hasFocus()) showCaptureShield("blur");
-  },180);
-});
-window.addEventListener("focus",()=>{ clearTimeout(state.blurTimer); });
-
-/* PrintScreen: يمكن لبعض المتصفحات تمرير هذا الحدث للصفحة. */
-window.addEventListener("keydown",e=>{
-  const k=(e.key||"").toLowerCase();
-  if(e.key === "PrintScreen" || k === "printscreen") {
-    e.preventDefault();
-    e.stopPropagation();
-    if(state.securityAcknowledged){
-      showCaptureShield("printscr");
-      setTimeout(()=>{
-        if(!document.hidden){
-          hideCaptureShield();
-        }
-      },3000);
-    }
-    try{ navigator.clipboard?.writeText(""); }catch{}
-    return false;
-  }
-  /* اختصارات الحفظ/الطباعة/عرض المصدر */
-  if((e.ctrlKey||e.metaKey) && ["s","p","u"].includes(k)){
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  }
-  if(e.key === "F12" || (e.ctrlKey && e.shiftKey && ["i","j","c"].includes(k))){
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  }
-});
-
-/* منع قائمة الزر الأيمن والنسخ والسحب من صفحة المحتوى. */
-document.addEventListener("contextmenu",e=>e.preventDefault());
-document.addEventListener("dragstart",e=>e.preventDefault());
-document.addEventListener("copy",e=>e.preventDefault());
-
-/* عند الطباعة أو قبل مغادرة الصفحة نخفي المحتوى. */
-window.addEventListener("beforeprint",()=>{ if(state.securityAcknowledged) showCaptureShield("print"); });
-
-/* إذا بدأ التقاط شاشة عبر API من داخل الصفحة نفسها، نخفي الفيديو فورًا.
-   هذا لا يستطيع اكتشاف مسجل النظام الخارجي الذي يعمل خارج الصفحة. */
-try{
-  if(navigator.mediaDevices?.getDisplayMedia){
-    const originalGetDisplayMedia=navigator.mediaDevices.getDisplayMedia.bind(navigator.mediaDevices);
-    navigator.mediaDevices.getDisplayMedia=async function(...args){
-      if(state.securityAcknowledged) showCaptureShield("displaymedia");
-      try{
-        const stream=await originalGetDisplayMedia(...args);
-        stream?.getTracks?.().forEach(track=>track.addEventListener("ended",()=>{
-          if(!document.hidden) hideCaptureShield();
-        }));
-        return stream;
-      }catch(err){
-        if(state.securityAcknowledged) hideCaptureShield();
-        throw err;
-      }
-    };
-  }
-}catch(e){ console.warn("[Screen Capture Guard]",e); }
-
-window.addEventListener("beforeunload",()=>{persistLocalProgress();saveSession();});
 
 /* =========================================================
-   INIT — الفيديوهات أولاً حتى لا تتأثر بتحميل بيانات الطالب
+   VISIBILITY
 ========================================================= */
+
+document.addEventListener(
+  "visibilitychange",
+  ()=>{
+
+    if(
+      document.hidden
+    ){
+
+      persistLocalProgress();
+
+      saveSession();
+
+
+      if(
+        state.securityAcknowledged
+      ){
+
+        showCaptureShield(
+          "hidden"
+        );
+
+      }
+
+    }else if(
+      state.captureShieldActive
+    ){
+
+      hideCaptureShield();
+
+    }
+
+  }
+);
+
+
+window.addEventListener(
+  "pagehide",
+  ()=>{
+    persistLocalProgress();
+    saveSession();
+  }
+);
+
+
+window.addEventListener(
+  "pageshow",
+  ()=>{
+
+    if(
+      state.captureShieldActive
+    ){
+
+      hideCaptureShield();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   BLUR
+   مهم:
+   لا نعتمد على blur وحده لأنه قد يحصل أثناء
+   الضغط على عناصر الواجهة.
+========================================================= */
+
+window.addEventListener(
+  "blur",
+  ()=>{
+
+    if(
+      !state.securityAcknowledged ||
+      state.securityButtonLock
+    )
+      return;
+
+
+    clearTimeout(
+      state.blurTimer
+    );
+
+
+    state.blurTimer =
+      setTimeout(
+        ()=>{
+
+          if(
+            state.securityButtonLock
+          )
+            return;
+
+
+          /*
+            نتحقق من visibility أولًا.
+            لا نوقف المحتوى لمجرد فقدان focus.
+          */
+
+          if(
+            document.hidden
+          ){
+
+            showCaptureShield(
+              "blur"
+            );
+
+          }
+
+        },
+        180
+      );
+
+  }
+);
+
+
+window.addEventListener(
+  "focus",
+  ()=>{
+    clearTimeout(
+      state.blurTimer
+    );
+  }
+);
+
+
+/* =========================================================
+   PRINT SCREEN
+========================================================= */
+
+window.addEventListener(
+  "keydown",
+  e=>{
+
+    const k =
+      (e.key || "")
+        .toLowerCase();
+
+
+    if(
+      e.key === "PrintScreen" ||
+      k === "printscreen"
+    ){
+
+      e.preventDefault();
+
+      e.stopPropagation();
+
+
+      if(
+        state.securityAcknowledged
+      ){
+
+        showCaptureShield(
+          "printscr"
+        );
+
+
+        setTimeout(
+          ()=>{
+
+            if(
+              !document.hidden
+            ){
+
+              hideCaptureShield();
+
+            }
+
+          },
+          3000
+        );
+
+      }
+
+
+      try{
+
+        navigator.clipboard?.writeText(
+          ""
+        );
+
+      }catch{}
+
+
+      return false;
+
+    }
+
+
+    if(
+      (e.ctrlKey || e.metaKey) &&
+      ["s","p","u"].includes(k)
+    ){
+
+      e.preventDefault();
+
+      e.stopPropagation();
+
+      return false;
+
+    }
+
+
+    if(
+      e.key === "F12" ||
+      (
+        e.ctrlKey &&
+        e.shiftKey &&
+        ["i","j","c"].includes(k)
+      )
+    ){
+
+      e.preventDefault();
+
+      e.stopPropagation();
+
+      return false;
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   BASIC PROTECTION
+========================================================= */
+
+document.addEventListener(
+  "contextmenu",
+  e =>
+    e.preventDefault()
+);
+
+document.addEventListener(
+  "dragstart",
+  e =>
+    e.preventDefault()
+);
+
+document.addEventListener(
+  "copy",
+  e =>
+    e.preventDefault()
+);
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+window.addEventListener(
+  "beforeprint",
+  ()=>{
+    if(
+      state.securityAcknowledged
+    ){
+
+      showCaptureShield(
+        "print"
+      );
+
+    }
+  }
+);
+
+
+/* =========================================================
+   DISPLAY MEDIA
+========================================================= */
+
+try{
+
+  if(
+    navigator.mediaDevices?.getDisplayMedia
+  ){
+
+    const originalGetDisplayMedia =
+      navigator.mediaDevices.getDisplayMedia.bind(
+        navigator.mediaDevices
+      );
+
+
+    navigator.mediaDevices.getDisplayMedia =
+      async function(...args){
+
+        if(
+          state.securityAcknowledged
+        ){
+
+          showCaptureShield(
+            "displaymedia"
+          );
+
+        }
+
+
+        try{
+
+          const stream =
+            await originalGetDisplayMedia(
+              ...args
+            );
+
+
+          stream?.getTracks?.()
+            .forEach(
+              track =>
+                track.addEventListener(
+                  "ended",
+                  ()=>{
+
+                    if(
+                      !document.hidden
+                    ){
+
+                      hideCaptureShield();
+
+                    }
+
+                  }
+                )
+            );
+
+
+          return stream;
+
+        }catch(err){
+
+          if(
+            state.securityAcknowledged
+          ){
+
+            hideCaptureShield();
+
+          }
+
+
+          throw err;
+
+        }
+
+      };
+
+  }
+
+}catch(e){
+
+  console.warn(
+    "[Screen Capture Guard]",
+    e
+  );
+
+}
+
+
+/* =========================================================
+   BEFORE UNLOAD
+========================================================= */
+
+window.addEventListener(
+  "beforeunload",
+  ()=>{
+    persistLocalProgress();
+    saveSession();
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
 (async function init(){
+
   updateUserUI();
+
   startWatermark();
+
   await loadVideos();
+
   getCurrentUser();
+
   updateFullscreenButton();
-  setInterval(saveSession,10000);
+
+
+  setInterval(
+    saveSession,
+    10000
+  );
+
 })();
 </script>
+
 </body>
 </html>
