@@ -6,7 +6,13 @@
 <title>لوحة التحكم | د. يوسف نافع</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
+<td>
+<button
+onclick="forceStudentLogout('${s.id}')"
+>
+🔓 فصل الجهاز
+</button>
+</td>
 <style>
 
 /* ================= BASE ================= */
@@ -307,7 +313,57 @@ window.location.replace(
 );
 
 }
+async function forceStudentLogout(studentId){
 
+if(
+!confirm(
+"هل تريد إنهاء جلسة هذا الطالب؟"
+)
+){
+return;
+}
+
+
+const {
+data,
+error
+} =
+await client.rpc(
+"admin_end_student_session",
+{
+p_student_id:studentId
+}
+);
+
+
+if(error){
+
+console.error(error);
+
+alert(
+"حدث خطأ أثناء إنهاء الجلسة"
+);
+
+return;
+
+}
+
+
+if(data?.success){
+
+alert(
+"تم إنهاء جلسة الطالب بنجاح"
+);
+
+}else{
+
+alert(
+"تعذر إنهاء الجلسة"
+);
+
+}
+
+}
 /* ================= LOAD ================= */
 async function loadStudents(){
 
