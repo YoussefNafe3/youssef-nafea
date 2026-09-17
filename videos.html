@@ -122,7 +122,114 @@ const user = {
   phone: savedUser.phone || savedUser.mobile || "غير مسجل",
   class_group: savedUser.class_group || "unknown"
 };
+const platformSessionId =
+localStorage.getItem("platform_session_id");
 
+const platformUser =
+JSON.parse(
+localStorage.getItem("user") || "null"
+);
+
+
+if(
+!platformUser ||
+!platformSessionId
+){
+
+window.location.replace("login.html");
+
+throw new Error(
+"NO_ACTIVE_PLATFORM_SESSION"
+);
+}
+
+
+let videoSessionAlive = true;
+
+
+async function verifyPlatformSession(){
+
+if(!videoSessionAlive) return;
+
+
+try{
+
+const {
+data,
+error
+} =
+await client.rpc(
+"refresh_student_session",
+{
+p_session_id:platformSessionId
+}
+);
+
+
+if(error){
+
+console.error(
+"Session verification error:",
+error
+);
+
+return;
+
+}
+
+
+if(
+!data ||
+!data.success
+){
+
+videoSessionAlive = false;
+
+
+try{
+
+await client.auth.signOut();
+
+}catch(e){}
+
+
+localStorage.removeItem(
+"platform_session_id"
+);
+
+localStorage.removeItem(
+"user"
+);
+
+
+alert(
+"🔒 انتهت جلسة الدخول أو تم تسجيل الدخول من جهاز آخر."
+);
+
+
+window.location.replace(
+"login.html"
+);
+
+}
+
+}catch(err){
+
+console.error(err);
+
+}
+
+}
+
+
+verifyPlatformSession();
+
+
+const videoSessionHeartbeat =
+setInterval(
+verifyPlatformSession,
+30000
+);
 const state = {
   all: [], filtered: [], currentVideoId: null, currentVideo: null,
   lastTime: 0, sessionSaved: false, skips: 0, completedByEnd: false, watchedRanges: [],
