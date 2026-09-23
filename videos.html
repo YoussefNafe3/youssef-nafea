@@ -2033,7 +2033,14 @@ async function loadSavedSession(
         Number(
           data.watched_seconds
         ) || 0;
-
+const savedProgress =
+  Math.min(
+    100,
+    Math.max(
+      0,
+      Number(data.progress) || 0
+    )
+  );
       const duration =
         Number(
           data.duration
@@ -2196,38 +2203,42 @@ async function saveSession(){
     );
 
 
-  const payload = {
+ const payload = {
 
-    student_id:
-      String(user.id),
+  student_id:
+    String(user.id),
 
-    video_id:
-      state.currentVideoId,
+  video_id:
+    state.currentVideoId,
 
-    class_group:
-      user.class_group,
+  class_group:
+    user.class_group,
 
-    watched_seconds:
-      Math.floor(watched),
+  watched_seconds:
+    Math.floor(watched),
 
-    duration:
-      Math.floor(duration),
+  duration:
+    Math.floor(duration),
 
-    percent:
-      Number(
-        percent.toFixed(2)
-      ),
+  progress:
+    Math.min(
+      100,
+      Math.max(
+        0,
+        Math.round(percent)
+      )
+    ),
 
-    completed:
-      state.completedByEnd,
+  completed:
+    state.completedByEnd,
 
-    skips:
-      state.skips || 0,
+  skips:
+    state.skips || 0,
 
-    updated_at:
-      new Date().toISOString()
+  updated_at:
+    new Date().toISOString()
 
-  };
+};
 
 
   try{
