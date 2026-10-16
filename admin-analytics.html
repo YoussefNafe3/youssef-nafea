@@ -642,7 +642,14 @@ function safeNumber(v, fallback = 0) {
   const n = Number(v);
   return Number.isFinite(n) ? n : fallback;
 }
+function getSessionProgress(session) {
+  if (!session) return 0;
 
+  // صفحة الطالب تحفظ النسبة في progress
+  const value = session.progress ?? session.percent ?? 0;
+
+  return Math.min(100, Math.max(0, safeNumber(value)));
+}
 function formatTime(seconds) {
   const s = Math.max(0, Math.floor(safeNumber(seconds, 0)));
   if (s < 60) return `${s}ث`;
@@ -682,24 +689,26 @@ function getAllStudentIds() {
 }
 
 function latestSessionByStudentForVideo(videoId) {
-  const relevant = state.sessions.filter(s => String(s.video_id) === String(videoId));
+  const relevant = state.sessions.filter(
+    s => String(s.video_id) === String(videoId)
+  );
 
   const map = {};
+
   relevant.forEach(s => {
     const sid = String(s.student_id);
     const current = map[sid];
 
-    const currentDate = current ? new Date(current.updated_at || current.created_at || 0).getTime() : -1;
-    const newDate = new Date(s.updated_at || s.created_at || 0).getTime();
+    const currentDate = current
+      ? new Date(current.updated_at || current.created_at || 0).getTime()
+      : -1;
 
-    const currentPercent = safeNumber(current?.percent, -1);
-    const newPercent = safeNumber(s.percent, -1);
+    const newDate = new Date(
+      s.updated_at || s.created_at || 0
+    ).getTime();
 
-    if (
-      !current ||
-      newPercent > currentPercent ||
-      (newPercent === currentPercent && newDate > currentDate)
-    ) {
+    // اختيار أحدث سجل زمني، وليس أعلى نسبة قديمة
+    if (!current || newDate > currentDate) {
       map[sid] = s;
     }
   });
@@ -712,19 +721,33 @@ function videoAggregate(videoId) {
   const rows = Object.values(byStudent);
 
   const watchedStudents = rows.length;
-  const completedStudents = rows.filter(r => r.completed === true || safeNumber(r.percent) >= 90).length;
+
+  const completedStudents = rows.filter(r =>
+    r.completed === true || getSessionProgress(r) >= 90
+  ).length;
 
   const avgPercent = rows.length
-    ? rows.reduce((sum, r) => sum + safeNumber(r.percent), 0) / rows.length
+    ? rows.reduce(
+        (sum, r) => sum + getSessionProgress(r),
+        0
+      ) / rows.length
     : 0;
 
   const avgTime = rows.length
-    ? rows.reduce((sum, r) => sum + safeNumber(r.watched_seconds), 0) / rows.length
+    ? rows.reduce(
+        (sum, r) => sum + safeNumber(r.watched_seconds),
+        0
+      ) / rows.length
     : 0;
 
-  return { watchedStudents, completedStudents, avgPercent, avgTime, rows };
+  return {
+    watchedStudents,
+    completedStudents,
+    avgPercent,
+    avgTime,
+    rows
+  };
 }
-
 function statusBadge(percent, exists) {
   if (!exists) return `<span class="badge empty">لم يشاهد</span>`;
   if (percent >= 95) return `<span class="badge good">مكتمل</span>`;
@@ -797,7 +820,7 @@ function renderSelectedVideo() {
       `;
     }
 
-    const percent = safeNumber(record.percent);
+  const percent = getSessionProgress(record);
 
     return `
       <tr>
