@@ -141,6 +141,21 @@ input,select#class_group{border:1px solid rgba(177,183,214,.17);background:rgba(
 input:focus,select#class_group:focus{outline:none;border-color:#9d8dff;box-shadow:0 0 0 4px rgba(118,100,223,.15)}
 button{background:linear-gradient(120deg,#8270ed,#6551c9 52%,#5140aa);color:white;box-shadow:0 12px 25px rgba(81,64,170,.3)}
 .login-link a{color:#d3caff}
+
+/* Animated premium DNA mark */
+.logo{display:flex;align-items:center;justify-content:center;margin:0 auto 14px;width:88px;height:88px;border-radius:27px;border:1px solid rgba(174,160,255,.27);background:radial-gradient(circle at 50% 42%,rgba(118,100,223,.22),rgba(244,215,126,.045) 72%);box-shadow:0 12px 34px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08);overflow:hidden}
+.dna-mark{display:block;width:65px;height:65px;overflow:visible;filter:drop-shadow(0 0 9px rgba(118,100,223,.2));transform-origin:center;animation:dna-float 4s ease-in-out infinite}
+.dna-core{transform-origin:center;animation:dna-turn 6s ease-in-out infinite}
+.dna-strand{stroke-dasharray:180;stroke-dashoffset:0;animation:dna-flow 3.6s linear infinite}
+.strand-b{animation-delay:-1.8s}
+.dna-rungs path{transform-box:fill-box;transform-origin:center;animation:dna-rung 2.4s ease-in-out infinite}
+.dna-rungs path:nth-child(even){animation-delay:-1.2s}
+@keyframes dna-float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.035)}}
+@keyframes dna-turn{0%,100%{transform:rotateY(0deg) rotateZ(-3deg)}50%{transform:rotateY(22deg) rotateZ(3deg)}}
+@keyframes dna-flow{to{stroke-dashoffset:-360}}
+@keyframes dna-rung{0%,100%{transform:scaleX(.65);opacity:.48}50%{transform:scaleX(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){.dna-mark,.dna-core,.dna-strand,.dna-rungs path{animation:none!important}}
+
 </style>
 
 </head>
@@ -151,7 +166,23 @@ button{background:linear-gradient(120deg,#8270ed,#6551c9 52%,#5140aa);color:whit
 </a>
 <div class="container">
 
-<div class="logo">🧬</div>
+<div class="logo"><svg class="dna-mark" viewBox="0 0 100 100" role="img" aria-label="DNA" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="dnaViolet" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c5baff"/><stop offset="1" stop-color="#7664df"/></linearGradient>
+  <linearGradient id="dnaGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b2"/><stop offset="1" stop-color="#d5a83e"/></linearGradient>
+  <filter id="dnaGlow"><feGaussianBlur stdDeviation="2.2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ </defs>
+ <g class="dna-core" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path class="dna-strand strand-a" d="M27 10 C76 20 76 30 27 40 C-1 50 -1 60 27 70 C76 80 76 90 27 96" stroke="url(#dnaViolet)" stroke-width="5.5" filter="url(#dnaGlow)"/>
+  <path class="dna-strand strand-b" d="M73 10 C24 20 24 30 73 40 C101 50 101 60 73 70 C24 80 24 90 73 96" stroke="url(#dnaGold)" stroke-width="5.5" filter="url(#dnaGlow)"/>
+  <g class="dna-rungs" stroke="#d8d1ff" stroke-width="3.3" opacity=".9">
+   <path d="M35 15 L65 15"/><path d="M48 25 L52 25"/><path d="M35 35 L65 35"/>
+   <path d="M15 45 L85 45"/><path d="M15 55 L85 55"/><path d="M35 65 L65 65"/>
+   <path d="M48 75 L52 75"/><path d="M35 85 L65 85"/>
+  </g>
+ </g>
+ <circle cx="27" cy="10" r="3" fill="#e5deff"/><circle cx="73" cy="96" r="3" fill="#ffe7a0"/>
+</svg></div>
 
 <h2>إنشاء حساب</h2>
 
