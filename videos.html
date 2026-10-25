@@ -2065,27 +2065,11 @@ const savedProgress =
       }
 
 
-      const dbTime =
-        Math.max(
-          0,
-          Number(
-            data.last_time
-          ) || 0
-        );
+      const dbTime = Math.max(0, Number(data.last_time) || 0);
 
-
-      if(
-        dbTime > 0 ||
-        !local
-      ){
-
-        state.lastTime =
-          Math.max(
-            state.lastTime,
-            dbTime
-          );
-
-      }
+      // Server position is authoritative across browser restarts/devices.
+      // Keep a newer local position only when it is ahead of the last DB save.
+      state.lastTime = Math.max(state.lastTime, dbTime);
 
 
       state.skips =
@@ -2149,6 +2133,7 @@ async function saveSession(){
       p_video_id: String(state.currentVideoId),
       p_watched_seconds: Math.floor(watched),
       p_duration: Math.floor(duration),
+      p_last_time: Math.floor(Math.min(duration, Math.max(0, current))),
       p_completed: state.completedByEnd === true,
       p_skips: Math.max(0, Math.floor(Number(state.skips) || 0))
     });
