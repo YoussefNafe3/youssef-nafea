@@ -338,6 +338,20 @@ html[data-theme="light"] .card{color:var(--text);background:var(--card)}
 .student-notifications-subtitle{font-size:12px;color:#c3c8e7;margin-top:3px}
 .student-push-status{font-size:12px;line-height:1.7;color:#d6d9ee;margin:0 0 10px;padding:0 2px}
 .student-push-status[data-state="success"]{color:#a7f3d0}.student-push-status[data-state="error"]{color:#fca5a5}
+.push-setup-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  width:auto;max-width:100%;min-height:36px;padding:8px 12px;
+  border:1px solid rgba(167,139,250,.38);border-radius:11px;
+  background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(99,102,241,.12));
+  color:#ddd6fe;font:600 12px/1.4 inherit;white-space:normal;text-align:center;
+  cursor:pointer;transition:background .2s,border-color .2s,transform .2s;
+  box-shadow:0 3px 12px rgba(8,10,35,.12)
+}
+.push-setup-btn:hover{background:rgba(124,58,237,.27);border-color:rgba(196,181,253,.7);transform:translateY(-1px)}
+.push-setup-btn:focus-visible{outline:2px solid #c4b5fd;outline-offset:3px}
+.push-setup-btn:disabled{opacity:.65;cursor:wait;transform:none}
+@media(max-width:520px){.push-setup-btn{min-height:34px;padding:7px 10px;font-size:11px;gap:5px}}
+
 .student-notification-list{display:grid;gap:9px}
 .student-notification-item{width:100%;display:flex;align-items:center;gap:12px;text-align:right;padding:13px 14px;border:1px solid rgba(190,190,255,.14);border-radius:15px;background:rgba(255,255,255,.045);color:inherit;font:inherit;cursor:pointer;transition:transform .18s,border-color .18s,background .18s}
 .student-notification-item:hover,.student-notification-item:focus-visible{transform:translateY(-1px);border-color:rgba(244,215,126,.48);background:rgba(139,124,255,.12);outline:none}
@@ -414,7 +428,7 @@ onclick="goDashboard()"
 <span id="themeLabel">الوضع الفاتح</span>
 </button>
 
-<button id="enableDeviceNotifications" class="btn home-btn" type="button">🔔 تفعيل إشعارات الجهاز</button>
+<button id="enableDeviceNotifications" class="push-setup-btn" type="button">🔔 تفعيل الإشعارات</button>
 
 <a href="index.html" class="btn home-btn">⌂ الرئيسية</a>
 
@@ -835,19 +849,21 @@ function setPushStatus(message, state = ""){
 
 function updateDeviceNotificationButton(){
   if(!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)){
-    enableDeviceNotificationsButton.textContent = "إشعارات الجهاز غير مدعومة";
+    enableDeviceNotificationsButton.textContent = "الإشعارات غير مدعومة";
     enableDeviceNotificationsButton.disabled = true;
     enableDeviceNotificationsButton.title = "استخدم متصفحًا حديثًا يدعم Web Push وافتح المنصة عبر HTTPS.";
     return;
   }
+  enableDeviceNotificationsButton.disabled = false;
   if(Notification.permission === "denied"){
-    enableDeviceNotificationsButton.textContent = "اسمح بالإشعارات من إعدادات المتصفح";
-    enableDeviceNotificationsButton.disabled = false;
+    enableDeviceNotificationsButton.textContent = "🔔 إعادة المحاولة";
+    enableDeviceNotificationsButton.title = "إذا سبق رفض الإذن، فعّل إشعارات الموقع من إعدادات المتصفح أولًا.";
+  }else if(Notification.permission === "granted"){
+    enableDeviceNotificationsButton.textContent = "✓ تحديث الإشعارات";
+    enableDeviceNotificationsButton.title = "تحديث اشتراك إشعارات هذا الجهاز.";
   }else{
-    enableDeviceNotificationsButton.textContent = Notification.permission === "granted"
-      ? "تفعيل / تحديث إشعارات الجهاز"
-      : "تفعيل إشعارات الجهاز";
-    enableDeviceNotificationsButton.disabled = false;
+    enableDeviceNotificationsButton.textContent = "🔔 تفعيل الإشعارات";
+    enableDeviceNotificationsButton.title = "اضغط لطلب إذن الإشعارات. يمكنك المحاولة مرة أخرى إذا لم تختر سماحًا أو رفضًا.";
   }
 }
 
@@ -874,13 +890,18 @@ async function activateDevicePush(){
   enableDeviceNotificationsButton.textContent = "جاري تفعيل الإشعارات…";
   setPushStatus("جاري تجهيز إشعارات الجهاز بأمان…");
   try{
+    // Ask again whenever permission is still default. Browsers do not show
+    // another native prompt after a persistent denial; in that case give
+    // concise recovery instructions and keep the retry button available.
     const permission = Notification.permission === "granted"
       ? "granted"
       : await Notification.requestPermission();
     if(permission !== "granted"){
-      setPushStatus(permission === "denied"
-        ? "تم رفض الإذن. فعّل إشعارات الموقع من إعدادات المتصفح ثم حاول مرة أخرى."
-        : "لم يتم منح إذن الإشعارات. يمكنك تفعيلها في أي وقت.", "error");
+      if(permission === "denied"){
+        setPushStatus("المتصفح حظر الطلب السابق، لذلك لن يظهر مربع السماح تلقائيًا الآن. افتح إعدادات الموقع من رمز القفل بجوار العنوان ← الإشعارات ← سماح، ثم ارجع واضغط «إعادة المحاولة». على iPhone تأكد من فتح الموقع من أيقونته على الشاشة الرئيسية.", "error");
+      }else{
+        setPushStatus("لم يتم اختيار سماح بعد. اضغط «تفعيل الإشعارات» للمحاولة مرة أخرى، واختر «سماح» عندما تظهر نافذة المتصفح.", "error");
+      }
       return;
     }
 
