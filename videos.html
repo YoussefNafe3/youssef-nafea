@@ -2149,7 +2149,6 @@ async function saveSession(){
       p_video_id: String(state.currentVideoId),
       p_watched_seconds: Math.floor(watched),
       p_duration: Math.floor(duration),
-      p_percent: Number(percent.toFixed(2)),
       p_completed: state.completedByEnd === true,
       p_skips: Math.max(0, Math.floor(Number(state.skips) || 0))
     });
