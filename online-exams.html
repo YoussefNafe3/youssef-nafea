@@ -29,8 +29,5 @@ h1{margin:0 0 12px;font-size:clamp(24px,5vw,34px);font-weight:900}p{margin:0 aut
 <script>
 (function(){const root=document.documentElement,b=document.getElementById("themeToggle"),i=document.getElementById("themeIcon"),l=document.getElementById("themeLabel");function apply(t){const light=t==="light";root.dataset.theme=light?"light":"dark";i.textContent=light?"☾":"☀";l.textContent=light?"الوضع الداكن":"الوضع الفاتح";try{localStorage.setItem("student-dashboard-theme",t)}catch(e){}}let t="dark";try{t=localStorage.getItem("student-dashboard-theme")==="light"?"light":"dark"}catch(e){}apply(t);b.addEventListener("click",()=>apply(root.dataset.theme==="light"?"dark":"light"))})();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const client=supabase.createClient("https://nhdowqzecpwmkunczodl.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmxlIiwicmVmIjoibmhkb3dxemVjcHdta3VuY3pvZGwifQ.not-used");
-</script>
+
 </body></html>
