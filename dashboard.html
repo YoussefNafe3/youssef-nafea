@@ -7,6 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>لوحة الطالب | د. يوسف نافع</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#11152f">
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
@@ -334,6 +336,8 @@ html[data-theme="light"] .card{color:var(--text);background:var(--card)}
 .student-notifications-title{display:flex;align-items:center;gap:10px;font-weight:900;font-size:17px}
 .student-notifications-title .bell{width:38px;height:38px;display:grid;place-items:center;border-radius:13px;background:rgba(139,124,255,.18);font-size:20px}
 .student-notifications-subtitle{font-size:12px;color:#c3c8e7;margin-top:3px}
+.student-push-status{font-size:12px;line-height:1.7;color:#d6d9ee;margin:0 0 10px;padding:0 2px}
+.student-push-status[data-state="success"]{color:#a7f3d0}.student-push-status[data-state="error"]{color:#fca5a5}
 .student-notification-list{display:grid;gap:9px}
 .student-notification-item{width:100%;display:flex;align-items:center;gap:12px;text-align:right;padding:13px 14px;border:1px solid rgba(190,190,255,.14);border-radius:15px;background:rgba(255,255,255,.045);color:inherit;font:inherit;cursor:pointer;transition:transform .18s,border-color .18s,background .18s}
 .student-notification-item:hover,.student-notification-item:focus-visible{transform:translateY(-1px);border-color:rgba(244,215,126,.48);background:rgba(139,124,255,.12);outline:none}
@@ -442,6 +446,7 @@ onclick="goDashboard()"
       <button id="dismissStudentNotifications" class="student-notifications-dismiss" type="button">إخفاء مؤقتًا</button>
     </div>
   </div>
+  <div id="pushNotificationStatus" class="student-push-status" role="status" aria-live="polite"></div>
   <div id="studentNotificationList" class="student-notification-list"></div>
 </section>
 
@@ -812,35 +817,125 @@ studentNotificationList.addEventListener("click",event=>{
 });
 
 const enableDeviceNotificationsButton = document.getElementById("enableDeviceNotifications");
+const pushNotificationStatus = document.getElementById("pushNotificationStatus");
+const VAPID_PUBLIC_KEY = "BDpbM0K5jqGxUMXHPGTkcFFWnOH382b7689D_9PfwxI3ecn1RR5kgrnkan9poadyfR-NgFeD6cbPO_6XEemjY80";
+
+function setPushStatus(message, state = ""){
+  pushNotificationStatus.textContent = message;
+  pushNotificationStatus.dataset.state = state;
+}
+
 function updateDeviceNotificationButton(){
-  if(!("Notification" in window)){
-    enableDeviceNotificationsButton.textContent = "إشعارات الجهاز غير مدعومة هنا";
+  if(!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)){
+    enableDeviceNotificationsButton.textContent = "إشعارات الجهاز غير مدعومة";
     enableDeviceNotificationsButton.disabled = true;
-    enableDeviceNotificationsButton.title = "جرّب فتح المنصة في متصفح حديث يدعم إشعارات الويب.";
+    enableDeviceNotificationsButton.title = "استخدم متصفحًا حديثًا يدعم Web Push وافتح المنصة عبر HTTPS.";
     return;
   }
-  if(Notification.permission === "granted"){
-    enableDeviceNotificationsButton.textContent = "إشعارات الجهاز مفعّلة";
-    enableDeviceNotificationsButton.disabled = true;
-  }else if(Notification.permission === "denied"){
+  if(Notification.permission === "denied"){
     enableDeviceNotificationsButton.textContent = "اسمح بالإشعارات من إعدادات المتصفح";
-    enableDeviceNotificationsButton.disabled = true;
+    enableDeviceNotificationsButton.disabled = false;
   }else{
-    enableDeviceNotificationsButton.textContent = "تفعيل إشعارات الجهاز";
+    enableDeviceNotificationsButton.textContent = Notification.permission === "granted"
+      ? "تفعيل / تحديث إشعارات الجهاز"
+      : "تفعيل إشعارات الجهاز";
     enableDeviceNotificationsButton.disabled = false;
   }
 }
-updateDeviceNotificationButton();
-enableDeviceNotificationsButton.addEventListener("click",async()=>{
-  if(!("Notification" in window)) return;
+
+function urlBase64ToUint8Array(base64String){
+  const padding = "=".repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = atob(base64);
+  return Uint8Array.from([...raw].map(char => char.charCodeAt(0)));
+}
+
+async function registerPlatformServiceWorker(){
+  if(!("serviceWorker" in navigator)) throw new Error("المتصفح لا يدعم Service Worker.");
+  const registration = await navigator.serviceWorker.register("./sw.js", {scope:"./", updateViaCache:"none"});
+  await navigator.serviceWorker.ready;
+  return registration;
+}
+
+async function activateDevicePush(){
+  if(!("Notification" in window) || !("PushManager" in window) || !("serviceWorker" in navigator)){
+    setPushStatus("المتصفح الحالي لا يدعم إشعارات Push. جرّب Chrome أو Edge أو Safari حديثًا عبر HTTPS.", "error");
+    return;
+  }
+  enableDeviceNotificationsButton.disabled = true;
+  enableDeviceNotificationsButton.textContent = "جاري تفعيل الإشعارات…";
+  setPushStatus("جاري تجهيز إشعارات الجهاز بأمان…");
   try{
-    const permission = await Notification.requestPermission();
-    updateDeviceNotificationButton();
-    if(permission === "granted"){
-      try{new Notification("تم تفعيل إشعارات منصة د. يوسف نافع",{body:"ستظهر إشعارات المتصفح عندما تكون المنصة مفتوحة في هذا المتصفح."});}catch(e){}
+    const permission = Notification.permission === "granted"
+      ? "granted"
+      : await Notification.requestPermission();
+    if(permission !== "granted"){
+      setPushStatus(permission === "denied"
+        ? "تم رفض الإذن. فعّل إشعارات الموقع من إعدادات المتصفح ثم حاول مرة أخرى."
+        : "لم يتم منح إذن الإشعارات. يمكنك تفعيلها في أي وقت.", "error");
+      return;
     }
-  }catch(error){console.warn("Notification permission request failed:",error);}
-});
+
+    const {data: authData, error: authError} = await client.auth.getSession();
+    if(authError || !authData?.session){
+      setPushStatus("انتهت جلسة الدخول الآمنة. سجّل الخروج ثم ادخل مرة أخرى قبل تفعيل إشعارات الجهاز.", "error");
+      return;
+    }
+
+    const registration = await registerPlatformServiceWorker();
+    let subscription = await registration.pushManager.getSubscription();
+    if(!subscription){
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly:true,
+        applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+    }
+
+    const json = subscription.toJSON();
+    if(!json.endpoint || !json.keys?.p256dh || !json.keys?.auth){
+      throw new Error("لم يتمكن المتصفح من إنشاء اشتراك Push صالح.");
+    }
+
+    const {error: saveError} = await client.from("push_subscriptions").upsert({
+      student_id:user.id,
+      endpoint:json.endpoint,
+      p256dh:json.keys.p256dh,
+      auth:json.keys.auth,
+      expiration_time:subscription.expirationTime ? Math.floor(subscription.expirationTime) : null,
+      user_agent:navigator.userAgent,
+      updated_at:new Date().toISOString()
+    },{onConflict:"student_id,endpoint"});
+    if(saveError){
+      if(saveError.code === "42501" || /row-level security|permission/i.test(saveError.message || "")){
+        throw new Error("تعذر ربط الجهاز بحسابك الآمن. سجّل الخروج من المنصة ثم سجّل الدخول مجددًا، وبعدها أعد المحاولة.");
+      }
+      throw saveError;
+    }
+
+    setPushStatus("تم تفعيل إشعارات الجهاز بنجاح. ستصلك إشعارات النتائج الجديدة حتى عند إغلاق المنصة، ما دام المتصفح أو نظام الجهاز يسمح بإشعارات الخلفية.", "success");
+    enableDeviceNotificationsButton.textContent = "إشعارات الجهاز مفعّلة ✓";
+    try{
+      await registration.showNotification("تم تفعيل إشعارات منصة د. يوسف نافع",{
+        body:"سيصلك تنبيه عند نشر نتيجة أو إشعار جديد.",
+        icon:"./android-chrome-192x192.png",
+        badge:"./favicon-32x32.png",
+        tag:"push-setup-confirmation",
+        dir:"rtl",
+        lang:"ar"
+      });
+    }catch(e){}
+  }catch(error){
+    console.error("Could not activate web push:",error);
+    setPushStatus(error?.message || "تعذر تفعيل الإشعارات. تأكد من اتصال الإنترنت وإعدادات المتصفح ثم حاول مرة أخرى.", "error");
+  }finally{
+    enableDeviceNotificationsButton.disabled = false;
+    updateDeviceNotificationButton();
+  }
+}
+
+updateDeviceNotificationButton();
+registerPlatformServiceWorker().catch(error=>console.warn("Service worker registration unavailable:",error));
+enableDeviceNotificationsButton.addEventListener("click",activateDevicePush);
 
 document.getElementById("dismissStudentNotifications").addEventListener("click",()=>{
   studentNotificationsBox.classList.remove("show");
