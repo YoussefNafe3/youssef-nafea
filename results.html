@@ -1923,6 +1923,7 @@ return `
 <article
 class="result ${status.className} fade"
 data-percent="${percent}"
+data-result-id="${escapeHTML(result.id)}"
 >
 
 <div class="result-head">
@@ -2592,11 +2593,7 @@ async function openResultNotification(element){
   const section = target.closest(".section");
   if(section) section.scrollIntoView({behavior:"smooth",block:"start"});
 
-  const card = [...target.querySelectorAll(".result")].find(el => {
-    const list = resultType === "exam" ? examData : recitationData;
-    const result = list.find(row => String(row.id) === String(resultId));
-    return result && el.querySelector(".result-title")?.textContent === String(result.title || "");
-  });
+  const card = target.querySelector(`.result[data-result-id="${CSS.escape(String(resultId))}"]`);
 
   if(card){
     card.classList.add("notification-target");
@@ -2612,11 +2609,7 @@ async function openResultNotification(element){
     // Refresh the appropriate list in case results have just been updated.
     if(resultType === "exam") await loadExamResults();
     else await loadRecitationResults();
-    const refreshed = [...target.querySelectorAll(".result")].find(el => {
-      const list = resultType === "exam" ? examData : recitationData;
-      const result = list.find(row => String(row.id) === String(resultId));
-      return result && el.querySelector(".result-title")?.textContent === String(result.title || "");
-    });
+    const refreshed = target.querySelector(`.result[data-result-id="${CSS.escape(String(resultId))}"]`);
     if(refreshed){
       refreshed.scrollIntoView({behavior:"smooth",block:"center"});
       refreshed.style.outline = "3px solid var(--primary)";
