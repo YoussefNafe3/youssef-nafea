@@ -239,6 +239,49 @@ padding:20px;
 
 }
 
+
+/* Premium science dashboard refresh */
+:root{color-scheme:dark;--bg1:#081426;--bg2:#0d1c32;--card:rgba(17,34,58,.84);--border:rgba(148,182,224,.15);--gold:#f4cf82;--text:#f2f6fc;--muted:#a4b5cb;--accent:#73b8ff;--shadow:0 22px 60px rgba(0,0,0,.22)}
+html[data-theme="light"]{color-scheme:light;--bg1:#f3f7fc;--bg2:#eaf1fa;--card:rgba(255,255,255,.9);--border:rgba(50,83,128,.14);--gold:#9a6a18;--text:#172b45;--muted:#647792;--accent:#2563eb;--shadow:0 20px 48px rgba(40,65,100,.09)}
+body{padding:clamp(12px,3vw,34px);color:var(--text);background:radial-gradient(ellipse at 8% 0%,rgba(59,130,246,.17),transparent 35%),radial-gradient(ellipse at 92% 45%,rgba(16,185,129,.055),transparent 28%),linear-gradient(145deg,var(--bg1),var(--bg2));transition:background .25s,color .25s}
+.topbar{max-width:1240px;margin:0 auto 24px;padding:13px 17px;border:1px solid var(--border);border-radius:20px;background:var(--card);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+.logo{font-size:17px;font-weight:900;color:var(--gold)}
+.user-name{color:var(--text);font-size:13px}
+.actions{align-items:center;gap:7px}
+.btn{min-height:36px;padding:7px 11px;border-radius:11px;font-size:12px}
+.home-btn{color:var(--accent);background:rgba(37,99,235,.09);border-color:rgba(37,99,235,.2)}
+.logout-btn{color:#fca5a5;background:rgba(239,68,68,.08);border-color:rgba(248,113,113,.2)}
+.theme-btn{color:#fef3c7;background:linear-gradient(135deg,#334155,#0f172a);border-color:rgba(250,204,21,.28)}
+html[data-theme="light"] .theme-btn{color:#854d0e;background:linear-gradient(135deg,#fef3c7,#fffbeb);border-color:rgba(180,130,30,.3)}
+.hero{max-width:1240px;margin:0 auto 25px;position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 190px;align-items:center;gap:22px;padding:clamp(28px,5vw,58px);border:1px solid rgba(115,184,255,.2);border-radius:28px;text-align:right;background:linear-gradient(112deg,rgba(23,65,119,.78),rgba(13,32,57,.94) 62%,rgba(13,58,67,.76));box-shadow:var(--shadow)}
+html[data-theme="light"] .hero{background:linear-gradient(112deg,#e4efff,#f9fbff 62%,#e7f8f4);border-color:rgba(37,99,235,.14)}
+.hero h1{font-size:clamp(27px,4vw,43px);font-weight:900;line-height:1.5}
+.hero p{max-width:650px;margin:0;color:#c5d6eb;font-size:clamp(13px,1.6vw,16px);line-height:2}
+html[data-theme="light"] .hero p{color:#536984}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:19px}
+.hero-tags span{padding:6px 10px;border:1px solid rgba(191,219,254,.16);border-radius:99px;background:rgba(255,255,255,.055);color:#d8e8fa;font-size:11px;font-weight:700}
+html[data-theme="light"] .hero-tags span{color:#425a78;background:rgba(255,255,255,.72);border-color:rgba(37,99,235,.12)}
+.science-art{width:min(100%,190px);height:auto;filter:drop-shadow(0 12px 26px rgba(59,130,246,.2))}
+.cards{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.card{--card-accent:#73b8ff;display:flex;flex-direction:column;min-height:220px;padding:22px 20px 18px;border:1px solid var(--border);border-radius:21px;color:var(--text);background:var(--card);text-decoration:none;box-shadow:0 12px 32px rgba(0,0,0,.09);transition:transform .24s,border-color .24s,box-shadow .24s;position:relative;isolation:isolate}
+.card::before{content:"";position:absolute;z-index:-1;width:170px;height:170px;top:-90px;left:-78px;border-radius:50%;background:var(--card-accent);opacity:.1;filter:blur(5px);transition:transform .3s,opacity .3s}
+.card::after{content:"";position:absolute;top:0;right:20px;left:20px;height:2px;background:linear-gradient(90deg,transparent,var(--card-accent),transparent);opacity:.7}
+.card:hover{transform:translateY(-5px);border-color:var(--card-accent);box-shadow:0 20px 42px rgba(0,0,0,.15)}
+.card:hover::before{transform:scale(1.3);opacity:.16}
+.card-videos{--card-accent:#75b9ff}.card-results{--card-accent:#f2cb78}.card-files{--card-accent:#56d6b0}.card-exams{--card-accent:#b6a0ff}
+.icon{display:grid;place-items:center;width:52px;height:52px;margin-bottom:17px;border-radius:15px;color:var(--card-accent);background:color-mix(in srgb,var(--card-accent) 12%,transparent);border:1px solid color-mix(in srgb,var(--card-accent) 23%,transparent);font-size:25px;font-weight:900}
+.card h3{font-size:17px;font-weight:900;margin:0 0 7px}
+.card p{font-size:12px;line-height:1.9;color:var(--muted);margin:0}
+.card-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:18px;color:var(--card-accent);font-size:11px;font-weight:900}
+.card-arrow{display:grid;place-items:center;width:27px;height:27px;border:1px solid color-mix(in srgb,var(--card-accent) 25%,transparent);border-radius:9px;background:color-mix(in srgb,var(--card-accent) 8%,transparent);font-size:17px}
+.footer{max-width:1240px;margin:30px auto 4px;color:var(--muted);font-size:11px}
+#sessionStatus{color:var(--muted)}
+html[data-theme="light"] .card{color:var(--text);background:var(--card)}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:minmax(0,1fr) 150px}.science-art{width:150px}}
+@media(max-width:768px){.topbar{flex-wrap:wrap;gap:10px}.actions{justify-content:flex-start}.hero{padding:28px 22px}.hero h1{font-size:29px}}
+@media(max-width:560px){body{padding:12px}.topbar{align-items:flex-start;flex-direction:column;padding:13px;border-radius:17px;margin-bottom:15px}.actions{width:100%;justify-content:flex-start}.btn{padding:7px 9px;font-size:11px}.hero{grid-template-columns:1fr;gap:8px;padding:25px 19px;border-radius:22px;margin-bottom:20px}.hero h1{font-size:26px}.hero p{font-size:12px}.science-art{position:absolute;width:135px;left:-15px;bottom:-22px;opacity:.12}.hero-tags{margin-top:14px}.cards{gap:10px}.card{min-height:205px;padding:16px 13px 14px;border-radius:17px}.icon{width:44px;height:44px;font-size:21px;margin-bottom:13px}.card h3{font-size:14px}.card p{font-size:11px;line-height:1.8}.card-bottom{padding-top:14px;font-size:10px}.card-arrow{width:24px;height:24px}}
+@media(max-width:360px){.cards{grid-template-columns:1fr}.card{min-height:175px}}
+
 </style>
 
 </head>
@@ -263,19 +306,14 @@ onclick="goDashboard()"
 
 <div class="actions">
 
-<a
-href="index.html"
-class="btn home-btn"
->
-🏠 الرئيسية
-</a>
-
-<button
-class="btn logout-btn"
-onclick="logout()"
->
-🚪 خروج
+<button id="themeToggle" class="btn theme-btn" type="button" aria-label="التبديل إلى الوضع الفاتح" title="الوضع الفاتح">
+<span id="themeIcon" aria-hidden="true">☀</span>
+<span id="themeLabel">الوضع الفاتح</span>
 </button>
+
+<a href="index.html" class="btn home-btn">⌂ الرئيسية</a>
+
+<button class="btn logout-btn" onclick="logout()" type="button">↪ خروج</button>
 
 </div>
 
@@ -289,102 +327,47 @@ onclick="logout()"
 </h1>
 
 <p>
-كل محاضراتك وملفاتك وحصصك في مكان واحد بشكل منظم
+رحلتك نحو التفوق تبدأ بخطوة. افتح محاضراتك، راجع نتائجك، ونظّم مذاكرتك من لوحة واحدة مصممة لتجعل الوصول إلى محتواك أسهل وأسرع.
 </p>
+<div class="hero-tags"><span>✦ تعلّم بتركيز</span><span>⌁ تقدّم بثبات</span><span>✓ استعدّ للتفوّق</span></div>
+<svg class="science-art" viewBox="0 0 240 150" fill="none" aria-hidden="true"><circle cx="120" cy="75" r="57" stroke="#83d5ff" stroke-opacity=".35" stroke-dasharray="4 7"/><ellipse cx="120" cy="75" rx="28" ry="60" transform="rotate(48 120 75)" stroke="#76c7ff"/><ellipse cx="120" cy="75" rx="28" ry="60" transform="rotate(-48 120 75)" stroke="#b4a1ff"/><circle cx="120" cy="75" r="7" fill="#f4cf82"/><circle cx="73" cy="47" r="4" fill="#f4cf82"/><circle cx="165" cy="47" r="4" fill="#83d5ff"/><path d="M12 132h55l12-12 12 19 16-29 13 22h38" stroke="#83d5ff" stroke-width="2" stroke-linecap="round" opacity=".7"/></svg>
 
 </div>
 
 
 <div class="cards">
 
-<div
-class="card"
-onclick="window.location.href='videos.html'"
->
-
-<div class="icon">🎥</div>
-
+<a class="card card-videos" href="videos.html">
+<div class="icon" aria-hidden="true">▶</div>
 <h3>الفيديوهات</h3>
+<p>شاهد فيديوهات الشرح وحل الواجبات وتابع رحلتك التعليمية في أي وقت.</p>
+<div class="card-bottom"><span>استكشف الفيديوهات</span><span class="card-arrow">←</span></div>
+</a>
 
-<p>
-مشاهدة المحاضرات المسجلة
-</p>
+<a class="card card-results" href="results.html">
+<div class="icon" aria-hidden="true">▤</div>
+<h3>نتائج الامتحانات</h3>
+<p>راجع درجاتك ونتائج التسميعات وتعرّف على مستوى تقدّمك.</p>
+<div class="card-bottom"><span>عرض النتائج</span><span class="card-arrow">←</span></div>
+</a>
 
-</div>
-
-
-<div class="card">
-
-<div class="icon">📅</div>
-
-<h3>الحصص</h3>
-
-<p>
-جدول الحصص
-</p>
-
-</div>
-
-
-<div
-class="card"
-onclick="window.location.href='files.html'"
->
-
-<div class="icon">📚</div>
-
+<a class="card card-files" href="files.html">
+<div class="icon" aria-hidden="true">▣</div>
 <h3>الملفات التعليمية</h3>
+<p>وصل بسهولة إلى المذكرات وملفات PDF والمواد المساعدة للمذاكرة.</p>
+<div class="card-bottom"><span>تصفّح الملفات</span><span class="card-arrow">←</span></div>
+</a>
 
-<p>
-ملازم + ملفات PDF
-</p>
-
-</div>
-
-
-<div class="card">
-
-<div class="icon">📝</div>
-
-<h3>الواجبات</h3>
-
-<p>
-متابعة التكليفات
-</p>
+<a class="card card-exams" href="online-exams.html">
+<div class="icon" aria-hidden="true">✓</div>
+<h3>الامتحانات الأونلاين</h3>
+<p>استعدّ لاختباراتك وتابع الامتحانات المتاحة لك عبر المنصة.</p>
+<div class="card-bottom"><span>دخول الامتحانات</span><span class="card-arrow">←</span></div>
+</a>
 
 </div>
 
 
-
-<div class="card"
-onclick="window.location.href='results.html'"
->
-
-<div class="icon">🏆</div>
-
-<h3>النتائج</h3>
-
-<p>
-نتائج الامتحانات والتسميعات
-</p>
-
-</div>
-
-
-
-<div class="card">
-
-<div class="icon">📢</div>
-
-<h3>الإعلانات</h3>
-
-<p>
-آخر التنبيهات
-</p>
-
-</div>
-
-</div>
 
 
 <div class="footer">
@@ -394,6 +377,15 @@ onclick="window.location.href='results.html'"
 
 <div id="sessionStatus"></div>
 
+
+<script>
+(function(){
+const root=document.documentElement,button=document.getElementById("themeToggle"),icon=document.getElementById("themeIcon"),label=document.getElementById("themeLabel");
+function applyTheme(theme){const light=theme==="light";root.dataset.theme=light?"light":"dark";icon.textContent=light?"☾":"☀";label.textContent=light?"الوضع الداكن":"الوضع الفاتح";button.setAttribute("aria-label",light?"التبديل إلى الوضع الداكن":"التبديل إلى الوضع الفاتح");button.title=light?"التبديل إلى الوضع الداكن":"التبديل إلى الوضع الفاتح";const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=light?"#f3f7fc":"#081426"}
+let saved="dark";try{saved=localStorage.getItem("student-dashboard-theme")==="light"?"light":"dark"}catch(e){}applyTheme(saved);
+button.addEventListener("click",function(){const next=root.dataset.theme==="light"?"dark":"light";applyTheme(next);try{localStorage.setItem("student-dashboard-theme",next)}catch(e){}});
+})();
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
