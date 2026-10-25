@@ -1287,7 +1287,25 @@
             .video-order-actions{gap:4px}
             .video-order-btn{width:32px;height:34px}
         }
-    </style>
+    
+/* Consistent premium admin palette + mobile comfort; behavior unchanged */
+:root{--gold:#f4d77e;--purple:#7664df;--admin-border:rgba(174,160,255,.18)}
+body{background:radial-gradient(ellipse at 12% 5%,rgba(118,100,223,.15),transparent 34%),radial-gradient(ellipse at 88% 95%,rgba(244,215,126,.06),transparent 30%),linear-gradient(135deg,#080b1b,#11152f 55%,#090d20)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(244,215,126,.82);outline-offset:2px}
+@media(max-width:760px){
+ body{width:100%;min-width:0}
+ .main-card{width:100%;min-width:0;max-width:100%;padding:15px}
+ input,select,textarea{max-width:100%;min-width:0;font-size:16px}
+ .video-order-row{min-width:0}
+}
+@media(max-width:420px){
+ .main-card{padding:12px;border-radius:16px}
+ h1,h2{overflow-wrap:anywhere}
+ .video-order-row{grid-template-columns:28px minmax(0,1fr) auto;gap:6px}
+ .video-order-number{width:27px;height:27px}
+ .video-order-btn{width:29px;height:32px}
+}
+</style>
 
 </head>
 
