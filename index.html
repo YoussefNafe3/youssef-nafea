@@ -907,6 +907,8 @@ body.dark{--accent:#b0a2ff;--gold:#f4d77e}
 .auth-area .account-greeting{display:none!important;}
 @media(max-width:768px){.top-bar{grid-template-columns:36px minmax(0,1fr)!important;grid-template-areas:'theme brand' 'auth auth'!important}.brand-center{position:static!important;left:auto!important;transform:none!important;justify-self:center!important}.theme-control{justify-self:start!important}.auth-area{justify-self:center!important}}
 </style>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#11152f">
 </head>
 <body>
 <header class="top-bar" id="siteHeader">
@@ -1058,6 +1060,14 @@ The ability to understand a problem from its roots is what separates ordinary an
  const reveals=document.querySelectorAll('.reveal');
  if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('active')}),{threshold:.15});reveals.forEach(el=>observer.observe(el));}else{reveals.forEach(el=>el.classList.add('active'));}
 })();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js", { scope: "./", updateViaCache: "none" })
+      .catch(error => console.warn("Platform service worker registration failed:", error));
+  });
+}
 </script>
 </body>
 </html>
