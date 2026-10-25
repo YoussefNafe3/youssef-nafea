@@ -105,6 +105,15 @@ button,input,select{
   flex-direction:column;
   gap:9px
 }
+.video-sidebar-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 2px 14px;margin-bottom:14px;border-bottom:1px solid rgba(148,163,184,.15)}
+.video-sidebar-heading-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.video-sidebar-heading-copy strong{font-size:15px;font-weight:900;letter-spacing:-.2px}
+.video-sidebar-heading-copy small{font-size:11px;line-height:1.5;color:var(--muted)}
+.close-video-list{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:0 0 auto;min-height:38px;padding:7px 10px;border:1px solid rgba(248,113,113,.28);border-radius:11px;background:linear-gradient(135deg,rgba(127,29,29,.4),rgba(69,10,10,.35));color:#fecaca;font-size:12px;font-weight:850;white-space:nowrap;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.close-video-list:hover{background:rgba(185,28,28,.28);border-color:rgba(248,113,113,.55);transform:translateY(-1px)}
+.close-video-list-x{display:grid;place-items:center;width:20px;height:20px;border-radius:6px;background:rgba(248,113,113,.15);font-size:21px;line-height:18px;font-weight:500}
+.close-video-list:focus-visible,.video-category-toggle:focus-visible{outline:2px solid #93c5fd;outline-offset:3px}
+@media(max-width:640px){.video-sidebar-heading{gap:8px;padding-bottom:12px;margin-bottom:12px}.video-sidebar-heading-copy strong{font-size:14px}.video-sidebar-heading-copy small{font-size:10px}.close-video-list{min-height:40px;padding:8px 10px;font-size:12px}}
 .video-category-list{display:flex;flex-direction:column;gap:12px;min-width:0}
 .video-category{border:1px solid rgba(148,163,184,.16);border-radius:17px;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.12)}
 .video-category-toggle{width:100%;display:flex;align-items:center;gap:10px;padding:13px 12px;text-align:right;color:var(--text);background:transparent;border:0;cursor:pointer;transition:background .2s}
@@ -734,6 +743,17 @@ button,input,select{
 <div class="app">
 
 <aside class="sidebar" id="sidebar">
+    <div class="video-sidebar-heading">
+      <div class="video-sidebar-heading-copy">
+        <strong>مكتبة الفيديوهات</strong>
+        <small>اختر القسم الذي تريد مشاهدته</small>
+      </div>
+      <button type="button" id="closeVideoList" class="close-video-list" aria-label="غلق القائمة">
+        <span class="close-video-list-x" aria-hidden="true">×</span>
+        <span>غلق القائمة</span>
+      </button>
+    </div>
+
 
   <div class="brand">🎬 الفيديوهات</div>
 
@@ -752,13 +772,13 @@ button,input,select{
 
   <div class="video-category-list" aria-label="قوائم الفيديوهات">
     <section class="video-category">
-      <button type="button" class="video-category-toggle" data-category-toggle="explanation" aria-expanded="true" aria-controls="explanationVideoList">
+      <button type="button" class="video-category-toggle" data-category-toggle="explanation" aria-expanded="false" aria-controls="explanationVideoList">
         <span class="video-category-icon">▶</span>
         <span class="video-category-label"><strong>فيديوهات الشرح</strong><small>شرح الدروس والمفاهيم</small></span>
         <span class="video-category-count" id="explanationVideoCount">0</span>
         <span class="video-category-chevron" aria-hidden="true">⌄</span>
       </button>
-      <div id="explanationVideoList" class="videoList video-category-content">
+      <div id="explanationVideoList" class="videoList video-category-content" hidden>
         <div class="loadingItem">جاري تحميل الفيديوهات...</div>
       </div>
     </section>
@@ -3221,6 +3241,19 @@ videoCategoryToggles.forEach(toggle => {
     target.hidden = expanded;
   });
 });
+
+const closeVideoListButton = $("closeVideoList");
+if (closeVideoListButton) {
+  closeVideoListButton.addEventListener("click", () => {
+    if (typeof closeSidebar === "function") {
+      closeSidebar();
+    } else {
+      document.body.classList.remove("sidebar-open");
+    }
+    const menuButton = $("mobileMenu");
+    if (menuButton) menuButton.focus({ preventScroll: true });
+  });
+}
 
 /* =========================================================
    NATIVE WATCH PROGRESS
