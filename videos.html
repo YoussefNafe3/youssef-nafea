@@ -2014,24 +2014,12 @@ async function loadSavedSession(
     );
 
 
+  // Local storage is only a fallback when no server record exists.
+  // The server record is shared by all devices and is authoritative.
   if(local){
-
-    state.lastTime =
-      Math.max(
-        0,
-        Number(local.lastTime) || 0
-      );
-
-
-    state.watchedRanges =
-      mergeRanges(
-        local.watchedRanges || []
-      );
-
-
-    state.completedByEnd =
-      local.completed === true;
-
+    state.lastTime = Math.max(0, Number(local.lastTime) || 0);
+    state.watchedRanges = mergeRanges(local.watchedRanges || []);
+    state.completedByEnd = local.completed === true;
   }
 
 
@@ -2087,29 +2075,16 @@ const savedProgress =
         ) || 0;
 
 
-      if(
-        !state.watchedRanges.length &&
-        watched > 0 &&
-        duration > 0
-      ){
+      // Replace stale device-local tracking with the shared server progress.
+      // The database stores the cumulative watched seconds, so reconstruct a
+      // conservative range for the progress bar and never downgrade on device switch.
+      state.watchedRanges = watched > 0 && duration > 0
+        ? [[0, Math.min(watched, duration)]]
+        : [];
 
-        state.watchedRanges =
-          [[
-            0,
-            Math.min(
-              watched,
-              duration
-            )
-          ]];
-
-      }
-
-
-      const dbTime = Math.max(0, Number(data.last_time) || 0);
-
-      // Server position is authoritative across browser restarts/devices.
-      // Keep a newer local position only when it is ahead of the last DB save.
-      state.lastTime = Math.max(state.lastTime, dbTime);
+      // Always resume from the last server-saved playback position, not stale
+      // localStorage from this particular phone/laptop.
+      state.lastTime = Math.max(0, Number(data.last_time) || 0);
 
 
       state.skips =
