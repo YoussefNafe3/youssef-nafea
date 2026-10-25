@@ -265,7 +265,7 @@ button,input,select{
 }
 
 .mobileMenu{
-  display:none;
+  display:inline-flex;
   align-items:center;
   justify-content:center;
   gap:9px;
@@ -610,6 +610,9 @@ button,input,select{
   display:block
 }
 
+@media(min-width:1001px){
+  .sidebar.closed{display:none}
+}
 @media(max-width:1000px){
 
   body{
@@ -3245,7 +3248,11 @@ videoCategoryToggles.forEach(toggle => {
 const closeVideoListButton = $("closeVideoList");
 if (closeVideoListButton) {
   closeVideoListButton.addEventListener("click", () => {
-    sidebar.classList.remove("open");
+    if (window.innerWidth <= 1000) {
+      sidebar.classList.remove("open");
+    } else {
+      sidebar.classList.add("closed");
+    }
     const menuButton = $("mobileMenu");
     if (menuButton) menuButton.focus({ preventScroll: true });
   });
@@ -3612,13 +3619,14 @@ $("searchInput")
 
 
 $("mobileMenu")
-  .addEventListener(
-    "click",
-    () =>
-      sidebar.classList.toggle(
-        "open"
-      )
-  );
+  .addEventListener("click", () => {
+    if (window.innerWidth <= 1000) {
+      sidebar.classList.remove("closed");
+      sidebar.classList.toggle("open");
+    } else {
+      sidebar.classList.toggle("closed");
+    }
+  });
 
 
 /* =========================================================
