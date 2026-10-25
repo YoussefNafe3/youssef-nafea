@@ -4761,6 +4761,48 @@ window.addEventListener(
 
 
 /* =========================================================
+   DETECTABLE CAPTURE ATTEMPT: FORCE LOGOUT
+   Browser JavaScript cannot detect every OS-level screenshot/recording.
+   This handler logs out for capture actions the page can actually detect.
+========================================================= */
+
+let captureLogoutInProgress = false;
+
+async function forceLogoutForCapture(reason = "capture") {
+  if (captureLogoutInProgress) return;
+  captureLogoutInProgress = true;
+  videoSessionAlive = false;
+
+  try { pauseCurrentMedia(); } catch {}
+  try {
+    antiRecord?.classList.add("show");
+    captureShield?.classList.add("show");
+  } catch {}
+
+  toast("تم تسجيل خروجك بسبب محاولة تصوير المحتوى. حفاظًا على حقوق الدروس، سجّل الدخول مرة أخرى.");
+
+  try {
+    await client.rpc("release_student_session", {
+      p_session_id: localStorage.getItem("platform_session_id")
+    });
+  } catch (e) {
+    console.warn("Could not release platform session after capture attempt", e);
+  }
+
+  try { await client.auth.signOut(); } catch (e) {
+    console.warn("Could not sign out auth session after capture attempt", e);
+  }
+
+  try {
+    localStorage.removeItem("platform_session_id");
+    localStorage.removeItem("user");
+  } catch {}
+
+  setTimeout(() => window.location.replace("login.html"), 650);
+}
+
+
+/* =========================================================
    PRINT SCREEN
 ========================================================= */
 
@@ -4786,27 +4828,7 @@ window.addEventListener(
       if(
         state.securityAcknowledged
       ){
-
-        showCaptureShield(
-          "printscr"
-        );
-
-
-        setTimeout(
-          ()=>{
-
-            if(
-              !document.hidden
-            ){
-
-              hideCaptureShield();
-
-            }
-
-          },
-          3000
-        );
-
+        void forceLogoutForCapture("printscr");
       }
 
 
@@ -4924,11 +4946,11 @@ try{
         if(
           state.securityAcknowledged
         ){
-
-          showCaptureShield(
-            "displaymedia"
+          void forceLogoutForCapture("displaymedia");
+          throw new DOMException(
+            "Screen capture is not allowed on this learning page.",
+            "NotAllowedError"
           );
-
         }
 
 
