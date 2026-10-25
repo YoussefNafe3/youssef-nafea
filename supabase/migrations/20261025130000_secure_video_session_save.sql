@@ -113,7 +113,6 @@ revoke all on function public.save_video_session(text, text, integer, integer, b
 revoke all on function public.save_video_session(text, text, integer, integer, boolean, integer) from anon;
 grant execute on function public.save_video_session(text, text, integer, integer, boolean, integer) to authenticated;
 
--- These write policies currently allow unauthenticated clients to write arbitrary
--- student/video rows. The RPC above becomes the only supported write path.
-drop policy if exists "sessions insert" on public.video_sessions;
-drop policy if exists "allow update" on public.video_sessions;
+-- Keep existing policies unchanged until the RPC has been verified with a real
+-- authenticated student session. Remove legacy write policies in a follow-up
+-- migration after the end-to-end test succeeds.
