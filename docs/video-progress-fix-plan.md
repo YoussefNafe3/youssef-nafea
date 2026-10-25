@@ -9,3 +9,5 @@ Root causes confirmed:
 - Existing rows have null percent; 241 of 254 rows cannot use the percent column.
 
 Changes should be staged on this branch first. Production schema and published files remain unchanged until the RPC migration and branch changes are verified.
+
+Implementation is in progress; production branch has not been changed.
