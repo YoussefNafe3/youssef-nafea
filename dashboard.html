@@ -428,7 +428,7 @@ onclick="goDashboard()"
 <span id="themeLabel">الوضع الفاتح</span>
 </button>
 
-<button id="enableDeviceNotifications" class="push-setup-btn" type="button">🔔 تفعيل الإشعارات</button>
+<button id="enableDeviceNotifications" class="push-setup-btn" type="button">🔔 تفعيل الإشعار</button>
 
 <a href="index.html" class="btn home-btn">⌂ الرئيسية</a>
 
@@ -842,29 +842,22 @@ const pushNotificationStatus = document.getElementById("pushNotificationStatus")
 const VAPID_PUBLIC_KEY = "BDpbM0K5jqGxUMXHPGTkcFFWnOH382b7689D_9PfwxI3ecn1RR5kgrnkan9poadyfR-NgFeD6cbPO_6XEemjY80";
 
 function setPushStatus(message, state = ""){
-  pushNotificationStatus.textContent = message;
-  pushNotificationStatus.dataset.state = state;
-  pushNotificationStatus.style.display = message ? "block" : "none";
+  // Keep notification setup quiet and uncluttered; technical details stay in console.
+  pushNotificationStatus.textContent = "";
+  pushNotificationStatus.dataset.state = "";
+  pushNotificationStatus.style.display = "none";
 }
 
 function updateDeviceNotificationButton(){
   if(!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)){
-    enableDeviceNotificationsButton.textContent = "الإشعارات غير مدعومة";
+    enableDeviceNotificationsButton.textContent = "تفعيل الإشعار";
     enableDeviceNotificationsButton.disabled = true;
-    enableDeviceNotificationsButton.title = "استخدم متصفحًا حديثًا يدعم Web Push وافتح المنصة عبر HTTPS.";
+    enableDeviceNotificationsButton.title = "هذا المتصفح لا يدعم إشعارات الجهاز.";
     return;
   }
   enableDeviceNotificationsButton.disabled = false;
-  if(Notification.permission === "denied"){
-    enableDeviceNotificationsButton.textContent = "🔔 إعادة المحاولة";
-    enableDeviceNotificationsButton.title = "إذا سبق رفض الإذن، فعّل إشعارات الموقع من إعدادات المتصفح أولًا.";
-  }else if(Notification.permission === "granted"){
-    enableDeviceNotificationsButton.textContent = "✓ تحديث الإشعارات";
-    enableDeviceNotificationsButton.title = "تحديث اشتراك إشعارات هذا الجهاز.";
-  }else{
-    enableDeviceNotificationsButton.textContent = "🔔 تفعيل الإشعارات";
-    enableDeviceNotificationsButton.title = "اضغط لطلب إذن الإشعارات. يمكنك المحاولة مرة أخرى إذا لم تختر سماحًا أو رفضًا.";
-  }
+  enableDeviceNotificationsButton.textContent = "🔔 تفعيل الإشعار";
+  enableDeviceNotificationsButton.title = "اضغط لطلب إذن إشعارات الجهاز.";
 }
 
 function urlBase64ToUint8Array(base64String){
@@ -883,31 +876,30 @@ async function registerPlatformServiceWorker(){
 
 async function activateDevicePush(){
   if(!("Notification" in window) || !("PushManager" in window) || !("serviceWorker" in navigator)){
-    setPushStatus("المتصفح الحالي لا يدعم إشعارات Push. جرّب Chrome أو Edge أو Safari حديثًا عبر HTTPS.", "error");
+    console.warn("This browser does not support Web Push notifications.");
     return;
   }
+
   enableDeviceNotificationsButton.disabled = true;
-  enableDeviceNotificationsButton.textContent = "جاري تفعيل الإشعارات…";
-  setPushStatus("جاري تجهيز إشعارات الجهاز بأمان…");
+  enableDeviceNotificationsButton.textContent = "جاري التفعيل…";
+  pushNotificationStatus.style.display = "none";
+
   try{
-    // Ask again whenever permission is still default. Browsers do not show
-    // another native prompt after a persistent denial; in that case give
-    // concise recovery instructions and keep the retry button available.
+    // Request permission directly from the user's click.
+    // If the browser has already stored a denial, it will not show a new prompt
+    // until the user re-enables this site's notifications in browser settings.
     const permission = Notification.permission === "granted"
       ? "granted"
       : await Notification.requestPermission();
+
     if(permission !== "granted"){
-      if(permission === "denied"){
-        setPushStatus("المتصفح حظر الطلب السابق، لذلك لن يظهر مربع السماح تلقائيًا الآن. افتح إعدادات الموقع من رمز القفل بجوار العنوان ← الإشعارات ← سماح، ثم ارجع واضغط «إعادة المحاولة». على iPhone تأكد من فتح الموقع من أيقونته على الشاشة الرئيسية.", "error");
-      }else{
-        setPushStatus("لم يتم اختيار سماح بعد. اضغط «تفعيل الإشعارات» للمحاولة مرة أخرى، واختر «سماح» عندما تظهر نافذة المتصفح.", "error");
-      }
+      console.info("Notification permission was not granted:", permission);
       return;
     }
 
     const {data: authData, error: authError} = await client.auth.getSession();
     if(authError || !authData?.session){
-      setPushStatus("انتهت جلسة الدخول الآمنة. سجّل الخروج ثم ادخل مرة أخرى قبل تفعيل إشعارات الجهاز.", "error");
+      console.warn("A valid signed-in session is required to save this device's push subscription.");
       return;
     }
 
@@ -922,7 +914,7 @@ async function activateDevicePush(){
 
     const json = subscription.toJSON();
     if(!json.endpoint || !json.keys?.p256dh || !json.keys?.auth){
-      throw new Error("لم يتمكن المتصفح من إنشاء اشتراك Push صالح.");
+      throw new Error("The browser did not return a valid push subscription.");
     }
 
     const {error: saveError} = await client.from("push_subscriptions").upsert({
@@ -934,15 +926,10 @@ async function activateDevicePush(){
       user_agent:navigator.userAgent,
       updated_at:new Date().toISOString()
     },{onConflict:"student_id,endpoint"});
-    if(saveError){
-      if(saveError.code === "42501" || /row-level security|permission/i.test(saveError.message || "")){
-        throw new Error("تعذر ربط الجهاز بحسابك الآمن. سجّل الخروج من المنصة ثم سجّل الدخول مجددًا، وبعدها أعد المحاولة.");
-      }
-      throw saveError;
-    }
 
-    setPushStatus("تم تفعيل إشعارات الجهاز بنجاح. ستصلك إشعارات النتائج الجديدة حتى عند إغلاق المنصة، ما دام المتصفح أو نظام الجهاز يسمح بإشعارات الخلفية.", "success");
-    enableDeviceNotificationsButton.textContent = "إشعارات الجهاز مفعّلة ✓";
+    if(saveError) throw saveError;
+
+    enableDeviceNotificationsButton.textContent = "✓ تم تفعيل الإشعار";
     try{
       await registration.showNotification("تم تفعيل إشعارات منصة د. يوسف نافع",{
         body:"سيصلك تنبيه عند نشر نتيجة أو إشعار جديد.",
@@ -952,13 +939,19 @@ async function activateDevicePush(){
         dir:"rtl",
         lang:"ar"
       });
-    }catch(e){}
+    }catch(notificationError){
+      console.info("Could not display local setup confirmation:",notificationError);
+    }
   }catch(error){
-    console.error("Could not activate web push:",error);
-    setPushStatus(error?.message || "تعذر تفعيل الإشعارات. تأكد من اتصال الإنترنت وإعدادات المتصفح ثم حاول مرة أخرى.", "error");
+    // Do not show technical/browser errors in red on the page.
+    console.error("Could not activate device push notifications:",error);
   }finally{
     enableDeviceNotificationsButton.disabled = false;
-    updateDeviceNotificationButton();
+    if(Notification.permission !== "granted"){
+      enableDeviceNotificationsButton.textContent = "🔔 تفعيل الإشعار";
+    }else if(enableDeviceNotificationsButton.textContent !== "✓ تم تفعيل الإشعار"){
+      enableDeviceNotificationsButton.textContent = "🔔 تفعيل الإشعار";
+    }
   }
 }
 
