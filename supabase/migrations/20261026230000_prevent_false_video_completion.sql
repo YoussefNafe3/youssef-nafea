@@ -110,7 +110,7 @@ begin
       excluded.last_opened_at
     ),
     percent = greatest(coalesce(public.video_sessions.percent, 0), coalesce(public.video_sessions.progress, 0), excluded.percent),
-    progress = greatest(coalesce(public.video_sessions.progress, 0), coalesce(public.video_sessions.percent, 0), excluded.progress),
+    progress = greatest(coalesce(public.video_sessions.progress, 0), floor(coalesce(public.video_sessions.percent, 0))::integer, excluded.progress),
     completed = coalesce(public.video_sessions.completed, false) or excluded.completed,
     skips = greatest(coalesce(public.video_sessions.skips, 0), excluded.skips),
     updated_at = pg_catalog.now();
