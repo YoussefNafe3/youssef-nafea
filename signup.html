@@ -283,5 +283,19 @@ msg.innerText = "حدث خطأ غير متوقع";
 
 </script>
 
+
+<script>
+(function(){
+ const message = document.getElementById("msg");
+ if(!message) return;
+ const observer = new MutationObserver(function(){
+   if(message.textContent.includes("تم إنشاء الحساب بنجاح")){
+     observer.disconnect();
+     window.location.assign("login.html?registered=1");
+   }
+ });
+ observer.observe(message, {childList:true,subtree:true,characterData:true});
+})();
+</script>
 </body>
 </html>
