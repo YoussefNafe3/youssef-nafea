@@ -3,14 +3,19 @@
 -- writes are routed through this authenticated, active-session-checked RPC.
 -- Existing video_sessions rows are retained.
 
+alter table public.video_sessions add column if not exists last_time integer not null default 0;
+
 create unique index if not exists video_sessions_student_video_uidx
   on public.video_sessions (student_id, video_id);
 
-create or replace function public.save_video_session(
+drop function if exists public.save_video_session(text, text, integer, integer, integer, boolean, integer);
+
+create function public.save_video_session(
   p_session_id text,
   p_video_id text,
   p_watched_seconds integer,
   p_duration integer,
+  p_last_time integer,
   p_completed boolean default false,
   p_skips integer default 0
 )
@@ -81,11 +86,12 @@ begin
   end;
 
   insert into public.video_sessions (
-    student_id, video_id, class_group, watched_seconds, duration,
+    student_id, video_id, class_group, watched_seconds, duration, last_time,
     percent, progress, completed, skips, updated_at
   )
   values (
     v_student.id, p_video_id, v_student.class_group, v_watched, v_duration,
+    greatest(0, least(coalesce(p_last_time, 0), v_duration)),
     v_percent, round(v_percent)::integer,
     coalesce(p_completed, false) or v_percent >= 95,
     greatest(0, coalesce(p_skips, 0)), pg_catalog.now()
@@ -94,6 +100,7 @@ begin
     class_group = excluded.class_group,
     watched_seconds = excluded.watched_seconds,
     duration = excluded.duration,
+    last_time = excluded.last_time,
     percent = excluded.percent,
     progress = excluded.progress,
     completed = excluded.completed,
@@ -109,9 +116,9 @@ begin
 end;
 $function$;
 
-revoke all on function public.save_video_session(text, text, integer, integer, boolean, integer) from public;
-revoke all on function public.save_video_session(text, text, integer, integer, boolean, integer) from anon;
-grant execute on function public.save_video_session(text, text, integer, integer, boolean, integer) to authenticated;
+revoke all on function public.save_video_session(text, text, integer, integer, integer, boolean, integer) from public;
+revoke all on function public.save_video_session(text, text, integer, integer, integer, boolean, integer) from anon;
+grant execute on function public.save_video_session(text, text, integer, integer, integer, boolean, integer) to authenticated;
 
 -- Keep existing policies unchanged until the RPC has been verified with a real
 -- authenticated student session. Remove legacy write policies in a follow-up
