@@ -2374,6 +2374,22 @@ function calculateWatchedSeconds(){
 
 }
 
+function markCompletionIfFullyWatched(duration){
+  if(!Number.isFinite(duration) || duration <= 0){
+    state.completedByEnd = false;
+    return false;
+  }
+
+  const ranges = mergeRanges(state.watchedRanges);
+  const watched = ranges.reduce((sum, range) => sum + range[1] - range[0], 0);
+  const furthestWatched = ranges.reduce((end, range) => Math.max(end, range[1]), 0);
+
+  // Small tolerance accounts only for the final media-timer tick, never a seek.
+  const completed = watched >= duration - 0.75 && furthestWatched >= duration - 0.75;
+  state.completedByEnd = completed;
+  return completed;
+}
+
 
 function updateProgressUI(
   current,
@@ -2403,20 +2419,17 @@ function updateProgressUI(
     );
 
 
-  const percent =
-    Math.min(
-      100,
-      (watched / duration) * 100
-    );
+  const fullyWatched =
+    state.completedByEnd === true &&
+    watched >= duration - 0.75;
 
+  // Never display 100% while the lesson has only been seeked to its end.
+  const percent = fullyWatched
+    ? 100
+    : Math.min(99.9, Math.max(0, (watched / duration) * 100));
 
-  percentBox.textContent =
-    percent.toFixed(1) +
-    "%";
-
-
-  progressBar.style.width =
-    percent + "%";
+  percentBox.textContent = percent.toFixed(1) + "%";
+  progressBar.style.width = percent + "%";
 
 }
 
@@ -2680,17 +2693,21 @@ async function saveSession(){
   state.lastTime = current;
 
   const watched = Math.min(duration, Math.max(0, calculateWatchedSeconds()));
-  const percent = Math.min(100, Math.max(0, (watched / duration) * 100));
+  const fullyWatched = state.completedByEnd === true && watched >= duration - 0.75;
+  const storedDuration = Math.ceil(duration);
+  const storedWatched = fullyWatched
+    ? storedDuration
+    : Math.min(Math.floor(watched), Math.max(0, storedDuration - 1));
 
   try {
     const { data, error } = await client.rpc("save_video_session", {
       p_session_id: platformSessionId,
       p_video_id: String(state.currentVideoId),
-      p_watched_seconds: Math.floor(watched),
-      p_duration: Math.floor(duration),
+      p_watched_seconds: storedWatched,
+      p_duration: storedDuration,
       p_last_time: Math.floor(Math.min(duration, Math.max(0, current))),
       p_opened_at: state.videoOpenedAt || getDeviceLocalTimestamp(),
-      p_completed: state.completedByEnd === true,
+      p_completed: fullyWatched,
       p_skips: Math.max(0, Math.floor(Number(state.skips) || 0))
     });
 
@@ -3150,40 +3167,13 @@ function createYouTubePlayer(
                 e.data ===
                 YT.PlayerState.ENDED
               ){
-
-                state.completedByEnd =
-                  true;
-
-
-                const d =
-                  Number(
-                    state.yt.getDuration?.()
-                  ) || 0;
-
-
-                if(d > 0){
-
-                  addWatchedRange(
-                    0,
-                    d
-                  );
-
-                }
-
-
-                updateProgressUI(
-                  d,
-                  d
-                );
-
-
+                const d = Number(state.yt.getDuration?.()) || 0;
+                const completed = markCompletionIfFullyWatched(d);
+                updateProgressUI(d, d);
                 saveSession();
-
-
-                toast(
-                  "✓ تم إكمال الدرس تلقائيًا"
-                );
-
+                if(completed){
+                  toast("✓ تم إكمال الدرس بنجاح");
+                }
               }
 
             }
@@ -3920,44 +3910,14 @@ video.addEventListener(
 video.addEventListener(
   "ended",
   ()=>{
-
-    state.nativePlaying =
-      false;
-
-    state.completedByEnd =
-      true;
-
-
-    if(
-      Number.isFinite(
-        video.duration
-      ) &&
-      video.duration > 0
-    ){
-
-      addWatchedRange(
-        0,
-        video.duration
-      );
-
-    }
-
-
-    updateProgressUI(
-      video.duration,
-      video.duration
-    );
-
-
+    state.nativePlaying = false;
+    const completed = markCompletionIfFullyWatched(video.duration);
+    updateProgressUI(video.duration, video.duration);
     saveSession();
-
     persistLocalProgress();
-
-
-    toast(
-      "✓ تم إكمال الدرس تلقائيًا"
-    );
-
+    if(completed){
+      toast("✓ تم إكمال الدرس بنجاح");
+    }
   }
 );
 
