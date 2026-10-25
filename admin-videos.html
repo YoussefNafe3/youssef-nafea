@@ -1164,6 +1164,113 @@
 
         }
 
+
+        /* =========================================================
+           VIDEO ORDER MANAGER
+        ========================================================= */
+        .order-manager{
+            margin-top:28px;
+            padding:22px;
+            border:1px solid rgba(255,255,255,.1);
+            border-radius:22px;
+            background:linear-gradient(145deg,rgba(8,20,37,.92),rgba(15,30,49,.78));
+            box-shadow:0 18px 45px rgba(0,0,0,.18)
+        }
+        .order-manager-head{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:18px;
+            margin-bottom:16px
+        }
+        .order-kicker{
+            color:var(--gold);
+            font-size:10px;
+            font-weight:900;
+            letter-spacing:1.5px;
+            margin-bottom:5px
+        }
+        .order-manager h2{
+            font-size:19px;
+            font-weight:900;
+            line-height:1.5
+        }
+        .order-manager-head p{
+            margin-top:5px;
+            color:var(--muted);
+            font-size:12px;
+            line-height:1.8;
+            max-width:520px
+        }
+        .order-refresh{
+            flex:0 0 auto;
+            min-height:42px;
+            padding:0 13px;
+            border-radius:12px;
+            color:#dbeafe;
+            background:rgba(59,130,246,.12);
+            border:1px solid rgba(96,165,250,.24);
+            font-size:12px;
+            font-weight:800;
+            cursor:pointer
+        }
+        .order-refresh:hover{background:rgba(59,130,246,.22)}
+        .order-status{
+            padding:10px 12px;
+            margin-bottom:12px;
+            border-radius:11px;
+            background:rgba(255,255,255,.035);
+            color:var(--muted);
+            font-size:12px;
+            line-height:1.7
+        }
+        .order-status.success{color:#86efac;background:rgba(34,197,94,.08)}
+        .order-status.error{color:#fca5a5;background:rgba(239,68,68,.08)}
+        .video-order-list{display:flex;flex-direction:column;gap:9px}
+        .video-order-row{
+            display:grid;
+            grid-template-columns:38px minmax(0,1fr) auto;
+            align-items:center;
+            gap:12px;
+            padding:12px;
+            border:1px solid rgba(255,255,255,.07);
+            border-radius:15px;
+            background:rgba(255,255,255,.025);
+            transition:border-color .2s,background .2s
+        }
+        .video-order-row:hover{border-color:rgba(96,165,250,.28);background:rgba(255,255,255,.045)}
+        .video-order-number{
+            width:34px;height:34px;display:grid;place-items:center;
+            border-radius:11px;color:#bfdbfe;background:rgba(59,130,246,.13);
+            font-size:12px;font-weight:900
+        }
+        .video-order-title{min-width:0;font-size:13px;font-weight:800;line-height:1.65;overflow-wrap:anywhere}
+        .video-order-meta{margin-top:3px;color:var(--muted);font-size:10px;line-height:1.6}
+        .video-order-new{
+            display:inline-flex;margin-inline-start:7px;padding:2px 6px;border-radius:999px;
+            color:#052e16;background:#86efac;font-size:9px;font-weight:900;vertical-align:middle
+        }
+        .video-order-actions{display:flex;gap:6px}
+        .video-order-btn{
+            width:36px;height:36px;display:grid;place-items:center;border-radius:11px;
+            color:#e2e8f0;background:#17263e;border:1px solid rgba(255,255,255,.08);
+            font-size:17px;cursor:pointer;transition:.2s
+        }
+        .video-order-btn:hover:not(:disabled){color:#fff;background:#2563eb;border-color:#60a5fa}
+        .video-order-btn:disabled{opacity:.28;cursor:not-allowed}
+        .video-order-empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+        @media(max-width:760px){
+            body{padding:14px 9px}
+            .main-card{padding:17px;border-radius:20px}
+            .order-manager{padding:14px;margin-top:20px;border-radius:17px}
+            .order-manager-head{align-items:flex-start;flex-direction:column}
+            .order-manager h2{font-size:17px}
+            .order-refresh{width:100%}
+            .video-order-row{grid-template-columns:32px minmax(0,1fr) auto;gap:8px;padding:10px}
+            .video-order-number{width:30px;height:30px}
+            .video-order-actions{gap:4px}
+            .video-order-btn{width:32px;height:34px}
+        }
     </style>
 
 </head>
@@ -1541,6 +1648,22 @@
         </form>
 
 
+        <!-- =========================================================
+             VIDEO ORDER MANAGEMENT
+        ========================================================= -->
+        <section class="order-manager" aria-labelledby="orderManagerTitle">
+            <div class="order-manager-head">
+                <div>
+                    <div class="order-kicker">CONTENT MANAGEMENT</div>
+                    <h2 id="orderManagerTitle">ترتيب الفيديوهات على المنصة</h2>
+                    <p>استخدم الأسهم لتحديد ترتيب ظهور الدروس للطلاب. الفيديو الجديد يظهر تلقائيًا في بداية القائمة.</p>
+                </div>
+                <button type="button" class="order-refresh" id="refreshVideoOrder">↻ تحديث القائمة</button>
+            </div>
+            <div id="videoOrderStatus" class="order-status" role="status">جاري تحميل الفيديوهات...</div>
+            <div id="videoOrderList" class="video-order-list"></div>
+        </section>
+
     </main>
 
 
@@ -1665,7 +1788,9 @@
      SUPABASE
 ============================================================= -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+
+</script>
 
 
 <script>
@@ -3303,6 +3428,106 @@ window.addEventListener(
 
     }
 );
+
+/* ================================================================
+   ADMIN VIDEO ORDERING
+================================================================ */
+const orderList = document.getElementById("videoOrderList");
+const orderStatus = document.getElementById("videoOrderStatus");
+const refreshOrderBtn = document.getElementById("refreshVideoOrder");
+
+function setOrderStatus(message, type = "") {
+    orderStatus.textContent = message;
+    orderStatus.className = "order-status" + (type ? " " + type : "");
+}
+
+function escapeOrderText(value) {
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[ch]);
+}
+
+function isRecentlyUploaded(value) {
+    if (!value) return false;
+    const time = new Date(value).getTime();
+    const age = Date.now() - time;
+    return Number.isFinite(time) && age >= 0 && age <= 7 * 24 * 60 * 60 * 1000;
+}
+
+async function loadVideoOrder() {
+    setOrderStatus("جاري تحميل ترتيب الفيديوهات...");
+    orderList.innerHTML = "";
+    const { data, error } = await client
+        .from("videos")
+        .select("id,title,class_group,created_at,sort_order")
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: false, nullsFirst: false });
+
+    if (error) {
+        console.error("[Video order]", error);
+        setOrderStatus("تعذر تحميل القائمة. تأكد من تسجيل الدخول بحساب الإدارة ثم أعد المحاولة.", "error");
+        return;
+    }
+
+    const videos = Array.isArray(data) ? data : [];
+    if (!videos.length) {
+        orderList.innerHTML = '<div class="video-order-empty">لا توجد فيديوهات حتى الآن.</div>';
+        setOrderStatus("لا توجد فيديوهات لعرضها.");
+        return;
+    }
+
+    orderList.innerHTML = videos.map((video, index) => {
+        const fresh = isRecentlyUploaded(video.created_at);
+        const groupNames = {
+            first_science: "أولى ثانوي · علوم متكاملة",
+            third_biology: "تالتة ثانوي · أحياء",
+            third_geology: "تالتة ثانوي · جيولوجيا"
+        };
+        return `
+            <div class="video-order-row">
+                <div class="video-order-number">${index + 1}</div>
+                <div>
+                    <div class="video-order-title">${escapeOrderText(video.title || "بدون عنوان")}${fresh ? '<span class="video-order-new">NEW · جديد</span>' : ""}</div>
+                    <div class="video-order-meta">${escapeOrderText(groupNames[video.class_group] || video.class_group || "درس تعليمي")}</div>
+                </div>
+                <div class="video-order-actions">
+                    <button type="button" class="video-order-btn" data-video-id="${escapeOrderText(video.id)}" data-direction="-1" aria-label="نقل الفيديو لأعلى" title="نقل لأعلى" ${index === 0 ? "disabled" : ""}>↑</button>
+                    <button type="button" class="video-order-btn" data-video-id="${escapeOrderText(video.id)}" data-direction="1" aria-label="نقل الفيديو لأسفل" title="نقل لأسفل" ${index === videos.length - 1 ? "disabled" : ""}>↓</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    setOrderStatus("تم تحميل " + videos.length + " فيديو. الترتيب محفوظ للطلاب تلقائيًا.", "success");
+}
+
+async function moveVideoOrder(videoId, direction, button) {
+    const buttons = orderList.querySelectorAll("button");
+    buttons.forEach(button => button.disabled = true);
+    setOrderStatus("جاري حفظ الترتيب الجديد...");
+    try {
+        const { data, error } = await client.rpc("admin_reorder_video", {
+            p_video_id: videoId,
+            p_direction: Number(direction)
+        });
+        if (error) throw error;
+        if (data && data.success === false) throw new Error("تعذر تغيير ترتيب الفيديو.");
+        await loadVideoOrder();
+        setOrderStatus(data?.moved === false ? "الفيديو بالفعل عند حد القائمة." : "تم حفظ ترتيب الفيديوهات بنجاح.", "success");
+    } catch (error) {
+        console.error("[Move video]", error);
+        setOrderStatus(error?.message || "تعذر تغيير الترتيب. تأكد من تسجيل الدخول بحساب الإدارة.", "error");
+        buttons.forEach(button => button.disabled = false);
+    }
+}
+
+orderList.addEventListener("click", event => {
+    const button = event.target.closest("button[data-video-id]");
+    if (!button || button.disabled) return;
+    moveVideoOrder(button.dataset.videoId, button.dataset.direction, button);
+});
+refreshOrderBtn.addEventListener("click", loadVideoOrder);
+loadVideoOrder();
 
 </script>
 

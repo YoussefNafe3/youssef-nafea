@@ -124,7 +124,27 @@ button,input,select{
 .videoItemTitle{
   font-size:14px;
   font-weight:700;
-  line-height:1.65
+  line-height:1.65;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:9px
+}
+.videoNewBadge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  padding:3px 7px;
+  border-radius:999px;
+  color:#052e16;
+  background:linear-gradient(135deg,#bbf7d0,#4ade80);
+  border:1px solid rgba(134,239,172,.7);
+  font-size:9px;
+  font-weight:900;
+  line-height:1.4;
+  letter-spacing:.35px;
+  box-shadow:0 3px 10px rgba(34,197,94,.15)
 }
 
 .videoItemMeta{
@@ -219,7 +239,25 @@ button,input,select{
 }
 
 .mobileMenu{
-  display:none
+  display:none;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  min-height:44px;
+  padding:0 16px;
+  border-radius:13px;
+  white-space:nowrap;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.1px;
+  background:linear-gradient(135deg,#2563eb,#1d4ed8);
+  border:1px solid rgba(147,197,253,.28);
+  box-shadow:0 8px 22px rgba(37,99,235,.22);
+}
+.mobileMenu::before{
+  content:"▤";
+  font-size:16px;
+  line-height:1
 }
 
 .playerCard{
@@ -712,7 +750,7 @@ button,input,select{
         class="btn secondary mobileMenu"
         type="button"
       >
-        ☰
+        عرض الفيديوهات
       </button>
 
       <div>
@@ -3027,12 +3065,19 @@ async function loadVideos(){
       await client
         .from("videos")
         .select(
-          "id,title,url,class_group,is_premium"
+          "id,title,url,class_group,is_premium,created_at,sort_order"
         )
         .order(
-          "id",
+          "sort_order",
           {
             ascending:true
+          }
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false,
+            nullsFirst:false
           }
         );
 
@@ -3170,6 +3215,14 @@ function render(){
         item.title ||
         "بدون عنوان";
 
+      const uploadedAt = item.created_at ? new Date(item.created_at).getTime() : 0;
+      const isNew = uploadedAt > 0 && Date.now() - uploadedAt >= 0 && Date.now() - uploadedAt <= 7 * 24 * 60 * 60 * 1000;
+      if (isNew) {
+        const newBadge = document.createElement("span");
+        newBadge.className = "videoNewBadge";
+        newBadge.textContent = "NEW · جديد";
+        title.appendChild(newBadge);
+      }
 
       const meta =
         document.createElement(
