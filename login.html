@@ -175,6 +175,8 @@ button:not(.eye){background:linear-gradient(120deg,#8270ed,#6551c9 52%,#5140aa);
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#11152f">
 </head>
 
 
@@ -644,6 +646,14 @@ pass.type === "password"
    if(window.history && window.history.replaceState) window.history.replaceState({}, document.title, window.location.pathname);
  }
 })();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js", { scope: "./", updateViaCache: "none" })
+      .catch(error => console.warn("Platform service worker registration failed:", error));
+  });
+}
 </script>
 </body>
 </html>
