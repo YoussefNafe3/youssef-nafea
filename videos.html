@@ -1275,6 +1275,8 @@ const state = {
 
   currentVideo: null,
 
+  videoOpenedAt: null,
+
   lastTime: 0,
 
   sessionSaved: false,
@@ -2100,6 +2102,12 @@ const savedProgress =
    SAVE SESSION
 ========================================================= */
 
+function getDeviceLocalTimestamp(){
+  const d = new Date();
+  const pad = n => String(n).padStart(2, "0");
+  return String(d.getFullYear()) + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()) + "T" + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
+}
+
 async function saveSession(){
 
   persistLocalProgress();
@@ -2134,6 +2142,7 @@ async function saveSession(){
       p_watched_seconds: Math.floor(watched),
       p_duration: Math.floor(duration),
       p_last_time: Math.floor(Math.min(duration, Math.max(0, current))),
+      p_opened_at: state.videoOpenedAt || getDeviceLocalTimestamp(),
       p_completed: state.completedByEnd === true,
       p_skips: Math.max(0, Math.floor(Number(state.skips) || 0))
     });
@@ -2557,6 +2566,9 @@ function createYouTubePlayer(
                 0
               );
 
+              // Save the open event even if playback has not started.
+              await saveSession();
+
             },
 
 
@@ -2838,6 +2850,8 @@ async function selectVideo(
         )
     };
 
+  // Capture opening time from the device clock once per video opening.
+  state.videoOpenedAt = getDeviceLocalTimestamp();
 
   state.lastTime =
     0;
@@ -2981,6 +2995,9 @@ function prepareNativeVideo(
         video.currentTime,
         video.duration
       );
+
+      // Save the open event even if playback has not started.
+      await saveSession();
 
     },
     {
