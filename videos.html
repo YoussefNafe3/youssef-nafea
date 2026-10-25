@@ -3245,11 +3245,7 @@ videoCategoryToggles.forEach(toggle => {
 const closeVideoListButton = $("closeVideoList");
 if (closeVideoListButton) {
   closeVideoListButton.addEventListener("click", () => {
-    if (typeof closeSidebar === "function") {
-      closeSidebar();
-    } else {
-      document.body.classList.remove("sidebar-open");
-    }
+    sidebar.classList.remove("open");
     const menuButton = $("mobileMenu");
     if (menuButton) menuButton.focus({ preventScroll: true });
   });
