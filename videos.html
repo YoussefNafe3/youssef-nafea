@@ -6,6 +6,7 @@
 <title>الفيديوهات | د. يوسف نافع</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://www.fontstatic.com/f=diwanltr" />
 
 <style>
 :root{
@@ -207,12 +208,57 @@ button,input,select{
   display:flex;
   align-items:center;
   gap:10px;
-  min-width:0
+  min-width:0;
+  flex:1
+}
+
+.quote-heading{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  min-width:0;
+  width:100%;
+  padding:4px 0
+}
+
+.pageTitle.quote-title{
+  font-family:"diwanltr",serif;
+  font-size:clamp(25px,2.45vw,39px);
+  font-weight:400;
+  line-height:1.75;
+  letter-spacing:0;
+  color:#f7e7b0;
+  text-shadow:0 3px 20px rgba(245,197,66,.12);
+  text-wrap:balance;
+  overflow-wrap:anywhere
+}
+
+.studentChip{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  flex-wrap:wrap
 }
 
 .pageTitle{
   font-size:19px;
   font-weight:800
+}
+
+.player-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  margin:0 0 12px;
+  min-width:0
+}
+
+.player-toolbar .mobileMenu{
+  min-height:38px;
+  padding:0 13px;
+  border-radius:11px;
+  font-size:12px;
+  box-shadow:0 6px 16px rgba(37,99,235,.18)
 }
 
 .studentChip{
@@ -269,16 +315,16 @@ button,input,select{
   align-items:center;
   justify-content:center;
   gap:9px;
-  min-height:44px;
-  padding:0 16px;
-  border-radius:13px;
+  min-height:38px;
+  padding:0 13px;
+  border-radius:11px;
   white-space:nowrap;
-  font-size:13px;
+  font-size:12px;
   font-weight:800;
-  letter-spacing:.1px;
+  letter-spacing:0;
   background:linear-gradient(135deg,#2563eb,#1d4ed8);
   border:1px solid rgba(147,197,253,.28);
-  box-shadow:0 8px 22px rgba(37,99,235,.22);
+  box-shadow:0 6px 16px rgba(37,99,235,.18);
 }
 .mobileMenu::before{
   content:"▤";
@@ -642,11 +688,39 @@ button,input,select{
 
   .topbar{
     align-items:flex-start;
-    flex-wrap:wrap
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:12px
+  }
+
+  .topLeft{
+    width:100%;
+    flex:1 1 100%
+  }
+
+  .quote-heading{
+    gap:5px
+  }
+
+  .pageTitle.quote-title{
+    font-size:clamp(25px,5.2vw,34px);
+    line-height:1.75
   }
 
   .topActions{
-    width:100%
+    width:100%;
+    justify-content:flex-start;
+    gap:7px
+  }
+
+  .topActions .btn{
+    padding:8px 11px;
+    min-height:36px;
+    font-size:12px
+  }
+
+  .player-toolbar{
+    margin-bottom:9px
   }
 
   .stage{
@@ -686,11 +760,24 @@ button,input,select{
   }
 
   .topbar{
-    gap:9px
+    gap:8px
+  }
+
+  .pageTitle.quote-title{
+    font-size:clamp(23px,6vw,29px);
+    line-height:1.8
   }
 
   .topActions .btn{
-    flex:1
+    flex:0 1 auto;
+    min-width:0;
+    padding:8px 10px;
+    font-size:11px
+  }
+
+  .player-toolbar .mobileMenu{
+    width:100%;
+    min-height:40px
   }
 
   .stage{
@@ -806,18 +893,10 @@ button,input,select{
 
     <div class="topLeft">
 
-      <button
-        id="mobileMenu"
-        class="btn secondary mobileMenu"
-        type="button"
-      >
-        عرض الفيديوهات
-      </button>
+      <div class="quote-heading">
 
-      <div>
-
-        <div class="pageTitle">
-          📚 المحتوى التعليمي
+        <div class="pageTitle quote-title" lang="ar">
+          إنَّ المرءَ لن ينالَ ما يحبُّ حتى يصبرَ على كثيرٍ ممَّا يكرهُ
         </div>
 
         <div class="studentChip">
@@ -864,6 +943,16 @@ button,input,select{
 
   </div>
 
+  <div class="player-toolbar">
+    <button
+      id="mobileMenu"
+      class="btn secondary mobileMenu"
+      type="button"
+      aria-label="عرض قائمة الفيديوهات"
+    >
+      عرض الفيديوهات
+    </button>
+  </div>
 
   <section
     class="playerCard"
