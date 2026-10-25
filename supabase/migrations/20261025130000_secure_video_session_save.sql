@@ -8,7 +8,7 @@ alter table public.video_sessions add column if not exists last_time integer not
 create unique index if not exists video_sessions_student_video_uidx
   on public.video_sessions (student_id, video_id);
 
-drop function if exists public.save_video_session(text, text, integer, integer, integer, boolean, integer);
+drop function if exists public.save_video_session(text, text, integer, integer, boolean, integer);
 
 create function public.save_video_session(
   p_session_id text,
