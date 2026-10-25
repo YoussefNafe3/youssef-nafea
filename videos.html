@@ -2203,81 +2203,26 @@ async function saveSession(){
     );
 
 
- const payload = {
+  try {
+    // Save through a server-side RPC. The database verifies the signed-in
+    // student and active platform session instead of trusting client IDs.
+    const { data, error } = await client.rpc("save_video_session", {
+      p_session_id: platformSessionId,
+      p_video_id: String(state.currentVideoId),
+      p_watched_seconds: Math.floor(watched),
+      p_duration: Math.floor(duration),
+      p_completed: state.completedByEnd === true,
+      p_skips: Math.max(0, Math.floor(Number(state.skips) || 0))
+    });
 
-  student_id:
-    String(user.id),
-
-  video_id:
-    state.currentVideoId,
-
-  class_group:
-    user.class_group,
-
-  watched_seconds:
-    Math.floor(watched),
-
-  duration:
-    Math.floor(duration),
-
-  progress:
-    Math.min(
-      100,
-      Math.max(
-        0,
-        Math.round(percent)
-      )
-    ),
-
-  completed:
-    state.completedByEnd,
-
-  skips:
-    state.skips || 0,
-
-  updated_at:
-    new Date().toISOString()
-
-};
-
-
-  try{
-
-    const {
-      error
-    } =
-      await client
-        .from("video_sessions")
-        .upsert(
-          payload,
-          {
-            onConflict:
-              "student_id,video_id"
-          }
-        );
-
-
-    if(error){
-
-      console.warn(
-        "[Save session]",
-        error
-      );
-
-    }else{
-
-      state.sessionSaved =
-        true;
-
+    if (error) throw error;
+    if (!data || data.success !== true) {
+      throw new Error(data?.reason || "VIDEO_SESSION_SAVE_REJECTED");
     }
 
-  }catch(e){
-
-    console.warn(
-      "[Save session]",
-      e
-    );
-
+    state.sessionSaved = true;
+  } catch (e) {
+    console.warn("[Save session]", e);
   }
 
 }
