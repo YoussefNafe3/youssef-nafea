@@ -325,6 +325,27 @@ html[data-theme="light"] .card{color:var(--text);background:var(--card)}
 @media(max-width:360px){.calligraphy-logo{min-height:72px}.calligraphy-name{font-size:25px}.actions .btn{padding:7px 8px;font-size:10px}}
 @media(prefers-reduced-motion:reduce){.orbit-system,.sprout{animation:none!important}.electron animateMotion{display:none}}
 
+
+/* Student-wide notifications: visible immediately on dashboard open */
+.student-notifications{display:none;width:min(1180px,calc(100% - 36px));margin:0 auto 22px;padding:18px;border:1px solid rgba(139,124,255,.28);border-radius:22px;background:linear-gradient(125deg,rgba(38,36,85,.96),rgba(14,25,48,.96));box-shadow:0 18px 44px rgba(0,0,0,.18);color:#f6f7ff;position:relative;overflow:hidden}
+.student-notifications.show{display:block;animation:studentNoticeIn .45s ease both}
+.student-notifications:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:linear-gradient(#f4d77e,#8b7cff)}
+.student-notifications-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.student-notifications-title{display:flex;align-items:center;gap:10px;font-weight:900;font-size:17px}
+.student-notifications-title .bell{width:38px;height:38px;display:grid;place-items:center;border-radius:13px;background:rgba(139,124,255,.18);font-size:20px}
+.student-notifications-subtitle{font-size:12px;color:#c3c8e7;margin-top:3px}
+.student-notification-list{display:grid;gap:9px}
+.student-notification-item{width:100%;display:flex;align-items:center;gap:12px;text-align:right;padding:13px 14px;border:1px solid rgba(190,190,255,.14);border-radius:15px;background:rgba(255,255,255,.045);color:inherit;font:inherit;cursor:pointer;transition:transform .18s,border-color .18s,background .18s}
+.student-notification-item:hover,.student-notification-item:focus-visible{transform:translateY(-1px);border-color:rgba(244,215,126,.48);background:rgba(139,124,255,.12);outline:none}
+.student-notification-item .notice-icon{flex:0 0 38px;height:38px;display:grid;place-items:center;border-radius:12px;background:rgba(244,215,126,.12);font-size:18px}
+.student-notification-item .notice-copy{flex:1;min-width:0}
+.student-notification-item strong{display:block;color:#ffe7a0;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.student-notification-item p{margin:3px 0 0;color:#d6d9ee;font-size:12px;line-height:1.7}
+.student-notification-item .notice-arrow{color:#d9d1ff;font-size:21px}
+.student-notifications-dismiss{border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(255,255,255,.05);color:#e4e7ff;padding:8px 11px;font:inherit;font-size:12px;cursor:pointer;white-space:nowrap}
+@keyframes studentNoticeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:560px){.student-notifications{width:calc(100% - 22px);margin-bottom:14px;padding:13px;border-radius:17px}.student-notifications-head{align-items:flex-start}.student-notifications-title{font-size:15px}.student-notifications-title .bell{width:34px;height:34px}.student-notification-item{padding:11px;gap:9px}.student-notification-item .notice-icon{flex-basis:32px;height:32px}.student-notification-item strong{font-size:13px}.student-notification-item p{font-size:11px}.student-notifications-dismiss{padding:7px 8px;font-size:11px}}
+
 </style>
 
 </head>
@@ -412,6 +433,14 @@ onclick="goDashboard()"
 
 </div>
 
+
+<section id="studentNotifications" class="student-notifications" aria-live="polite" aria-label="إشعارات جديدة">
+  <div class="student-notifications-head">
+    <div class="student-notifications-title"><span class="bell" aria-hidden="true">🔔</span><div><div>إشعاراتك الجديدة</div><div class="student-notifications-subtitle">آخر النتائج والإعلانات الخاصة بك</div></div></div>
+    <button id="dismissStudentNotifications" class="student-notifications-dismiss" type="button">إخفاء مؤقتًا</button>
+  </div>
+  <div id="studentNotificationList" class="student-notification-list"></div>
+</section>
 
 <div class="cards">
 
@@ -703,6 +732,109 @@ window.location.href =
 "dashboard.html";
 
 }
+
+
+/* =====================================================
+   STUDENT NOTIFICATIONS ON DASHBOARD OPEN
+===================================================== */
+
+const studentNotificationsBox = document.getElementById("studentNotifications");
+const studentNotificationList = document.getElementById("studentNotificationList");
+let dashboardNotifications = [];
+let dashboardNotificationChannel = null;
+
+function safeNotificationText(value){
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+
+function dashboardNotificationTarget(n){
+  const type = ["exam","exam_result"].includes(String(n.type || "").toLowerCase())
+    ? "exam"
+    : ["recitation","recitation_result"].includes(String(n.type || "").toLowerCase())
+      ? "recitation" : "";
+  const resultId = Number(n.related_id);
+  const params = new URLSearchParams();
+  if(type && Number.isSafeInteger(resultId) && resultId > 0){
+    params.set("type",type);
+    params.set("resultId",String(resultId));
+  }
+  if(n.id != null) params.set("notificationId",String(n.id));
+  return "results.html" + (params.size ? "?" + params.toString() : "");
+}
+
+function renderDashboardNotifications(){
+  const unread = dashboardNotifications.filter(n => !n.is_read).slice(0,4);
+  if(!unread.length){
+    studentNotificationsBox.classList.remove("show");
+    studentNotificationList.replaceChildren();
+    return;
+  }
+  studentNotificationList.innerHTML = unread.map(n=>{
+    const isExam = ["exam","exam_result"].includes(String(n.type || "").toLowerCase());
+    const isRecitation = ["recitation","recitation_result"].includes(String(n.type || "").toLowerCase());
+    const icon = isExam ? "🏆" : isRecitation ? "🎤" : "📣";
+    const title = n.title || (isExam ? "نتيجة امتحان جديدة" : isRecitation ? "نتيجة تسميع جديدة" : "إشعار جديد");
+    const message = n.message || "اضغط لعرض التفاصيل.";
+    return `<button type="button" class="student-notification-item" data-notification-id="${safeNotificationText(n.id)}">
+      <span class="notice-icon" aria-hidden="true">${icon}</span>
+      <span class="notice-copy"><strong>${safeNotificationText(title)}</strong><p>${safeNotificationText(message)}</p></span>
+      <span class="notice-arrow" aria-hidden="true">←</span>
+    </button>`;
+  }).join("");
+  studentNotificationsBox.classList.add("show");
+}
+
+async function loadDashboardNotifications(){
+  try{
+    const {data,error} = await client.from("notifications")
+      .select("id,title,message,type,related_id,created_at,is_read")
+      .eq("student_id",user.id)
+      .order("created_at",{ascending:false})
+      .limit(30);
+    if(error) throw error;
+    dashboardNotifications = data || [];
+    renderDashboardNotifications();
+  }catch(error){
+    console.warn("Could not load dashboard notifications:",error);
+  }
+}
+
+studentNotificationList.addEventListener("click",event=>{
+  const button = event.target.closest("[data-notification-id]");
+  if(!button) return;
+  const item = dashboardNotifications.find(n=>String(n.id)===String(button.dataset.notificationId));
+  if(item) window.location.href = dashboardNotificationTarget(item);
+});
+
+document.getElementById("dismissStudentNotifications").addEventListener("click",()=>{
+  studentNotificationsBox.classList.remove("show");
+});
+
+loadDashboardNotifications();
+
+dashboardNotificationChannel = client.channel("dashboard-student-notifications")
+  .on("postgres_changes",{
+    event:"INSERT",schema:"public",table:"notifications",filter:`student_id=eq.${user.id}`
+  },payload=>{
+    if(!dashboardNotifications.some(n=>String(n.id)===String(payload.new.id))){
+      dashboardNotifications.unshift(payload.new);
+      renderDashboardNotifications();
+      // Show a system notification while the page is open if the student has already granted permission.
+      if(document.visibilityState === "hidden" && "Notification" in window && Notification.permission === "granted"){
+        try{
+          const note = new Notification(payload.new.title || "إشعار جديد من منصة د. يوسف نافع",{
+            body:payload.new.message || "اضغط لعرض التفاصيل.",
+            icon:"./favicon.ico",
+            tag:"platform-notification-" + payload.new.id
+          });
+          note.onclick=()=>{window.focus();window.location.href=dashboardNotificationTarget(payload.new);};
+        }catch(error){console.warn("Browser notification could not be shown:",error);}
+      }
+    }
+  })
+  .subscribe();
 
 
 /* =====================================================
