@@ -375,7 +375,7 @@ body{
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:980px;
+  min-width:1180px;
   background:rgba(15,23,42,.82);
 }
 
@@ -605,7 +605,8 @@ td{
               <th>سمع</th>
               <th>النسبة</th>
               <th>الحالة</th>
-              <th>آخر تحديث</th>
+              <th>أول فتح للفيديو</th>
+              <th>آخر فتح للفيديو</th>
             </tr>
           </thead>
           <tbody id="studentsTableBody"></tbody>
@@ -656,9 +657,10 @@ function formatTime(seconds) {
 
 function formatDate(value) {
   if (!value) return "-";
+  // Values are local wall-clock strings from the student device; do not convert them from UTC.
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return "-";
-  return d.toLocaleString("ar-EG");
+  return d.toLocaleString("ar-EG", { hour12: true });
 }
 
 function getStudentDisplayName(studentId) {
@@ -793,6 +795,7 @@ function renderSelectedVideo() {
           <td>0%</td>
           <td>${statusBadge(0, false)}</td>
           <td>-</td>
+          <td>-</td>
         </tr>
       `;
     }
@@ -806,7 +809,8 @@ function renderSelectedVideo() {
         <td>${formatTime(record.watched_seconds)}</td>
         <td>${percent.toFixed(1)}%</td>
         <td>${statusBadge(percent, true)}</td>
-        <td>${formatDate(record.updated_at || record.created_at)}</td>
+        <td>${formatDate(record.first_opened_at)}</td>
+        <td>${formatDate(record.last_opened_at)}</td>
       </tr>
     `;
   });
