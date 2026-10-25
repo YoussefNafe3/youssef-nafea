@@ -3552,11 +3552,12 @@ orderList.addEventListener("change", async event => {
     select.disabled = true;
     setOrderStatus("جاري حفظ تصنيف الفيديو...");
     try {
-        const { error } = await client
-            .from("videos")
-            .update({ video_category: newCategory })
-            .eq("id", videoId);
+        const { data, error } = await client.rpc("admin_set_video_category", {
+            p_video_id: videoId,
+            p_category: newCategory
+        });
         if (error) throw error;
+        if (!data || data.success !== true) throw new Error(data?.reason || "تعذر حفظ التصنيف.");
         setOrderStatus(newCategory === "homework"
             ? "تم نقل الفيديو إلى قائمة «فيديوهات حل الواجب»."
             : "تم نقل الفيديو إلى قائمة «فيديوهات الشرح».", "success");
