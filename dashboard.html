@@ -282,6 +282,50 @@ html[data-theme="light"] .card{color:var(--text);background:var(--card)}
 @media(max-width:560px){body{padding:12px}.topbar{align-items:flex-start;flex-direction:column;padding:13px;border-radius:17px;margin-bottom:15px}.actions{width:100%;justify-content:flex-start}.btn{padding:7px 9px;font-size:11px}.hero{grid-template-columns:1fr;gap:8px;padding:25px 19px;border-radius:22px;margin-bottom:20px}.hero h1{font-size:26px}.hero p{font-size:12px}.science-art{position:absolute;width:135px;left:-15px;bottom:-22px;opacity:.12}.hero-tags{margin-top:14px}.cards{gap:10px}.card{min-height:205px;padding:16px 13px 14px;border-radius:17px}.icon{width:44px;height:44px;font-size:21px;margin-bottom:13px}.card h3{font-size:14px}.card p{font-size:11px;line-height:1.8}.card-bottom{padding-top:14px;font-size:10px}.card-arrow{width:24px;height:24px}}
 @media(max-width:360px){.cards{grid-template-columns:1fr}.card{min-height:175px}}
 
+
+/* Arabic calligraphy wordmark with a subtle science-inspired orbit */
+@import url('https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&display=swap');
+.topbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,auto) minmax(0,1fr);align-items:center;gap:14px;position:relative}
+.calligraphy-logo{
+  grid-column:2;grid-row:1;position:relative;display:flex;align-items:center;justify-content:center;
+  width:clamp(300px,34vw,430px);min-height:92px;isolation:isolate;color:#f5d58a;
+}
+.calligraphy-name{
+  position:relative;z-index:2;display:block;width:100%;text-align:center;white-space:nowrap;
+  font-family:'Aref Ruqaa Ink','Amiri',serif;font-size:clamp(31px,3.1vw,45px);
+  font-weight:700;line-height:1.55;letter-spacing:0;
+  color:#f4d38b;
+  background:linear-gradient(110deg,#e8c77e 0%,#fff0bd 25%,#87dcf4 52%,#f2d28a 76%,#d9b66c 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 2px 10px rgba(91,191,232,.16));
+}
+.calligraphy-orbits{
+  position:absolute;z-index:1;inset:0;width:100%;height:100%;overflow:visible;
+  pointer-events:none;opacity:.95;
+}
+.orbit-system{transform-origin:104px 76px;animation:orbit-breathe 4.8s ease-in-out infinite}
+.sprout{transform-box:fill-box;transform-origin:bottom center;animation:sprout-sway 3.8s ease-in-out infinite}
+@keyframes orbit-breathe{0%,100%{opacity:.72}50%{opacity:1}}
+@keyframes sprout-sway{0%,100%{transform:translate(105px,17px) rotate(-2deg)}50%{transform:translate(105px,17px) rotate(3deg)}}
+.user-name{grid-column:1;grid-row:1;justify-self:start;min-width:0}
+.actions{grid-column:3;grid-row:1;justify-self:end;min-width:0}
+@media(max-width:900px){
+ .topbar{grid-template-columns:minmax(0,1fr) minmax(230px,auto) minmax(0,1fr);gap:8px;padding:12px}
+ .calligraphy-logo{width:clamp(245px,34vw,320px);min-height:76px}
+ .calligraphy-name{font-size:clamp(26px,3vw,35px)}
+ .actions{gap:6px}.btn{padding:8px 10px;font-size:12px}
+}
+@media(max-width:560px){
+ .topbar{display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:12px}
+ .calligraphy-logo{order:0;width:100%;max-width:370px;min-height:80px;margin:0 auto}
+ .calligraphy-name{font-size:clamp(30px,8vw,39px)}
+ .user-name{order:1;align-self:center;text-align:center}
+ .actions{order:2;width:100%;justify-content:center;flex-wrap:wrap}
+ .calligraphy-orbits{width:100%;height:100%}
+}
+@media(max-width:360px){.calligraphy-logo{min-height:72px}.calligraphy-name{font-size:28px}.actions .btn{padding:7px 8px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){.orbit-system,.sprout{animation:none!important}.electron animateMotion{display:none}}
+
 </style>
 
 </head>
@@ -292,8 +336,43 @@ html[data-theme="light"] .card{color:var(--text);background:var(--card)}
 
 <div class="topbar">
 
-<div class="logo">
-Dr Youssef Nafea
+<div class="logo calligraphy-logo" aria-label="دكتور يوسف نافع">
+  <span class="calligraphy-name">دكتور يوسف نافع</span>
+  <svg class="calligraphy-orbits" viewBox="0 0 420 150" role="img" aria-label="مدارات إلكترونية مضيئة ونبتة صغيرة">
+    <defs>
+      <linearGradient id="orbitGradient" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#70e1ff" stop-opacity=".15"/>
+        <stop offset="48%" stop-color="#83bfff" stop-opacity=".85"/>
+        <stop offset="100%" stop-color="#f5d58a" stop-opacity=".5"/>
+      </linearGradient>
+      <filter id="electronGlow" x="-250%" y="-250%" width="600%" height="600%">
+        <feGaussianBlur stdDeviation="3.2" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <linearGradient id="sproutGradient" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#b5f5c8"/><stop offset="100%" stop-color="#38c994"/>
+      </linearGradient>
+    </defs>
+    <g class="orbit-system">
+      <ellipse cx="104" cy="76" rx="82" ry="27" transform="rotate(-20 104 76)" fill="none" stroke="url(#orbitGradient)" stroke-width="1.15" stroke-dasharray="3 5"/>
+      <ellipse cx="104" cy="76" rx="78" ry="23" transform="rotate(27 104 76)" fill="none" stroke="#8bdcff" stroke-opacity=".48" stroke-width="1.05"/>
+      <circle class="electron electron-one" r="3.5" fill="#a8edff" filter="url(#electronGlow)">
+        <animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto" path="M 22,76 A 82,27 -20 1 1 186,76 A 82,27 -20 1 1 22,76"/>
+      </circle>
+      <circle class="electron electron-two" r="2.8" fill="#ffe6a1" filter="url(#electronGlow)">
+        <animateMotion dur="3.1s" begin="-1.4s" repeatCount="indefinite" rotate="auto" path="M 26,76 A 78,23 27 1 0 182,76 A 78,23 27 1 0 26,76"/>
+      </circle>
+      <circle class="electron electron-three" r="2.2" fill="#b9a8ff" filter="url(#electronGlow)">
+        <animateMotion dur="5.3s" begin="-2s" repeatCount="indefinite" rotate="auto" path="M 22,76 A 82,27 -20 1 0 186,76 A 82,27 -20 1 0 22,76"/>
+      </circle>
+    </g>
+    <g class="sprout" transform="translate(105 17)">
+      <path d="M0 26 C1 17 2 10 7 3" fill="none" stroke="#67d6a0" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M5 12 C-8 12 -13 4 -12 -3 C-2 -3 5 1 5 12Z" fill="url(#sproutGradient)" stroke="#8ae8b2" stroke-width=".7"/>
+      <path d="M7 5 C8 -5 18 -10 27 -8 C27 2 18 8 7 5Z" fill="url(#sproutGradient)" stroke="#8ae8b2" stroke-width=".7"/>
+      <path d="M-9 0 -1 7 M23 -5 10 3" stroke="#e0ffe9" stroke-opacity=".8" stroke-width="1" stroke-linecap="round"/>
+    </g>
+  </svg>
 </div>
 
 <div
