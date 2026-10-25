@@ -383,6 +383,11 @@ transition:.2s;
 
 }
 
+.notification[role="button"]{cursor:pointer;text-align:right;width:100%;color:inherit;font:inherit;background:transparent;border-left:0;border-right:0;border-top:0}
+.notification[role="button"]:focus-visible{outline:3px solid var(--primary);outline-offset:-3px}
+.notification:active{transform:scale(.995)}
+.notification .notification-title{overflow-wrap:anywhere}
+
 .notification:hover{
 
 background:var(--card2);
@@ -2518,50 +2523,120 @@ notificationBadge.style.display =
 
 
 notificationList.innerHTML =
-notifications.map(n=>`
+notifications.map(n=>{
+const resultType = ["exam", "exam_result"].includes(String(n.type || "").toLowerCase())
+  ? "exam"
+  : ["recitation", "recitation_result"].includes(String(n.type || "").toLowerCase())
+    ? "recitation"
+    : "";
+const resultId = Number(n.related_id);
+const hasTarget = !!resultType && Number.isFinite(resultId) && resultId > 0;
+const icon = resultType === "exam" ? "🏆" : resultType === "recitation" ? "🎤" : "📢";
+const label = resultType === "exam" ? "نتيجة امتحان" : resultType === "recitation" ? "نتيجة تسميع" : "إشعار";
+const title = resultType ? (n.title || label) : (n.title || "إشعار جديد");
+const message = n.message || (resultType ? "اضغط لعرض النتيجة." : "");
+const attrs = hasTarget
+  ? `role="button" tabindex="0" data-notification-id="${escapeHTML(n.id)}" data-result-type="${resultType}" data-result-id="${resultId}" aria-label="${escapeHTML(title)}. اضغط لعرض النتيجة"`
+  : `role="group"`;
+return `
+<div class="notification ${n.is_read ? "" : "unread"}" ${attrs}>
+  <div class="notification-icon">${icon}</div>
+  <div>
+    <strong class="notification-title">${escapeHTML(title)}</strong>
+    <p>${escapeHTML(message)}</p>
+    <time>${formatDate(n.created_at)}</time>
+    ${hasTarget ? '<small style="display:block;margin-top:7px;color:var(--primary);font-weight:800">اضغط لعرض النتيجة ←</small>' : ""}
+  </div>
+</div>
+`;
+}).join("");
 
-<div
-class="notification
-${n.is_read ? "" : "unread"}"
->
 
-<div class="notification-icon">
 
-${
-n.type === "exam_result"
-?
-"🏆"
-:
-n.type === "recitation_result"
-?
-"🎤"
-:
-"📢"
 }
 
-</div>
 
-<div>
+/* =========================================================
+   OPEN A RESULT FROM ITS NOTIFICATION
+========================================================= */
 
-<strong>
-${escapeHTML(n.title)}
-</strong>
+async function openResultNotification(element){
+  const notificationId = element.dataset.notificationId;
+  const resultType = element.dataset.resultType;
+  const resultId = Number(element.dataset.resultId);
+  if(!notificationId || !["exam","recitation"].includes(resultType) || !Number.isFinite(resultId) || resultId <= 0) return;
 
-<p>
-${escapeHTML(n.message)}
-</p>
+  const notification = notifications.find(n => String(n.id) === String(notificationId));
+  if(notification && !notification.is_read){
+    try {
+      const { error } = await client.from("notifications")
+        .update({is_read:true})
+        .eq("id", notificationId)
+        .eq("student_id", studentId);
+      if(error) console.warn("Could not mark notification read:", error);
+      else {
+        notification.is_read = true;
+        renderNotifications();
+      }
+    } catch(error) {
+      console.warn("Could not mark notification read:", error);
+    }
+  }
 
-<time>
-${formatDate(n.created_at)}
-</time>
+  const target = resultType === "exam"
+    ? document.getElementById("examResults")
+    : document.getElementById("recitationResults");
+  if(!target) return;
 
-</div>
+  document.getElementById("notificationPanel").classList.remove("show");
+  const section = target.closest(".section");
+  if(section) section.scrollIntoView({behavior:"smooth",block:"start"});
 
-</div>
+  const card = [...target.querySelectorAll(".result")].find(el => {
+    const list = resultType === "exam" ? examData : recitationData;
+    const result = list.find(row => String(row.id) === String(resultId));
+    return result && el.querySelector(".result-title")?.textContent === String(result.title || "");
+  });
 
-`).join("");
-
+  if(card){
+    card.classList.add("notification-target");
+    card.style.outline = "3px solid var(--primary)";
+    card.style.outlineOffset = "4px";
+    card.style.transition = "outline-color .3s";
+    setTimeout(() => {
+      card.style.outline = "";
+      card.style.outlineOffset = "";
+      card.classList.remove("notification-target");
+    }, 3200);
+  } else {
+    // Refresh the appropriate list in case results have just been updated.
+    if(resultType === "exam") await loadExamResults();
+    else await loadRecitationResults();
+    const refreshed = [...target.querySelectorAll(".result")].find(el => {
+      const list = resultType === "exam" ? examData : recitationData;
+      const result = list.find(row => String(row.id) === String(resultId));
+      return result && el.querySelector(".result-title")?.textContent === String(result.title || "");
+    });
+    if(refreshed){
+      refreshed.scrollIntoView({behavior:"smooth",block:"center"});
+      refreshed.style.outline = "3px solid var(--primary)";
+      refreshed.style.outlineOffset = "4px";
+      setTimeout(()=>{refreshed.style.outline="";refreshed.style.outlineOffset="";},3200);
+    }
+  }
 }
+
+notificationList.addEventListener("click", event => {
+  const item = event.target.closest(".notification[data-result-id]");
+  if(item) void openResultNotification(item);
+});
+notificationList.addEventListener("keydown", event => {
+  const item = event.target.closest(".notification[data-result-id]");
+  if(item && (event.key === "Enter" || event.key === " ")){
+    event.preventDefault();
+    void openResultNotification(item);
+  }
+});
 
 
 /* =========================================================
