@@ -2726,6 +2726,28 @@ loadNotifications()
 
 ]);
 
+// Open the exact result when arriving from a dashboard notification.
+const params = new URLSearchParams(window.location.search);
+const notificationId = params.get("notificationId");
+const resultType = params.get("type");
+const resultId = Number(params.get("resultId"));
+if(notificationId && ["exam","recitation"].includes(resultType) && Number.isSafeInteger(resultId) && resultId > 0){
+  const notification = notifications.find(n => String(n.id) === String(notificationId));
+  if(notification){
+    await openResultNotification({
+      dataset:{
+        notificationId:String(notificationId),
+        resultType,
+        resultId:String(resultId)
+      }
+    });
+  }else{
+    const target = resultType === "exam" ? document.getElementById("examResults") : document.getElementById("recitationResults");
+    const section = target?.closest(".section");
+    if(section) section.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+}
+
 }
 
 
