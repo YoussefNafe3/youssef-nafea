@@ -422,6 +422,21 @@ onclick="goDashboard()"
 
 </div>
 
+<div id="pushNotificationStatus" class="student-push-status" role="status" aria-live="polite" data-state="" style="display:none;width:min(1180px,calc(100% - 36px));margin:0 auto 12px"></div>
+
+<section id="studentNotifications" class="student-notifications" aria-live="polite" aria-label="إشعارات جديدة">
+  <div class="student-notifications-head">
+    <div class="student-notifications-title"><span class="bell" aria-hidden="true">🔔</span><div><div>إشعاراتك الجديدة</div><div class="student-notifications-subtitle">آخر النتائج والإعلانات الخاصة بك</div></div></div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">
+      <button id="enableDeviceNotifications" class="btn home-btn" type="button">🔔 تفعيل إشعارات الجهاز</button>
+      <button id="dismissStudentNotifications" class="student-notifications-dismiss" type="button">إخفاء مؤقتًا</button>
+    </div>
+  </div>
+  <div id="studentNotificationList" class="student-notification-list"></div>
+</section>
+
+
+
 
 <div class="hero">
 
@@ -438,17 +453,7 @@ onclick="goDashboard()"
 </div>
 
 
-<section id="studentNotifications" class="student-notifications" aria-live="polite" aria-label="إشعارات جديدة">
-  <div class="student-notifications-head">
-    <div class="student-notifications-title"><span class="bell" aria-hidden="true">🔔</span><div><div>إشعاراتك الجديدة</div><div class="student-notifications-subtitle">آخر النتائج والإعلانات الخاصة بك</div></div></div>
-    <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">
-      <button id="enableDeviceNotifications" class="student-notifications-dismiss" type="button">تفعيل إشعارات الجهاز</button>
-      <button id="dismissStudentNotifications" class="student-notifications-dismiss" type="button">إخفاء مؤقتًا</button>
-    </div>
-  </div>
-  <div id="pushNotificationStatus" class="student-push-status" role="status" aria-live="polite"></div>
-  <div id="studentNotificationList" class="student-notification-list"></div>
-</section>
+
 
 <div class="cards">
 
@@ -823,6 +828,7 @@ const VAPID_PUBLIC_KEY = "BDpbM0K5jqGxUMXHPGTkcFFWnOH382b7689D_9PfwxI3ecn1RR5kgr
 function setPushStatus(message, state = ""){
   pushNotificationStatus.textContent = message;
   pushNotificationStatus.dataset.state = state;
+  pushNotificationStatus.style.display = message ? "block" : "none";
 }
 
 function updateDeviceNotificationButton(){
