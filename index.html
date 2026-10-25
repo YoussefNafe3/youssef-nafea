@@ -898,6 +898,14 @@ body.dark{--accent:#b0a2ff;--gold:#f4d77e}
  .logo{font-size:32px!important}
 }
 
+
+/* Exact centered brand + tidy signed-in actions */
+.top-bar{display:grid!important;grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)!important;grid-template-areas:'theme brand auth'!important;}
+.theme-control{grid-area:theme!important;justify-self:start!important;}
+.brand-center{grid-area:brand!important;justify-self:center!important;position:absolute!important;left:50%!important;transform:translateX(-50%)!important;text-align:center!important;margin:0!important;}
+.auth-area{grid-area:auth!important;justify-self:end!important;}
+.auth-area .account-greeting{display:none!important;}
+@media(max-width:768px){.top-bar{grid-template-columns:36px minmax(0,1fr)!important;grid-template-areas:'theme brand' 'auth auth'!important}.brand-center{position:static!important;left:auto!important;transform:none!important;justify-self:center!important}.theme-control{justify-self:start!important}.auth-area{justify-self:center!important}}
 </style>
 </head>
 <body>
@@ -1039,7 +1047,7 @@ The ability to understand a problem from its roots is what separates ordinary an
  themeButton.addEventListener('click',()=>setTheme(body.classList.contains('dark')?'light':'dark'));
  function renderAuth(){let user=null;try{user=JSON.parse(localStorage.getItem('user')||'null')}catch(e){}
   const heroCta=document.getElementById('heroCta');
-  if(user){const safeName=String(user.full_name||user.name||'').replace(/[<>]/g,'');authArea.innerHTML='<a class="nav-btn enter-platform" href="dashboard.html">ادخل إلى المنصة ↗</a><span class="nav-btn account-greeting" style="cursor:default">أهلًا '+safeName+'</span><button type="button" class="nav-btn" id="logoutBtn">تسجيل خروج</button>';if(heroCta)heroCta.innerHTML='<a href="dashboard.html" class="btn">ادخل إلى المنصة <span aria-hidden="true">↗</span></a>';document.getElementById('logoutBtn').addEventListener('click',()=>{localStorage.removeItem('user');location.href='index.html'});}
+  if(user){authArea.innerHTML='<a class="nav-btn enter-platform" href="dashboard.html">ادخل للمنصة ↗</a><button type="button" class="nav-btn" id="logoutBtn">تسجيل خروج</button>';if(heroCta)heroCta.innerHTML='<a href="dashboard.html" class="btn">ادخل إلى المنصة <span aria-hidden="true">↗</span></a>';document.getElementById('logoutBtn').addEventListener('click',()=>{localStorage.removeItem('user');location.href='index.html'});}
   else{authArea.innerHTML='<a href="login.html" class="nav-btn">تسجيل دخول</a><a href="signup.html" class="nav-btn signup">حساب جديد</a>';if(heroCta)heroCta.innerHTML='<a href="#about" class="btn">اكتشف المنصة <span aria-hidden="true">←</span></a>';}
  }
  renderAuth();
