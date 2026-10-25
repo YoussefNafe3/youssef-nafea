@@ -1250,7 +1250,13 @@
             display:inline-flex;margin-inline-start:7px;padding:2px 6px;border-radius:999px;
             color:#052e16;background:#86efac;font-size:9px;font-weight:900;vertical-align:middle
         }
-        .video-order-actions{display:flex;gap:6px}
+        .video-category-admin-label{display:flex;align-items:center;gap:7px;margin-top:9px;flex-wrap:wrap}
+.video-category-admin-label span{font-size:11px;color:var(--muted);font-weight:700}
+.video-category-admin-select{max-width:100%;min-width:145px;padding:7px 9px;border-radius:10px;border:1px solid rgba(96,165,250,.25);background:#0d1a2d;color:#f8fafc;font-size:12px;font-weight:700;outline:none}
+.video-category-admin-select:focus{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+.field-hint{display:block;margin-top:7px;color:var(--muted);font-size:12px;line-height:1.7}
+@media(max-width:600px){.video-category-admin-label{align-items:flex-start;flex-direction:column}.video-category-admin-select{width:100%;min-width:0}.video-order-row{grid-template-columns:34px minmax(0,1fr) auto;gap:8px}}
+.video-order-actions{display:flex;gap:6px}
         .video-order-btn{
             width:36px;height:36px;display:grid;place-items:center;border-radius:11px;
             color:#e2e8f0;background:#17263e;border:1px solid rgba(255,255,255,.08);
@@ -1425,6 +1431,15 @@
 
                 </select>
 
+            </div>
+
+            <div class="field">
+                <label for="video_category">تصنيف الفيديو في صفحة الطالب</label>
+                <select id="video_category">
+                    <option value="explanation">📘 فيديوهات الشرح</option>
+                    <option value="homework">✍️ فيديوهات حل الواجب</option>
+                </select>
+                <small class="field-hint">اختر القائمة التي سيظهر فيها الفيديو للطلاب. يمكنك تغيير التصنيف لاحقًا من قائمة إدارة الفيديوهات.</small>
             </div>
 
 
@@ -2641,6 +2656,7 @@ async function saveVideoToDatabase(
         title: title,
         url: videoURL,
         class_group: classGroup,
+        video_category: document.getElementById("video_category")?.value === "homework" ? "homework" : "explanation",
         is_premium: false
     };
 
@@ -3459,7 +3475,7 @@ async function loadVideoOrder() {
     orderList.innerHTML = "";
     const { data, error } = await client
         .from("videos")
-        .select("id,title,class_group,created_at,sort_order")
+        .select("id,title,class_group,created_at,sort_order,video_category")
         .order("sort_order", { ascending: true })
         .order("created_at", { ascending: false, nullsFirst: false });
 
@@ -3489,6 +3505,13 @@ async function loadVideoOrder() {
                 <div>
                     <div class="video-order-title">${escapeOrderText(video.title || "بدون عنوان")}${fresh ? '<span class="video-order-new">NEW · جديد</span>' : ""}</div>
                     <div class="video-order-meta">${escapeOrderText(groupNames[video.class_group] || video.class_group || "درس تعليمي")}</div>
+                    <label class="video-category-admin-label">
+                        <span>القائمة</span>
+                        <select class="video-category-admin-select" data-category-video-id="${escapeOrderText(video.id)}" aria-label="تصنيف ${escapeOrderText(video.title || "الفيديو")}">
+                            <option value="explanation" ${(video.video_category || "explanation") === "explanation" ? "selected" : ""}>فيديوهات الشرح</option>
+                            <option value="homework" ${video.video_category === "homework" ? "selected" : ""}>حل الواجب</option>
+                        </select>
+                    </label>
                 </div>
                 <div class="video-order-actions">
                     <button type="button" class="video-order-btn" data-video-id="${escapeOrderText(video.id)}" data-direction="-1" aria-label="نقل الفيديو لأعلى" title="نقل لأعلى" ${index === 0 ? "disabled" : ""}>↑</button>
@@ -3520,6 +3543,30 @@ async function moveVideoOrder(videoId, direction, button) {
         buttons.forEach(button => button.disabled = false);
     }
 }
+
+orderList.addEventListener("change", async event => {
+    const select = event.target.closest("select[data-category-video-id]");
+    if (!select) return;
+    const videoId = select.dataset.categoryVideoId;
+    const newCategory = select.value === "homework" ? "homework" : "explanation";
+    select.disabled = true;
+    setOrderStatus("جاري حفظ تصنيف الفيديو...");
+    try {
+        const { error } = await client
+            .from("videos")
+            .update({ video_category: newCategory })
+            .eq("id", videoId);
+        if (error) throw error;
+        setOrderStatus(newCategory === "homework"
+            ? "تم نقل الفيديو إلى قائمة «فيديوهات حل الواجب»."
+            : "تم نقل الفيديو إلى قائمة «فيديوهات الشرح».", "success");
+        await loadVideoOrder();
+    } catch (error) {
+        console.error("[Video category]", error);
+        setOrderStatus("تعذر حفظ التصنيف. تأكد من تسجيل الدخول بحساب الإدارة ثم حاول مرة أخرى.", "error");
+        select.disabled = false;
+    }
+});
 
 orderList.addEventListener("click", event => {
     const button = event.target.closest("button[data-video-id]");
