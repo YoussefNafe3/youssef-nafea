@@ -105,6 +105,23 @@ button,input,select{
   flex-direction:column;
   gap:9px
 }
+.video-category-list{display:flex;flex-direction:column;gap:12px;min-width:0}
+.video-category{border:1px solid rgba(148,163,184,.16);border-radius:17px;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.video-category-toggle{width:100%;display:flex;align-items:center;gap:10px;padding:13px 12px;text-align:right;color:var(--text);background:transparent;border:0;cursor:pointer;transition:background .2s}
+.video-category-toggle:hover,.video-category-toggle[aria-expanded="true"]{background:rgba(59,130,246,.10)}
+.video-category-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:12px;color:#bfdbfe;background:linear-gradient(145deg,rgba(37,99,235,.28),rgba(30,64,175,.16));border:1px solid rgba(96,165,250,.25);font-size:15px;font-weight:900}
+.homework-icon{color:#bbf7d0;background:linear-gradient(145deg,rgba(16,185,129,.22),rgba(5,150,105,.10));border-color:rgba(52,211,153,.25)}
+.video-category-label{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.video-category-label strong{font-size:13px;font-weight:850;line-height:1.5}
+.video-category-label small{font-size:10px;color:var(--muted);line-height:1.5}
+.video-category-count{min-width:27px;height:27px;padding:0 7px;display:grid;place-items:center;border-radius:9px;background:rgba(148,163,184,.12);border:1px solid rgba(148,163,184,.15);font-size:11px;font-weight:850;color:#e2e8f0}
+.video-category-chevron{color:#94a3b8;font-size:18px;transition:transform .2s}
+.video-category-toggle[aria-expanded="true"] .video-category-chevron{transform:rotate(180deg)}
+.video-category-content{padding:0 9px 10px}
+.video-category-content[hidden]{display:none}
+.video-category-content .videoItem{padding:11px}
+.video-category-content .videoItemTitle{font-size:13px}
+.video-category-content .emptyItem,.video-category-content .loadingItem{font-size:12px;padding:12px 8px;text-align:center}
 
 .videoItem{
   border:1px solid transparent;
@@ -733,8 +750,29 @@ button,input,select{
     autocomplete="off"
   >
 
-  <div id="videoList" class="videoList">
-    <div class="loadingItem">جاري تحميل الدروس...</div>
+  <div class="video-category-list" aria-label="قوائم الفيديوهات">
+    <section class="video-category">
+      <button type="button" class="video-category-toggle" data-category-toggle="explanation" aria-expanded="true" aria-controls="explanationVideoList">
+        <span class="video-category-icon">▶</span>
+        <span class="video-category-label"><strong>فيديوهات الشرح</strong><small>شرح الدروس والمفاهيم</small></span>
+        <span class="video-category-count" id="explanationVideoCount">0</span>
+        <span class="video-category-chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div id="explanationVideoList" class="videoList video-category-content">
+        <div class="loadingItem">جاري تحميل الفيديوهات...</div>
+      </div>
+    </section>
+    <section class="video-category">
+      <button type="button" class="video-category-toggle" data-category-toggle="homework" aria-expanded="false" aria-controls="homeworkVideoList">
+        <span class="video-category-icon homework-icon">✓</span>
+        <span class="video-category-label"><strong>فيديوهات حل الواجب</strong><small>حل وتدريب على الواجبات</small></span>
+        <span class="video-category-count" id="homeworkVideoCount">0</span>
+        <span class="video-category-chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div id="homeworkVideoList" class="videoList video-category-content" hidden>
+        <div class="loadingItem">جاري تحميل الفيديوهات...</div>
+      </div>
+    </section>
   </div>
 
 </aside>
@@ -1061,8 +1099,11 @@ const client =
 const $ = id =>
   document.getElementById(id);
 
-const videoList =
-  $("videoList");
+const explanationVideoList = $("explanationVideoList");
+const homeworkVideoList = $("homeworkVideoList");
+const explanationVideoCount = $("explanationVideoCount");
+const homeworkVideoCount = $("homeworkVideoCount");
+const videoCategoryToggles = [...document.querySelectorAll("[data-category-toggle]")];
 
 const video =
   $("videoPlayer");
@@ -3027,8 +3068,8 @@ function prepareNativeVideo(
 
 async function loadVideos(){
 
-  videoList.innerHTML =
-    '<div class="loadingItem">جاري تحميل الدروس...</div>';
+  explanationVideoList.innerHTML = '<div class="loadingItem">جاري تحميل الفيديوهات...</div>';
+  homeworkVideoList.innerHTML = '<div class="loadingItem">جاري تحميل الفيديوهات...</div>';
 
 
   try{
@@ -3040,7 +3081,7 @@ async function loadVideos(){
       await client
         .from("videos")
         .select(
-          "id,title,url,class_group,is_premium,created_at,sort_order"
+          "id,title,url,class_group,is_premium,created_at,sort_order,video_category"
         )
         .order(
           "sort_order",
@@ -3091,8 +3132,8 @@ async function loadVideos(){
     );
 
 
-    videoList.innerHTML =
-      '<div class="emptyItem">❌ تعذر تحميل الدروس حاليًا.</div>';
+    explanationVideoList.innerHTML = '<div class="emptyItem">❌ تعذر تحميل الفيديوهات حاليًا.</div>';
+    homeworkVideoList.innerHTML = '<div class="emptyItem">❌ تعذر تحميل الفيديوهات حاليًا.</div>';
 
 
     toast(
@@ -3105,156 +3146,81 @@ async function loadVideos(){
 
 
 function render(){
+  const q = ( $("searchInput").value || "" ).trim().toLowerCase();
 
-  const q =
-    (
-      $("searchInput").value ||
-      ""
-    )
-      .trim()
-      .toLowerCase();
+  const matchesSearch = v => !q ||
+    String(v.title || "").toLowerCase().includes(q) ||
+    String(v.class_group || "").toLowerCase().includes(q);
 
-
-  state.filtered =
-    state.all.filter(
-      v =>
-        !q ||
-        String(
-          v.title || ""
-        )
-          .toLowerCase()
-          .includes(q) ||
-
-        String(
-          v.class_group || ""
-        )
-          .toLowerCase()
-          .includes(q)
-    );
-
-
-  videoCount.textContent =
-    String(
-      state.filtered.length
-    );
-
-
-  if(
-    !state.filtered.length
-  ){
-
-    videoList.innerHTML =
-      '<div class="emptyItem">لا توجد دروس مطابقة.</div>';
-
-    return;
-
-  }
-
-
-  videoList.innerHTML =
-    "";
-
-
-  state.filtered.forEach(
-    item=>{
-
-      const el =
-        document.createElement(
-          "div"
-        );
-
-
-      el.className =
-        "videoItem";
-
-
-      el.dataset.id =
-        String(item.id);
-
-
-      el.tabIndex =
-        0;
-
-
-      const title =
-        document.createElement(
-          "div"
-        );
-
-
-      title.className =
-        "videoItemTitle";
-
-
-      title.textContent =
-        item.title ||
-        "بدون عنوان";
-
-      const uploadedAt = item.created_at ? new Date(item.created_at).getTime() : 0;
-      const isNew = uploadedAt > 0 && Date.now() - uploadedAt >= 0 && Date.now() - uploadedAt <= 7 * 24 * 60 * 60 * 1000;
-      if (isNew) {
-        const newBadge = document.createElement("span");
-        newBadge.className = "videoNewBadge";
-        newBadge.textContent = "NEW · جديد";
-        title.appendChild(newBadge);
-      }
-
-      const meta =
-        document.createElement(
-          "div"
-        );
-
-
-      meta.className =
-        "videoItemMeta";
-
-
-      meta.textContent =
-        item.class_group ||
-        "درس";
-
-
-      el.append(
-        title,
-        meta
-      );
-
-
-      el.addEventListener(
-        "click",
-        () =>
-          selectVideo(item)
-      );
-
-
-      el.addEventListener(
-        "keydown",
-        e=>{
-
-          if(
-            e.key === "Enter" ||
-            e.key === " "
-          ){
-
-            e.preventDefault();
-
-            selectVideo(item);
-
-          }
-
-        }
-      );
-
-
-      videoList.appendChild(
-        el
-      );
-
-    }
+  const explanation = state.all.filter(v =>
+    (v.video_category || "explanation") === "explanation" && matchesSearch(v)
+  );
+  const homework = state.all.filter(v =>
+    (v.video_category || "explanation") === "homework" && matchesSearch(v)
   );
 
+  state.filtered = [...explanation, ...homework];
+  videoCount.textContent = String(state.filtered.length);
+  explanationVideoCount.textContent = String(explanation.length);
+  homeworkVideoCount.textContent = String(homework.length);
+
+  const renderCategory = (container, items, categoryLabel) => {
+    if (!items.length) {
+      container.innerHTML = '<div class="emptyItem">لا توجد فيديوهات في هذه القائمة حالياً.</div>';
+      return;
+    }
+
+    container.innerHTML = "";
+    items.forEach(item => {
+      const el = document.createElement("div");
+      el.className = "videoItem";
+      el.dataset.id = String(item.id);
+      el.tabIndex = 0;
+
+      const title = document.createElement("div");
+      title.className = "videoItemTitle";
+      title.textContent = item.title || "بدون عنوان";
+
+      const uploadedAt = item.created_at ? new Date(item.created_at).getTime() : 0;
+      const age = Date.now() - uploadedAt;
+      if (uploadedAt > 0 && age >= 0 && age <= 7 * 24 * 60 * 60 * 1000) {
+        const badge = document.createElement("span");
+        badge.className = "videoNewBadge";
+        badge.textContent = "NEW · جديد";
+        title.appendChild(badge);
+      }
+
+      const meta = document.createElement("div");
+      meta.className = "videoItemMeta";
+      meta.textContent = item.class_group || categoryLabel || "درس";
+      el.append(title, meta);
+
+      if (String(item.id) === String(state.currentVideoId)) el.classList.add("active");
+
+      el.addEventListener("click", () => selectVideo(item));
+      el.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          selectVideo(item);
+        }
+      });
+      container.appendChild(el);
+    });
+  };
+
+  renderCategory(explanationVideoList, explanation, "فيديو شرح");
+  renderCategory(homeworkVideoList, homework, "حل واجب");
 }
 
+videoCategoryToggles.forEach(toggle => {
+  toggle.addEventListener("click", () => {
+    const category = toggle.dataset.categoryToggle;
+    const target = document.getElementById(category === "homework" ? "homeworkVideoList" : "explanationVideoList");
+    const expanded = toggle.getAttribute("aria-expanded") === "true";
+    toggle.setAttribute("aria-expanded", String(!expanded));
+    target.hidden = expanded;
+  });
+});
 
 /* =========================================================
    NATIVE WATCH PROGRESS
