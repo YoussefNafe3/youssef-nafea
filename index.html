@@ -857,6 +857,47 @@ footer{background:var(--surface);color:var(--muted);border-top:1px solid var(--l
 }
 @media(max-width:370px){.brand-center{font-size:13px}.auth-area .nav-btn{padding:8px 9px;font-size:10px}.atom-emblem{width:145px}}
 @media(prefers-reduced-motion:reduce){.atom-spin-a,.atom-spin-b,.atom-ring,.scroll-hint span::after{animation:none!important}}
+
+/* Responsive refinement: keep account actions visible in the top bar */
+.top-bar{display:grid!important;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;grid-template-areas:"theme brand auth"!important;align-items:center!important;gap:clamp(6px,1.2vw,16px)!important;padding:12px clamp(10px,2.8vw,34px)!important;background:color-mix(in srgb,var(--bg) 82%,transparent)!important;border-bottom:1px solid var(--line)!important;backdrop-filter:blur(18px)!important;box-shadow:0 8px 30px rgba(7,14,36,.08)!important}
+.theme-control{grid-area:theme!important}
+.brand-center{grid-area:brand!important;justify-self:center!important;font-size:clamp(15px,1.8vw,25px)!important;font-weight:900!important}
+.auth-area,.top-bar .auth-area{grid-area:auth!important;position:static!important;justify-self:end!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:nowrap!important;gap:clamp(5px,.8vw,10px)!important;width:auto!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:none!important}
+.auth-area .nav-btn{display:inline-flex!important;align-items:center;justify-content:center;min-height:40px;padding:9px clamp(10px,1.3vw,17px)!important;border-radius:12px!important;font-family:'Alexandria',sans-serif!important;font-size:clamp(11px,.95vw,13px)!important;font-weight:800!important;line-height:1.2;white-space:nowrap!important;border:1px solid var(--line)!important;background:var(--card)!important;color:var(--text)!important;box-shadow:0 5px 16px rgba(0,0,0,.07)!important}
+.auth-area .nav-btn.signup{background:linear-gradient(135deg,#7765df,#5945b8)!important;color:#fff!important;border-color:transparent!important}
+.auth-area .nav-btn.enter-platform{background:linear-gradient(135deg,#7664df,#5140aa)!important;color:#fff!important;border-color:transparent!important}
+.hero{background:#0d1029!important}
+.hero::after{content:"";position:absolute;inset:-12px;z-index:-2;background-image:url('https://images.pexels.com/photos/3825586/pexels-photo-3825586.jpeg?auto=compress&cs=tinysrgb&w=2000');background-size:cover;background-position:center;filter:blur(5px);opacity:.48;transform:scale(1.035);pointer-events:none}
+.hero::before{z-index:-1!important;background:radial-gradient(circle at 50% 35%,rgba(130,105,240,.24),transparent 42%),radial-gradient(circle at 18% 22%,rgba(120,220,242,.1),transparent 35%),linear-gradient(145deg,rgba(8,10,32,.82),rgba(26,18,61,.86))!important}
+.logo{font-family:'Alexandria',sans-serif!important;font-size:clamp(36px,6.7vw,72px)!important;font-weight:900!important;letter-spacing:-1.4px!important}
+.logo .brand-youssef{font-size:1em!important;font-weight:900!important;color:#a99aff!important;text-shadow:0 0 25px rgba(169,154,255,.32)!important}
+.hero .tagline{font-family:'Alexandria',sans-serif!important;color:#f1e8ff!important}
+.btn{font-family:'Alexandria',sans-serif!important;background:linear-gradient(135deg,#f4d77e,#e9b94f)!important;color:#231a40!important;box-shadow:0 10px 30px rgba(228,186,83,.2)!important}
+.whatsapp{background:linear-gradient(145deg,#7664df,#5543b8)!important;color:#fff!important;border:1px solid rgba(255,255,255,.32)!important;box-shadow:0 10px 28px rgba(63,46,145,.4)!important;transition:transform .2s,box-shadow .2s}
+.whatsapp:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 14px 32px rgba(63,46,145,.5)!important}
+.whatsapp i{font-size:27px;line-height:1}
+body.dark{--accent:#b0a2ff;--gold:#f4d77e}
+@media(max-width:768px){
+ .top-bar{grid-template-columns:36px minmax(0,1fr)!important;grid-template-areas:"theme brand" "auth auth"!important;gap:8px 10px!important;padding:9px 11px!important}
+ .theme-control{width:36px!important;height:36px!important;border-radius:11px!important;font-size:17px!important}
+ .brand-center{justify-self:center!important;font-size:clamp(15px,4.1vw,20px)!important;letter-spacing:-.45px!important}
+ .auth-area,.top-bar .auth-area{grid-area:auth!important;position:static!important;display:flex!important;justify-content:center!important;align-items:center!important;gap:8px!important;width:100%!important;flex-wrap:nowrap!important}
+ .auth-area .nav-btn{flex:0 1 auto;min-width:0;min-height:37px;padding:8px clamp(10px,3vw,18px)!important;font-size:clamp(11px,3vw,13px)!important}
+ .auth-area .nav-btn.signup{flex:0 0 auto}
+ .hero{padding:125px 18px 55px!important}
+ .logo{font-size:clamp(34px,8.8vw,52px)!important;letter-spacing:-.8px!important}
+ .atom-emblem{width:clamp(145px,42vw,205px)!important}
+ .whatsapp{width:52px!important;height:52px!important;right:14px!important;bottom:14px!important}
+ .whatsapp i{font-size:23px!important}
+}
+@media(max-width:360px){
+ .top-bar{padding:8px!important;gap:6px!important}
+ .brand-center{font-size:14px!important}
+ .auth-area .nav-btn{padding:7px 9px!important;font-size:10px!important}
+ .hero{padding-top:118px!important}
+ .logo{font-size:32px!important}
+}
+
 </style>
 </head>
 <body>
@@ -882,9 +923,9 @@ footer{background:var(--surface);color:var(--muted);border-top:1px solid var(--l
 <g class="atom-spin-b"><circle class="atom-electron" cx="73" cy="48" r="4.5" fill="#f6d78d"/><circle class="atom-electron" cx="167" cy="192" r="3.5" fill="#a99aff"/></g>
 <circle class="atom-core" cx="120" cy="120" r="12"/><circle cx="116" cy="116" r="4" fill="#fff8dd" opacity=".9"/>
 </svg>
-<h1 class="logo">دكتور <span class="brand-youssef">يوسف</span> نافع</h1>
+<h1 class="logo">د. <span class="brand-youssef">يوسف</span> نافع</h1>
 <p class="tagline">خليك دائمًا في المقدمة</p>
-<div class="hero-cta"><a href="#about" class="btn">اكتشف المنصة <span aria-hidden="true">←</span></a></div>
+<div class="hero-cta" id="heroCta"><a href="#about" class="btn">اكتشف المنصة <span aria-hidden="true">←</span></a></div>
 <div class="scroll-hint">اكتشف المزيد <span aria-hidden="true"></span></div>
 </div>
 </section>
@@ -964,7 +1005,7 @@ footer{background:var(--surface);color:var(--muted);border-top:1px solid var(--l
 <!-- FORM AREA RESERVED -->
 
 <!-- WHATSAPP FLOAT -->
-<a class="whatsapp" href="https://api.whatsapp.com/send?phone=201027065087" target="_blank">💬</a>
+<a class="whatsapp" href="https://api.whatsapp.com/send?phone=201027065087" target="_blank" rel="noopener noreferrer" aria-label="تواصل معنا عبر واتساب" title="تواصل معنا عبر واتساب"><i class="fa-regular fa-comments" aria-hidden="true"></i></a>
 
 <section class="custom-about-section">
   <div class="custom-about-container">
@@ -997,8 +1038,9 @@ The ability to understand a problem from its roots is what separates ordinary an
  let saved='false';try{saved=localStorage.getItem('theme')||'false'}catch(e){}setTheme(saved==='true'?'dark':'light');
  themeButton.addEventListener('click',()=>setTheme(body.classList.contains('dark')?'light':'dark'));
  function renderAuth(){let user=null;try{user=JSON.parse(localStorage.getItem('user')||'null')}catch(e){}
-  if(user){const safeName=String(user.full_name||user.name||'').replace(/[<>]/g,'');authArea.innerHTML='<a class="nav-btn enter-platform" href="dashboard.html">ادخل إلى المنصة ↗</a><span class="nav-btn" style="cursor:default">أهلًا '+safeName+'</span><button type="button" class="nav-btn" id="logoutBtn">تسجيل خروج</button>';document.getElementById('logoutBtn').addEventListener('click',()=>{localStorage.removeItem('user');location.href='index.html'});}
-  else{authArea.innerHTML='<a href="login.html" class="nav-btn">تسجيل دخول</a><a href="signup.html" class="nav-btn signup">حساب جديد</a>';}
+  const heroCta=document.getElementById('heroCta');
+  if(user){const safeName=String(user.full_name||user.name||'').replace(/[<>]/g,'');authArea.innerHTML='<a class="nav-btn enter-platform" href="dashboard.html">ادخل إلى المنصة ↗</a><span class="nav-btn account-greeting" style="cursor:default">أهلًا '+safeName+'</span><button type="button" class="nav-btn" id="logoutBtn">تسجيل خروج</button>';if(heroCta)heroCta.innerHTML='<a href="dashboard.html" class="btn">ادخل إلى المنصة <span aria-hidden="true">↗</span></a>';document.getElementById('logoutBtn').addEventListener('click',()=>{localStorage.removeItem('user');location.href='index.html'});}
+  else{authArea.innerHTML='<a href="login.html" class="nav-btn">تسجيل دخول</a><a href="signup.html" class="nav-btn signup">حساب جديد</a>';if(heroCta)heroCta.innerHTML='<a href="#about" class="btn">اكتشف المنصة <span aria-hidden="true">←</span></a>';}
  }
  renderAuth();
  function updateHeader(){header.classList.toggle('is-scrolled',window.scrollY>90)}
