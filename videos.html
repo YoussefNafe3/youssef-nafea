@@ -2120,97 +2120,36 @@ async function saveSession(){
 
   persistLocalProgress();
 
-
-  if(
-    !state.currentVideoId ||
-    !state.currentVideo
-  )
-    return;
-
+  if (!videoSessionAlive || !state.currentVideoId || !state.currentVideo) return;
 
   let duration = 0;
-
   let current = 0;
 
-
-  if(
-    state.currentVideo.is_youtube
-  ){
-
-    try{
-
-      duration =
-        Number(
-          state.yt?.getDuration?.()
-        ) || 0;
-
-      current =
-        Number(
-          state.yt?.getCurrentTime?.()
-        ) || 0;
-
-    }catch{}
-
-  }else{
-
-    duration =
-      Number(
-        video.duration
-      ) || 0;
-
-    current =
-      Number(
-        video.currentTime
-      ) || 0;
-
+  if (state.currentVideo.is_youtube) {
+    try {
+      duration = Number(state.yt?.getDuration?.()) || 0;
+      current = Number(state.yt?.getCurrentTime?.()) || 0;
+    } catch {}
+  } else {
+    duration = Number(video.duration) || 0;
+    current = Number(video.currentTime) || 0;
   }
 
+  if (!duration) return;
 
-  if(!duration)
-    return;
+  if (!state.currentVideo.is_youtube) addWatchedRange(state.lastTime, current);
+  state.lastTime = current;
 
-
-  if(
-    !state.currentVideo.is_youtube
-  ){
-
-    addWatchedRange(
-      state.lastTime,
-      current
-    );
-
-  }
-
-
-  state.lastTime =
-    current;
-
-
-  const watched =
-    Math.min(
-      duration,
-      calculateWatchedSeconds()
-    );
-
-
-  const percent =
-    Math.min(
-      100,
-      Math.max(
-        0,
-        (watched / duration) * 100
-      )
-    );
-
+  const watched = Math.min(duration, Math.max(0, calculateWatchedSeconds()));
+  const percent = Math.min(100, Math.max(0, (watched / duration) * 100));
 
   try {
-    // Save through a server-side RPC. The database verifies the signed-in
-    // student and active platform session instead of trusting client IDs.
     const { data, error } = await client.rpc("save_video_session", {
       p_session_id: platformSessionId,
       p_video_id: String(state.currentVideoId),
       p_watched_seconds: Math.floor(watched),
       p_duration: Math.floor(duration),
+      p_percent: Number(percent.toFixed(2)),
       p_completed: state.completedByEnd === true,
       p_skips: Math.max(0, Math.floor(Number(state.skips) || 0))
     });
@@ -2219,14 +2158,11 @@ async function saveSession(){
     if (!data || data.success !== true) {
       throw new Error(data?.reason || "VIDEO_SESSION_SAVE_REJECTED");
     }
-
     state.sessionSaved = true;
   } catch (e) {
     console.warn("[Save session]", e);
   }
-
 }
-
 
 /* =========================================================
    YOUTUBE
