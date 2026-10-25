@@ -1,35 +1,15 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>منصة د. يوسف نافع</title>
-        <meta name="viewport" content="width=device-width,initial-scale=1"/>
-        <meta name="author" content="Developer & teacher : Youssef Nafea"/>
-        <meta name="description" content="منصة د. يوسف نافع لتدريس الاحياء والعلوم المتكاملة للصفوف الثانوية"/>
-  <meta name="keywords" content="يوسف نافع, احياء, الصف الثالث الثانوي, ثانوية عامة, احياء ثانوية عامة, الصف الاول الثانوي, العلوم المتكاملة, د.يوسف نافع, دكتور يوسف نافع"/>
-<link rel="icon" href="./favicon.ico">
-<link rel="icon" type="image/png" href="./favicon-32x32.png">
-<link rel="icon" type="image/png" href="./favicon-16x16.png">
-<link rel="apple-touch-icon" href="./apple-touch-icon.png">
-
-</head>
-<body>
-
-<div class="top-bar">
-
-  <div class="logo-small">🧬</div>
-
-  <!-- هنا هنبدل المحتوى حسب تسجيل الدخول -->
-  <div id="authArea" class="auth-area"></div>
-
-
-</div>
-</div>
-</body>
-
-</html>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>منصة د. يوسف نافع | خليك دائمًا في المقدمة</title>
+<meta name="author" content="Developer & teacher: Youssef Nafea">
+<meta name="description" content="منصة دكتور يوسف نافع لتدريس الأحياء والجيولوجيا والعلوم المتكاملة للصفوف الثانوية.">
+<meta name="keywords" content="يوسف نافع, دكتور يوسف نافع, أحياء, جيولوجيا, علوم متكاملة, ثانوية عامة">
+<link rel="icon" href="./favicon.ico"><link rel="icon" type="image/png" href="./favicon-32x32.png"><link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800;900&family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 
 /* ================= THEME ================= */
@@ -748,7 +728,7 @@ transform: translateX(-30px) scale(1.05); /* 👈 يطلعها برا الكون
   }
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+400;600;700&display=swap');
 
 .custom-about-section {
   padding: 70px 8%;
@@ -819,39 +799,96 @@ transform: translateX(-30px) scale(1.05); /* 👈 يطلعها برا الكون
     margin: auto;
   }
 }
+
+/* Premium homepage refresh */
+:root{--bg:#f4f7fc;--card:#fff;--text:#14243b;--muted:#5f7088;--surface:#edf3fb;--line:rgba(50,75,115,.14);--accent:#6957d5;--gold:#e6bd65;--hero-text:#f8fbff}
+body{background:var(--bg);color:var(--text);transition:background .35s,color .35s}
+body.dark{--bg:#071426;--card:#10233b;--text:#f0f5fc;--muted:#b1bfd1;--surface:#0b1c31;--line:rgba(148,181,224,.18);--accent:#a99aff;--gold:#f1cf7b;--hero-text:#fff}
+.top-bar{position:fixed;inset:0 0 auto;width:100%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;padding:15px clamp(14px,4vw,54px);z-index:9999;background:transparent;border-bottom:1px solid transparent;backdrop-filter:blur(0);transition:background .3s,border-color .3s,backdrop-filter .3s}
+.top-bar.is-scrolled{background:color-mix(in srgb,var(--bg) 86%,transparent);border-color:var(--line);backdrop-filter:blur(18px);box-shadow:0 10px 35px rgba(0,0,0,.08)}
+.brand-center{grid-column:2;grid-row:1;justify-self:center;white-space:nowrap;font-family:'Alexandria',sans-serif;font-weight:900;font-size:clamp(18px,2.2vw,29px);letter-spacing:-.6px;color:var(--text);text-decoration:none;transition:color .25s}
+.brand-center .brand-youssef{color:var(--accent);text-shadow:0 0 22px color-mix(in srgb,var(--accent) 24%,transparent)}
+.auth-area{grid-column:3;grid-row:1;justify-self:end;display:flex;align-items:center;justify-content:flex-end;gap:9px;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px);transition:opacity .28s,transform .28s,visibility .28s}
+.top-bar.is-scrolled .auth-area{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
+.auth-area .nav-btn{font-family:'Alexandria',sans-serif;font-weight:700;font-size:13px;padding:10px 17px;border-radius:13px;border:1px solid var(--line);background:var(--card);color:var(--text);box-shadow:0 6px 20px rgba(0,0,0,.06);white-space:nowrap}
+.auth-area .nav-btn.signup{background:linear-gradient(135deg,#7a69e8,#5a4bc2);color:#fff;border-color:transparent}
+.auth-area .nav-btn.enter-platform{background:linear-gradient(135deg,#167f82,#0b686e);color:#fff;border-color:transparent}
+.theme-control{grid-column:1;grid-row:1;justify-self:start;width:43px;height:43px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--text);font-size:19px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.08);transition:transform .2s,background .25s}
+.theme-control:hover{transform:translateY(-2px)}
+.hero{min-height:100svh;padding:100px 22px 64px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--hero-text);position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 50% 38%,rgba(69,115,211,.25),transparent 34%),linear-gradient(145deg,#071426 0%,#0b2340 55%,#101a35 100%)}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 18% 20%,rgba(74,215,226,.13),transparent 30%),radial-gradient(circle at 85% 76%,rgba(233,193,103,.12),transparent 32%);pointer-events:none}
+.hero-content{position:relative;z-index:2;width:min(100%,900px);display:flex;align-items:center;flex-direction:column}
+.atom-emblem{width:clamp(155px,22vw,245px);height:auto;display:block;margin:0 auto 24px;overflow:visible;filter:drop-shadow(0 0 22px rgba(93,203,255,.18))}
+.atom-orbit{fill:none;stroke:url(#orbitStroke);stroke-width:1.4;opacity:.8}
+.atom-electron{filter:url(#atomGlow)}
+.atom-core{fill:url(#coreFill);filter:url(#atomGlow)}
+.atom-ring{transform-origin:120px 120px;animation:atomPulse 5s ease-in-out infinite}
+.atom-spin-a{transform-origin:120px 120px;animation:atomRotate 7s linear infinite}
+.atom-spin-b{transform-origin:120px 120px;animation:atomRotate 9s linear infinite reverse}
+@keyframes atomRotate{to{transform:rotate(360deg)}}
+@keyframes atomPulse{0%,100%{opacity:.72}50%{opacity:1}}
+.logo{font-family:'Alexandria',sans-serif;font-size:clamp(38px,7vw,76px);font-weight:900;line-height:1.35;letter-spacing:-1.4px;margin:0 0 13px;color:#f5d78b;text-shadow:0 5px 30px rgba(0,0,0,.24)}
+.logo .brand-youssef{color:#8de3ef;text-shadow:0 0 25px rgba(91,213,231,.25)}
+.hero .tagline{font-family:'Alexandria',sans-serif;font-size:clamp(16px,2.5vw,23px);font-weight:600;letter-spacing:.1px;color:#dce8f7;margin:0 0 30px;opacity:1}
+.hero .scroll-hint{display:inline-flex;align-items:center;gap:8px;margin-top:40px;color:rgba(226,238,250,.7);font-size:12px;letter-spacing:.4px}
+.scroll-hint span{display:inline-block;width:20px;height:30px;border:1px solid rgba(226,238,250,.45);border-radius:20px;position:relative}
+.scroll-hint span::after{content:"";position:absolute;width:3px;height:6px;border-radius:3px;top:6px;left:7px;background:#8de3ef;animation:scrollDot 1.4s ease-in-out infinite}
+@keyframes scrollDot{0%,100%{transform:translateY(0);opacity:1}70%{transform:translateY(9px);opacity:.15}}
+.section-title{color:var(--text)}
+.dark .section-title{color:#f1cf7b}
+.about-me,.info,.contact,.custom-about-section{background:var(--bg);color:var(--text)}
+.about-me{background:linear-gradient(135deg,var(--bg),var(--surface))}
+.about-text h2,.about-text h4,.about-text p,.custom-about-text p{color:var(--text)}
+.card{background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:0 12px 35px rgba(15,35,70,.07)}
+.dark .card{box-shadow:0 12px 35px rgba(0,0,0,.14)}
+.info-content,.contact{color:var(--text)}
+.contact a{color:var(--accent)}
+footer{background:var(--surface);color:var(--muted);border-top:1px solid var(--line);padding:24px;text-align:center}
+.whatsapp{z-index:100}
+@media(max-width:768px){
+ .top-bar{padding:10px 12px;grid-template-columns:42px minmax(0,1fr) 42px;gap:7px}
+ .brand-center{font-size:clamp(14px,3.6vw,20px);letter-spacing:-.5px}
+ .auth-area{position:absolute;top:calc(100% + 7px);left:10px;right:10px;justify-self:stretch;justify-content:center;flex-wrap:wrap;gap:7px}
+ .top-bar.is-scrolled .auth-area{padding:8px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--bg) 94%,transparent);box-shadow:0 12px 28px rgba(0,0,0,.12)}
+ .auth-area .nav-btn{font-size:11px;padding:9px 12px}
+ .hero{padding-top:90px}
+ .logo{letter-spacing:-.8px}
+ .hero .tagline{margin-bottom:22px}
+}
+@media(max-width:370px){.brand-center{font-size:13px}.auth-area .nav-btn{padding:8px 9px;font-size:10px}.atom-emblem{width:145px}}
+@media(prefers-reduced-motion:reduce){.atom-spin-a,.atom-spin-b,.atom-ring,.scroll-hint span::after{animation:none!important}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-
 <body>
-
-<!-- THEME -->
-<div class="auth-buttons">
-  <button id="themeToggle" onclick="toggleTheme()">🌙</button>
-  <a href="login.html" class="nav-btn">تسجيل الدخول</a>
-  <a href="signup.html" class="nav-btn signup">إنشاء حساب</a>
-</div>
-
-<!-- HERO -->
-<section class="hero">
-
+<header class="top-bar" id="siteHeader">
+<button id="themeToggle" class="theme-control" type="button" aria-label="تغيير الوضع" title="تغيير الوضع">☾</button>
+<a href="index.html" class="brand-center" aria-label="دكتور يوسف نافع">دكتور <span class="brand-youssef">يوسف</span> نافع</a>
+<nav id="authArea" class="auth-area" aria-label="حساب الطالب"></nav>
+</header>
+<section class="hero" id="home">
 <div class="hero-content">
-
-<div class="logo">د. يوسف نافع</div>
-
-<p>🎯 احجز مكانك وكن ضمن الطلاب المتفوقين</p>
-
-<a href="booking.html" class="btn">حجز دفعة 2027</a>  
-<br><br>
-
-<button class="special-btn" onclick="checkCode()">
-كورسات مدفوعة
-</button>
-</a>
+<svg class="atom-emblem" viewBox="0 0 240 240" role="img" aria-label="رمز نواة وإلكترونات تدور في مداراتها">
+<defs>
+<linearGradient id="orbitStroke" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#77e8f2" stop-opacity=".28"/><stop offset=".5" stop-color="#b9d9ff"/><stop offset="1" stop-color="#f2d28a" stop-opacity=".75"/></linearGradient>
+<radialGradient id="coreFill"><stop offset="0" stop-color="#fff3c4"/><stop offset=".45" stop-color="#f4cf79"/><stop offset="1" stop-color="#e6a849"/></radialGradient>
+<filter id="atomGlow" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<g class="atom-ring">
+<ellipse class="atom-orbit" cx="120" cy="120" rx="94" ry="35" transform="rotate(30 120 120)"/>
+<ellipse class="atom-orbit" cx="120" cy="120" rx="94" ry="35" transform="rotate(-30 120 120)"/>
+<ellipse class="atom-orbit" cx="120" cy="120" rx="94" ry="35" transform="rotate(90 120 120)"/>
+</g>
+<g class="atom-spin-a"><circle class="atom-electron" cx="214" cy="120" r="5" fill="#8de3ef"/><circle class="atom-electron" cx="26" cy="120" r="3.5" fill="#8de3ef" opacity=".8"/></g>
+<g class="atom-spin-b"><circle class="atom-electron" cx="73" cy="48" r="4.5" fill="#f6d78d"/><circle class="atom-electron" cx="167" cy="192" r="3.5" fill="#a99aff"/></g>
+<circle class="atom-core" cx="120" cy="120" r="12"/><circle cx="116" cy="116" r="4" fill="#fff8dd" opacity=".9"/>
+</svg>
+<h1 class="logo">دكتور <span class="brand-youssef">يوسف</span> نافع</h1>
+<p class="tagline">خليك دائمًا في المقدمة</p>
+<div class="hero-cta"><a href="#about" class="btn">اكتشف المنصة <span aria-hidden="true">←</span></a></div>
+<div class="scroll-hint">اكتشف المزيد <span aria-hidden="true"></span></div>
 </div>
-
 </section>
-
+<div id="about"></div>
 <section class="about-me reveal">
 
   <div class="about-container">
@@ -924,10 +961,7 @@ transform: translateX(-30px) scale(1.05); /* 👈 يطلعها برا الكون
 
 </section>
 
-<!-- FORM -->
-
-
-</section>
+<!-- FORM AREA RESERVED -->
 
 <!-- WHATSAPP FLOAT -->
 <a class="whatsapp" href="https://api.whatsapp.com/send?phone=201027065087" target="_blank">💬</a>
@@ -955,74 +989,25 @@ The ability to understand a problem from its roots is what separates ordinary an
 © 2026 Dr Youssef Nafea 
 </footer>
 
-<!-- SCRIPT -->
+
 <script>
-function checkCode(){
-    let code = prompt("ادخل كود الدخول 👇");
-
-    if(code === "DrNafe3"){
-        window.location.href = "physics-surprise.html";
-    }else{
-        alert("❌ الكود غلط");
-    }
-}
-</script>
-<script>
-const user = JSON.parse(localStorage.getItem("user"));
-const authArea = document.getElementById("authArea");
-
-if(user){
-
-authArea.innerHTML = `
-<div class="nav-btn" onclick="goDashboard()">
-👋 ${user.full_name || user.name}
-</div>
-
-<button class="nav-btn" onclick="logout()" style="background:#ef4444">
-تسجيل خروج
-</button>
-`;
-
-}else{
-
-authArea.innerHTML = `
-<a href="login.html" class="nav-btn">تسجيل الدخول</a>
-<a href="signup.html" class="nav-btn signup">إنشاء حساب</a>
-`;
-}
-
-function goDashboard(){
-window.location.href = "dashboard.html";
-}
-
-function logout(){
-localStorage.removeItem("user");
-window.location.href = "index.html";
-}
-
-function toggleTheme(){
-document.body.classList.toggle("dark");
-localStorage.setItem("theme", document.body.classList.contains("dark"));
-}
-
-if(localStorage.getItem("theme") === "true"){
-document.body.classList.add("dark");
-} 
-</script>
-<script>
-const reveals = document.querySelectorAll('.reveal');
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('active');
-    }
-  });
-}, {
-  threshold: 0.2
-});
-
-reveals.forEach(el => observer.observe(el));
+(function(){
+ const body=document.body,header=document.getElementById('siteHeader'),authArea=document.getElementById('authArea'),themeButton=document.getElementById('themeToggle');
+ function setTheme(mode){const dark=mode==='dark';body.classList.toggle('dark',dark);themeButton.textContent=dark?'☀':'☾';themeButton.setAttribute('aria-label',dark?'تفعيل الوضع الفاتح':'تفعيل الوضع الداكن');themeButton.title=dark?'الوضع الفاتح':'الوضع الداكن';try{localStorage.setItem('theme',dark?'true':'false')}catch(e){}}
+ let saved='false';try{saved=localStorage.getItem('theme')||'false'}catch(e){}setTheme(saved==='true'?'dark':'light');
+ themeButton.addEventListener('click',()=>setTheme(body.classList.contains('dark')?'light':'dark'));
+ function renderAuth(){let user=null;try{user=JSON.parse(localStorage.getItem('user')||'null')}catch(e){}
+  if(user){const safeName=String(user.full_name||user.name||'').replace(/[<>]/g,'');authArea.innerHTML='<a class="nav-btn enter-platform" href="dashboard.html">ادخل إلى المنصة ↗</a><span class="nav-btn" style="cursor:default">أهلًا '+safeName+'</span><button type="button" class="nav-btn" id="logoutBtn">تسجيل خروج</button>';document.getElementById('logoutBtn').addEventListener('click',()=>{localStorage.removeItem('user');location.href='index.html'});}
+  else{authArea.innerHTML='<a href="login.html" class="nav-btn">تسجيل دخول</a><a href="signup.html" class="nav-btn signup">حساب جديد</a>';}
+ }
+ renderAuth();
+ function updateHeader(){header.classList.toggle('is-scrolled',window.scrollY>90)}
+ updateHeader();window.addEventListener('scroll',updateHeader,{passive:true});
+ window.addEventListener('storage',renderAuth);
+ window.checkCode=function(){const code=prompt('ادخل كود الدخول 👇');if(code==='DrNafe3')location.href='physics-surprise.html';else if(code!==null)alert('❌ الكود غير صحيح');};
+ const reveals=document.querySelectorAll('.reveal');
+ if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('active')}),{threshold:.15});reveals.forEach(el=>observer.observe(el));}else{reveals.forEach(el=>el.classList.add('active'));}
+})();
 </script>
 </body>
 </html>
