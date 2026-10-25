@@ -1256,6 +1256,16 @@
 .video-category-admin-select:focus{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(59,130,246,.12)}
 .field-hint{display:block;margin-top:7px;color:var(--muted);font-size:12px;line-height:1.7}
 @media(max-width:600px){.video-category-admin-label{align-items:flex-start;flex-direction:column}.video-category-admin-select{width:100%;min-width:0}.video-order-row{grid-template-columns:34px minmax(0,1fr) auto;gap:8px}}
+.video-title-edit{display:flex;align-items:center;gap:7px;margin-top:9px;min-width:0}
+.video-title-edit input{width:100%;min-width:0;padding:9px 11px;border-radius:10px;border:1px solid rgba(148,163,184,.22);background:rgba(8,17,32,.82);color:#f8fafc;font-size:13px;font-weight:650;outline:none;transition:border-color .2s,box-shadow .2s}
+.video-title-edit input:focus{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(59,130,246,.13)}
+.video-title-edit input:disabled{opacity:.65}
+.video-title-save{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:8px 11px;border:1px solid rgba(96,165,250,.3);border-radius:10px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;font-size:12px;font-weight:800;cursor:pointer;transition:filter .2s,transform .2s}
+.video-title-save:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px)}
+.video-title-save:disabled{opacity:.55;cursor:wait}
+.video-title-edit-status{display:block;min-height:0;margin-top:4px;font-size:11px;color:#86efac}
+.video-title-edit-status:empty{display:none}
+@media(max-width:600px){.video-title-edit{align-items:stretch;flex-direction:column}.video-title-save{width:100%;min-height:40px}}
 .video-order-actions{display:flex;gap:6px}
         .video-order-btn{
             width:36px;height:36px;display:grid;place-items:center;border-radius:11px;
@@ -3505,6 +3515,11 @@ async function loadVideoOrder() {
                 <div>
                     <div class="video-order-title">${escapeOrderText(video.title || "بدون عنوان")}${fresh ? '<span class="video-order-new">NEW · جديد</span>' : ""}</div>
                     <div class="video-order-meta">${escapeOrderText(groupNames[video.class_group] || video.class_group || "درس تعليمي")}</div>
+                    <form class="video-title-edit" data-title-form data-video-id="${escapeOrderText(video.id)}">
+                        <input type="text" name="video_title" maxlength="180" required value="${escapeOrderText(video.title || "")}" aria-label="اسم الفيديو: ${escapeOrderText(video.title || "الفيديو")}" placeholder="اكتب اسم الفيديو" />
+                        <button type="submit" class="video-title-save">حفظ الاسم</button>
+                    </form>
+                    <small class="video-title-edit-status" data-title-status-for="${escapeOrderText(video.id)}" aria-live="polite"></small>
                     <label class="video-category-admin-label">
                         <span>القائمة</span>
                         <select class="video-category-admin-select" data-category-video-id="${escapeOrderText(video.id)}" aria-label="تصنيف ${escapeOrderText(video.title || "الفيديو")}">
@@ -3566,6 +3581,59 @@ orderList.addEventListener("change", async event => {
         console.error("[Video category]", error);
         setOrderStatus("تعذر حفظ التصنيف. تأكد من تسجيل الدخول بحساب الإدارة ثم حاول مرة أخرى.", "error");
         select.disabled = false;
+    }
+});
+
+orderList.addEventListener("submit", async event => {
+    const form = event.target.closest("form[data-title-form]");
+    if (!form) return;
+    event.preventDefault();
+
+    const videoId = form.dataset.videoId;
+    const input = form.querySelector('input[name="video_title"]');
+    const button = form.querySelector('button[type="submit"]');
+    const status = orderList.querySelector('[data-title-status-for="' + CSS.escape(videoId) + '"]');
+    const title = (input?.value || "").trim();
+
+    if (!title) {
+        if (status) status.textContent = "اكتب اسم الفيديو أولًا.";
+        input?.focus();
+        return;
+    }
+
+    if (title.length > 180) {
+        if (status) status.textContent = "اسم الفيديو طويل جدًا (الحد الأقصى 180 حرفًا).";
+        return;
+    }
+
+    const originalText = button.textContent;
+    button.disabled = true;
+    input.disabled = true;
+    button.textContent = "جاري الحفظ...";
+    if (status) status.textContent = "";
+
+    try {
+        const { data, error } = await client.rpc("admin_rename_video", {
+            p_video_id: videoId,
+            p_title: title
+        });
+        if (error) throw error;
+        if (!data || data.success !== true) throw new Error(data?.reason || "تعذر حفظ اسم الفيديو.");
+
+        if (status) {
+            status.textContent = "تم حفظ الاسم بنجاح.";
+            status.style.color = "#86efac";
+        }
+        await loadVideoOrder();
+    } catch (error) {
+        console.error("[Rename video]", error);
+        if (status) {
+            status.textContent = "تعذر حفظ الاسم. تأكد من صلاحيات الإدارة وحاول مرة أخرى.";
+            status.style.color = "#fca5a5";
+        }
+        input.disabled = false;
+        button.disabled = false;
+        button.textContent = originalText;
     }
 });
 
