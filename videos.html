@@ -1783,7 +1783,7 @@ html[data-theme="light"] .video-category-icon{
 
 <div
   id="securityWarning"
-  class="antiRecord show"
+  class="antiRecord"
 >
 
   <div class="antiBox securityWarningBox">
@@ -2212,6 +2212,47 @@ const state = {
 
 
 /* =========================================================
+   SECURITY WARNING CONSENT
+   تذكّر موافقة الطالب على هذا الجهاز لكل حساب.
+========================================================= */
+const securityConsentIdentity =
+  savedUser.id ||
+  savedUser.phone ||
+  savedUser.mobile ||
+  savedUser.email ||
+  null;
+
+const securityConsentKey = securityConsentIdentity
+  ? "security_warning_acknowledged_v1_" +
+    String(securityConsentIdentity).trim().toLowerCase().replace(/[^a-z0-9_-]/g, "_")
+  : null;
+
+let hasSavedSecurityConsent = false;
+
+try {
+  hasSavedSecurityConsent = Boolean(
+    securityConsentKey &&
+    localStorage.getItem(securityConsentKey) === "accepted"
+  );
+} catch (e) {
+  console.warn("Could not read saved security consent", e);
+}
+
+if (hasSavedSecurityConsent) {
+  state.securityAcknowledged = true;
+  securityWarning.classList.add("closed");
+  securityWarning.classList.remove("show");
+  securityWarning.style.display = "none";
+  securityWarning.style.pointerEvents = "none";
+  securityWarning.setAttribute("aria-hidden", "true");
+} else {
+  securityWarning.classList.remove("closed");
+  securityWarning.classList.add("show");
+  securityWarning.removeAttribute("aria-hidden");
+}
+
+
+/* =========================================================
    SECURITY WARNING
    إصلاح مشكلة زر "فهمت وأوافق"
 ========================================================= */
@@ -2219,6 +2260,14 @@ const state = {
 function closeSecurityWarning(){
 
   state.securityAcknowledged = true;
+
+  try {
+    if (securityConsentKey) {
+      localStorage.setItem(securityConsentKey, "accepted");
+    }
+  } catch (e) {
+    console.warn("Could not save security consent", e);
+  }
 
   state.securityButtonLock = true;
 
