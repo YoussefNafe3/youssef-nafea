@@ -1897,6 +1897,22 @@ function avatarSvg(avatar){
     '</svg>';
 }
 
+async function resolveSharedPhotoUrl(path){
+ if(!path)return null;
+ if(/^https?:\/\//i.test(path))return path;
+ const {data,error}=await client.storage.from("student-avatars").createSignedUrl(path,604800);
+ if(error)throw error;
+ return data.signedUrl;
+}
+async function prepareProfilePhoto(file){
+ if(!file)throw new Error("لم يتم اختيار صورة");
+ if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw new Error("اختار صورة JPG أو PNG أو WEBP");
+ if(file.size>8*1024*1024)throw new Error("حجم الصورة لازم يكون أقل من 8 ميجابايت");
+ const image=await new Promise((resolve,reject)=>{const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("تعذر قراءة الصورة"))};img.src=url;});
+ const scale=Math.min(1,1200/Math.max(image.naturalWidth,image.naturalHeight)),canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
+ const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",.86));if(!blob)throw new Error("تعذر تجهيز الصورة");return blob;
+}
+
 function broadcastSharedAvatar(profile,studentId){try{localStorage.setItem("student-avatar-profile-updated",JSON.stringify({studentId:String(studentId),at:Date.now(),profile}));}catch(e){}try{if(window.studentAvatarChannel)window.studentAvatarChannel.postMessage({studentId:String(studentId),profile});}catch(e){}}
 
 function suggestedAvatarForStudent(fullName){
@@ -1948,7 +1964,7 @@ async function loadStudentAvatar(){
     if(data && AVATAR_OPTIONS.some(item=>item.id===data.avatar_id)){
       savedAvatarId = data.avatar_id;
       selectedAvatarId = data.avatar_id;
-      savedPhotoUrl = data.photo_url || null;
+      savedPhotoUrl = await resolveSharedPhotoUrl(data.photo_url);
       renderStudentAvatar(data.avatar_id,savedPhotoUrl);
     }
   }catch(error){
@@ -2021,13 +2037,14 @@ document.getElementById("saveAvatarBtn").addEventListener("click",async()=>{
 
 async function uploadResultProfilePhoto(file){
  const hint=document.getElementById("avatarUploadHint");if(!file)return;hint.textContent="جاري تجهيز الصورة ورفعها...";hint.className="avatar-upload-hint";
- try{const blob=await prepareProfilePhoto(file),path=studentId+"/profile.webp";const {error:upErr}=await client.storage.from("student-avatars").upload(path,blob,{contentType:"image/webp",upsert:true,cacheControl:"3600"});if(upErr)throw upErr;const a=AVATAR_OPTIONS.find(x=>x.id===savedAvatarId)||AVATAR_OPTIONS[0],url=client.storage.from("student-avatars").getPublicUrl(path).data.publicUrl+"?v="+Date.now();const {error}=await client.from("student_avatars").upsert({student_id:studentId,avatar_id:a.id,avatar_gender:a.gender,photo_url:url,updated_at:new Date().toISOString()},{onConflict:"student_id"});if(error)throw error;savedAvatarId=a.id;selectedAvatarId=a.id;savedPhotoUrl=url;renderStudentAvatar(a.id,url);renderAvatarChoices();hint.textContent="تم حفظ صورتك وتحديثها في لوحة الطالب.";hint.className="avatar-upload-hint success";document.getElementById("avatarSelectedNote").textContent="تم حفظ صورتك الشخصية";document.getElementById("avatarSaveMessage").textContent="تم الحفظ بنجاح.";document.getElementById("avatarSaveMessage").className="avatar-save-message success";broadcastSharedAvatar({avatar_id:a.id,photo_url:url},studentId);}catch(e){console.error(e);hint.textContent=e.message||"تعذر رفع الصورة. حاول مرة أخرى.";hint.className="avatar-upload-hint error";}
+ try{const blob=await prepareProfilePhoto(file),path=studentId+"/profile.webp";const {error:upErr}=await client.storage.from("student-avatars").upload(path,blob,{contentType:"image/webp",upsert:true,cacheControl:"3600"});if(upErr)throw upErr;const a=AVATAR_OPTIONS.find(x=>x.id===savedAvatarId)||AVATAR_OPTIONS[0],{data:signedData,error:signedError}=await client.storage.from("student-avatars").createSignedUrl(path,604800);if(signedError)throw signedError;const url=signedData.signedUrl;const {error}=await client.from("student_avatars").upsert({student_id:studentId,avatar_id:a.id,avatar_gender:a.gender,photo_url:path,updated_at:new Date().toISOString()},{onConflict:"student_id"});if(error)throw error;savedAvatarId=a.id;selectedAvatarId=a.id;savedPhotoUrl=url;renderStudentAvatar(a.id,url);renderAvatarChoices();hint.textContent="تم حفظ صورتك وتحديثها في لوحة الطالب.";hint.className="avatar-upload-hint success";document.getElementById("avatarSelectedNote").textContent="تم حفظ صورتك الشخصية";document.getElementById("avatarSaveMessage").textContent="تم الحفظ بنجاح.";document.getElementById("avatarSaveMessage").className="avatar-save-message success";broadcastSharedAvatar({avatar_id:a.id,photo_url:path},studentId);}catch(e){console.error(e);hint.textContent=e.message||"تعذر رفع الصورة. حاول مرة أخرى.";hint.className="avatar-upload-hint error";}
 }
 document.getElementById("avatarPhotoInput").addEventListener("change",e=>{uploadResultProfilePhoto(e.target.files?.[0]);e.target.value="";});
 
 window.studentAvatarChannel=typeof BroadcastChannel!=="undefined"?new BroadcastChannel("student-avatar-profile"):null;
-if(window.studentAvatarChannel)window.studentAvatarChannel.onmessage=e=>{if(String(e.data?.studentId)===String(studentId)){savedAvatarId=e.data.profile?.avatar_id||savedAvatarId;savedPhotoUrl=e.data.profile?.photo_url||null;selectedAvatarId=savedAvatarId;renderStudentAvatar(savedAvatarId,savedPhotoUrl);}};
-window.addEventListener("storage",e=>{if(e.key==="student-avatar-profile-updated"&&e.newValue){try{const v=JSON.parse(e.newValue);if(String(v.studentId)===String(studentId)){savedAvatarId=v.profile?.avatar_id||savedAvatarId;savedPhotoUrl=v.profile?.photo_url||null;selectedAvatarId=savedAvatarId;renderStudentAvatar(savedAvatarId,savedPhotoUrl);}}catch(_){}}});
+async function applyResultsAvatarProfile(profile){savedAvatarId=profile?.avatar_id||savedAvatarId;selectedAvatarId=savedAvatarId;try{savedPhotoUrl=await resolveSharedPhotoUrl(profile?.photo_url);}catch(e){console.warn("Could not refresh profile photo URL",e.message);}renderStudentAvatar(savedAvatarId,savedPhotoUrl);}
+if(window.studentAvatarChannel)window.studentAvatarChannel.onmessage=e=>{if(String(e.data?.studentId)===String(studentId))applyResultsAvatarProfile(e.data.profile);};
+window.addEventListener("storage",e=>{if(e.key==="student-avatar-profile-updated"&&e.newValue){try{const v=JSON.parse(e.newValue);if(String(v.studentId)===String(studentId))applyResultsAvatarProfile(v.profile);}catch(_){}}});
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadStudentAvatar();});
 
 /* =========================================================
