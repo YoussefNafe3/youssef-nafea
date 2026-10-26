@@ -1095,6 +1095,67 @@ margin-top:4px;
 
 
 /* =========================================================
+   LATEST RESULT — restrained premium layout
+========================================================= */
+.latest-exam-section{margin-top:24px}
+.latest-section-icon{background:rgba(18,183,106,.1);color:var(--success)}
+.latest-section-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.latest-updated-label{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid var(--border);border-radius:999px;color:var(--muted);background:var(--card);font-size:10px;font-weight:700;white-space:nowrap}
+.latest-updated-label span{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 0 4px rgba(18,183,106,.1)}
+.latest-result-wrap{min-width:0}
+.latest-result-card{
+  display:grid;grid-template-columns:minmax(0,1.5fr) minmax(230px,.85fr);gap:24px;
+  padding:clamp(20px,3vw,30px);position:relative;overflow:hidden;
+  border:1px solid var(--border);border-radius:23px;background:var(--card);
+  box-shadow:var(--shadow);color:var(--text);
+}
+.latest-result-card::before{content:"";position:absolute;right:0;top:0;bottom:0;width:4px;background:var(--success)}
+.latest-result-card.warning::before{background:var(--warning)}
+.latest-result-card.excellent::before{background:var(--success)}
+.latest-result-main{min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.latest-result-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%}
+.latest-result-kicker{display:inline-flex;align-items:center;gap:7px;color:var(--success);font-size:10px;font-weight:850}
+.latest-result-kicker svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.latest-result-title{margin-top:17px;font-size:clamp(18px,2vw,23px);font-weight:900;line-height:1.6;overflow-wrap:anywhere}
+.latest-result-subject{margin-top:3px;color:var(--muted);font-size:12px;font-weight:600}
+.latest-result-meta{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:auto;padding-top:24px;color:var(--muted);font-size:10px}
+.latest-result-meta span{display:inline-flex;align-items:center;gap:6px}
+.latest-result-meta svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.latest-result-score{align-self:stretch;display:flex;flex-direction:column;justify-content:center;padding:19px 21px;border:1px solid var(--border);border-radius:17px;background:var(--card2);min-width:0}
+.latest-score-label{color:var(--muted);font-size:11px;font-weight:700}
+.latest-score-number{margin-top:2px;font-size:clamp(28px,3vw,38px);font-weight:900;line-height:1.35;letter-spacing:-.5px}
+.latest-score-number span{font-size:15px;color:var(--muted);font-weight:650;letter-spacing:0}
+.latest-percent-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
+.latest-percent-row strong{color:var(--primary);font-size:15px;font-weight:900}
+.latest-percent-row span{color:var(--muted);font-size:10px}
+.latest-progress{height:7px;border-radius:999px;background:var(--border);overflow:hidden;margin-top:9px}
+.latest-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#2563eb,#7c3aed)}
+.latest-empty{grid-column:1/-1}
+.latest-empty .empty-icon svg{width:34px;height:34px;fill:none;stroke:var(--muted);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.view-all-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;margin:13px auto 0;
+  padding:9px 15px;border:1px solid var(--border);border-radius:11px;
+  background:var(--card);color:var(--primary);font-family:inherit;font-size:11px;font-weight:800;
+  cursor:pointer;transition:background .2s,border-color .2s,transform .2s;
+}
+.latest-exam-section .view-all-btn{display:flex}
+.view-all-btn:hover{background:var(--card2);border-color:color-mix(in srgb,var(--primary) 35%,var(--border));transform:translateY(-1px)}
+.view-all-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.view-all-btn[aria-expanded="true"] svg{transform:rotate(180deg)}
+.all-exams-section[hidden],.view-all-btn[hidden]{display:none!important}
+.all-exams-section{scroll-margin-top:18px}
+@media(max-width:700px){
+  .latest-result-card{grid-template-columns:1fr;gap:16px;padding:18px}
+  .latest-result-score{padding:16px}
+  .latest-result-title{margin-top:12px;font-size:18px}
+  .latest-result-meta{padding-top:18px}
+  .latest-updated-label{font-size:9px;padding:6px 9px}
+}
+@media(prefers-reduced-motion:reduce){
+  .latest-result-card,.view-all-btn,.latest-progress span{transition:none!important}
+}
+
+/* =========================================================
    MOBILE
 ========================================================= */
 
@@ -1234,8 +1295,17 @@ animation:fadeUp .5s ease both;
 
 <div class="brand">
 
-<div class="logo">
-🧬
+<div class="logo" aria-hidden="true">
+<svg viewBox="0 0 48 48" role="img" focusable="false">
+  <ellipse cx="24" cy="24" rx="17" ry="7.5" fill="none" stroke="currentColor" stroke-width="1.7" transform="rotate(45 24 24)"/>
+  <ellipse cx="24" cy="24" rx="17" ry="7.5" fill="none" stroke="currentColor" stroke-width="1.7" transform="rotate(-45 24 24)"/>
+  <ellipse cx="24" cy="24" rx="17" ry="7.5" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  <circle cx="24" cy="24" r="3.2" fill="currentColor"/>
+  <circle cx="11.8" cy="11.8" r="2" fill="currentColor"/>
+  <circle cx="36.2" cy="11.8" r="2" fill="currentColor"/>
+  <circle cx="11.8" cy="36.2" r="2" fill="currentColor"/>
+  <circle cx="36.2" cy="36.2" r="2" fill="currentColor"/>
+</svg>
 </div>
 
 <div class="brand-text">
@@ -1469,10 +1539,39 @@ id="recitationCount"
 
 
 <!-- =====================================================
-     EXAMS
+     LATEST EXAM RESULT
 ====================================================== -->
 
-<section class="section">
+<section class="section latest-exam-section" aria-labelledby="latestExamTitle">
+  <div class="section-head">
+    <div class="section-title">
+      <div class="section-title-icon latest-section-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5V14"/><path d="M10 19.5V9"/><path d="M16 19.5V4.5"/><path d="M22 19.5H2"/></svg>
+      </div>
+      <div>
+        <h2 id="latestExamTitle">أحدث نتيجة امتحان</h2>
+        <p>آخر نتيجة وصلتك من الدكتور</p>
+      </div>
+    </div>
+    <span class="latest-updated-label"><span aria-hidden="true"></span> الأحدث أولًا</span>
+  </div>
+
+  <div id="latestExamResult" class="latest-result-wrap">
+    <div class="loading"><div class="loading-icon">◷</div><div class="loading-text">جاري تحميل أحدث نتيجة...</div></div>
+  </div>
+
+  <button type="button" id="toggleAllExams" class="view-all-btn" aria-controls="allExamsSection" aria-expanded="false" hidden>
+    <span>عرض كل النتائج</span>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+  </button>
+</section>
+
+
+<!-- =====================================================
+     ALL PREVIOUS EXAM RESULTS
+====================================================== -->
+
+<section class="section all-exams-section" id="allExamsSection" hidden>
 
 
 <div class="section-head">
@@ -1486,11 +1585,11 @@ id="recitationCount"
 <div>
 
 <h2>
-نتائج الامتحانات
+كل نتائج الامتحانات
 </h2>
 
 <p>
-جميع نتائج الاختبارات الخاصة بك
+نتائجك السابقة مرتبة من الأحدث إلى الأقدم
 </p>
 
 </div>
@@ -1820,12 +1919,8 @@ await client
 .from("exam_results")
 .select("*")
 .eq("student_id",studentId)
-.order(
-"exam_date",
-{
-ascending:false
-}
-);
+.order("created_at",{ascending:false,nullsFirst:false})
+.order("exam_date",{ascending:false,nullsFirst:false});
 
 
 if(error){
@@ -1857,17 +1952,83 @@ return;
 }
 
 
-examData=data || [];
+examData=(data || []).slice().sort((a,b)=>{
+  const createdA = a.created_at ? new Date(a.created_at).getTime() : 0;
+  const createdB = b.created_at ? new Date(b.created_at).getTime() : 0;
+  if(createdA !== createdB) return createdB - createdA;
+  const dateA = a.exam_date ? new Date(a.exam_date).getTime() : 0;
+  const dateB = b.exam_date ? new Date(b.exam_date).getTime() : 0;
+  return dateB - dateA;
+});
 
-
-renderExams(
-examData
-);
-
+renderLatestExam(examData[0] || null);
+renderExams(examData.slice(1));
 updateStatistics();
+updateAllExamsButton();
 
 }
 
+
+function updateAllExamsButton(){
+  const button = document.getElementById("toggleAllExams");
+  if(!button) return;
+  const hasPrevious = examData.length > 1;
+  button.hidden = !hasPrevious;
+  if(!hasPrevious){
+    document.getElementById("allExamsSection").hidden = true;
+    button.setAttribute("aria-expanded","false");
+    button.querySelector("span").textContent = "عرض كل النتائج";
+  }
+}
+
+function renderLatestExam(result){
+  const container = document.getElementById("latestExamResult");
+  if(!container) return;
+  if(!result){
+    container.innerHTML = `
+      <div class="empty latest-empty">
+        <div class="empty-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8 3h8"/><path d="M10 3v6l-5 8.5A2 2 0 0 0 6.7 21h10.6a2 2 0 0 0 1.7-3.5L14 9V3"/><path d="M8 15h8"/></svg>
+        </div>
+        <strong>لسه مفيش نتائج امتحانات</strong>
+        <span>أول ما الدكتور يضيف نتيجة، هتظهر هنا مباشرة.</span>
+      </div>`;
+    return;
+  }
+  const percent = percentage(result.score,result.total);
+  const status = statusInfo(percent);
+  container.innerHTML = `
+    <article class="latest-result-card ${status.className} fade" data-result-id="${escapeHTML(result.id)}">
+      <div class="latest-result-main">
+        <div class="latest-result-heading">
+          <span class="latest-result-kicker"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9Z"/></svg> أحدث نتيجة</span>
+          <span class="status ${status.badgeClass}">${status.badge}</span>
+        </div>
+        <h3 class="latest-result-title">${escapeHTML(result.title || "امتحان")}</h3>
+        <p class="latest-result-subject">${escapeHTML(result.subject || "أحياء")}</p>
+        <div class="latest-result-meta">
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="2"/><path d="M7.5 3.5v4M16.5 3.5v4M3.5 10h17"/></svg>${formatDate(result.exam_date)}</span>
+          ${result.duration_minutes ? `<span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg>${escapeHTML(result.duration_minutes)} دقيقة</span>` : ""}
+        </div>
+      </div>
+      <div class="latest-result-score">
+        <div class="latest-score-label">درجتك</div>
+        <div class="latest-score-number">${escapeHTML(result.score)}<span> / ${escapeHTML(result.total)}</span></div>
+        <div class="latest-percent-row"><strong>${percent}%</strong><span>النسبة المئوية</span></div>
+        <div class="latest-progress"><span style="width:${percent}%"></span></div>
+      </div>
+    </article>`;
+}
+
+document.getElementById("toggleAllExams").addEventListener("click",()=>{
+  const button = document.getElementById("toggleAllExams");
+  const section = document.getElementById("allExamsSection");
+  const opening = section.hidden;
+  section.hidden = !opening;
+  button.setAttribute("aria-expanded",String(opening));
+  button.querySelector("span").textContent = opening ? "إخفاء النتائج السابقة" : "عرض كل النتائج";
+  if(opening) section.scrollIntoView({behavior:"smooth",block:"start"});
+});
 
 function renderExams(data){
 
@@ -2341,7 +2502,7 @@ button.dataset.filter;
 if(filter==="all"){
 
 renderExams(
-examData
+examData.slice(1)
 );
 
 return;
@@ -2350,7 +2511,7 @@ return;
 
 
 const filtered =
-examData.filter(result=>{
+examData.slice(1).filter(result=>{
 
 const percent =
 percentage(
@@ -2585,12 +2746,36 @@ async function openResultNotification(element){
     }
   }
 
+  document.getElementById("notificationPanel").classList.remove("show");
+
+  if(resultType === "exam"){
+    const latestContainer = document.getElementById("latestExamResult");
+    const latestCard = latestContainer?.querySelector(`[data-result-id="${CSS.escape(String(resultId))}"]`);
+    if(latestCard){
+      const latestSection = latestCard.closest(".latest-exam-section");
+      if(latestSection) latestSection.scrollIntoView({behavior:"smooth",block:"start"});
+      latestCard.style.outline = "3px solid var(--primary)";
+      latestCard.style.outlineOffset = "4px";
+      setTimeout(()=>{latestCard.style.outline="";latestCard.style.outlineOffset="";},3200);
+      return;
+    }
+    const allSection = document.getElementById("allExamsSection");
+    if(allSection){
+      allSection.hidden = false;
+      const toggle = document.getElementById("toggleAllExams");
+      if(toggle){
+        toggle.setAttribute("aria-expanded","true");
+        toggle.querySelector("span").textContent = "إخفاء النتائج السابقة";
+      }
+      renderExams(examData.slice(1));
+      document.querySelectorAll(".filters .filter").forEach(button=>button.classList.toggle("active",button.dataset.filter==="all"));
+    }
+  }
+
   const target = resultType === "exam"
     ? document.getElementById("examResults")
     : document.getElementById("recitationResults");
   if(!target) return;
-
-  document.getElementById("notificationPanel").classList.remove("show");
   const section = target.closest(".section");
   if(section) section.scrollIntoView({behavior:"smooth",block:"start"});
 
