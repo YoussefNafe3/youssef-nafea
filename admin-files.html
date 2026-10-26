@@ -1,263 +1,148 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>رفع الملفات - احترافي</title>
-
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101329">
+<title>إدارة المكتبة التعليمية | د. يوسف نافع</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
 <style>
-body{
-margin:0;
-font-family:'Cairo',sans-serif;
-background:linear-gradient(135deg,#0f172a,#111827,#020617);
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-}
-
-.card{
-width:460px;
-background:rgba(255,255,255,.06);
-backdrop-filter:blur(25px);
-border:1px solid rgba(255,255,255,.12);
-border-radius:22px;
-padding:25px;
-box-shadow:0 25px 60px rgba(0,0,0,.5);
-}
-
-h2{text-align:center;margin-bottom:20px;font-weight:800;}
-
-input,select{
-width:100%;
-padding:12px;
-margin:10px 0;
-border-radius:12px;
-border:none;
-outline:none;
-background:rgba(255,255,255,.08);
-color:white;
-}
-
-button{
-width:100%;
-padding:13px;
-border:none;
-border-radius:12px;
-background:linear-gradient(135deg,#FFD700,#ffb300);
-font-weight:800;
-cursor:pointer;
-}
-
-button:disabled{opacity:.6;cursor:not-allowed;}
-
-.bar{
-width:100%;
-height:10px;
-background:rgba(255,255,255,.1);
-border-radius:20px;
-overflow:hidden;
-margin-top:10px;
-display:none;
-}
-
-.progress{
-height:100%;
-width:0%;
-background:linear-gradient(90deg,#22c55e,#16a34a);
-}
-
-#msg{
-text-align:center;
-margin-top:10px;
-font-weight:700;
-}
-
-/* Premium responsive file management — CSS only */
-body{padding:18px;background:radial-gradient(ellipse at 12% 5%,rgba(118,100,223,.16),transparent 34%),linear-gradient(135deg,#080b1b,#11152f 55%,#090d20)}
-.card{width:min(100%,460px);background:linear-gradient(145deg,rgba(27,32,67,.92),rgba(14,18,42,.94));border-color:rgba(174,160,255,.2);box-shadow:0 28px 80px rgba(0,0,0,.38)}
-h2{color:#f4d77e}
-input,select{border:1px solid rgba(174,160,255,.16);background:rgba(7,10,29,.58);min-width:0}
-input:focus,select:focus{border-color:#9d8dff;box-shadow:0 0 0 3px rgba(118,100,223,.13)}
-button{background:linear-gradient(120deg,#8270ed,#6551c9 52%,#5140aa);color:white;box-shadow:0 10px 24px rgba(81,64,170,.24)}
-@media(max-width:520px){body{padding:12px;align-items:flex-start}.card{width:100%;max-width:460px;margin:auto;padding:20px 16px;border-radius:18px}input,select{font-size:16px}}
+:root{color-scheme:dark;--bg:#090c1b;--panel:#12172e;--panel2:#171d39;--line:rgba(183,174,255,.16);--text:#f6f5ff;--muted:#a9aecb;--gold:#f4d77e;--violet:#8270ed;--violet2:#5e4bc1;--green:#6be0b0;--red:#ff8c9c}*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);font-family:'Cairo',sans-serif;background:radial-gradient(ellipse at 8% 0%,rgba(130,112,237,.18),transparent 32%),var(--bg)}button,input,select,textarea{font:inherit}.shell{width:min(1320px,calc(100% - 36px));margin:auto;padding:25px 0 45px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}.brand{display:flex;align-items:center;gap:12px}.mark{width:47px;height:47px;display:grid;place-items:center;border-radius:15px;color:#19172a;background:linear-gradient(145deg,#f4d77e,#b99b4f);font-size:23px}.brand strong{font-family:'Alexandria','Cairo',sans-serif;font-size:15px;display:block}.brand small{color:var(--muted)}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;border-radius:12px;padding:11px 15px;border:1px solid var(--line);background:#ffffff08;color:var(--text);text-decoration:none;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-1px);border-color:#a99aff88}.primary{background:linear-gradient(120deg,var(--violet),var(--violet2));border:0;font-weight:800}.hero{padding:29px clamp(20px,4vw,38px);border:1px solid var(--line);border-radius:24px;background:linear-gradient(120deg,#1b2042e8,#0f132beF);margin-bottom:20px}.eyebrow{font-size:11px;font-weight:800;color:var(--gold);letter-spacing:.5px}.hero h1{font:800 clamp(24px,3vw,35px)/1.5 'Alexandria','Cairo',sans-serif;margin:10px 0}.hero p{color:#c1c5dc;line-height:2;margin:0;max-width:800px;font-size:13px}.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(310px,.78fr);gap:18px;align-items:start}.panel{min-width:0;border:1px solid var(--line);border-radius:21px;background:linear-gradient(150deg,#191e3bcf,#11162fcf);padding:22px;box-shadow:0 18px 50px #00000018}.panel-head{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:20px}.panel h2{font-size:18px;margin:0}.panel-head p{font-size:12px;color:var(--muted);margin:5px 0 0;line-height:1.8}.mode-switch{display:flex;gap:5px;padding:5px;background:#0b1025;border:1px solid var(--line);border-radius:13px;margin-bottom:20px}.mode-switch button{flex:1;padding:10px 8px;background:transparent;border:0;border-radius:9px;color:var(--muted);cursor:pointer}.mode-switch button.active{background:#8270ed2d;color:#fff;border:1px solid #8270ed4a}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{min-width:0}.field.full{grid-column:1/-1}.field label{display:block;font-size:12px;font-weight:800;margin:0 0 7px;color:#e3e4f5}.field label em{font-style:normal;color:var(--gold)}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:12px;background:#0b1025;color:var(--text);padding:12px 13px;outline:none;min-width:0}.field input,.field select{height:47px}.field textarea{min-height:92px;resize:vertical;line-height:1.8}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--violet);box-shadow:0 0 0 3px #8270ed20}.field input::placeholder,.field textarea::placeholder{color:#777f9e}.hint{font-size:11px;color:var(--muted);line-height:1.8;margin-top:6px}.dropzone{position:relative;border:1.5px dashed #a99aff65;background:#8270ed0a;border-radius:17px;padding:25px 16px;text-align:center;transition:.2s}.dropzone.drag{background:#8270ed20;border-color:var(--gold)}.drop-icon{width:52px;height:52px;display:grid;place-items:center;border-radius:16px;margin:0 auto 10px;background:#8270ed20;font-size:24px}.dropzone strong{display:block;font-size:13px}.dropzone p{font-size:11px;color:var(--muted);margin:6px 0 12px}.dropzone input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.choose{display:inline-flex!important;width:auto!important;height:auto!important;padding:9px 14px!important;border-radius:10px!important;background:#8270ed24!important;border:1px solid #8270ed66!important;cursor:pointer!important;margin:0!important}.selected-file{margin-top:13px;padding:11px;border:1px solid var(--line);border-radius:11px;display:none;text-align:right;font-size:12px;overflow-wrap:anywhere}.progress-wrap{display:none;margin-top:15px}.progress-top{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-bottom:7px}.progress{height:7px;background:#ffffff12;border-radius:10px;overflow:hidden}.progress span{height:100%;display:block;width:0;background:linear-gradient(90deg,#8270ed,#f4d77e);transition:width .2s}.submit{width:100%;margin-top:18px;padding:14px;font-weight:800;font-size:14px}.submit:disabled{opacity:.55;cursor:wait;transform:none}.notice{display:none;margin-top:13px;border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.8}.notice.show{display:block}.notice.success{background:#6be0b012;border:1px solid #6be0b044;color:#b9f6dc}.notice.error{background:#ff8c9c12;border:1px solid #ff8c9c44;color:#ffc1ca}.notice.info{background:#8270ed12;border:1px solid #8270ed44;color:#d4ceff}.tip{margin-top:15px;border:1px solid #f4d77e26;background:#f4d77e09;border-radius:13px;padding:13px;color:#c9c4ad;font-size:11px;line-height:1.9}.tip strong{color:var(--gold)}.manage-toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}.manage-toolbar input,.manage-toolbar select{min-width:0;flex:1;padding:10px 12px;background:#0b1025;color:var(--text);border:1px solid var(--line);border-radius:11px}.resource-list{display:grid;gap:10px;max-height:900px;overflow:auto}.resource{display:flex;align-items:start;gap:12px;padding:13px;border:1px solid var(--line);background:#0d1228a6;border-radius:14px}.resource-icon{flex:0 0 42px;height:44px;border-radius:12px;display:grid;place-items:center;background:#8270ed20;font-size:20px}.resource-body{flex:1;min-width:0}.resource h3{font-size:13px;margin:0 0 4px;overflow-wrap:anywhere}.resource p{font-size:11px;color:var(--muted);line-height:1.8;margin:0;overflow-wrap:anywhere}.resource-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.mini{padding:6px 9px;border-radius:8px;font-size:10px;border:1px solid var(--line);background:#ffffff08;color:var(--text);cursor:pointer}.mini.danger{color:#ffb3bd;border-color:#ff8c9c44}.mini:disabled{opacity:.5}.empty{text-align:center;padding:32px 15px;color:var(--muted);border:1px dashed var(--line);border-radius:14px;font-size:12px;line-height:1.9}.footer{color:#7e85a5;font-size:11px;margin-top:23px;text-align:center}.toast{position:fixed;bottom:20px;left:20px;max-width:min(430px,calc(100% - 40px));padding:13px 17px;border-radius:13px;background:#191e3d;border:1px solid var(--line);box-shadow:0 20px 55px #0008;display:none;z-index:10}.toast.show{display:block}:focus-visible{outline:3px solid #f4d77eaa;outline-offset:3px}
+@media(max-width:980px){.layout{grid-template-columns:1fr}.resource-list{max-height:none}}
+@media(max-width:600px){.shell{width:calc(100% - 22px);padding-top:14px}.topbar{align-items:flex-start}.brand strong{font-size:12px}.brand small{font-size:10px}.mark{width:40px;height:40px}.actions .btn{padding:9px 10px;font-size:11px}.hero{padding:23px 18px;border-radius:19px}.hero h1{font-size:23px}.panel{padding:16px;border-radius:17px}.form-grid{grid-template-columns:1fr;gap:12px}.field.full{grid-column:auto}.panel-head{flex-direction:column}.submit{font-size:13px}}
 </style>
 </head>
-
 <body>
-
-<div class="card">
-
-<h2>📤 رفع ملف / فيديو</h2>
-
-<input id="title" placeholder="عنوان الملف *">
-<input id="desc" placeholder="الوصف (اختياري)">
-
-<select id="class_group">
-  <option value="first_science">أولى ثانوي</option>
-  <option value="third_biology">تالتة أحياء</option>
-  <option value="third_geology">تالتة جيولوجيا</option>
-</select>
-
-<select id="type">
-  <option value="file">ملف</option>
-  <option value="video">فيديو</option>
-</select>
-
-<input type="file" id="file">
-
-<div class="bar" id="bar">
-  <div class="progress" id="progress"></div>
+<main class="shell">
+<header class="topbar"><div class="brand"><div class="mark">✦</div><div><strong>د. يوسف نافع</strong><small>إدارة المكتبة التعليمية</small></div></div><div class="actions"><a class="btn" href="admin.html">← لوحة التحكم</a><a class="btn" href="files.html" target="_blank" rel="noopener">معاينة المكتبة ↗</a></div></header>
+<section class="hero"><div class="eyebrow">CONTENT MANAGEMENT · FILE LIBRARY</div><h1>مركز إدارة المحتوى التعليمي</h1><p>ارفع ملفاتك مرة واحدة، أو أضف روابط من مصادر خارجية لتوفير مساحة التخزين. نظّم كل مصدر حسب الصف، واكتب وصفًا واضحًا، وراجع المحتوى المنشور من مكان واحد.</p></section>
+<div class="layout">
+<section class="panel">
+<div class="panel-head"><div><h2 id="formTitle">إضافة مصدر جديد</h2><p>حقول واضحة وخطوات بسيطة، مع التحقق قبل الحفظ.</p></div><span class="eyebrow">NEW RESOURCE</span></div>
+<div class="mode-switch" role="tablist" aria-label="طريقة إضافة المصدر"><button type="button" class="active" data-mode="upload">⬆ رفع ملف</button><button type="button" data-mode="external">↗ رابط خارجي</button></div>
+<form id="resourceForm">
+<div class="form-grid">
+<div class="field full"><label for="title">عنوان المصدر <em>*</em></label><input id="title" maxlength="180" required placeholder="مثال: ملخص الوحدة الأولى — علوم متكاملة"></div>
+<div class="field full"><label for="description">وصف مختصر</label><textarea id="description" maxlength="1200" placeholder="اكتب محتوى الملف وما الذي سيستفيده الطالب منه…"></textarea></div>
+<div class="field"><label for="classGroup">المجموعة الدراسية <em>*</em></label><select id="classGroup" required><option value="first_science">أولى ثانوي — علوم متكاملة</option><option value="third_biology">تالتة ثانوي — أحياء</option><option value="third_geology">تالتة ثانوي — جيولوجيا</option></select></div>
+<div class="field"><label for="resourceType">نوع المصدر <em>*</em></label><select id="resourceType" required><option value="file">ملف للمذاكرة</option><option value="video">فيديو / شرح</option></select></div>
+<div class="field full" id="uploadFields"><label>الملف المطلوب <em>*</em></label><div class="dropzone" id="dropzone"><div class="drop-icon">⇧</div><strong>اسحب الملف هنا أو اختره من جهازك</strong><p>PDF، مستندات، عروض، صور أو فيديو حسب نوع المصدر</p><label class="choose" for="fileInput">اختيار ملف من الجهاز</label><input id="fileInput" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.jpg,.jpeg,.png,.webp,.mp4,.webm,.mov,application/pdf,image/*,video/mp4,video/webm"></div><div id="selectedFile" class="selected-file"></div><div class="hint">يتم رفع الملف إلى مساحة <b>study-files</b> الحالية. حجم الملف الأقصى يحدده إعداد التخزين في Supabase.</div></div>
+<div class="field full" id="externalFields" hidden><label for="externalUrl">رابط المصدر <em>*</em></label><input id="externalUrl" type="url" inputmode="url" placeholder="https://drive.google.com/... أو رابط مباشر"><div class="hint">يمكنك وضع رابط مشاركة من Google Drive أو OneDrive أو YouTube أو أي استضافة موثوقة. تأكد من ضبط صلاحية المشاركة لتسمح للطلاب بالفتح.</div></div>
 </div>
-
-<button id="btn" onclick="upload()">🚀 رفع الملف</button>
-
-<div id="msg"></div>
-
+<div class="progress-wrap" id="progressWrap"><div class="progress-top"><span id="progressLabel">جاري تجهيز الطلب…</span><b id="progressValue">0%</b></div><div class="progress"><span id="progressBar"></span></div></div>
+<button class="btn primary submit" id="submitBtn" type="submit">✦ نشر المصدر في مكتبة الطلاب</button>
+<div class="notice" id="notice" role="status"></div>
+</form>
+<div class="tip"><strong>نصيحة لتوفير المساحة:</strong> استخدم تبويب «رابط خارجي» للملفات الكبيرة أو الفيديوهات الموجودة بالفعل على خدمة استضافة. المنصة ستحفظ بيانات المصدر والرابط فقط، ولن تنسخ الملف إلى مساحة Supabase.</div>
+</section>
+<section class="panel">
+<div class="panel-head"><div><h2>المصادر المنشورة</h2><p>راجع الموجود في المكتبة، وابحث أو احذف مصدرًا عند الحاجة.</p></div><span class="eyebrow" id="resourceCount">0 مصدر</span></div>
+<div class="manage-toolbar"><input id="manageSearch" type="search" placeholder="ابحث في المصادر…" aria-label="البحث في المصادر"><select id="manageClass" aria-label="تصفية حسب الصف"><option value="all">كل الصفوف</option><option value="first_science">أولى ثانوي</option><option value="third_biology">تالتة أحياء</option><option value="third_geology">تالتة جيولوجيا</option></select></div>
+<div class="resource-list" id="resourceList"><div class="empty">جاري تحميل المصادر…</div></div>
+</section>
 </div>
-
+<footer class="footer">منصة د. يوسف نافع · إدارة المحتوى التعليمي</footer>
+</main>
+<div id="toast" class="toast" role="status"></div>
 <script>
-
-/* ================= SUPABASE ================= */
-const client = window.supabase.createClient(
-"https://nhdowqzecpwmkunczodl.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo"
-);
-
-/* ================= CLEAN FILE NAME ================= */
-function cleanFileName(name){
-  return name
-    .replace(/[\u0600-\u06FF]/g, "")
-    .replace(/\s+/g, "_")
-    .replace(/[^a-zA-Z0-9._-]/g, "");
+(function(){
+'use strict';
+const SUPABASE_URL="https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const $=id=>document.getElementById(id);
+const MAX_FILE_SIZE=100*1024*1024;
+let mode='upload',editingId=null,resources=[];
+function safeName(name){const ext=(name.match(/\.([a-zA-Z0-9]{1,12})$/)||[])[1]||'';const base=name.replace(/\.[^.]+$/,'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').slice(0,90)||'resource';return base+(ext?'.'+ext.toLowerCase():'')}
+function showNotice(message,type='info'){const el=$('notice');el.textContent=message;el.className='notice show '+type}
+function toast(message){$('toast').textContent=message;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),3200)}
+function progress(value,label){$('progressWrap').style.display='block';$('progressBar').style.width=value+'%';$('progressValue').textContent=value+'%';$('progressLabel').textContent=label}
+function hideProgress(){ $('progressWrap').style.display='none';$('progressBar').style.width='0%'}
+function setMode(next){mode=next;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));$('uploadFields').hidden=mode!=='upload';$('externalFields').hidden=mode!=='external';$('fileInput').required=mode==='upload';$('externalUrl').required=mode==='external';$('resourceType').value=mode==='external'?'link':($('resourceType').value==='link'?'file':$('resourceType').value);if(mode==='external')$('resourceType').value='link';$('formTitle').textContent=editingId?'تعديل المصدر':'إضافة مصدر جديد';$('submitBtn').textContent=editingId?'حفظ التعديلات':'✦ نشر المصدر في مكتبة الطلاب'}
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{if(editingId)resetForm();setMode(b.dataset.mode)}));
+$('resourceType').addEventListener('change',()=>{if(mode==='external'&&$('resourceType').value!=='link')$('resourceType').value='link'});
+$('fileInput').addEventListener('change',()=>showSelectedFile($('fileInput').files[0]));
+function showSelectedFile(file){const box=$('selectedFile');if(!file){box.style.display='none';box.textContent='';return}box.style.display='block';box.textContent=file.name+' · '+formatBytes(file.size);if(file.size>MAX_FILE_SIZE)box.textContent+=' — الحجم أكبر من الحد المسموح به في الواجهة (100 MB)'}
+function formatBytes(n){if(!Number.isFinite(n))return'';if(n<1024)return n+' B';const units=['KB','MB','GB'];let v=n/1024,i=0;while(v>=1024&&i<units.length-1){v/=1024;i++}return v.toFixed(v>=10?1:2)+' '+units[i]}
+function validHttpUrl(value){try{const u=new URL(value);return ['https:','http:'].includes(u.protocol)?u.href:null}catch{return null}}
+$('dropzone').addEventListener('dragover',e=>{e.preventDefault();$('dropzone').classList.add('drag')});
+$('dropzone').addEventListener('dragleave',()=> $('dropzone').classList.remove('drag'));
+$('dropzone').addEventListener('drop',e=>{e.preventDefault();$('dropzone').classList.remove('drag');const file=e.dataTransfer.files?.[0];if(!file)return;try{const dt=new DataTransfer();dt.items.add(file);$('fileInput').files=dt.files;showSelectedFile(file)}catch{toast('اختيار الملف من الزر أفضل في هذا المتصفح.')}});
+async function requireSession(){const {data,error}=await client.auth.getSession();if(error)throw error;if(!data.session?.user)throw new Error('لا توجد جلسة دخول صالحة. سجّل الدخول بحساب الإدارة ثم أعد المحاولة.');return data.session.user}
+async function uploadToStorage(file){
+ if(file.size>MAX_FILE_SIZE)throw new Error('الملف أكبر من حد الواجهة (100 MB). استخدم رابط استضافة خارجي أو قسّم الملف.');
+ const path='library/'+$('classGroup').value+'/'+Date.now()+'-'+crypto.getRandomValues(new Uint32Array(1))[0]+'-'+safeName(file.name);
+ const {data,error}=await client.storage.from('study-files').upload(path,file,{upsert:false,cacheControl:'3600',contentType:file.type||'application/octet-stream'});
+ if(error)throw error;
+ const {data:urlData}=client.storage.from('study-files').getPublicUrl(data.path);
+ return {path:data.path,url:urlData.publicUrl};
 }
-
-/* ================= PROGRESS ================= */
-function setProgress(v){
-  document.getElementById("bar").style.display = "block";
-  document.getElementById("progress").style.width = v + "%";
+$('resourceForm').addEventListener('submit',async e=>{
+ e.preventDefault();const btn=$('submitBtn');btn.disabled=true;$('notice').className='notice';hideProgress();
+ let uploadedPath=null,saveSucceeded=false;
+ try{
+  const user=await requireSession(),title=$('title').value.trim(),description=$('description').value.trim()||null,class_group=$('classGroup').value;
+  if(!title)throw new Error('اكتب عنوان المصدر أولًا.');
+  let file_url=null,file_path=null,resource_type=$('resourceType').value,source_type='upload';
+  if(mode==='external'){
+   file_url=validHttpUrl($('externalUrl').value.trim());if(!file_url)throw new Error('اكتب رابطًا صحيحًا يبدأ بـ https:// أو http://');resource_type='link';source_type='external';
+  }else{
+   const file=$('fileInput').files[0];if(!file)throw new Error('اختر الملف المطلوب رفعه.');
+   progress(10,'جاري التحقق من الملف…');const result=await uploadToStorage(file);file_url=result.url;file_path=result.path;uploadedPath=result.path;progress(75,'تم رفع الملف؛ جاري حفظ بياناته…');
+  }
+  const payload={title,description,class_group,file_url,file_path,resource_type,source_type};
+  let result;
+  if(editingId)result=await client.from('study_files').update(payload).eq('id',editingId).select('id').maybeSingle();
+  else result=await client.from('study_files').insert({...payload,user_id:user.id}).select('id').single();
+  if(result.error)throw result.error;
+  saveSucceeded=true;progress(100,editingId?'تم تحديث المصدر':'تم نشر المصدر بنجاح');showNotice(editingId?'تم حفظ تعديلات المصدر.':'تم حفظ المصدر في قاعدة البيانات وأصبح متاحًا حسب صلاحيات الصف.','success');toast('تم حفظ المصدر بنجاح');
+  resetForm(false);await loadResources();
+ }catch(err){
+  console.error('Study resource save failed:',err);
+  let message=err?.message||'حدث خطأ غير متوقع.';
+  if(/row-level security|42501|permission denied/i.test(message))message='رفضت صلاحيات Supabase العملية. تأكد من الدخول بحساب الإدارة وأن سياسات الجدول تسمح بالنشر.';
+  else if(/payload too large|file size|413/i.test(message))message='الملف أكبر من حد التخزين الحالي. ارفع الملف إلى استضافة خارجية ثم أضف رابطه من تبويب «رابط خارجي».';
+  showNotice(message,'error');
+  if(uploadedPath&&!saveSucceeded){console.warn('تم رفع الملف لكن فشل حفظ السجل. قد يحتاج الملف إلى حذف يدوي من Storage:',uploadedPath);showNotice(message+' ملاحظة: رُفع الملف إلى Storage لكن لم يُحفظ سجله؛ راجع وحدة التحكم قبل إعادة المحاولة.','error')}
+ }finally{btn.disabled=false;setTimeout(()=>{if($('progressValue').textContent==='100%')hideProgress()},3500)}
+});
+function resetForm(clearNotice=true){editingId=null;$('resourceForm').reset();$('selectedFile').style.display='none';$('selectedFile').textContent='';setMode('upload');if(clearNotice)$('notice').className='notice';$('submitBtn').disabled=false}
+function classLabel(v){return v==='first_science'?'أولى ثانوي':v==='third_biology'?'تالتة أحياء':v==='third_geology'?'تالتة جيولوجيا':'صف غير محدد'}
+function typeLabel(v){return v==='video'?'فيديو':v==='link'?'رابط خارجي':'ملف'}
+function makeResource(item){
+ const row=document.createElement('article');row.className='resource';const type=item.resource_type||(item.source_type==='external'?'link':'file');
+ const icon=document.createElement('div');icon.className='resource-icon';icon.textContent=type==='video'?'▶':type==='link'?'↗':'▤';
+ const body=document.createElement('div');body.className='resource-body';const h=document.createElement('h3');h.textContent=item.title||'مصدر بدون عنوان';const p=document.createElement('p');p.textContent=classLabel(item.class_group)+' · '+typeLabel(type)+(item.created_at?' · '+new Intl.DateTimeFormat('ar-EG',{dateStyle:'medium'}).format(new Date(item.created_at)):'');body.append(h,p);
+ const acts=document.createElement('div');acts.className='resource-actions';if(item.file_url){const a=document.createElement('a');a.className='mini';a.textContent='فتح المصدر ↗';a.href=item.file_url;a.target='_blank';a.rel='noopener noreferrer';acts.append(a)}
+ const edit=document.createElement('button');edit.type='button';edit.className='mini';edit.textContent='تعديل البيانات';edit.onclick=()=>editResource(item);
+ const del=document.createElement('button');del.type='button';del.className='mini danger';del.textContent='حذف';del.onclick=()=>deleteResource(item,del);acts.append(edit,del);body.append(acts);row.append(icon,body);return row;
 }
-
-/* ================= AUTH FIX (IMPORTANT) ================= */
-async function getUserSafe(){
-  const { data: { session } } = await client.auth.getSession();
-  return session?.user || null;
+function renderResources(){
+ const query=$('manageSearch').value.trim().toLocaleLowerCase('ar'),group=$('manageClass').value;
+ const filtered=resources.filter(r=>(group==='all'||r.class_group===group)&&[r.title,r.description,r.class_group].some(v=>String(v||'').toLocaleLowerCase('ar').includes(query)));
+ $('resourceCount').textContent=resources.length+' مصدر';const list=$('resourceList');list.replaceChildren();
+ if(!filtered.length){const empty=document.createElement('div');empty.className='empty';empty.textContent=resources.length?'لا توجد مصادر مطابقة للبحث.':'لا توجد مصادر منشورة حتى الآن.';list.append(empty);return}
+ const frag=document.createDocumentFragment();filtered.forEach(r=>frag.append(makeResource(r)));list.append(frag);
 }
-
-/* ================= MAIN UPLOAD ================= */
-window.upload = async function(){
-
-const title = document.getElementById("title").value.trim();
-const desc = document.getElementById("desc").value.trim();
-const class_group = document.getElementById("class_group").value;
-const type = document.getElementById("type").value;
-const file = document.getElementById("file").files[0];
-
-const msg = document.getElementById("msg");
-const btn = document.getElementById("btn");
-
-/* ================= VALIDATION ================= */
-if(!title){
-msg.innerText = "❌ اكتب عنوان";
-return;
+async function loadResources(){
+ const {data,error}=await client.from('study_files').select('id,title,description,file_url,file_path,class_group,created_at,resource_type,source_type').order('created_at',{ascending:false}).limit(200);
+ if(error){console.error('Could not load resource list:',error);$('resourceList').replaceChildren();const e=document.createElement('div');e.className='empty';e.textContent='تعذر تحميل القائمة. تحقق من جلسة الإدارة وصلاحيات الجدول.';$('resourceList').append(e);return}
+ resources=data||[];renderResources();
 }
-
-if(!file){
-msg.innerText = "❌ اختار ملف";
-return;
+function editResource(item){
+ editingId=item.id;$('title').value=item.title||'';$('description').value=item.description||'';$('classGroup').value=item.class_group||'first_science';const type=item.resource_type||(item.source_type==='external'?'link':'file');
+ if(type==='link'){setMode('external');$('externalUrl').value=item.file_url||''}else{setMode('upload');$('resourceType').value=type}
+ $('formTitle').textContent='تعديل بيانات المصدر';$('submitBtn').textContent='حفظ التعديلات';showNotice('التعديل يحدّث بيانات المصدر. لا يرفع الملف مجددًا.','info');$('resourceForm').scrollIntoView({behavior:'smooth',block:'start'});
 }
-
-/* ================= CHECK USER (FIXED) ================= */
-const user = await getUserSafe();
-
-if(!user){
-msg.innerText = "❌ لازم تسجل دخول الأول";
-return;
+async function deleteResource(item,button){
+ if(!confirm('هل تريد حذف «'+(item.title||'هذا المصدر')+'» من المكتبة؟'+(item.file_path?'\nسيتم حذف سجل المصدر فقط؛ الملف المخزن لن يُحذف تلقائيًا لتجنب حذف بيانات غير مقصودة.':'')))return;
+ button.disabled=true;
+ try{const {error}=await client.from('study_files').delete().eq('id',item.id);if(error)throw error;resources=resources.filter(r=>r.id!==item.id);renderResources();toast('تم حذف سجل المصدر من المكتبة.')}
+ catch(err){console.error(err);toast(/row-level security|permission denied|42501/i.test(err.message||'')?'لا تسمح صلاحيات Supabase بحذف هذا المصدر.':'تعذر حذف المصدر؛ حاول مرة أخرى.');button.disabled=false}
 }
-
-/* ================= UI ================= */
-btn.disabled = true;
-btn.innerText = "⏳ جاري الرفع...";
-msg.innerText = "جاري رفع الملف...";
-
-try{
-
-const fileName = Date.now() + "-" + cleanFileName(file.name);
-
-const path = type === "video"
-  ? "videos/" + fileName
-  : "files/" + fileName;
-
-setProgress(20);
-
-/* ================= UPLOAD ================= */
-const { data, error } = await client.storage
-.from("study-files")
-.upload(path, file);
-
-if(error){
-console.log(error);
-msg.innerText = "❌ فشل رفع الملف (راجع RLS)";
-btn.disabled = false;
-btn.innerText = "🚀 رفع الملف";
-return;
-}
-
-setProgress(70);
-
-/* ================= PUBLIC URL ================= */
-const { data: urlData } = client.storage
-.from("study-files")
-.getPublicUrl(data.path);
-
-setProgress(85);
-
-/* ================= DB SAVE ================= */
-const { error: dbError } = await client
-.from("study_files")
-.insert([{
-  title,
-  description: desc || null,
-  file_url: urlData.publicUrl,
-  file_path: data.path,
-  class_group,
-  user_id: user.id
-}]);
-
-if(dbError){
-console.log(dbError);
-msg.innerText = "❌ تم الرفع لكن فشل الحفظ";
-btn.disabled = false;
-btn.innerText = "🚀 رفع الملف";
-return;
-}
-
-setProgress(100);
-
-msg.innerText = "✅ تم الرفع بنجاح";
-
-setTimeout(()=>{
-btn.disabled = false;
-btn.innerText = "🚀 رفع الملف";
-msg.innerText = "";
-setProgress(0);
-},2000);
-
-}catch(err){
-console.log(err);
-msg.innerText = "❌ خطأ غير متوقع";
-btn.disabled = false;
-btn.innerText = "🚀 رفع الملف";
-}
-
-};
-
+$('manageSearch').addEventListener('input',renderResources);$('manageClass').addEventListener('change',renderResources);
+(async function init(){try{await requireSession();await loadResources()}catch(e){console.warn(e);showNotice(e.message||'سجّل الدخول بحساب الإدارة أولًا.','error');$('resourceList').replaceChildren();const box=document.createElement('div');box.className='empty';box.textContent='تحتاج إلى جلسة دخول صالحة لإدارة الملفات. استخدم زر تسجيل الدخول في المنصة ثم افتح هذه الصفحة من جديد.';$('resourceList').append(box)}})();
+})();
 </script>
-
 </body>
 </html>
