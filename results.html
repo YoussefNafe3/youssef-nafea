@@ -1114,11 +1114,14 @@ color:var(--muted);
 .score strong{font-size:clamp(26px,3vw,32px);line-height:1.2;letter-spacing:-.5px}
 .score span{font-size:12px}
 .percent-ring{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;position:relative;border-radius:50%;background:conic-gradient(var(--ring-color,var(--primary)) var(--score-angle),var(--border) 0);isolation:isolate}
-.percent-ring::before{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--card);z-index:-1}
-.percent-ring span{font-size:13px;font-weight:900;color:var(--text);direction:ltr;line-height:1}
+.percent-ring::before{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--card);z-index:0}
+.percent-ring span{position:relative;z-index:1;font-size:13px;font-weight:900;color:var(--text);direction:ltr;line-height:1}
 .percent-ring small{font-size:8px;color:var(--muted);margin-inline-start:1px}
 .result.excellent .percent-ring{--ring-color:var(--success)}
 .result.warning .percent-ring{--ring-color:var(--warning)}
+.result.poor::before{background:var(--danger)}
+.result.poor .percent-ring{--ring-color:var(--danger)}
+.latest-result-card.poor::before{background:var(--danger)}
 .result .progress{height:6px;margin-top:13px}
 .result .progress-bar{background:linear-gradient(90deg,var(--primary),var(--primary2))}
 .result-footer{font-size:9px;line-height:1.8}
@@ -2084,7 +2087,7 @@ badgeClass:"mid"
 
 return {
 
-className:"warning",
+className:"poor",
 
 badge:"ضعيف",
 
