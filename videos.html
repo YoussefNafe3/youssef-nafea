@@ -1493,8 +1493,11 @@ html[data-theme="light"] .video-category-icon{
   align-items:center;
   gap:8px;
   flex-wrap:wrap;
+  direction:ltr;
 }
+.topActions .btn{direction:rtl}
 .studentChip{
+  direction:rtl;
   order:-1;
   margin:0;
   min-height:34px;
@@ -4243,7 +4246,7 @@ function render(){
 
       const meta = document.createElement("div");
       meta.className = "videoItemMeta";
-      meta.textContent = item.class_group || categoryLabel || "درس";
+      meta.textContent = categoryLabel || "درس";
       el.append(title, meta);
 
       if (String(item.id) === String(state.currentVideoId)) el.classList.add("active");
