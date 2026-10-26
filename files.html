@@ -1,174 +1,98 @@
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>الملفات التعليمية</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101329">
+<title>مكتبة الملفات | د. يوسف نافع</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Cairo',sans-serif;
-}
-
-body{
-background:#0f172a;
-color:white;
-min-height:100vh;
-padding:25px;
-}
-
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:30px;
-}
-
-.back-btn{
-background:#1e293b;
-color:white;
-padding:12px 18px;
-border-radius:12px;
-text-decoration:none;
-}
-
-.title{
-font-size:30px;
-font-weight:800;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-gap:20px;
-}
-
-.file-card{
-background:#1e293b;
-border-radius:20px;
-padding:20px;
-border:1px solid rgba(255,255,255,.08);
-transition:.3s;
-}
-
-.file-card:hover{
-transform:translateY(-5px);
-}
-
-.file-title{
-font-size:20px;
-font-weight:800;
-margin-bottom:10px;
-}
-
-.file-desc{
-opacity:.8;
-margin-bottom:15px;
-line-height:1.8;
-}
-
-.download-btn{
-display:block;
-width:100%;
-text-align:center;
-padding:12px;
-border-radius:12px;
-background:#FFD700;
-color:#111;
-font-weight:800;
-text-decoration:none;
-}
-
-.empty{
-text-align:center;
-padding:50px;
-opacity:.7;
-}
-
+:root{color-scheme:dark;--bg:#090c1b;--panel:#12172e;--panel2:#171d39;--line:rgba(183,174,255,.15);--text:#f6f5ff;--muted:#a9aecb;--gold:#f4d77e;--violet:#8270ed;--violet2:#5e4bc1;--green:#6be0b0;--shadow:0 24px 70px rgba(0,0,0,.26)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--text);font-family:'Cairo',sans-serif;background:radial-gradient(ellipse at 8% 0%,rgba(130,112,237,.18),transparent 32%),radial-gradient(ellipse at 92% 38%,rgba(244,215,126,.07),transparent 28%),var(--bg)}a{color:inherit}button,input,select{font:inherit}.shell{width:min(1240px,calc(100% - 36px));margin:auto;padding:26px 0 50px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px}.brand{display:flex;align-items:center;gap:13px}.brand-mark{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(145deg,#f4d77e,#b99b4f);color:#16152a;font-size:23px;box-shadow:0 8px 25px #f4d77e20}.brand strong{display:block;font-family:'Alexandria','Cairo',sans-serif;font-size:15px;letter-spacing:.1px}.brand span{display:block;color:var(--muted);font-size:12px;margin-top:2px}.top-actions{display:flex;gap:10px;flex-wrap:wrap}.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:11px 16px;border-radius:13px;text-decoration:none;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px);border-color:#9d8dff66}.btn-primary{background:linear-gradient(120deg,var(--violet),var(--violet2));border-color:transparent;box-shadow:0 9px 24px #6551c92b}.hero{position:relative;overflow:hidden;padding:clamp(25px,5vw,52px);border:1px solid var(--line);border-radius:28px;background:linear-gradient(120deg,rgba(26,31,65,.94),rgba(15,19,43,.94));box-shadow:var(--shadow);margin-bottom:22px}.hero:after{content:'✦';position:absolute;left:5%;top:0;font-size:170px;line-height:1;color:#f4d77e09;pointer-events:none}.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--gold);font-size:12px;font-weight:800;letter-spacing:.4px}.eyebrow:before{content:'';width:22px;height:2px;background:var(--gold);border-radius:3px}.hero h1{font-family:'Alexandria','Cairo',sans-serif;font-size:clamp(27px,4.5vw,45px);line-height:1.5;margin:12px 0 10px;max-width:750px}.hero h1 span{color:var(--gold)}.hero p{max-width:690px;color:#c1c5dc;line-height:2;margin:0;font-size:14px}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0}.stat{border:1px solid var(--line);background:rgba(20,25,52,.72);border-radius:17px;padding:17px 19px;display:flex;align-items:center;gap:13px}.stat-icon{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:#8270ed20;font-size:20px}.stat strong{font-size:23px;display:block;line-height:1.25}.stat span{font-size:12px;color:var(--muted)}.toolbar{display:grid;grid-template-columns:minmax(220px,1fr) 200px 180px;gap:12px;padding:15px;border:1px solid var(--line);background:rgba(17,22,47,.85);border-radius:19px;margin:20px 0}.field{position:relative}.field input,.field select{width:100%;height:48px;border-radius:12px;border:1px solid var(--line);background:#0b1025;color:var(--text);padding:0 14px;outline:none}.field input:focus,.field select:focus{border-color:var(--violet);box-shadow:0 0 0 3px #8270ed20}.field input::placeholder{color:#777f9e}.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:28px 2px 15px}.section-head h2{font-size:20px;margin:0}.section-head p{margin:5px 0 0;color:var(--muted);font-size:12px}.results-count{color:var(--muted);font-size:12px;white-space:nowrap}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.file-card{min-width:0;display:flex;flex-direction:column;position:relative;padding:21px;border:1px solid var(--line);border-radius:21px;background:linear-gradient(150deg,rgba(25,31,64,.92),rgba(15,19,42,.94));box-shadow:0 12px 30px #00000012;transition:transform .22s,border-color .22s,box-shadow .22s}.file-card:hover{transform:translateY(-4px);border-color:#a99aff66;box-shadow:0 22px 45px #00000024}.card-top{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:18px}.file-icon{width:52px;height:58px;border-radius:14px;display:grid;place-items:center;font-size:25px;background:linear-gradient(145deg,#8270ed28,#f4d77e14);border:1px solid #a99aff22}.badge{padding:5px 9px;border-radius:99px;font-size:10px;color:var(--gold);background:#f4d77e12;border:1px solid #f4d77e25;white-space:nowrap}.file-card h3{font-size:16px;line-height:1.8;margin:0 0 8px;overflow-wrap:anywhere}.file-card p{font-size:12px;line-height:1.9;color:var(--muted);margin:0 0 17px;white-space:pre-wrap;overflow-wrap:anywhere;flex:1}.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#8f96b8;font-size:11px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);margin-bottom:14px}.card-action{width:100%;border:0;border-radius:12px;padding:12px;text-align:center;text-decoration:none;font-weight:800;background:linear-gradient(120deg,#f4d77e,#d8b75e);color:#19172a;cursor:pointer}.card-action:hover{filter:brightness(1.05)}.empty,.state{grid-column:1/-1;text-align:center;padding:54px 18px;border:1px dashed var(--line);border-radius:20px;background:#13183180;color:var(--muted)}.empty-icon{font-size:36px;margin-bottom:10px}.empty h3{color:var(--text);margin:0 0 6px}.empty p{margin:0;font-size:13px;line-height:1.8}.footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#7e85a5;font-size:11px;padding-top:26px;margin-top:30px;border-top:1px solid var(--line)}.toast{position:fixed;bottom:20px;left:20px;max-width:min(420px,calc(100% - 40px));padding:13px 17px;border-radius:13px;background:#191e3d;border:1px solid var(--line);box-shadow:var(--shadow);display:none;z-index:10}.toast.show{display:block}.skeleton{height:225px;border-radius:20px;background:linear-gradient(100deg,#171b35 20%,#222849 40%,#171b35 60%);background-size:200% 100%;animation:shine 1.3s infinite}@keyframes shine{to{background-position:-200% 0}}:focus-visible{outline:3px solid #f4d77eaa;outline-offset:3px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.toolbar{grid-template-columns:1fr 1fr}.field:first-child{grid-column:1/-1}}
+@media(max-width:600px){.shell{width:calc(100% - 24px);padding-top:15px}.topbar{align-items:flex-start}.brand-mark{width:41px;height:41px}.brand strong{font-size:12px}.brand span{font-size:10px}.top-actions .btn{padding:9px 11px;font-size:11px}.hero{border-radius:21px;padding:25px 20px}.hero h1{font-size:27px}.hero p{font-size:12px}.stats{gap:8px}.stat{padding:12px 10px;gap:8px;align-items:flex-start;flex-direction:column}.stat-icon{width:34px;height:34px;font-size:16px;border-radius:10px}.stat strong{font-size:20px}.stat span{font-size:10px}.toolbar{grid-template-columns:1fr;padding:11px}.field:first-child{grid-column:auto}.grid{grid-template-columns:1fr;gap:12px}.file-card{padding:17px}.section-head{align-items:start;flex-direction:column}.results-count{white-space:normal}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 </style>
-
 </head>
-
 <body>
-
-<div class="header">
-<a href="dashboard.html" class="back-btn">⬅ رجوع</a>
-<div class="title">📚 الملفات التعليمية</div>
-</div>
-
-<div id="filesContainer" class="grid"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
+<main class="shell">
+<header class="topbar">
+<div class="brand"><div class="brand-mark">✦</div><div><strong>د. يوسف نافع</strong><span>مكتبتك التعليمية الرقمية</span></div></div>
+<nav class="top-actions" aria-label="التنقل"><a class="btn" href="dashboard.html">← لوحة الطالب</a><a class="btn btn-primary" href="results.html">🏆 النتائج</a></nav>
+</header>
+<section class="hero">
+<div class="eyebrow">YOUR LEARNING LIBRARY</div>
+<h1>كل مصادر مذاكرتك،<br><span>في مكان واحد.</span></h1>
+<p>ملفات منظمة ومصادر مختارة بعناية علشان توصل للمعلومة بسرعة، وتحفظ وقتك للمذاكرة والفهم. اختار المصدر المناسب وابدأ.</p>
+</section>
+<section class="stats" aria-label="إحصائيات المكتبة">
+<div class="stat"><div class="stat-icon">📚</div><div><strong id="totalCount">—</strong><span>مصدر تعليمي</span></div></div>
+<div class="stat"><div class="stat-icon">📄</div><div><strong id="fileCount">—</strong><span>ملفات للمذاكرة</span></div></div>
+<div class="stat"><div class="stat-icon">🔗</div><div><strong id="linkCount">—</strong><span>مصادر وروابط</span></div></div>
+</section>
+<section class="toolbar" aria-label="البحث والتصفية">
+<label class="field"><input id="searchInput" type="search" placeholder="ابحث باسم الملف أو محتواه..." autocomplete="off" aria-label="البحث في الملفات"></label>
+<label class="field"><select id="typeFilter" aria-label="نوع المصدر"><option value="all">كل أنواع المصادر</option><option value="file">ملفات</option><option value="video">فيديوهات</option><option value="link">روابط خارجية</option></select></label>
+<label class="field"><select id="sortFilter" aria-label="ترتيب الملفات"><option value="newest">الأحدث أولًا</option><option value="oldest">الأقدم أولًا</option><option value="az">الاسم: أ إلى ي</option></select></label>
+</section>
+<div class="section-head"><div><h2>المكتبة التعليمية</h2><p>مصادر مخصصة لمجموعتك الدراسية</p></div><div id="resultsCount" class="results-count">جاري تحميل المكتبة…</div></div>
+<section id="filesContainer" class="grid" aria-live="polite"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></section>
+<footer class="footer"><span>© <span id="year"></span> د. يوسف نافع · جميع الحقوق محفوظة</span><span>مصممة لتجربة مذاكرة أسهل وأكثر تركيزًا</span></footer>
+</main>
+<div id="toast" class="toast" role="status"></div>
 <script>
-
-const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
-
-const client = window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_ANON_KEY
-);
-
-const user = JSON.parse(localStorage.getItem("user") || "{}");
-
+(function(){
+'use strict';
+const SUPABASE_URL="https://nhdowqzecpwmkunczodl.supabase.co";
+const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const $=id=>document.getElementById(id);
+const user=(()=>{try{return JSON.parse(localStorage.getItem('user')||'null')}catch{return null}})();
+let allFiles=[];
+$('year').textContent=new Date().getFullYear();
+function showToast(text){$('toast').textContent=text;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),3500)}
+function textNode(tag,text,className){const el=document.createElement(tag);if(className)el.className=className;el.textContent=text||'';return el}
+function formatDate(value){if(!value)return 'مضاف إلى المكتبة';const date=new Date(value);if(Number.isNaN(date.getTime()))return 'مضاف إلى المكتبة';return new Intl.DateTimeFormat('ar-EG',{year:'numeric',month:'short',day:'numeric'}).format(date)}
+function normalizeType(file){if(['file','video','link'].includes(file.resource_type))return file.resource_type;if(file.source_type==='external')return 'link';return 'file'}
+function safeExternalUrl(value){try{const u=new URL(value);return ['https:','http:'].includes(u.protocol)?u.href:null}catch{return null}}
+function makeCard(file){
+ const type=normalizeType(file),card=textNode('article','','file-card'),top=textNode('div','','card-top'),icon=textNode('div',type==='video'?'▶':type==='link'?'↗':'▤','file-icon'),badge=textNode('span',type==='video'?'فيديو':type==='link'?'رابط خارجي':'ملف تعليمي','badge');
+ top.append(icon,badge);card.append(top);
+ card.append(textNode('h3',file.title||'مصدر تعليمي'));
+ card.append(textNode('p',file.description||'مصدر تعليمي مضاف لمساعدتك في المذاكرة.'));
+ const meta=textNode('div','','meta');meta.append(textNode('span',file.class_group==='first_science'?'أولى ثانوي':file.class_group==='third_biology'?'تالتة أحياء':file.class_group==='third_geology'?'تالتة جيولوجيا':'مادة تعليمية'),textNode('span',formatDate(file.created_at)));card.append(meta);
+ const url=safeExternalUrl(file.file_url);
+ if(url){const a=textNode('a',type==='link'?'فتح المصدر ↗':type==='video'?'مشاهدة المحتوى ▶':'فتح / تحميل الملف ↗','card-action');a.href=url;a.target='_blank';a.rel='noopener noreferrer';card.append(a)}
+ else{const btn=textNode('button','المصدر غير متاح','card-action');btn.type='button';btn.disabled=true;btn.style.opacity='.6';card.append(btn)}
+ return card;
+}
+function render(){
+ const query=$('searchInput').value.trim().toLocaleLowerCase('ar'),type=$('typeFilter').value,sort=$('sortFilter').value;
+ let list=allFiles.filter(f=>(type==='all'||normalizeType(f)===type)&&[f.title,f.description].some(v=>String(v||'').toLocaleLowerCase('ar').includes(query)));
+ list.sort((a,b)=>sort==='az'?String(a.title||'').localeCompare(String(b.title||''),'ar'):sort==='oldest'?new Date(a.created_at||0)-new Date(b.created_at||0):new Date(b.created_at||0)-new Date(a.created_at||0));
+ $('resultsCount').textContent=list.length+' مصدر'+(list.length===1?'':' متاح');
+ const container=$('filesContainer');container.replaceChildren();
+ if(!list.length){const empty=textNode('div','','empty');empty.append(textNode('div','⌕','empty-icon'),textNode('h3',allFiles.length?'ملقيناش نتيجة مطابقة':'المكتبة لسه بتتجهز'),textNode('p',allFiles.length?'جرّب تغيّر كلمة البحث أو نوع المصدر.':'أول ما يتم إضافة ملفات لمجموعتك الدراسية، هتلاقيها هنا.'));container.append(empty);return}
+ const fragment=document.createDocumentFragment();list.forEach(f=>fragment.append(makeCard(f)));container.append(fragment);
+}
 async function loadFiles(){
-
-const container = document.getElementById("filesContainer");
-
-const { data , error } = await client
-.from("study_files")
-.select("*")
-.eq("class_group", user.class_group)
-.order("created_at",{ascending:false});
-
-if(error){
-container.innerHTML="<div class='empty'>حدث خطأ</div>";
-return;
+ if(!user){$('filesContainer').replaceChildren();const empty=textNode('div','','empty');empty.append(textNode('div','🔐','empty-icon'),textNode('h3','سجّل الدخول لعرض مكتبتك'),textNode('p','المصادر التعليمية بتظهر حسب المجموعة الدراسية المرتبطة بحسابك.'));const a=textNode('a','تسجيل الدخول','btn btn-primary');a.href='login.html';a.style.marginTop='16px';empty.append(a);$('filesContainer').append(empty);$('resultsCount').textContent='بانتظار تسجيل الدخول';return}
+ let query=client.from('study_files').select('id,title,description,file_url,class_group,created_at,file_path,resource_type,source_type');
+ if(user.class_group)query=query.eq('class_group',user.class_group);
+ const {data,error}=await query.order('created_at',{ascending:false});
+ if(error){console.error('Study files load error:',error);$('filesContainer').replaceChildren();const empty=textNode('div','','empty');empty.append(textNode('div','⚠','empty-icon'),textNode('h3','تعذر تحميل المكتبة'),textNode('p','حصلت مشكلة في الاتصال بالمصادر التعليمية. حدّث الصفحة، ولو استمرت المشكلة تواصل مع الدعم.'));const retry=textNode('button','إعادة المحاولة','btn btn-primary');retry.style.marginTop='15px';retry.onclick=loadFiles;empty.append(retry);$('filesContainer').append(empty);$('resultsCount').textContent='تعذر الاتصال';showToast('لم يتم تحميل الملفات؛ راجع الاتصال أو صلاحيات الوصول.');return}
+ allFiles=data||[];
+ $('totalCount').textContent=allFiles.length;
+ $('fileCount').textContent=allFiles.filter(f=>normalizeType(f)==='file').length+allFiles.filter(f=>normalizeType(f)==='video').length;
+ $('linkCount').textContent=allFiles.filter(f=>normalizeType(f)==='link').length;
+ render();
 }
-
-if(!data.length){
-container.innerHTML="<div class='empty'>لا توجد ملفات حالياً</div>";
-return;
-}
-
-container.innerHTML = data.map(file => `
-
-<div class="file-card">
-
-<div class="file-title">
-📄 ${file.title || ""}
-</div>
-
-<div class="file-desc">
-${file.description || ""}
-</div>
-
-<a
-href="${file.file_url}"
-target="_blank"
-class="download-btn"
->
-تحميل الملف
-</a>
-
-</div>
-
-`).join("");
-
-}
-
+['searchInput','typeFilter','sortFilter'].forEach(id=>$(id).addEventListener(id==='searchInput'?'input':'change',render));
 loadFiles();
-
+})();
 </script>
-
 </body>
 </html>
