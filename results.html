@@ -1113,7 +1113,7 @@ color:var(--muted);
 .score-row{margin-top:17px;gap:12px}
 .score strong{font-size:clamp(26px,3vw,32px);line-height:1.2;letter-spacing:-.5px}
 .score span{font-size:12px}
-.percent-ring{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;position:relative;border-radius:50%;background:conic-gradient(var(--ring-color,var(--primary)) var(--score-angle),var(--border) 0);isolation:isolate}
+.percent-ring{width:66px;height:66px;flex:0 0 66px;display:grid;place-items:center;position:relative;border-radius:50%;background:conic-gradient(var(--ring-color,var(--primary)) 0deg var(--score-angle),var(--border) var(--score-angle) 360deg);isolation:isolate;filter:drop-shadow(0 3px 7px rgba(16,24,40,.08));transition:background .35s ease}
 .percent-ring::before{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--card);z-index:0}
 .percent-ring span{position:relative;z-index:1;font-size:13px;font-weight:900;color:var(--text);direction:ltr;line-height:1}
 .percent-ring small{font-size:8px;color:var(--muted);margin-inline-start:1px}
@@ -1124,6 +1124,14 @@ color:var(--muted);
 .latest-result-card.poor::before{background:var(--danger)}
 .result .progress{height:6px;margin-top:13px}
 .result .progress-bar{background:linear-gradient(90deg,var(--primary),var(--primary2))}
+.result.excellent .progress-bar{background:linear-gradient(90deg,#12b76a,#34d399)}
+.result.warning .progress-bar{background:linear-gradient(90deg,#f79009,#fbbf24)}
+.result.poor .progress-bar{background:linear-gradient(90deg,#f04438,#fb7185)}
+.percent-ring span{display:flex;align-items:baseline;gap:1px}
+.percent-ring small{font-size:9px}
+.result .score{display:flex;align-items:baseline;gap:4px}
+.result .score strong{font-variant-numeric:tabular-nums}
+.result .score-row{min-height:66px}
 .result-footer{font-size:9px;line-height:1.8}
 .latest-result-card{background:linear-gradient(145deg,var(--card),var(--card2))}
 .latest-result-score{box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
@@ -1131,7 +1139,7 @@ color:var(--muted);
 @media(max-width:700px){
   .result{padding:16px;border-radius:17px}
   .result-title{font-size:13px}
-  .percent-ring{width:56px;height:56px;flex-basis:56px}
+  .percent-ring{width:58px;height:58px;flex-basis:58px}
   .score strong{font-size:26px}
   .result-footer{font-size:8px}
 }
@@ -1225,15 +1233,38 @@ margin-top:4px;
 .latest-result-meta{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:auto;padding-top:24px;color:var(--muted);font-size:10px}
 .latest-result-meta span{display:inline-flex;align-items:center;gap:6px}
 .latest-result-meta svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.latest-result-score{align-self:stretch;display:flex;flex-direction:column;justify-content:center;padding:19px 21px;border:1px solid var(--border);border-radius:17px;background:var(--card2);min-width:0}
-.latest-score-label{color:var(--muted);font-size:11px;font-weight:700}
-.latest-score-number{margin-top:2px;font-size:clamp(28px,3vw,38px);font-weight:900;line-height:1.35;letter-spacing:-.5px}
-.latest-score-number span{font-size:15px;color:var(--muted);font-weight:650;letter-spacing:0}
-.latest-percent-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
-.latest-percent-row strong{color:var(--primary);font-size:15px;font-weight:900}
+.latest-result-score{align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:19px 21px;border:1px solid var(--border);border-radius:19px;background:linear-gradient(145deg,var(--card2),var(--card));min-width:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.24)}
+.latest-score-summary{display:flex;align-items:center;justify-content:space-between;gap:14px;min-width:0}
+.latest-score-values{min-width:0;flex:1}
+.latest-score-label{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px;font-weight:800}
+.latest-score-label svg{width:15px;height:15px;fill:none;stroke:var(--primary);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.latest-score-number{margin-top:3px;font-size:clamp(27px,3vw,37px);font-weight:900;line-height:1.3;letter-spacing:-.6px;font-variant-numeric:tabular-nums}
+.latest-score-number span{font-size:14px;color:var(--muted);font-weight:650;letter-spacing:0}
+.latest-percent-row{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap}
+.latest-percent-row strong{color:var(--primary);font-size:14px;font-weight:900;font-variant-numeric:tabular-nums}
 .latest-percent-row span{color:var(--muted);font-size:10px}
-.latest-progress{height:7px;border-radius:999px;background:var(--border);overflow:hidden;margin-top:9px}
-.latest-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#2563eb,#7c3aed)}
+.latest-performance-ring{--ring-color:var(--primary);width:84px;height:84px;flex:0 0 84px;display:grid;place-items:center;position:relative;border-radius:50%;background:conic-gradient(var(--ring-color) 0deg var(--score-angle),var(--border) var(--score-angle) 360deg);isolation:isolate;filter:drop-shadow(0 4px 9px rgba(16,24,40,.1))}
+.latest-performance-ring::before{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--card);border:1px solid color-mix(in srgb,var(--ring-color) 14%,var(--border));z-index:0}
+.latest-performance-ring-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.2}
+.latest-performance-ring strong{font-size:21px;font-weight:900;color:var(--text);font-variant-numeric:tabular-nums}
+.latest-performance-ring small{font-size:10px;color:var(--muted);font-weight:800}
+.latest-result-card.excellent .latest-performance-ring{--ring-color:var(--success)}
+.latest-result-card.warning .latest-performance-ring{--ring-color:var(--warning)}
+.latest-result-card.poor .latest-performance-ring{--ring-color:var(--danger)}
+.latest-result-card.excellent .latest-percent-row strong{color:var(--success)}
+.latest-result-card.warning .latest-percent-row strong{color:var(--warning)}
+.latest-result-card.poor .latest-percent-row strong{color:var(--danger)}
+.latest-progress{height:7px;border-radius:999px;background:var(--border);overflow:hidden;margin-top:0}
+.latest-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--primary),var(--primary2));transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.latest-result-card.excellent .latest-progress span{background:linear-gradient(90deg,#12b76a,#34d399)}
+.latest-result-card.warning .latest-progress span{background:linear-gradient(90deg,#f79009,#fbbf24)}
+.latest-result-card.poor .latest-progress span{background:linear-gradient(90deg,#f04438,#fb7185)}
+.latest-performance-caption{display:flex;align-items:center;gap:8px;min-width:0;padding-top:10px;border-top:1px solid var(--border);color:var(--muted);font-size:10px;line-height:1.7}
+.latest-performance-caption svg{width:17px;height:17px;flex:0 0 17px;fill:none;stroke:var(--ring-color,var(--primary));stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.latest-result-card.excellent .latest-performance-caption svg{stroke:var(--success)}
+.latest-result-card.warning .latest-performance-caption svg{stroke:var(--warning)}
+.latest-result-card.poor .latest-performance-caption svg{stroke:var(--danger)}
+.latest-performance-caption strong{color:var(--text);font-weight:850}
 .latest-empty{grid-column:1/-1}
 .latest-empty .empty-icon svg{width:34px;height:34px;fill:none;stroke:var(--muted);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .view-all-btn{
@@ -1250,10 +1281,12 @@ margin-top:4px;
 .all-exams-section{scroll-margin-top:18px}
 @media(max-width:700px){
   .latest-result-card{grid-template-columns:1fr;gap:16px;padding:18px}
-  .latest-result-score{padding:16px}
+  .latest-result-score{padding:15px;gap:11px}
   .latest-result-title{margin-top:12px;font-size:18px}
   .latest-result-meta{padding-top:18px}
   .latest-updated-label{font-size:9px;padding:6px 9px}
+  .latest-performance-ring{width:76px;height:76px;flex-basis:76px}
+  .latest-performance-ring strong{font-size:19px}
 }
 @media(prefers-reduced-motion:reduce){
   .latest-result-card,.view-all-btn,.latest-progress span{transition:none!important}
@@ -2282,10 +2315,21 @@ function renderLatestExam(result){
         </div>
       </div>
       <div class="latest-result-score">
-        <div class="latest-score-label">درجتك</div>
-        <div class="latest-score-number">${escapeHTML(result.score)}<span> / ${escapeHTML(result.total)}</span></div>
-        <div class="latest-percent-row"><strong>${percent}%</strong><span>النسبة المئوية</span></div>
-        <div class="latest-progress"><span style="width:${percent}%"></span></div>
+        <div class="latest-score-summary">
+          <div class="latest-score-values">
+            <div class="latest-score-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h14v15H5z"/><path d="m8 12 2.5 2.5L16 9"/></svg>درجتك</div>
+            <div class="latest-score-number">${escapeHTML(result.score)}<span> / ${escapeHTML(result.total)}</span></div>
+            <div class="latest-percent-row"><strong>${percent}%</strong><span>النسبة المئوية</span></div>
+          </div>
+          <div class="latest-performance-ring" style="--score-angle:${percent*3.6}deg" role="img" aria-label="مؤشر الأداء: ${percent} بالمئة">
+            <div class="latest-performance-ring-content"><strong>${percent}<small>%</small></strong></div>
+          </div>
+        </div>
+        <div class="latest-progress" role="progressbar" aria-label="نسبة نتيجة الامتحان" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><span style="width:${percent}%"></span></div>
+        <div class="latest-performance-caption">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V14"/><path d="M10 19.5V9"/><path d="M16 19.5V4.5"/><path d="M22 19.5H2"/></svg>
+          <span><strong>${status.badge}.</strong> ${percent>=85?"أداء متميز، استمر في التقدم.":percent>=70?"أداء جيد جدًا، ومع المراجعة ستصل للأفضل.":"راجع النقاط التي تحتاج إلى تقوية وابدأ بخطوات ثابتة."}</span>
+        </div>
       </div>
     </article>`;
 }
