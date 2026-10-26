@@ -1693,6 +1693,205 @@ html[data-theme="light"] .playerHeader{
   .topActions{gap:4px}
 }
 
+
+/* Restored motivational quote + unified premium student toolbar */
+.topbar{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto auto;
+  align-items:center;
+  justify-content:stretch;
+  gap:18px;
+  min-height:0;
+  margin-bottom:22px;
+}
+.topActions{
+  grid-row:1;
+  grid-column:1;
+  position:relative;
+  inset:auto;
+  display:flex;
+  width:100%;
+  max-width:100%;
+  margin:0;
+  padding:7px;
+  align-items:center;
+  justify-content:flex-start;
+  flex-wrap:wrap;
+  gap:8px;
+  direction:ltr;
+  border:1px solid var(--video-border);
+  border-radius:17px;
+  background:linear-gradient(110deg,rgba(148,163,184,.075),rgba(148,163,184,.025));
+  box-shadow:0 8px 24px rgba(0,0,0,.07),inset 0 1px 0 rgba(255,255,255,.035);
+}
+.topActions .btn{direction:rtl}
+.topLeft{
+  display:flex;
+  grid-row:2;
+  grid-column:1;
+  width:100%;
+  min-width:0;
+  flex:none;
+  justify-content:center;
+  align-items:center;
+}
+.quote-heading{
+  display:flex;
+  width:100%;
+  max-width:1050px;
+  margin-inline:auto;
+  padding:0 18px 4px;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+}
+.pageTitle.quote-title{
+  display:block;
+  width:100%;
+  max-width:1000px;
+  margin-inline:auto;
+  font-family:"diwanltr",serif;
+  font-size:clamp(31px,3.4vw,48px);
+  font-weight:400;
+  line-height:1.8;
+  letter-spacing:0;
+  text-align:center;
+  text-wrap:balance;
+  overflow-wrap:anywhere;
+  color:#f6e8b8;
+  text-shadow:0 3px 22px rgba(245,197,66,.16);
+}
+.studentChip{
+  order:0;
+  min-height:36px;
+  padding:4px 9px;
+  gap:7px;
+  border-radius:11px;
+  flex:0 1 auto;
+  box-shadow:none;
+  background:rgba(148,163,184,.055);
+  border-color:var(--video-border);
+}
+.student-avatar{
+  width:28px;
+  height:28px;
+  flex:0 0 28px;
+  border-radius:9px;
+}
+.student-avatar svg{width:17px;height:17px}
+.studentName{
+  max-width:190px;
+  font-size:12px;
+  line-height:1.45;
+  font-weight:800;
+}
+.idBadge{
+  min-height:24px;
+  padding:3px 8px;
+  border-radius:8px;
+  font-size:9px;
+}
+.topActions .btn.compact-action,
+.topActions .theme-toggle{
+  min-height:36px;
+  padding:8px 12px;
+  gap:7px;
+  border-radius:11px;
+  font-size:12px;
+  line-height:1.35;
+  font-weight:800;
+  box-shadow:0 4px 12px rgba(0,0,0,.09);
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+}
+.topActions .btn.compact-action:hover,
+.topActions .theme-toggle:hover{
+  transform:translateY(-1px);
+  box-shadow:0 7px 16px rgba(0,0,0,.13);
+  filter:brightness(1.05);
+}
+.topActions .compact-action.secondary{
+  background:linear-gradient(135deg,#3478e5,#2458b9);
+  border:1px solid rgba(147,197,253,.3);
+}
+.topActions .compact-action.danger{
+  background:linear-gradient(135deg,#c2414b,#922b35);
+  border:1px solid rgba(252,165,165,.28);
+}
+.topActions .theme-toggle{
+  min-width:80px;
+  color:#fff2bd;
+  border:1px solid rgba(250,204,21,.25);
+  background:linear-gradient(135deg,#475569,#1e293b);
+}
+html[data-theme="light"] .topActions{
+  background:linear-gradient(110deg,#fff,#f6f8fc);
+  border-color:rgba(51,65,85,.13);
+  box-shadow:0 8px 24px rgba(31,55,90,.06),inset 0 1px 0 #fff;
+}
+html[data-theme="light"] .studentChip{
+  background:#f8fafc;
+  border-color:rgba(51,65,85,.12);
+}
+html[data-theme="light"] .studentName{color:#172338}
+html[data-theme="light"] .pageTitle.quote-title{
+  color:#75520b;
+  text-shadow:0 2px 12px rgba(180,130,30,.1);
+}
+html[data-theme="light"] .topActions .theme-toggle{
+  color:#fff7d6;
+  background:linear-gradient(135deg,#475569,#1e293b);
+}
+@media(max-width:900px){
+  .topbar{gap:13px;margin-bottom:18px}
+  .topActions{gap:7px;padding:6px;border-radius:15px}
+  .pageTitle.quote-title{font-size:clamp(29px,4.4vw,39px);line-height:1.75}
+}
+@media(max-width:640px){
+  .topbar{
+    display:grid;
+    grid-template-rows:auto auto;
+    gap:14px;
+    margin-bottom:15px;
+  }
+  .topActions{
+    width:100%;
+    flex-wrap:wrap;
+    gap:6px;
+    padding:6px;
+    border-radius:14px;
+  }
+  .studentChip{min-height:32px;padding:3px 7px;gap:5px}
+  .student-avatar{width:24px;height:24px;flex-basis:24px}
+  .studentName{max-width:calc(100vw - 245px);font-size:10px}
+  .idBadge{min-height:22px;font-size:8px;padding:3px 6px}
+  .topActions .btn.compact-action,
+  .topActions .theme-toggle{
+    min-height:32px;
+    padding:6px 8px;
+    gap:5px;
+    font-size:10px;
+    border-radius:9px;
+  }
+  .topActions .theme-toggle{min-width:65px}
+  .quote-heading{padding:0 5px 2px}
+  .pageTitle.quote-title{
+    font-size:clamp(26px,6.3vw,35px);
+    line-height:1.85;
+    text-shadow:0 2px 14px rgba(245,197,66,.12);
+  }
+}
+@media(max-width:380px){
+  .topActions{gap:5px}
+  .studentName{max-width:calc(100vw - 260px);font-size:9px}
+  .topActions .btn.compact-action,
+  .topActions .theme-toggle{padding-inline:6px;font-size:9px}
+  .pageTitle.quote-title{font-size:25px}
+}
+@media(prefers-reduced-motion:reduce){
+  .topActions .btn.compact-action,.topActions .theme-toggle{transition:none}
+}
+
 </style>
 </head>
 
