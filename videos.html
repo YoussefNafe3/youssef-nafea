@@ -2068,6 +2068,61 @@ html[data-theme="light"] .topActions .theme-toggle{
   }
 }
 
+
+/* Final toolbar balance: student identity left, home action right. */
+.topActions{
+  direction:ltr;
+  justify-content:space-between;
+  gap:8px;
+}
+.studentChip{
+  order:0;
+  margin-right:auto;
+}
+.topActions .theme-toggle{
+  order:1;
+  margin-left:auto;
+}
+.topActions .home-action{
+  order:2;
+  margin-left:0;
+  min-width:94px;
+  color:#f5f0ff;
+  background:linear-gradient(135deg,#7966e8 0%,#5b4ac7 100%);
+  border:1px solid rgba(196,181,253,.34);
+  box-shadow:0 4px 13px rgba(91,74,199,.18);
+}
+.topActions .home-action:hover{
+  background:linear-gradient(135deg,#8876f0 0%,#6553d4 100%);
+  box-shadow:0 6px 16px rgba(91,74,199,.24);
+}
+.home-action-icon{
+  display:block;
+  width:16px;
+  height:16px;
+  flex:0 0 16px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+html[data-theme="light"] .topActions .home-action{
+  color:#fff;
+  background:linear-gradient(135deg,#7565df 0%,#5745bd 100%);
+  border-color:rgba(109,92,232,.25);
+  box-shadow:0 4px 12px rgba(91,74,199,.14);
+}
+@media(max-width:640px){
+  .topActions{justify-content:space-between;gap:5px}
+  .topActions .home-action{min-width:0}
+  .home-action-icon{width:14px;height:14px;flex-basis:14px}
+}
+@media(max-width:360px){
+  .topActions{gap:4px}
+  .topActions .home-action{padding-inline:6px}
+}
+
 </style>
 </head>
 
@@ -2161,19 +2216,18 @@ html[data-theme="light"] .topActions .theme-toggle{
       </button>
 
       <button
-        class="btn secondary compact-action"
+        id="homeBtn"
+        class="btn secondary compact-action home-action"
         type="button"
         onclick="window.location.href='dashboard.html'"
+        aria-label="العودة إلى الرئيسية"
+        title="الرئيسية"
       >
-        <span aria-hidden="true">⌂</span> الرئيسية
-      </button>
-
-      <button
-        id="logoutBtn"
-        class="btn danger compact-action"
-        type="button"
-      >
-        تسجيل الخروج
+        <svg class="home-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="m3.5 10.5 8.5-7 8.5 7" />
+          <path d="M5.5 9.5v10h13v-10M9.5 19.5v-6h5v6" />
+        </svg>
+        <span>الرئيسية</span>
       </button>
 
     </div>
