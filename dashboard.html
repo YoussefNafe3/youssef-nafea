@@ -367,6 +367,24 @@ html[data-theme="light"] .card{color:var(--text);background:var(--card)}
 @keyframes studentNoticeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:560px){.student-notifications{width:calc(100% - 22px);margin-bottom:14px;padding:13px;border-radius:17px}.student-notifications-head{align-items:flex-start}.student-notifications-title{font-size:15px}.student-notifications-title .bell{width:34px;height:34px}.student-notification-item{padding:11px;gap:9px}.student-notification-item .notice-icon{flex-basis:32px;height:32px}.student-notification-item strong{font-size:13px}.student-notification-item p{font-size:11px}.student-notifications-dismiss{padding:7px 8px;font-size:11px}}
 
+
+/* Unified dashboard actions: home, theme, and device notifications */
+.actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+.actions .btn,.actions .push-setup-btn{min-height:40px;padding:8px 13px;border-radius:12px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:800;line-height:1.35;gap:8px;white-space:nowrap;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease}
+.actions .btn:hover,.actions .push-setup-btn:hover:not(:disabled){transform:translateY(-2px)}
+.actions .home-btn{color:#f5f1ff;background:linear-gradient(135deg,#7867e8,#5545bd);border:1px solid rgba(196,181,253,.3);box-shadow:0 6px 17px rgba(91,74,199,.18)}
+.actions .home-btn:hover{background:linear-gradient(135deg,#8878f0,#6351ce);box-shadow:0 9px 22px rgba(91,74,199,.24)}
+.actions .theme-btn{color:#f9e8b3;background:linear-gradient(135deg,#35455d,#1c293d);border:1px solid rgba(244,207,130,.24)}
+.actions .push-setup-btn{width:auto;max-width:100%;display:inline-flex;align-items:center;justify-content:center;color:#dffbf2;background:linear-gradient(135deg,rgba(13,148,136,.2),rgba(16,185,129,.1));border:1px solid rgba(52,211,153,.28);box-shadow:0 5px 15px rgba(5,150,105,.08)}
+.actions .push-setup-btn:hover:not(:disabled){background:linear-gradient(135deg,rgba(13,148,136,.3),rgba(16,185,129,.16));border-color:rgba(52,211,153,.45)}
+.action-icon{display:block;width:17px;height:17px;flex:0 0 17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.notification-action-icon{width:17px;height:17px}
+html[data-theme="light"] .actions .home-btn{color:#fff;background:linear-gradient(135deg,#7565df,#5745bd);border-color:rgba(109,92,232,.24)}
+html[data-theme="light"] .actions .theme-btn{color:#785415;background:linear-gradient(135deg,#fff4d0,#fffaf0);border-color:rgba(180,130,30,.25)}
+html[data-theme="light"] .actions .push-setup-btn{color:#086b58;background:linear-gradient(135deg,#e4fbf4,#f0fdf8);border-color:rgba(13,148,136,.24);box-shadow:0 5px 15px rgba(13,148,136,.06)}
+@media(max-width:560px){.actions{width:100%;justify-content:flex-start;gap:7px}.actions .btn,.actions .push-setup-btn{min-height:36px;padding:7px 10px;font-size:11px;gap:6px}.action-icon{width:15px;height:15px;flex-basis:15px}}
+@media(prefers-reduced-motion:reduce){.actions .btn,.actions .push-setup-btn{transition:none}}
+
 </style>
 
 </head>
@@ -431,11 +449,22 @@ onclick="goDashboard()"
 <span id="themeLabel">الوضع الفاتح</span>
 </button>
 
-<button id="enableDeviceNotifications" class="push-setup-btn" type="button">🔔 تفعيل الإشعار</button>
+<button id="enableDeviceNotifications" class="push-setup-btn" type="button" aria-label="تفعيل الإشعارات">
+  <svg class="action-icon notification-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+    <path d="M10 21h4"/>
+    <path d="M19 4.5 20.5 3M5 4.5 3.5 3"/>
+  </svg>
+  <span id="enableDeviceNotificationsLabel">تفعيل الإشعارات</span>
+</button>
 
-<a href="index.html" class="btn home-btn">⌂ الرئيسية</a>
-
-<button class="btn logout-btn" onclick="logout()" type="button">↪ خروج</button>
+<a href="index.html" class="btn home-btn">
+  <svg class="action-icon home-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="m3.5 10.5 8.5-7 8.5 7"/>
+    <path d="M5.5 9.5v10h13v-10M9.5 19.5v-6h5v6"/>
+  </svg>
+  <span>الرئيسية</span>
+</a>
 
 </div>
 
@@ -841,6 +870,7 @@ studentNotificationList.addEventListener("click",event=>{
 });
 
 const enableDeviceNotificationsButton = document.getElementById("enableDeviceNotifications");
+const enableDeviceNotificationsLabel = document.getElementById("enableDeviceNotificationsLabel");
 const pushNotificationStatus = document.getElementById("pushNotificationStatus");
 const VAPID_PUBLIC_KEY = "BDpbM0K5jqGxUMXHPGTkcFFWnOH382b7689D_9PfwxI3ecn1RR5kgrnkan9poadyfR-NgFeD6cbPO_6XEemjY80";
 
@@ -852,13 +882,13 @@ function setPushStatus(message, state = "info"){
 
 function updateDeviceNotificationButton(){
   if(!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)){
-    enableDeviceNotificationsButton.textContent = "تفعيل الإشعار";
+    enableDeviceNotificationsLabel.textContent = "تفعيل الإشعارات";
     enableDeviceNotificationsButton.disabled = true;
     enableDeviceNotificationsButton.title = "هذا المتصفح لا يدعم إشعارات الجهاز.";
     return;
   }
   enableDeviceNotificationsButton.disabled = false;
-  enableDeviceNotificationsButton.textContent = "🔔 تفعيل الإشعار";
+  enableDeviceNotificationsLabel.textContent = "تفعيل الإشعارات";
   enableDeviceNotificationsButton.title = "اضغط لطلب إذن إشعارات الجهاز.";
 }
 
@@ -883,7 +913,7 @@ async function activateDevicePush(){
   }
 
   enableDeviceNotificationsButton.disabled = true;
-  enableDeviceNotificationsButton.textContent = "جاري التفعيل…";
+  enableDeviceNotificationsLabel.textContent = "جاري التفعيل…";
   setPushStatus("");
 
   try{
@@ -897,7 +927,7 @@ async function activateDevicePush(){
       return;
     }
     if(permission !== "granted"){
-      setPushStatus("لم يتم اختيار «سماح» بعد. اضغط «تفعيل الإشعار» واختر سماحًا من نافذة المتصفح.", "info");
+      setPushStatus("لم يتم اختيار «سماح» بعد. اضغط «تفعيل الإشعارات» واختر سماحًا من نافذة المتصفح.", "info");
       return;
     }
 
@@ -934,7 +964,7 @@ async function activateDevicePush(){
 
     if(saveError) throw saveError;
 
-    enableDeviceNotificationsButton.textContent = "✓ تم تفعيل الإشعار";
+    enableDeviceNotificationsLabel.textContent = "✓ تم تفعيل الإشعارات";
     setPushStatus("تم تفعيل الإشعارات على هذا الجهاز بنجاح.", "success");
 
     try{
@@ -962,9 +992,9 @@ async function activateDevicePush(){
   }finally{
     enableDeviceNotificationsButton.disabled = false;
     if(Notification.permission !== "granted"){
-      enableDeviceNotificationsButton.textContent = "🔔 تفعيل الإشعار";
-    }else if(enableDeviceNotificationsButton.textContent !== "✓ تم تفعيل الإشعار"){
-      enableDeviceNotificationsButton.textContent = "🔔 تفعيل الإشعار";
+      enableDeviceNotificationsLabel.textContent = "تفعيل الإشعارات";
+    }else if(enableDeviceNotificationsLabel.textContent !== "✓ تم تفعيل الإشعارات"){
+      enableDeviceNotificationsLabel.textContent = "تفعيل الإشعارات";
     }
   }
 }
