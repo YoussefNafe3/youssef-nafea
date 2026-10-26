@@ -1362,6 +1362,15 @@ body.dark footer{background:var(--bg)!important;color:var(--muted)!important}
 @media(max-width:600px){.honors-section{padding:48px 12px 54px}.honors-heading{margin-bottom:23px}.honors-heading p{font-size:12px}.honors-ribbon{margin:15px auto 20px}.honors-group{gap:12px;padding-right:12px}.honors-card{flex-basis:min(280px,calc(100vw - 52px));min-height:338px;padding:20px 17px 17px;border-radius:21px}.honors-avatar{width:82px;height:82px;font-size:42px}.honors-name{font-size:15px}.honors-controls{margin-top:5px}}
 @media(prefers-reduced-motion:reduce){.honors-track{animation:none!important;transform:none!important}.honors-card,.honors-avatar,.honors-control{transition:none!important}}
 
+
+/* Honor roll motion refinements: reverse direction and explicit-only pause */
+.honors-track{animation:honorsDriftLeft 48s linear infinite!important;will-change:transform}
+.honors-section:hover .honors-track,.honors-section:focus-within .honors-track{animation-play-state:running!important}
+.honors-section.is-paused .honors-track{animation-play-state:paused!important}
+.honors-metrics-single{grid-template-columns:1fr}
+.honors-metrics-single .honors-metric{max-width:190px;width:100%;justify-self:center}
+@keyframes honorsDriftLeft{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
 </style>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#11152f">
