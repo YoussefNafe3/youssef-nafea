@@ -2027,6 +2027,47 @@ html[data-theme="light"] .topActions .theme-toggle{
   .topActions .theme-toggle{padding-inline:6px;font-size:9px}
 }
 
+
+/* Put the main toolbar first, with the quote centered directly beneath it. */
+.topbar{
+  display:block;
+  margin:0 0 8px;
+}
+.topActions{
+  justify-content:flex-start;
+  flex-wrap:nowrap;
+}
+.quote-heading{
+  display:flex;
+  width:100%;
+  max-width:1100px;
+  margin:0 auto 18px;
+  padding:4px 16px 8px;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.pageTitle.quote-title{
+  display:block;
+  width:100%;
+  max-width:1050px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(34px,4vw,52px);
+  line-height:1.75;
+  text-wrap:balance;
+}
+@media(max-width:640px){
+  .quote-heading{
+    margin-bottom:14px;
+    padding:2px 6px 5px;
+  }
+  .pageTitle.quote-title{
+    font-size:clamp(27px,6.5vw,36px);
+    line-height:1.8;
+  }
+}
+
 </style>
 </head>
 
@@ -2093,18 +2134,6 @@ html[data-theme="light"] .topActions .theme-toggle{
 
   <div class="topbar">
 
-    <div class="topLeft">
-
-      <div class="quote-heading">
-
-        <div class="pageTitle quote-title" lang="ar">
-          إنَّ المرءَ لن ينالَ ما يحبُّ حتى يصبرَ على كثيرٍ ممَّا يكرهُ
-        </div>
-
-      </div>
-
-    </div>
-
     <div class="topActions">
 
       <div class="studentChip" aria-label="بيانات الطالب">
@@ -2149,6 +2178,12 @@ html[data-theme="light"] .topActions .theme-toggle{
 
     </div>
 
+  </div>
+
+  <div class="quote-heading">
+    <div class="pageTitle quote-title" lang="ar">
+      إنَّ المرءَ لن ينالَ ما يحبُّ حتى يصبرَ على كثيرٍ ممَّا يكرهُ
+    </div>
   </div>
 
   <div class="player-toolbar">
