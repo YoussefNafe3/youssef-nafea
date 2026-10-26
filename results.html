@@ -1940,11 +1940,40 @@ async function resolveSharedPhotoUrl(path){
 async function prepareProfilePhoto(file){
  if(!file)throw new Error("لم يتم اختيار صورة");
  if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw new Error("اختار صورة JPG أو PNG أو WEBP");
- if(file.size>8*1024*1024)throw new Error("حجم الصورة لازم يكون أقل من 8 ميجابايت");
- const image=await new Promise((resolve,reject)=>{const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("تعذر قراءة الصورة"))};img.src=url;});
- const scale=Math.min(1,1200/Math.max(image.naturalWidth,image.naturalHeight)),canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
- const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",.86));if(!blob)throw new Error("تعذر تجهيز الصورة");return blob;
+ if(file.size>8*1024*1024)throw new Error("حجم الصورة الأصلية لازم يكون أقل من 8 ميجابايت");
+ const image=await new Promise((resolve,reject)=>{const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("تعذر قراءة الصورة. جرّب ملف صورة آخر."))};img.src=url;});
+ const scale=Math.min(1,1200/Math.max(image.naturalWidth,image.naturalHeight)),canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+ const context=canvas.getContext("2d");if(!context)throw new Error("المتصفح لم يتمكن من تجهيز الصورة");
+ context.drawImage(image,0,0,canvas.width,canvas.height);
+ const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",.82));if(!blob)throw new Error("تعذر تجهيز الصورة");
+ if(blob.size>2.8*1024*1024)throw new Error("الصورة الناتجة أكبر من الحد المسموح. اختر صورة أبسط أو أصغر.");
+ return blob;
 }
+
+/* Resolve the canonical student row from the authenticated Supabase session.
+   Do not trust localStorage IDs for Storage paths or database writes. */
+async function resolveAvatarStudentId(){
+  const {data:sessionData,error:sessionError}=await client.auth.getSession();
+  if(sessionError) throw sessionError;
+  if(!sessionData?.session) throw new Error("انتهت جلسة الدخول الآمنة. سجّل الخروج ثم ادخل مرة أخرى قبل رفع الصورة.");
+  const {data,error}=await client.rpc("current_student_id");
+  if(error) throw new Error("تعذر التحقق من حساب الطالب في قاعدة البيانات. سجّل الخروج ثم ادخل مرة أخرى.");
+  const id=Number(data);
+  if(!Number.isSafeInteger(id)||id<=0) throw new Error("لم نتمكن من ربط الصورة بسجل الطالب الصحيح. تأكد من تسجيل الدخول بحساب الطالب.");
+  return id;
+}
+function avatarUploadErrorMessage(error){
+  const message=String(error?.message||"");
+  if(/row-level security|permission denied|42501|not allowed/i.test(message))
+    return "تم رفض الحفظ بسبب صلاحيات الحساب. سجّل الخروج من المنصة ثم ادخل مرة أخرى، وإذا استمرت المشكلة أرسل للدكتور رمز الخطأ.";
+  if(/payload too large|file size|maximum allowed|413/i.test(message))
+    return "حجم الصورة بعد التجهيز أكبر من الحد المسموح. جرّب صورة أصغر.";
+  if(/network|fetch|timeout|failed to fetch/i.test(message))
+    return "الاتصال بالإنترنت انقطع أثناء الرفع. تأكد من الاتصال ثم حاول مرة أخرى.";
+  return message || "تعذر حفظ الصورة. حاول مرة أخرى.";
+}
+
+let avatarStudentId=null;
 
 function broadcastSharedAvatar(profile,studentId){try{localStorage.setItem("student-avatar-profile-updated",JSON.stringify({studentId:String(studentId),at:Date.now(),profile}));}catch(e){}try{if(window.studentAvatarChannel)window.studentAvatarChannel.postMessage({studentId:String(studentId),profile});}catch(e){}}
 
@@ -1992,13 +2021,16 @@ async function loadStudentAvatar(){
   selectedAvatarId = fallback;
   renderStudentAvatar(fallback);
   try{
-    const {data,error} = await client.from("student_avatars").select("avatar_id,photo_url").eq("student_id",studentId).maybeSingle();
+    avatarStudentId = await resolveAvatarStudentId();
+    const {data,error} = await client.from("student_avatars").select("avatar_id,photo_url").eq("student_id",avatarStudentId).maybeSingle();
     if(error) throw error;
     if(data && AVATAR_OPTIONS.some(item=>item.id===data.avatar_id)){
       savedAvatarId = data.avatar_id;
       selectedAvatarId = data.avatar_id;
       savedPhotoUrl = await resolveSharedPhotoUrl(data.photo_url);
       renderStudentAvatar(data.avatar_id,savedPhotoUrl);
+    }else{
+      savedPhotoUrl = null;
     }
   }catch(error){
     console.warn("Could not load saved avatar:",error.message);
@@ -2035,14 +2067,15 @@ document.getElementById("saveAvatarBtn").addEventListener("click",async()=>{
   const button = document.getElementById("saveAvatarBtn");
   const message = document.getElementById("avatarSaveMessage");
   const avatar = AVATAR_OPTIONS.find(item=>item.id===selectedAvatarId);
-  if(!avatar || !studentId) return;
+  if(!avatar) return;
   button.disabled = true;
   button.textContent = "جاري الحفظ...";
   message.textContent = "";
   message.className = "avatar-save-message";
   try{
+    avatarStudentId = await resolveAvatarStudentId();
     const {error} = await client.from("student_avatars").upsert({
-      student_id:studentId,
+      student_id:avatarStudentId,
       avatar_id:avatar.id,
       avatar_gender:avatar.gender,
       photo_url:null,
@@ -2050,34 +2083,64 @@ document.getElementById("saveAvatarBtn").addEventListener("click",async()=>{
     },{onConflict:"student_id"});
     if(error) throw error;
     savedAvatarId = avatar.id;
+    selectedAvatarId = avatar.id;
     savedPhotoUrl = null;
     renderStudentAvatar(avatar.id,null);
     renderAvatarChoices();
     document.getElementById("avatarSelectedNote").textContent = "تم اختيار " + avatar.label;
-    message.textContent = "تم حفظ صورتك وتحديثها في لوحة الطالب.";
-    broadcastSharedAvatar({avatar_id:avatar.id,photo_url:null},studentId);
+    message.textContent = "تم حفظ الاختيار في Supabase وتحديث الصورة في لوحة الطالب.";
+    broadcastSharedAvatar({avatar_id:avatar.id,photo_url:null},avatarStudentId);
     message.className = "avatar-save-message success";
   }catch(error){
     console.error("Avatar save failed:",error);
-    message.textContent = "ماقدرناش نحفظ الصورة دلوقتي. حاول مرة تانية.";
+    message.textContent = avatarUploadErrorMessage(error);
     message.className = "avatar-save-message error";
   }finally{
     button.textContent = "حفظ الصورة";
-    button.disabled = selectedAvatarId===savedAvatarId;
+    button.disabled = selectedAvatarId===savedAvatarId && !savedPhotoUrl;
   }
 });
 
 
 async function uploadResultProfilePhoto(file){
- const hint=document.getElementById("avatarUploadHint");if(!file)return;hint.textContent="جاري تجهيز الصورة ورفعها...";hint.className="avatar-upload-hint";
- try{const blob=await prepareProfilePhoto(file),path=studentId+"/profile.webp";const {error:upErr}=await client.storage.from("student-avatars").upload(path,blob,{contentType:"image/webp",upsert:true,cacheControl:"3600"});if(upErr)throw upErr;const a=AVATAR_OPTIONS.find(x=>x.id===savedAvatarId)||AVATAR_OPTIONS[0],{data:signedData,error:signedError}=await client.storage.from("student-avatars").createSignedUrl(path,604800);if(signedError)throw signedError;const url=signedData.signedUrl;const {error}=await client.from("student_avatars").upsert({student_id:studentId,avatar_id:a.id,avatar_gender:a.gender,photo_url:path,updated_at:new Date().toISOString()},{onConflict:"student_id"});if(error)throw error;savedAvatarId=a.id;selectedAvatarId=a.id;savedPhotoUrl=url;renderStudentAvatar(a.id,url);renderAvatarChoices();hint.textContent="تم حفظ صورتك وتحديثها في لوحة الطالب.";hint.className="avatar-upload-hint success";document.getElementById("avatarSelectedNote").textContent="تم حفظ صورتك الشخصية";document.getElementById("avatarSaveMessage").textContent="تم الحفظ بنجاح.";document.getElementById("avatarSaveMessage").className="avatar-save-message success";broadcastSharedAvatar({avatar_id:a.id,photo_url:path},studentId);}catch(e){console.error(e);hint.textContent=e.message||"تعذر رفع الصورة. حاول مرة أخرى.";hint.className="avatar-upload-hint error";}
+ const hint=document.getElementById("avatarUploadHint"),input=document.getElementById("avatarPhotoInput"),button=document.getElementById("saveAvatarBtn");
+ if(!file)return;
+ if(button)button.disabled=true;
+ hint.textContent="جاري التحقق من الحساب وتجهيز الصورة...";hint.className="avatar-upload-hint";
+ try{
+  avatarStudentId=await resolveAvatarStudentId();
+  const blob=await prepareProfilePhoto(file),path=avatarStudentId+"/profile.webp";
+  hint.textContent="جاري رفع الصورة بأمان...";
+  const {error:upErr}=await client.storage.from("student-avatars").upload(path,blob,{contentType:"image/webp",upsert:true,cacheControl:"3600"});
+  if(upErr)throw upErr;
+  const a=AVATAR_OPTIONS.find(x=>x.id===savedAvatarId)||AVATAR_OPTIONS[0];
+  const {error:rowError}=await client.from("student_avatars").upsert({student_id:avatarStudentId,avatar_id:a.id,avatar_gender:a.gender,photo_url:path,updated_at:new Date().toISOString()},{onConflict:"student_id"});
+  if(rowError)throw rowError;
+  const {data:signedData,error:signedError}=await client.storage.from("student-avatars").createSignedUrl(path,60*60*24);
+  if(signedError)throw signedError;
+  savedAvatarId=a.id;selectedAvatarId=a.id;savedPhotoUrl=signedData.signedUrl;
+  renderStudentAvatar(a.id,savedPhotoUrl);renderAvatarChoices();
+  hint.textContent="تم رفع الصورة وحفظ مسارها في Supabase بنجاح، وتم تحديث لوحة الطالب.";
+  hint.className="avatar-upload-hint success";
+  document.getElementById("avatarSelectedNote").textContent="تم حفظ صورتك الشخصية";
+  document.getElementById("avatarSaveMessage").textContent="تم الحفظ بنجاح.";
+  document.getElementById("avatarSaveMessage").className="avatar-save-message success";
+  broadcastSharedAvatar({avatar_id:a.id,photo_url:path},avatarStudentId);
+ }catch(e){
+  console.error("Student profile photo upload failed:",e);
+  hint.textContent=avatarUploadErrorMessage(e);
+  hint.className="avatar-upload-hint error";
+ }finally{
+  if(button)button.disabled=selectedAvatarId===savedAvatarId&&!savedPhotoUrl;
+  if(input)input.value="";
+ }
 }
 document.getElementById("avatarPhotoInput").addEventListener("change",e=>{uploadResultProfilePhoto(e.target.files?.[0]);e.target.value="";});
 
 window.studentAvatarChannel=typeof BroadcastChannel!=="undefined"?new BroadcastChannel("student-avatar-profile"):null;
 async function applyResultsAvatarProfile(profile){savedAvatarId=profile?.avatar_id||savedAvatarId;selectedAvatarId=savedAvatarId;try{savedPhotoUrl=await resolveSharedPhotoUrl(profile?.photo_url);}catch(e){console.warn("Could not refresh profile photo URL",e.message);}renderStudentAvatar(savedAvatarId,savedPhotoUrl);}
-if(window.studentAvatarChannel)window.studentAvatarChannel.onmessage=e=>{if(String(e.data?.studentId)===String(studentId))applyResultsAvatarProfile(e.data.profile);};
-window.addEventListener("storage",e=>{if(e.key==="student-avatar-profile-updated"&&e.newValue){try{const v=JSON.parse(e.newValue);if(String(v.studentId)===String(studentId))applyResultsAvatarProfile(v.profile);}catch(_){}}});
+if(window.studentAvatarChannel)window.studentAvatarChannel.onmessage=e=>{if(String(e.data?.studentId)===String(avatarStudentId))applyResultsAvatarProfile(e.data.profile);};
+window.addEventListener("storage",e=>{if(e.key==="student-avatar-profile-updated"&&e.newValue){try{const v=JSON.parse(e.newValue);if(String(v.studentId)===String(avatarStudentId))applyResultsAvatarProfile(v.profile);}catch(_){}}});
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadStudentAvatar();});
 
 /* =========================================================

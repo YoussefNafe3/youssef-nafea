@@ -654,21 +654,71 @@ async function resolveSharedPhotoUrl(path){
 async function prepareProfilePhoto(file){
  if(!file)throw new Error("لم يتم اختيار صورة");
  if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw new Error("اختار صورة JPG أو PNG أو WEBP");
- if(file.size>8*1024*1024)throw new Error("حجم الصورة لازم يكون أقل من 8 ميجابايت");
- const image=await new Promise((resolve,reject)=>{const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("تعذر قراءة الصورة"))};img.src=url;});
- const scale=Math.min(1,1200/Math.max(image.naturalWidth,image.naturalHeight)),canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
- const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",.86));if(!blob)throw new Error("تعذر تجهيز الصورة");return blob;
+ if(file.size>8*1024*1024)throw new Error("حجم الصورة الأصلية لازم يكون أقل من 8 ميجابايت");
+ const image=await new Promise((resolve,reject)=>{const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("تعذر قراءة الصورة. جرّب ملف صورة آخر."))};img.src=url;});
+ const scale=Math.min(1,1200/Math.max(image.naturalWidth,image.naturalHeight)),canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+ const context=canvas.getContext("2d");if(!context)throw new Error("المتصفح لم يتمكن من تجهيز الصورة");
+ context.drawImage(image,0,0,canvas.width,canvas.height);
+ const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",.82));if(!blob)throw new Error("تعذر تجهيز الصورة");
+ if(blob.size>2.8*1024*1024)throw new Error("الصورة الناتجة أكبر من الحد المسموح. اختر صورة أبسط أو أصغر.");
+ return blob;
 }
 
-const dashboardStudentId=user.id;let dashboardAvatarId=sharedSuggestedAvatar(user.full_name||user.name),dashboardPhotoUrl=null,dashboardSelectedId=null;
+/* Resolve the canonical student row from the authenticated Supabase session.
+   Do not trust localStorage IDs for Storage paths or database writes. */
+async function resolveAvatarStudentId(){
+  const {data:sessionData,error:sessionError}=await client.auth.getSession();
+  if(sessionError) throw sessionError;
+  if(!sessionData?.session) throw new Error("انتهت جلسة الدخول الآمنة. سجّل الخروج ثم ادخل مرة أخرى قبل رفع الصورة.");
+  const {data,error}=await client.rpc("current_student_id");
+  if(error) throw new Error("تعذر التحقق من حساب الطالب في قاعدة البيانات. سجّل الخروج ثم ادخل مرة أخرى.");
+  const id=Number(data);
+  if(!Number.isSafeInteger(id)||id<=0) throw new Error("لم نتمكن من ربط الصورة بسجل الطالب الصحيح. تأكد من تسجيل الدخول بحساب الطالب.");
+  return id;
+}
+function avatarUploadErrorMessage(error){
+  const message=String(error?.message||"");
+  if(/row-level security|permission denied|42501|not allowed/i.test(message))
+    return "تم رفض الحفظ بسبب صلاحيات الحساب. سجّل الخروج من المنصة ثم ادخل مرة أخرى، وإذا استمرت المشكلة أرسل للدكتور رمز الخطأ.";
+  if(/payload too large|file size|maximum allowed|413/i.test(message))
+    return "حجم الصورة بعد التجهيز أكبر من الحد المسموح. جرّب صورة أصغر.";
+  if(/network|fetch|timeout|failed to fetch/i.test(message))
+    return "الاتصال بالإنترنت انقطع أثناء الرفع. تأكد من الاتصال ثم حاول مرة أخرى.";
+  return message || "تعذر حفظ الصورة. حاول مرة أخرى.";
+}
+
+let dashboardStudentId=null,dashboardAvatarId=sharedSuggestedAvatar(user.full_name||user.name),dashboardPhotoUrl=null,dashboardSelectedId=null;
 function renderDashboardAvatar(){const el=document.getElementById("dashboardStudentAvatar");if(!el)return;el.replaceChildren();if(dashboardPhotoUrl){const im=document.createElement("img");im.src=dashboardPhotoUrl;im.alt="الصورة الشخصية";el.appendChild(im);}else el.innerHTML=sharedAvatarSvg(SHARED_AVATAR_OPTIONS.find(a=>a.id===dashboardAvatarId)||SHARED_AVATAR_OPTIONS[0]);}
 function setDashboardAvatarMessage(t,state=""){const e=document.getElementById("dashboardAvatarMessage");e.textContent=t;e.className="avatar-upload-hint"+(state?" "+state:"");}
 function renderDashboardAvatarChoices(){const grid=document.getElementById("dashboardAvatarChoices");grid.innerHTML=SHARED_AVATAR_OPTIONS.map(a=>'<button type="button" class="avatar-option" data-shared-avatar="'+a.id+'" aria-pressed="'+(!dashboardPhotoUrl&&dashboardSelectedId===a.id)+'"><span class="student-avatar">'+sharedAvatarSvg(a)+'</span><span class="avatar-option-label">'+a.label+'</span><span class="avatar-option-kind">'+a.kind+'</span></button>').join('')+'<button type="button" class="avatar-upload-option" id="dashboardChoosePhoto"><span class="avatar-upload-plus">+</span><strong>أضف صورتك</strong><small>من الهاتف أو الكمبيوتر</small></button>';grid.querySelectorAll("[data-shared-avatar]").forEach(b=>b.addEventListener("click",()=>{dashboardSelectedId=b.dataset.sharedAvatar;grid.querySelectorAll("[data-shared-avatar]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));document.getElementById("dashboardAvatarSave").disabled=dashboardSelectedId===dashboardAvatarId&&!dashboardPhotoUrl;document.getElementById("dashboardAvatarSelectedNote").textContent="الصورة المختارة: "+SHARED_AVATAR_OPTIONS.find(x=>x.id===dashboardSelectedId).label;setDashboardAvatarMessage("اضغط حفظ الاختيار لتحديث صورتك في كل الصفحات.");}));document.getElementById("dashboardChoosePhoto").onclick=()=>document.getElementById("dashboardAvatarFile").click();}
-async function loadDashboardAvatar(){try{const {data,error}=await client.from("student_avatars").select("avatar_id,photo_url").eq("student_id",dashboardStudentId).maybeSingle();if(error)throw error;dashboardAvatarId=data?.avatar_id||sharedSuggestedAvatar(user.full_name||user.name);dashboardPhotoUrl=await resolveSharedPhotoUrl(data?.photo_url);}catch(e){console.warn("Profile photo load failed",e.message);}renderDashboardAvatar();}
+async function loadDashboardAvatar(){try{dashboardStudentId=await resolveAvatarStudentId();const {data,error}=await client.from("student_avatars").select("avatar_id,photo_url").eq("student_id",dashboardStudentId).maybeSingle();if(error)throw error;dashboardAvatarId=data?.avatar_id||sharedSuggestedAvatar(user.full_name||user.name);dashboardPhotoUrl=await resolveSharedPhotoUrl(data?.photo_url);}catch(e){console.warn("Profile photo load failed",e.message);dashboardPhotoUrl=null;}renderDashboardAvatar();}
 function openDashboardAvatar(){const modal=document.getElementById("dashboardAvatarModal");if(modal.parentElement!==document.body)document.body.appendChild(modal);dashboardSelectedId=dashboardAvatarId;renderDashboardAvatarChoices();document.getElementById("dashboardAvatarSave").disabled=true;document.getElementById("dashboardAvatarSelectedNote").textContent=dashboardPhotoUrl?"صورتك الشخصية محفوظة":"الصورة المختارة: "+(SHARED_AVATAR_OPTIONS.find(x=>x.id===dashboardSelectedId)?.label||"آدم");setDashboardAvatarMessage("اختار شخصية أو اضغط + لإضافة صورتك.");modal.hidden=false;document.body.style.overflow="hidden";document.getElementById("dashboardAvatarClose").focus();}
 function closeDashboardAvatar(){document.getElementById("dashboardAvatarModal").hidden=true;document.body.style.overflow="";document.getElementById("dashboardAvatarTrigger")?.focus({preventScroll:true});}
-async function saveDashboardAvatar(){const btn=document.getElementById("dashboardAvatarSave"),a=SHARED_AVATAR_OPTIONS.find(x=>x.id===dashboardSelectedId);if(!a)return;btn.disabled=true;btn.textContent="جاري الحفظ...";try{const {error}=await client.from("student_avatars").upsert({student_id:dashboardStudentId,avatar_id:a.id,avatar_gender:a.gender,photo_url:null,updated_at:new Date().toISOString()},{onConflict:"student_id"});if(error)throw error;dashboardAvatarId=a.id;dashboardPhotoUrl=null;renderDashboardAvatar();broadcastSharedAvatar({avatar_id:a.id,photo_url:null},dashboardStudentId);setDashboardAvatarMessage("تم تحديث الصورة في لوحة الطالب وصفحة النتائج.","success");}catch(e){console.error(e);setDashboardAvatarMessage("تعذر حفظ الصورة. حاول مرة أخرى.","error");}finally{btn.textContent="حفظ الاختيار";btn.disabled=dashboardSelectedId===dashboardAvatarId&&!dashboardPhotoUrl;}}
-async function uploadDashboardPhoto(file){if(!file)return;setDashboardAvatarMessage("جاري تجهيز الصورة ورفعها...");try{const blob=await prepareProfilePhoto(file),path=dashboardStudentId+"/profile.webp";const {error:upErr}=await client.storage.from("student-avatars").upload(path,blob,{contentType:"image/webp",upsert:true,cacheControl:"3600"});if(upErr)throw upErr;const a=SHARED_AVATAR_OPTIONS.find(x=>x.id===dashboardAvatarId)||SHARED_AVATAR_OPTIONS[0],{data:signedData,error:signedError}=await client.storage.from("student-avatars").createSignedUrl(path,604800);if(signedError)throw signedError;const url=signedData.signedUrl;const {error}=await client.from("student_avatars").upsert({student_id:dashboardStudentId,avatar_id:a.id,avatar_gender:a.gender,photo_url:path,updated_at:new Date().toISOString()},{onConflict:"student_id"});if(error)throw error;dashboardAvatarId=a.id;dashboardPhotoUrl=url;renderDashboardAvatar();broadcastSharedAvatar({avatar_id:a.id,photo_url:path},dashboardStudentId);setDashboardAvatarMessage("تم حفظ صورتك وتحديثها في صفحة النتائج.","success");document.getElementById("dashboardAvatarSelectedNote").textContent="تم حفظ صورتك الشخصية";}catch(e){console.error(e);setDashboardAvatarMessage(e.message||"تعذر رفع الصورة. حاول مرة أخرى.","error");}}
+async function saveDashboardAvatar(){const btn=document.getElementById("dashboardAvatarSave"),a=SHARED_AVATAR_OPTIONS.find(x=>x.id===dashboardSelectedId);if(!a)return;btn.disabled=true;btn.textContent="جاري الحفظ...";try{dashboardStudentId=await resolveAvatarStudentId();const {error}=await client.from("student_avatars").upsert({student_id:dashboardStudentId,avatar_id:a.id,avatar_gender:a.gender,photo_url:null,updated_at:new Date().toISOString()},{onConflict:"student_id"});if(error)throw error;dashboardAvatarId=a.id;dashboardPhotoUrl=null;renderDashboardAvatar();broadcastSharedAvatar({avatar_id:a.id,photo_url:null},dashboardStudentId);setDashboardAvatarMessage("تم حفظ الاختيار في قاعدة البيانات وتحديث الصورة في صفحة النتائج.","success");}catch(e){console.error("Avatar selection save failed:",e);setDashboardAvatarMessage(avatarUploadErrorMessage(e),"error");}finally{btn.textContent="حفظ الاختيار";btn.disabled=dashboardSelectedId===dashboardAvatarId&&!dashboardPhotoUrl;}}
+async function uploadDashboardPhoto(file){
+ if(!file)return;
+ const input=document.getElementById("dashboardAvatarFile"),button=document.getElementById("dashboardAvatarSave");
+ if(button)button.disabled=true;
+ setDashboardAvatarMessage("جاري التحقق من الحساب وتجهيز الصورة...");
+ try{
+  dashboardStudentId=await resolveAvatarStudentId();
+  const blob=await prepareProfilePhoto(file);
+  const path=dashboardStudentId+"/profile.webp";
+  setDashboardAvatarMessage("جاري رفع الصورة بأمان...");
+  const {error:upErr}=await client.storage.from("student-avatars").upload(path,blob,{contentType:"image/webp",upsert:true,cacheControl:"3600"});
+  if(upErr)throw upErr;
+  const a=SHARED_AVATAR_OPTIONS.find(x=>x.id===dashboardAvatarId)||SHARED_AVATAR_OPTIONS[0];
+  const {error:rowError}=await client.from("student_avatars").upsert({student_id:dashboardStudentId,avatar_id:a.id,avatar_gender:a.gender,photo_url:path,updated_at:new Date().toISOString()},{onConflict:"student_id"});
+  if(rowError)throw rowError;
+  const {data:signedData,error:signedError}=await client.storage.from("student-avatars").createSignedUrl(path,60*60*24);
+  if(signedError)throw signedError;
+  dashboardPhotoUrl=signedData.signedUrl;dashboardAvatarId=a.id;dashboardSelectedId=a.id;
+  renderDashboardAvatar();broadcastSharedAvatar({avatar_id:a.id,photo_url:path},dashboardStudentId);
+  setDashboardAvatarMessage("تم رفع الصورة وحفظ مسارها في Supabase بنجاح، وتم تحديث صفحة النتائج.","success");
+  document.getElementById("dashboardAvatarSelectedNote").textContent="تم حفظ صورتك الشخصية";
+ }catch(e){console.error("Student profile photo upload failed:",e);setDashboardAvatarMessage(avatarUploadErrorMessage(e),"error");}
+ finally{if(button)button.disabled=dashboardSelectedId===dashboardAvatarId&&!dashboardPhotoUrl;if(input)input.value="";}
+}
 document.getElementById("dashboardAvatarTrigger").addEventListener("click",openDashboardAvatar);document.getElementById("dashboardAvatarClose").addEventListener("click",closeDashboardAvatar);document.querySelectorAll("[data-dashboard-avatar-close]").forEach(x=>x.addEventListener("click",closeDashboardAvatar));document.getElementById("dashboardAvatarSave").addEventListener("click",saveDashboardAvatar);document.getElementById("dashboardAvatarFile").addEventListener("change",e=>{uploadDashboardPhoto(e.target.files?.[0]);e.target.value="";});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElementById("dashboardAvatarModal").hidden)closeDashboardAvatar();});async function applyDashboardAvatarProfile(profile){dashboardAvatarId=profile?.avatar_id||dashboardAvatarId;try{dashboardPhotoUrl=await resolveSharedPhotoUrl(profile?.photo_url);}catch(e){console.warn("Could not refresh profile photo URL",e.message);}renderDashboardAvatar();}if(window.studentAvatarChannel)window.studentAvatarChannel.onmessage=e=>{if(String(e.data?.studentId)===String(dashboardStudentId))applyDashboardAvatarProfile(e.data.profile);};window.addEventListener("storage",e=>{if(e.key==="student-avatar-profile-updated"&&e.newValue){try{const v=JSON.parse(e.newValue);if(String(v.studentId)===String(dashboardStudentId))applyDashboardAvatarProfile(v.profile);}catch(_){}}});document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadDashboardAvatar();});loadDashboardAvatar();
 
 
