@@ -1136,6 +1136,14 @@ color:var(--muted);
   .result-footer{font-size:8px}
 }
 
+.avatar-upload-option{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:120px;padding:12px 7px;border:1px dashed rgba(99,102,241,.5);border-radius:16px;background:linear-gradient(145deg,rgba(99,102,241,.08),rgba(14,165,233,.06));color:var(--text);font:inherit;cursor:pointer}
+.avatar-upload-plus{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#6255dc,#3288d8);color:#fff;font-size:30px;line-height:1}
+.avatar-upload-option strong{font-size:11px;font-weight:900}.avatar-upload-option small{font-size:9px;color:var(--muted);text-align:center}
+.avatar-upload-input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.avatar-upload-hint{font-size:10px;color:var(--muted);line-height:1.8;text-align:center;margin-top:10px}.avatar-upload-hint.error{color:#ef4444}.avatar-upload-hint.success{color:#16a34a}
+.student-avatar img{display:block;width:100%;height:100%;object-fit:cover}
+@media(max-width:560px){.avatar-upload-option{min-height:110px;padding:9px 5px;gap:6px}.avatar-upload-plus{width:42px;height:42px;font-size:27px}.avatar-upload-option strong{font-size:10px}.avatar-upload-option small{font-size:8px}}
+
 /* =========================================================
    EMPTY / LOADING
 ========================================================= */
@@ -1492,6 +1500,8 @@ text-decoration:none;
     <h2 id="avatarDialogTitle">اختار صورتك الكرتونية</h2>
     <p id="avatarDialogDescription">اختار الصورة الأقرب ليك. تقدر تغيّرها في أي وقت.</p>
     <div class="avatar-choice-grid" id="avatarChoiceGrid" role="group" aria-label="الصور الشخصية المتاحة"></div>
+<input class="avatar-upload-input" type="file" id="avatarPhotoInput" accept="image/jpeg,image/png,image/webp">
+<p class="avatar-upload-hint" id="avatarUploadHint" role="status" aria-live="polite">اضغط + لإضافة صورتك من الموبايل أو الكمبيوتر.</p>
     <div class="avatar-dialog-footer">
       <span class="avatar-selected-note" id="avatarSelectedNote">اختار صورة للمتابعة</span>
       <button type="button" class="avatar-save-btn" id="saveAvatarBtn" disabled>حفظ الصورة</button>
@@ -1827,6 +1837,7 @@ const AVATAR_OPTIONS = [
 ];
 let selectedAvatarId = null;
 let savedAvatarId = null;
+let savedPhotoUrl = null;
 let avatarDialogPreviousFocus = null;
 
 function avatarSvg(avatar){
@@ -1886,16 +1897,18 @@ function avatarSvg(avatar){
     '</svg>';
 }
 
+function broadcastSharedAvatar(profile,studentId){try{localStorage.setItem("student-avatar-profile-updated",JSON.stringify({studentId:String(studentId),at:Date.now(),profile}));}catch(e){}try{if(window.studentAvatarChannel)window.studentAvatarChannel.postMessage({studentId:String(studentId),profile});}catch(e){}}
+
 function suggestedAvatarForStudent(fullName){
   const first = String(fullName||"").trim().split(/\s+/)[0].replace(/[ًٌٍَُِّْـ]/g,"");
   const femaleNames = new Set(["مريم","نور","ليلى","ليلى","سارة","ساره","ملك","منة","منه","مها","ندى","نورا","نوره","آية","ايه","حبيبة","حبيبه","فاطمة","فاطمه","ياسمين","يارا","جنى","جنه","شهد","بسملة","بسمله","رحمة","رحمه","زينب","روان","رنا","دينا","هنا","هبة","هبه","أسماء","اسماء","إسراء","اسراء","مي","منةالله","منهالله","فرح","أميرة","اميره","سلمى","سلمي","ريم","ملك"]);
   return femaleNames.has(first) ? "girl-1" : "boy-1";
 }
 
-function renderStudentAvatar(avatarId){
+function renderStudentAvatar(avatarId,photoUrl=savedPhotoUrl){
   const avatar = AVATAR_OPTIONS.find(item=>item.id===avatarId) || AVATAR_OPTIONS[0];
   const target = document.getElementById("studentAvatar");
-  if(target) target.innerHTML = avatarSvg(avatar);
+  if(target){target.replaceChildren();if(photoUrl){const img=document.createElement("img");img.src=photoUrl;img.alt="الصورة الشخصية";target.appendChild(img);}else target.innerHTML=avatarSvg(avatar);}
   const name = document.getElementById("welcomeName");
   if(name) name.textContent = user.full_name || user.name || "الطالب";
 }
@@ -1909,7 +1922,9 @@ function renderAvatarChoices(){
       <span class="avatar-option-label">${avatar.label}</span>
       <span class="avatar-option-kind">${avatar.kind}</span>
       <span class="avatar-option-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></span>
-    </button>`).join("");
+    </button>
+  <button type="button" class="avatar-upload-option" id="chooseAvatarPhoto"><span class="avatar-upload-plus">+</span><strong>أضف صورتك</strong><small>من الهاتف أو الكمبيوتر</small></button>`).join("");
+  document.getElementById("chooseAvatarPhoto")?.addEventListener("click",()=>document.getElementById("avatarPhotoInput").click());
   grid.querySelectorAll(".avatar-option").forEach(button=>{
     button.addEventListener("click",()=>{
       selectedAvatarId = button.dataset.avatarId;
@@ -1928,12 +1943,13 @@ async function loadStudentAvatar(){
   selectedAvatarId = fallback;
   renderStudentAvatar(fallback);
   try{
-    const {data,error} = await client.from("student_avatars").select("avatar_id").eq("student_id",studentId).maybeSingle();
+    const {data,error} = await client.from("student_avatars").select("avatar_id,photo_url").eq("student_id",studentId).maybeSingle();
     if(error) throw error;
     if(data && AVATAR_OPTIONS.some(item=>item.id===data.avatar_id)){
       savedAvatarId = data.avatar_id;
       selectedAvatarId = data.avatar_id;
-      renderStudentAvatar(data.avatar_id);
+      savedPhotoUrl = data.photo_url || null;
+      renderStudentAvatar(data.avatar_id,savedPhotoUrl);
     }
   }catch(error){
     console.warn("Could not load saved avatar:",error.message);
@@ -1980,14 +1996,17 @@ document.getElementById("saveAvatarBtn").addEventListener("click",async()=>{
       student_id:studentId,
       avatar_id:avatar.id,
       avatar_gender:avatar.gender,
+      photo_url:null,
       updated_at:new Date().toISOString()
     },{onConflict:"student_id"});
     if(error) throw error;
     savedAvatarId = avatar.id;
-    renderStudentAvatar(avatar.id);
+    savedPhotoUrl = null;
+    renderStudentAvatar(avatar.id,null);
     renderAvatarChoices();
     document.getElementById("avatarSelectedNote").textContent = "تم اختيار " + avatar.label;
-    message.textContent = "تم حفظ صورتك بنجاح.";
+    message.textContent = "تم حفظ صورتك وتحديثها في لوحة الطالب.";
+    broadcastSharedAvatar({avatar_id:avatar.id,photo_url:null},studentId);
     message.className = "avatar-save-message success";
   }catch(error){
     console.error("Avatar save failed:",error);
@@ -1998,6 +2017,18 @@ document.getElementById("saveAvatarBtn").addEventListener("click",async()=>{
     button.disabled = selectedAvatarId===savedAvatarId;
   }
 });
+
+
+async function uploadResultProfilePhoto(file){
+ const hint=document.getElementById("avatarUploadHint");if(!file)return;hint.textContent="جاري تجهيز الصورة ورفعها...";hint.className="avatar-upload-hint";
+ try{const blob=await prepareProfilePhoto(file),path=studentId+"/profile.webp";const {error:upErr}=await client.storage.from("student-avatars").upload(path,blob,{contentType:"image/webp",upsert:true,cacheControl:"3600"});if(upErr)throw upErr;const a=AVATAR_OPTIONS.find(x=>x.id===savedAvatarId)||AVATAR_OPTIONS[0],url=client.storage.from("student-avatars").getPublicUrl(path).data.publicUrl+"?v="+Date.now();const {error}=await client.from("student_avatars").upsert({student_id:studentId,avatar_id:a.id,avatar_gender:a.gender,photo_url:url,updated_at:new Date().toISOString()},{onConflict:"student_id"});if(error)throw error;savedAvatarId=a.id;selectedAvatarId=a.id;savedPhotoUrl=url;renderStudentAvatar(a.id,url);renderAvatarChoices();hint.textContent="تم حفظ صورتك وتحديثها في لوحة الطالب.";hint.className="avatar-upload-hint success";document.getElementById("avatarSelectedNote").textContent="تم حفظ صورتك الشخصية";document.getElementById("avatarSaveMessage").textContent="تم الحفظ بنجاح.";document.getElementById("avatarSaveMessage").className="avatar-save-message success";broadcastSharedAvatar({avatar_id:a.id,photo_url:url},studentId);}catch(e){console.error(e);hint.textContent=e.message||"تعذر رفع الصورة. حاول مرة أخرى.";hint.className="avatar-upload-hint error";}
+}
+document.getElementById("avatarPhotoInput").addEventListener("change",e=>{uploadResultProfilePhoto(e.target.files?.[0]);e.target.value="";});
+
+window.studentAvatarChannel=typeof BroadcastChannel!=="undefined"?new BroadcastChannel("student-avatar-profile"):null;
+if(window.studentAvatarChannel)window.studentAvatarChannel.onmessage=e=>{if(String(e.data?.studentId)===String(studentId)){savedAvatarId=e.data.profile?.avatar_id||savedAvatarId;savedPhotoUrl=e.data.profile?.photo_url||null;selectedAvatarId=savedAvatarId;renderStudentAvatar(savedAvatarId,savedPhotoUrl);}};
+window.addEventListener("storage",e=>{if(e.key==="student-avatar-profile-updated"&&e.newValue){try{const v=JSON.parse(e.newValue);if(String(v.studentId)===String(studentId)){savedAvatarId=v.profile?.avatar_id||savedAvatarId;savedPhotoUrl=v.profile?.photo_url||null;selectedAvatarId=savedAvatarId;renderStudentAvatar(savedAvatarId,savedPhotoUrl);}}catch(_){}}});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadStudentAvatar();});
 
 /* =========================================================
    THEME
