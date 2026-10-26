@@ -1922,15 +1922,15 @@ function renderAvatarChoices(){
       <span class="avatar-option-label">${avatar.label}</span>
       <span class="avatar-option-kind">${avatar.kind}</span>
       <span class="avatar-option-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></span>
-    </button>
-  <button type="button" class="avatar-upload-option" id="chooseAvatarPhoto"><span class="avatar-upload-plus">+</span><strong>أضف صورتك</strong><small>من الهاتف أو الكمبيوتر</small></button>`).join("");
+    </button>`).join("") + `
+    <button type="button" class="avatar-upload-option" id="chooseAvatarPhoto"><span class="avatar-upload-plus">+</span><strong>أضف صورتك</strong><small>من الهاتف أو الكمبيوتر</small></button>`;
   document.getElementById("chooseAvatarPhoto")?.addEventListener("click",()=>document.getElementById("avatarPhotoInput").click());
   grid.querySelectorAll(".avatar-option").forEach(button=>{
     button.addEventListener("click",()=>{
       selectedAvatarId = button.dataset.avatarId;
       grid.querySelectorAll(".avatar-option").forEach(option=>option.setAttribute("aria-pressed",String(option===button)));
       document.getElementById("avatarSelectedNote").textContent = "الصورة المختارة: " + AVATAR_OPTIONS.find(item=>item.id===selectedAvatarId).label;
-      document.getElementById("saveAvatarBtn").disabled = selectedAvatarId===savedAvatarId;
+      document.getElementById("saveAvatarBtn").disabled = selectedAvatarId===savedAvatarId && !savedPhotoUrl;
       document.getElementById("avatarSaveMessage").textContent = "";
       document.getElementById("avatarSaveMessage").className = "avatar-save-message";
     });
@@ -1961,7 +1961,7 @@ function openAvatarModal(){
   selectedAvatarId = savedAvatarId || suggestedAvatarForStudent(user.full_name || user.name);
   renderAvatarChoices();
   document.getElementById("avatarSelectedNote").textContent = "الصورة المختارة: " + AVATAR_OPTIONS.find(item=>item.id===selectedAvatarId).label;
-  document.getElementById("saveAvatarBtn").disabled = selectedAvatarId===savedAvatarId;
+  document.getElementById("saveAvatarBtn").disabled = selectedAvatarId===savedAvatarId && !savedPhotoUrl;
   document.getElementById("avatarSaveMessage").textContent = "";
   document.getElementById("avatarSaveMessage").className = "avatar-save-message";
   const modal = document.getElementById("avatarModal");
