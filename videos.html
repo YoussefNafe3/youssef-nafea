@@ -5069,8 +5069,8 @@ $("mobileMenu")
    LOGOUT
 ========================================================= */
 
-$("logoutBtn")
-  .addEventListener(
+const logoutButton = $("logoutBtn");
+if (logoutButton) logoutButton.addEventListener(
     "click",
     async function(){
 
