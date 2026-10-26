@@ -1152,6 +1152,321 @@ html[data-theme="light"] .speedBtn.active{
     flex:1 1 auto
   }
 }
+
+/* =========================================================
+   Student video page — refined visual system
+   Presentation-only overrides; player/security logic unchanged.
+========================================================= */
+:root{
+  --video-accent:#8b7cf6;
+  --video-accent-strong:#6d5ce8;
+  --video-accent-soft:rgba(139,124,246,.14);
+  --video-surface:rgba(17,29,49,.78);
+  --video-border:rgba(148,163,184,.17);
+}
+.brand{
+  justify-content:flex-start;
+  gap:11px;
+  padding:10px 4px 14px;
+  color:var(--text);
+  font-size:17px;
+  letter-spacing:-.25px;
+  border-bottom:1px solid var(--video-border);
+}
+.brand-icon{
+  width:42px;
+  height:42px;
+  flex:0 0 42px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(139,124,246,.28);
+  border-radius:14px;
+  color:#c4b5fd;
+  background:linear-gradient(145deg,rgba(139,124,246,.24),rgba(59,130,246,.12));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 22px rgba(0,0,0,.12);
+}
+.brand-icon svg,.playerHeader-icon svg{
+  display:block;
+  width:21px;
+  height:21px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.studentChip{
+  width:fit-content;
+  max-width:100%;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  flex-wrap:nowrap;
+  margin-top:5px;
+  padding:9px 12px 9px 14px;
+  border:1px solid var(--video-border);
+  border-radius:16px;
+  color:var(--text);
+  background:linear-gradient(135deg,rgba(148,163,184,.075),rgba(148,163,184,.025));
+  box-shadow:0 8px 22px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.student-avatar{
+  display:grid;
+  place-items:center;
+  width:40px;
+  height:40px;
+  flex:0 0 40px;
+  border-radius:13px;
+  color:#c4b5fd;
+  border:1px solid rgba(139,124,246,.3);
+  background:linear-gradient(145deg,rgba(139,124,246,.22),rgba(59,130,246,.12));
+}
+.student-avatar svg{
+  width:22px;
+  height:22px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.65;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.student-identity{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width:0;
+}
+.student-label{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:700;
+  line-height:1.5;
+}
+.studentName{
+  display:block;
+  max-width:min(42vw,340px);
+  overflow-wrap:anywhere;
+  color:#f1f5f9;
+  font-size:14px;
+  font-weight:850;
+  line-height:1.65;
+}
+.idBadge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:28px;
+  padding:4px 10px;
+  border-radius:10px;
+  white-space:nowrap;
+  background:rgba(245,197,66,.10);
+  border:1px solid rgba(245,197,66,.22);
+  color:#f5d778;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.2px;
+}
+.playerCard{
+  border-radius:22px;
+  border-color:var(--video-border);
+  box-shadow:0 22px 55px rgba(0,0,0,.2),0 2px 8px rgba(0,0,0,.08);
+}
+.playerHeader{
+  position:relative;
+  padding:19px 22px 18px;
+  background:linear-gradient(115deg,rgba(139,124,246,.09),rgba(7,17,31,.42) 48%,rgba(59,130,246,.06));
+}
+.playerHeader-topline{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+  margin-bottom:10px;
+}
+.playerHeader-icon{
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  flex:0 0 34px;
+  color:#c4b5fd;
+  border:1px solid rgba(139,124,246,.27);
+  border-radius:11px;
+  background:var(--video-accent-soft);
+}
+.playerHeader-icon svg{width:18px;height:18px}
+.playerHeader-eyebrow{
+  color:#c4b5fd;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.15px;
+}
+.playerHeader-hint{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-inline-start:auto;
+  padding:5px 9px;
+  border:1px solid rgba(52,211,153,.18);
+  border-radius:999px;
+  color:#a7f3d0;
+  background:rgba(16,185,129,.075);
+  font-size:10px;
+  font-weight:750;
+  white-space:nowrap;
+}
+.playerHeader-hint-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#34d399;
+  box-shadow:0 0 0 3px rgba(52,211,153,.12);
+}
+#videoTitle{
+  font-size:clamp(17px,1.8vw,22px);
+  font-weight:850;
+  letter-spacing:-.25px;
+  line-height:1.75;
+  overflow-wrap:anywhere;
+}
+#videoSubtitle{
+  max-width:760px;
+  margin-top:5px;
+  font-size:12px;
+  line-height:1.9;
+}
+.player-toolbar .mobileMenu{
+  min-height:42px;
+  padding-inline:16px;
+  border-radius:13px;
+  background:linear-gradient(135deg,#7565e8,#4f46c9);
+  border-color:rgba(196,181,253,.3);
+  box-shadow:0 8px 20px rgba(99,82,220,.2);
+}
+.mobileMenu::before{content:none}
+.mobileMenu .menu-button-icon{
+  display:inline-grid;
+  place-items:center;
+  width:18px;
+  height:18px;
+}
+.mobileMenu .menu-button-icon svg{
+  width:18px;
+  height:18px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.video-category-icon{
+  display:grid;
+  place-items:center;
+}
+.video-category-icon svg{
+  width:18px;
+  height:18px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.video-category-chevron{
+  display:grid;
+  place-items:center;
+  width:25px;
+  height:25px;
+  border-radius:8px;
+  background:rgba(148,163,184,.08);
+  font-size:16px;
+}
+html[data-theme="light"]{
+  --video-accent:#6d5ce8;
+  --video-accent-strong:#5948d6;
+  --video-accent-soft:rgba(109,92,232,.09);
+  --video-surface:rgba(255,255,255,.94);
+  --video-border:rgba(51,65,85,.13);
+}
+html[data-theme="light"] .brand{color:#172338}
+html[data-theme="light"] .brand-icon,
+html[data-theme="light"] .student-avatar,
+html[data-theme="light"] .playerHeader-icon{
+  color:#5b4bc4;
+  border-color:rgba(109,92,232,.2);
+  background:linear-gradient(145deg,#eeebff,#f3f6ff);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 5px 16px rgba(49,46,129,.06);
+}
+html[data-theme="light"] .studentChip{
+  background:linear-gradient(135deg,#fff,#f7f8fc);
+  box-shadow:0 8px 22px rgba(31,55,90,.055),inset 0 1px 0 #fff;
+}
+html[data-theme="light"] .studentName{color:#172338}
+html[data-theme="light"] .student-label{color:#64748b}
+html[data-theme="light"] .idBadge{
+  color:#8a6108;
+  background:#fff8e6;
+  border-color:rgba(180,130,30,.22);
+}
+html[data-theme="light"] .playerCard{
+  border-color:rgba(51,65,85,.13);
+  box-shadow:0 20px 48px rgba(31,55,90,.09),0 2px 8px rgba(31,55,90,.035);
+}
+html[data-theme="light"] .playerHeader{
+  background:linear-gradient(115deg,#f4f1ff,#fff 52%,#f0f6ff);
+  border-color:rgba(51,65,85,.12);
+}
+html[data-theme="light"] .playerHeader-eyebrow{color:#5948c8}
+html[data-theme="light"] .playerHeader-hint{
+  color:#047857;
+  background:#ecfdf5;
+  border-color:#bbf7d0;
+}
+html[data-theme="light"] .player-toolbar .mobileMenu{
+  color:#fff;
+  background:linear-gradient(135deg,#7565e8,#4f46c9);
+}
+html[data-theme="light"] .video-category-icon{
+  color:#5b4bc4;
+}
+@media(max-width:1000px){
+  .studentChip{width:fit-content;max-width:100%}
+  .studentName{max-width:min(54vw,340px)}
+}
+@media(max-width:640px){
+  .brand{font-size:16px;padding-bottom:12px}
+  .brand-icon{width:38px;height:38px;flex-basis:38px;border-radius:12px}
+  .studentChip{
+    gap:8px;
+    padding:8px 9px;
+    border-radius:14px;
+  }
+  .student-avatar{width:35px;height:35px;flex-basis:35px;border-radius:11px}
+  .student-identity{gap:1px}
+  .student-label{font-size:9px}
+  .studentName{font-size:12px;max-width:calc(100vw - 180px)}
+  .idBadge{min-height:25px;padding:4px 7px;font-size:9px}
+  .playerHeader{padding:14px 13px 13px}
+  .playerHeader-topline{gap:7px;margin-bottom:8px}
+  .playerHeader-icon{width:30px;height:30px;flex-basis:30px;border-radius:10px}
+  .playerHeader-eyebrow{font-size:10px}
+  .playerHeader-hint{font-size:9px;padding:4px 7px}
+  #videoTitle{font-size:16px;line-height:1.8}
+  #videoSubtitle{font-size:11px;line-height:1.85}
+  .playerCard{border-radius:16px}
+  .player-toolbar .mobileMenu{min-height:42px}
+}
+@media(max-width:380px){
+  .studentChip{gap:6px;padding:7px}
+  .student-avatar{width:31px;height:31px;flex-basis:31px}
+  .studentName{max-width:calc(100vw - 170px);font-size:11px}
+  .idBadge{font-size:8px;padding-inline:6px}
+  .playerHeader-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .studentChip,.playerCard,.player-toolbar .mobileMenu{transition:none}
+}
+
 </style>
 </head>
 
@@ -1172,7 +1487,7 @@ html[data-theme="light"] .speedBtn.active{
     </div>
 
 
-  <div class="brand">🎬 الفيديوهات</div>
+  <div class="brand"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/></svg></span><span>مكتبة الفيديوهات</span></div>
 
   <div class="count">
     عدد الدروس:
@@ -1190,7 +1505,7 @@ html[data-theme="light"] .speedBtn.active{
   <div class="video-category-list" aria-label="قوائم الفيديوهات">
     <section class="video-category">
       <button type="button" class="video-category-toggle" data-category-toggle="explanation" aria-expanded="false" aria-controls="explanationVideoList">
-        <span class="video-category-icon">▶</span>
+        <span class="video-category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m9 6 9 6-9 6z"/></svg></span>
         <span class="video-category-label"><strong>فيديوهات الشرح</strong><small>شرح الدروس والمفاهيم</small></span>
         <span class="video-category-count" id="explanationVideoCount">0</span>
         <span class="video-category-chevron" aria-hidden="true">⌄</span>
@@ -1201,7 +1516,7 @@ html[data-theme="light"] .speedBtn.active{
     </section>
     <section class="video-category">
       <button type="button" class="video-category-toggle" data-category-toggle="homework" aria-expanded="false" aria-controls="homeworkVideoList">
-        <span class="video-category-icon homework-icon">✓</span>
+        <span class="video-category-icon homework-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m5 12 4 4L19 6"/></svg></span>
         <span class="video-category-label"><strong>فيديوهات حل الواجب</strong><small>حل وتدريب على الواجبات</small></span>
         <span class="video-category-count" id="homeworkVideoCount">0</span>
         <span class="video-category-chevron" aria-hidden="true">⌄</span>
@@ -1226,22 +1541,18 @@ html[data-theme="light"] .speedBtn.active{
           إنَّ المرءَ لن ينالَ ما يحبُّ حتى يصبرَ على كثيرٍ ممَّا يكرهُ
         </div>
 
-        <div class="studentChip">
-
-          <span
-            id="studentName"
-            class="studentName"
-          >
-            الطالب
+        <div class="studentChip" aria-label="بيانات الطالب">
+          <span class="student-avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M20 21a8 8 0 0 0-16 0" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
           </span>
-
-          <span
-            id="studentId"
-            class="idBadge"
-          >
-            ID: 000
+          <span class="student-identity">
+            <span class="student-label">مسجل الدخول باسم</span>
+            <span id="studentName" class="studentName">الطالب</span>
           </span>
-
+          <span id="studentId" class="idBadge" aria-label="رقم الطالب">ID: 000</span>
         </div>
 
       </div>
@@ -1288,7 +1599,7 @@ html[data-theme="light"] .speedBtn.active{
       type="button"
       aria-label="عرض قائمة الفيديوهات"
     >
-      عرض الفيديوهات
+      <span class="menu-button-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16M15 4v16M3 9h6M15 9h6M3 15h6M15 15h6"/></svg></span><span>مكتبة الفيديوهات</span>
     </button>
   </div>
 
@@ -1298,15 +1609,18 @@ html[data-theme="light"] .speedBtn.active{
   >
 
     <div class="playerHeader">
-
-      <div id="videoTitle">
-        اختر درسًا من القائمة
+      <div class="playerHeader-topline">
+        <span class="playerHeader-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <rect x="3" y="5" width="18" height="14" rx="3" />
+            <path d="m10 9 5 3-5 3z" />
+          </svg>
+        </span>
+        <span class="playerHeader-eyebrow">مساحة التعلّم</span>
+        <span class="playerHeader-hint"><span class="playerHeader-hint-dot"></span> محتوى تعليمي</span>
       </div>
-
-      <div id="videoSubtitle">
-        سيظهر محتوى الدرس هنا بعد اختياره.
-      </div>
-
+      <div id="videoTitle">اختار درسًا من مكتبة الفيديوهات</div>
+      <div id="videoSubtitle">اختار درس من القائمة عشان يبدأ العرض هنا، وتقدر تتابع تقدّمك من أدوات المشاهدة أسفل الفيديو.</div>
     </div>
 
 
