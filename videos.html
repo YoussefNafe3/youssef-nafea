@@ -1471,11 +1471,11 @@ html[data-theme="light"] .video-category-icon{
 /* Simplified student header and polished player controls */
 .topbar{
   align-items:flex-start;
+  justify-content:flex-start;
   min-height:44px;
 }
 .topLeft{
-  min-height:40px;
-  align-items:flex-start;
+  display:none;
 }
 .quote-heading{
   padding-top:0;
@@ -1487,12 +1487,12 @@ html[data-theme="light"] .video-category-icon{
 .topActions{
   position:relative;
   inset:auto;
-  margin-inline-start:auto;
-  width:100%;
+  margin:0;
+  width:auto;
   justify-content:flex-start;
   align-items:center;
   gap:8px;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
   direction:ltr;
 }
 .topActions .btn{direction:rtl}
@@ -1577,6 +1577,17 @@ html[data-theme="light"] .video-category-icon{
   font-weight:800;
   transition:background .18s,border-color .18s,transform .18s;
 }
+.speedBtn{
+  color:#cbd5e1;
+  background:rgba(148,163,184,.08);
+  border-color:rgba(148,163,184,.12);
+}
+.speedBtn.active{
+  color:#fff;
+  background:linear-gradient(135deg,#7565e8,#4f46c9);
+  border-color:rgba(196,181,253,.32);
+  box-shadow:0 4px 12px rgba(99,82,220,.2);
+}
 .speedBtn:hover{transform:translateY(-1px)}
 .fullscreenBtn{
   display:inline-flex;
@@ -1649,12 +1660,13 @@ html[data-theme="light"] .playerHeader{
   .studentName{max-width:150px}
 }
 @media(max-width:640px){
-  .topbar{display:flex;flex-direction:column;gap:8px}
-  .topLeft{width:100%;flex:0 0 auto}
+  .topbar{display:flex;flex-direction:row;gap:8px}
+  .topLeft{display:none}
   .topActions{
     width:100%;
     margin:0;
     justify-content:flex-start;
+    flex-wrap:wrap;
     gap:6px;
   }
   .studentChip{min-height:32px;padding:3px 7px;gap:6px}
