@@ -2793,8 +2793,21 @@ async function openResultNotification(element){
     }, 3200);
   } else {
     // Refresh the appropriate list in case results have just been updated.
-    if(resultType === "exam") await loadExamResults();
-    else await loadRecitationResults();
+    if(resultType === "exam"){
+      await loadExamResults();
+      const refreshedLatest = document.getElementById("latestExamResult")
+        ?.querySelector(`[data-result-id="${CSS.escape(String(resultId))}"]`);
+      if(refreshedLatest){
+        const latestSection = refreshedLatest.closest(".latest-exam-section");
+        if(latestSection) latestSection.scrollIntoView({behavior:"smooth",block:"start"});
+        refreshedLatest.style.outline = "3px solid var(--primary)";
+        refreshedLatest.style.outlineOffset = "4px";
+        setTimeout(()=>{refreshedLatest.style.outline="";refreshedLatest.style.outlineOffset="";},3200);
+        return;
+      }
+    } else {
+      await loadRecitationResults();
+    }
     const refreshed = target.querySelector(`.result[data-result-id="${CSS.escape(String(resultId))}"]`);
     if(refreshed){
       refreshed.scrollIntoView({behavior:"smooth",block:"center"});
