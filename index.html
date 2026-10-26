@@ -1317,6 +1317,51 @@ body.dark footer{background:var(--bg)!important;color:var(--muted)!important}
   .subjects-section .subject-card,.subjects-section .subject-card-icon,.subjects-section .subject-card-arrow{transition:none!important}
 }
 
+
+/* ================= HONOR ROLL — PREMIUM STUDENT RECOGNITION ================= */
+.honors-section{position:relative;isolation:isolate;overflow:hidden;padding:clamp(56px,7vw,92px) clamp(16px,4vw,44px);background:radial-gradient(ellipse at 8% 8%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 35%),radial-gradient(ellipse at 92% 92%,color-mix(in srgb,var(--gold) 13%,transparent),transparent 32%),var(--bg);border-block:1px solid var(--line)}
+.honors-section:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.28;background-image:radial-gradient(color-mix(in srgb,var(--accent) 32%,transparent) .7px,transparent .7px);background-size:20px 20px;mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent)}
+.honors-shell{width:min(1180px,100%);margin-inline:auto}
+.honors-heading{text-align:center;max-width:760px;margin:0 auto 30px}
+.honors-kicker{display:inline-flex;align-items:center;gap:9px;border:1px solid color-mix(in srgb,var(--gold) 45%,var(--line));border-radius:999px;padding:7px 13px;color:var(--text);background:color-mix(in srgb,var(--gold) 10%,var(--card));font-size:11px;font-weight:800;letter-spacing:.35px}
+.honors-kicker i{color:var(--gold)}
+.honors-heading h2{font-family:'Alexandria','Cairo',sans-serif;color:var(--text);font-size:clamp(25px,4vw,42px);font-weight:900;line-height:1.6;margin:14px 0 7px}
+.honors-heading h2 span{color:var(--accent)}
+.honors-heading p{max-width:650px;margin:0 auto;color:var(--muted);font-size:14px;line-height:2}
+.honors-ribbon{display:flex;justify-content:center;align-items:center;gap:10px;margin:20px auto 30px;color:var(--muted);font-size:11px}
+.honors-ribbon:before,.honors-ribbon:after{content:"";width:clamp(20px,8vw,90px);height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.honors-ribbon:after{transform:scaleX(-1)}
+.honors-viewport{position:relative;overflow:hidden;padding:8px 2px 22px;direction:ltr;mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent)}
+.honors-track{display:flex;width:max-content;animation:honorsDriftRight 48s linear infinite;will-change:transform}
+.honors-section:hover .honors-track,.honors-section:focus-within .honors-track,.honors-section.is-paused .honors-track{animation-play-state:paused}
+.honors-group{display:flex;flex:0 0 auto;gap:18px;padding-right:18px}
+.honors-card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;flex:0 0 300px;min-height:350px;padding:23px 22px 20px;border-radius:24px;border:1px solid var(--line);background:linear-gradient(155deg,var(--card),color-mix(in srgb,var(--accent) 4%,var(--card)));box-shadow:0 15px 38px rgba(20,38,74,.075);color:var(--text);text-align:center;transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease}
+.honors-card:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,var(--accent),var(--gold),var(--accent));z-index:-1}
+.honors-card:after{content:"✦";position:absolute;top:50px;right:17px;font-size:23px;color:var(--gold);opacity:.45}
+.honors-card:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--gold) 50%,var(--line));box-shadow:0 22px 48px rgba(20,38,74,.13)}
+.honors-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;direction:rtl}
+.honors-medal{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:color-mix(in srgb,var(--gold) 15%,var(--card));color:#b98a29;border:1px solid color-mix(in srgb,var(--gold) 35%,var(--line));font-size:15px}
+.honors-rank{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.4px}
+.honors-avatar{width:91px;height:91px;display:grid;place-items:center;align-self:center;border-radius:28px;margin:0 auto 14px;font-size:47px;background:radial-gradient(circle at 35% 20%,#fff9e9,color-mix(in srgb,var(--accent) 14%,var(--card)) 70%);border:1px solid color-mix(in srgb,var(--accent) 23%,var(--line));box-shadow:0 10px 25px color-mix(in srgb,var(--accent) 12%,transparent);transform:rotate(-3deg);transition:transform .3s ease}
+.honors-card:hover .honors-avatar{transform:rotate(0) translateY(-2px)}
+.honors-name{font-family:'Alexandria','Cairo',sans-serif;font-size:16px;font-weight:800;line-height:1.8;margin:0 0 4px;overflow-wrap:anywhere}
+.honors-college{display:flex;justify-content:center;align-items:center;gap:7px;min-height:42px;color:var(--muted);font-size:11px;line-height:1.8;margin:0 auto 16px}
+.honors-college i{color:var(--accent);font-size:13px}
+.honors-metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:auto}
+.honors-metric{padding:11px 8px;border-radius:14px;background:color-mix(in srgb,var(--accent) 6%,var(--bg));border:1px solid var(--line)}
+.honors-metric strong{display:block;color:var(--text);font-family:'Alexandria','Cairo',sans-serif;font-size:20px;font-weight:900;line-height:1.5}
+.honors-metric span{display:block;color:var(--muted);font-size:10px;line-height:1.7}
+.honors-metric.highlight strong{color:var(--accent)}
+.honors-note{text-align:center;color:var(--muted);font-size:11px;line-height:1.8;margin:2px 0 0}
+.honors-controls{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:3px}
+.honors-control{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:8px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font:700 11px 'Cairo',sans-serif;cursor:pointer;transition:transform .2s,border-color .2s}
+.honors-control:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.honors-control:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.honors-control i{color:var(--accent)}
+@keyframes honorsDriftRight{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+@media(max-width:600px){.honors-section{padding:48px 12px 54px}.honors-heading{margin-bottom:23px}.honors-heading p{font-size:12px}.honors-ribbon{margin:15px auto 20px}.honors-group{gap:12px;padding-right:12px}.honors-card{flex-basis:min(280px,calc(100vw - 52px));min-height:338px;padding:20px 17px 17px;border-radius:21px}.honors-avatar{width:82px;height:82px;font-size:42px}.honors-name{font-size:15px}.honors-controls{margin-top:5px}}
+@media(prefers-reduced-motion:reduce){.honors-track{animation:none!important;transform:none!important}.honors-card,.honors-avatar,.honors-control{transition:none!important}}
+
 </style>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#11152f">
@@ -1350,6 +1395,40 @@ body.dark footer{background:var(--bg)!important;color:var(--muted)!important}
 <div class="scroll-hint">اكتشف المزيد <span aria-hidden="true"></span></div>
 </div>
 </section>
+
+<!-- HONOR ROLL: achievements shared by the teacher -->
+<section class="honors-section" id="honor-roll" aria-labelledby="honors-title">
+ <div class="honors-shell">
+  <header class="honors-heading">
+   <span class="honors-kicker"><i class="fa-solid fa-award" aria-hidden="true"></i> نفخر بتفوقهم</span>
+   <h2 id="honors-title">نجاحات نفتخر بها، <span>ومستقبل نصنعه</span></h2>
+   <p>كل درجة وراءها تعب، وكل نجاح بداية لحلم أكبر. بنحتفي بطلابنا المتفوقين وبخطواتهم الأولى نحو مستقبلهم الجامعي.</p>
+  </header>
+  <div class="honors-ribbon"><i class="fa-solid fa-star" aria-hidden="true"></i> أبطال الأحياء · دفعة التفوق</div>
+  <div class="honors-viewport" id="honorsViewport" aria-label="بطاقات تكريم الطلاب المتفوقين">
+   <div class="honors-track" id="honorsTrack">
+    <div class="honors-group" id="honorsGroup">
+     <article class="honors-card"><div class="honors-card-top"><span class="honors-medal"><i class="fa-solid fa-user-doctor" aria-hidden="true"></i></span><span class="honors-rank">01 · من المتفوقين</span></div><div class="honors-avatar" aria-hidden="true">👨🏻‍⚕️</div><h3 class="honors-name">عبدالله أحمد أبو زيد</h3><p class="honors-college"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> كلية الطب البشري · جامعة الإسكندرية</p><div class="honors-metrics"><div class="honors-metric highlight"><strong>97.2%</strong><span>المجموع الكلي</span></div><div class="honors-metric"><strong>60 / 60</strong><span>درجة الأحياء</span></div></div></article>
+     <article class="honors-card"><div class="honors-card-top"><span class="honors-medal"><i class="fa-solid fa-stethoscope" aria-hidden="true"></i></span><span class="honors-rank">02 · من المتفوقات</span></div><div class="honors-avatar" aria-hidden="true">👩🏻‍⚕️</div><h3 class="honors-name">بسملة أحمد كمال</h3><p class="honors-college"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> كلية الطب البشري · جامعة الإسكندرية</p><div class="honors-metrics"><div class="honors-metric highlight"><strong>96.3%</strong><span>المجموع الكلي</span></div><div class="honors-metric"><strong>60 / 60</strong><span>درجة الأحياء</span></div></div></article>
+     <article class="honors-card"><div class="honors-card-top"><span class="honors-medal"><i class="fa-solid fa-award" aria-hidden="true"></i></span><span class="honors-rank">03 · من المتفوقات</span></div><div class="honors-avatar" aria-hidden="true">👩🏻‍🎓</div><h3 class="honors-name">رحمة محمد خضر</h3><p class="honors-college"><i class="fa-solid fa-dna" aria-hidden="true"></i> تميّز في مادة الأحياء</p><div class="honors-metrics"><div class="honors-metric highlight"><strong>57.5 / 60</strong><span>درجة الأحياء</span></div><div class="honors-metric"><strong>95.8%</strong><span>من درجة الأحياء</span></div></div></article>
+     <article class="honors-card"><div class="honors-card-top"><span class="honors-medal"><i class="fa-solid fa-capsules" aria-hidden="true"></i></span><span class="honors-rank">04 · من المتفوقات</span></div><div class="honors-avatar" aria-hidden="true">👩🏻‍⚕️</div><h3 class="honors-name">حبيبة محمود حماد</h3><p class="honors-college"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> كلية الصيدلة</p><div class="honors-metrics"><div class="honors-metric highlight"><strong>55 / 60</strong><span>درجة الأحياء</span></div><div class="honors-metric"><strong>91.7%</strong><span>من درجة الأحياء</span></div></div></article>
+     <article class="honors-card"><div class="honors-card-top"><span class="honors-medal"><i class="fa-solid fa-prescription-bottle-medical" aria-hidden="true"></i></span><span class="honors-rank">05 · من المتفوقات</span></div><div class="honors-avatar" aria-hidden="true">👩🏻‍🔬</div><h3 class="honors-name">مريم علاء العبسي</h3><p class="honors-college"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> كلية الصيدلة</p><div class="honors-metrics"><div class="honors-metric highlight"><strong>54.5 / 60</strong><span>درجة الأحياء</span></div><div class="honors-metric"><strong>90.8%</strong><span>من درجة الأحياء</span></div></div></article>
+     <article class="honors-card"><div class="honors-card-top"><span class="honors-medal"><i class="fa-solid fa-flask" aria-hidden="true"></i></span><span class="honors-rank">06 · من المتفوقات</span></div><div class="honors-avatar" aria-hidden="true">👩🏻‍🔬</div><h3 class="honors-name">شهد ماجد غنيم</h3><p class="honors-college"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> كلية العلوم</p><div class="honors-metrics"><div class="honors-metric highlight"><strong>55 / 60</strong><span>درجة الأحياء</span></div><div class="honors-metric"><strong>91.7%</strong><span>من درجة الأحياء</span></div></div></article>
+    </div>
+    <div class="honors-group" aria-hidden="true">
+     <article class="honors-card"><div class="honors-card-top"><span class="honors-medal"><i class="fa-solid fa-user-doctor"></i></span><span class="honors-rank">01 · من المتفوقين</span></div><div class="honors-avatar">👨🏻‍⚕️</div><h3 class="honors-name">عبدالله أحمد أبو زيد</h3><p class="honors-college"><i class="fa-solid fa-graduation-cap"></i> كلية الطب البشري · جامعة الإسكندرية</p><div class="honors-metrics"><div class="honors-metric highlight"><strong>97.2%</strong><span>المجموع الكلي</span></div><div class="honors-metric"><strong>60 / 60</strong><span>درجة الأحياء</span></div></div></article>
+     <article class="honors-card"><div class="honors-card-top"><span class="honors-medal"><i class="fa-solid fa-stethoscope"></i></span><span class="honors-rank">02 · من المتفوقات</span></div><div class="honors-avatar">👩🏻‍⚕️</div><h3 class="honors-name">بسملة أحمد كمال</h3><p class="honors-college"><i class="fa-solid fa-graduation-cap"></i> كلية الطب البشري · جامعة الإسكندرية</p><div class="honors-metrics"><div class="honors-metric highlight"><strong>96.3%</strong><span>المجموع الكلي</span></div><div class="honors-metric"><strong>60 / 60</strong><span>درجة الأحياء</span></div></div></article>
+     <article class="honors-card"><div class="honors-card-top"><span class="honors-medal"><i class="fa-solid fa-award"></i></span><span class="honors-rank">03 · من المتفوقات</span></div><div class="honors-avatar">👩🏻‍🎓</div><h3 class="honors-name">رحمة محمد خضر</h3><p class="honors-college"><i class="fa-solid fa-dna"></i> تميّز في مادة الأحياء</p><div class="honors-metrics"><div class="honors-metric highlight"><strong>57.5 / 60</strong><span>درجة الأحياء</span></div><div class="honors-metric"><strong>95.8%</strong><span>من درجة الأحياء</span></div></div></article>
+     <article class="honors-card"><div class="honors-card-top"><span class="honors-medal"><i class="fa-solid fa-capsules"></i></span><span class="honors-rank">04 · من المتفوقات</span></div><div class="honors-avatar">👩🏻‍⚕️</div><h3 class="honors-name">حبيبة محمود حماد</h3><p class="honors-college"><i class="fa-solid fa-graduation-cap"></i> كلية الصيدلة</p><div class="honors-metrics"><div class="honors-metric highlight"><strong>55 / 60</strong><span>درجة الأحياء</span></div><div class="honors-metric"><strong>91.7%</strong><span>من درجة الأحياء</span></div></div></article>
+     <article class="honors-card"><div class="honors-card-top"><span class="honors-medal"><i class="fa-solid fa-prescription-bottle-medical"></i></span><span class="honors-rank">05 · من المتفوقات</span></div><div class="honors-avatar">👩🏻‍🔬</div><h3 class="honors-name">مريم علاء العبسي</h3><p class="honors-college"><i class="fa-solid fa-graduation-cap"></i> كلية الصيدلة</p><div class="honors-metrics"><div class="honors-metric highlight"><strong>54.5 / 60</strong><span>درجة الأحياء</span></div><div class="honors-metric"><strong>90.8%</strong><span>من درجة الأحياء</span></div></div></article>
+     <article class="honors-card"><div class="honors-card-top"><span class="honors-medal"><i class="fa-solid fa-flask"></i></span><span class="honors-rank">06 · من المتفوقات</span></div><div class="honors-avatar">👩🏻‍🔬</div><h3 class="honors-name">شهد ماجد غنيم</h3><p class="honors-college"><i class="fa-solid fa-graduation-cap"></i> كلية العلوم</p><div class="honors-metrics"><div class="honors-metric highlight"><strong>55 / 60</strong><span>درجة الأحياء</span></div><div class="honors-metric"><strong>91.7%</strong><span>من درجة الأحياء</span></div></div></article>
+    </div>
+   </div>
+  </div>
+  <div class="honors-controls"><button class="honors-control" id="honorsPause" type="button" aria-pressed="false"><i class="fa-solid fa-pause" aria-hidden="true"></i><span>إيقاف الحركة</span></button><span class="honors-note">كل إنجاز يستحق الاحتفاء</span></div>
+ </div>
+</section>
+
 <div id="about"></div>
 <section class="about-me reveal">
 
@@ -1502,5 +1581,24 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
+
+<script>
+(function(){
+ const section=document.getElementById('honor-roll');
+ const track=document.getElementById('honorsTrack');
+ const group=document.getElementById('honorsGroup');
+ const pause=document.getElementById('honorsPause');
+ if(!section||!track||!group||!pause)return;
+ const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(reduced){section.classList.add('is-paused');pause.disabled=true;pause.innerHTML='<i class="fa-solid fa-leaf" aria-hidden="true"></i><span>الحركة مخفّضة حسب إعداد جهازك</span>';return;}
+ let paused=false;
+ function setPaused(next){paused=next;section.classList.toggle('is-paused',paused);pause.setAttribute('aria-pressed',String(paused));pause.innerHTML=paused?'<i class="fa-solid fa-play" aria-hidden="true"></i><span>استئناف الحركة</span>':'<i class="fa-solid fa-pause" aria-hidden="true"></i><span>إيقاف الحركة</span>';}
+ pause.addEventListener('click',()=>setPaused(!paused));
+ section.addEventListener('keydown',e=>{if(e.key==='Escape')setPaused(true)});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)section.classList.add('is-paused');else if(!paused)section.classList.remove('is-paused')});
+ window.addEventListener('resize',()=>{if(group.children.length!==6)return;}, {passive:true});
+})();
+</script>
+
 </body>
 </html>
