@@ -703,7 +703,63 @@ html[data-theme="light"] .speedBtn.active{
   width:100%;
   height:100%;
   border:0;
-  background:#000
+  background:#000;
+  transform:scale(var(--player-zoom,1));
+  transform-origin:center center;
+  transition:transform .18s ease
+}
+
+/* Fullscreen prioritizes the actual lesson canvas; security overlays remain layered above it. */
+.playerCard:fullscreen,
+.playerCard:-webkit-full-screen{
+  width:100vw;
+  height:100dvh;
+  max-height:100dvh;
+  border:0;
+  border-radius:0;
+  display:flex;
+  flex-direction:column;
+  background:#000;
+}
+.playerCard:fullscreen .playerHeader,
+.playerCard:-webkit-full-screen .playerHeader{display:none!important}
+.playerCard:fullscreen .stage,
+.playerCard:-webkit-full-screen .stage{
+  flex:1 1 auto;
+  width:100%;
+  height:auto;
+  min-height:0;
+  aspect-ratio:auto;
+  overflow:hidden;
+}
+.playerCard:fullscreen .playerControls,
+.playerCard:-webkit-full-screen .playerControls{
+  flex:0 0 auto;
+  padding:6px 10px;
+  background:rgba(3,8,18,.94);
+}
+.playerCard:fullscreen .progressInfo,
+.playerCard:fullscreen .progress,
+.playerCard:-webkit-full-screen .progressInfo,
+.playerCard:-webkit-full-screen .progress{display:none!important}
+.playerCard:fullscreen .controlRow,
+.playerCard:-webkit-full-screen .controlRow{gap:5px;flex-wrap:nowrap}
+.playerCard:fullscreen .speedGroup,
+.playerCard:-webkit-full-screen .speedGroup{gap:4px}
+.playerCard:fullscreen .speedBtn,
+.playerCard:-webkit-full-screen .speedBtn{padding:3px 7px;font-size:11px;min-height:27px;border-radius:7px}
+.playerCard:fullscreen .qualitySelect,
+.playerCard:-webkit-full-screen .qualitySelect{padding:3px 6px;font-size:11px;max-width:100px}
+.playerCard:fullscreen .fullscreenBtn,
+.playerCard:-webkit-full-screen .fullscreenBtn,
+.playerCard:fullscreen .zoomBtn,
+.playerCard:-webkit-full-screen .zoomBtn{padding:4px 8px;min-height:28px;font-size:11px;white-space:nowrap}
+.playerCard:fullscreen .fullscreenBtn svg,
+.playerCard:-webkit-full-screen .fullscreenBtn svg{width:14px;height:14px}
+@media(max-width:640px){
+ .playerCard:fullscreen .playerControls,.playerCard:-webkit-full-screen .playerControls{padding:5px 6px}
+ .playerCard:fullscreen .speedBtn,.playerCard:-webkit-full-screen .speedBtn{padding:3px 5px;font-size:10px}
+ .playerCard:fullscreen .zoomBtn,.playerCard:-webkit-full-screen .zoomBtn{font-size:10px;padding:3px 5px}
 }
 
 .ytBlocker,
@@ -2463,6 +2519,14 @@ body.help-modal-open{overflow:hidden}
 
 
         <button
+          id="zoomBtn"
+          class="btn secondary zoomBtn"
+          type="button"
+          aria-label="تكبير الفيديو"
+          title="تكبير الفيديو"
+        >＋ تكبير</button>
+
+        <button
           id="fullscreenBtn"
           class="btn fullscreenBtn"
           type="button"
@@ -2945,6 +3009,10 @@ const state = {
   currentAttemptNumber: 1,
 
   completionEventId: null,
+
+  preservedCompletedProgress: false,
+
+  playerZoom: 1,
 
   watchedRanges: [],
 
@@ -3570,7 +3638,7 @@ function updateProgressUI(
   }
 
   // Never display 100% while the lesson has only been seeked to its end.
-  const percent = fullyWatched
+  const percent = (fullyWatched || state.preservedCompletedProgress)
     ? 100
     : Math.min(99.9, Math.max(0, (watched / duration) * 100));
 
@@ -3783,25 +3851,16 @@ const savedProgress =
       state.fullCompletionCount = Math.max(0, Number(data.full_completion_count) || 0);
       state.currentAttemptNumber = state.fullCompletionCount + 1;
 
-      // Completed videos reopen at the beginning for a fresh full listen.
-      if(data.completed === true){
-        state.lastTime = 0;
-        state.watchedRanges = [];
-        state.completedByEnd = false;
-        state.completionEventId = null;
-      }else{
-        state.lastTime = Math.max(0, Number(data.last_time) || 0);
-      }
+      // Preserve the previously earned 100% while a new full-listen attempt is tracked separately.
+      state.preservedCompletedProgress = data.completed === true || Number(data.percent) >= 100 || Number(data.progress) >= 100;
+      state.lastTime = data.completed === true
+        ? 0
+        : Math.max(0, Number(data.last_time) || 0);
+      state.watchedRanges = [];
+      state.completedByEnd = false;
+      state.completionEventId = null;
 
-
-      state.skips =
-        Number(
-          data.skips
-        ) || 0;
-
-
-      // The server record is authoritative; each reopening starts a fresh attempt.
-    state.completedByEnd = false;
+      state.skips = Number(data.skips) || 0;
 
     }
 
@@ -5469,6 +5528,19 @@ async function exitFullscreen(){
 
 }
 
+
+const zoomBtn = document.getElementById("zoomBtn");
+function updatePlayerZoom(){
+  stage.style.setProperty("--player-zoom", String(state.playerZoom));
+  zoomBtn.textContent = state.playerZoom <= 1 ? "＋ تكبير" : state.playerZoom < 1.16 ? "＋ تكبير" : "↺ الحجم الأصلي";
+  zoomBtn.setAttribute("aria-label", state.playerZoom <= 1 ? "تكبير الفيديو" : "إعادة حجم الفيديو");
+  zoomBtn.title = state.playerZoom <= 1 ? "تكبير الفيديو" : "إعادة حجم الفيديو";
+}
+zoomBtn.addEventListener("click",()=>{
+  state.playerZoom = state.playerZoom <= 1 ? 1.12 : state.playerZoom < 1.16 ? 1.22 : 1;
+  updatePlayerZoom();
+});
+updatePlayerZoom();
 
 fullscreenBtn.addEventListener(
   "click",
