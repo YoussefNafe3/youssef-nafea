@@ -5400,6 +5400,14 @@ if (logoutButton) logoutButton.addEventListener(
     "click",
     async function(){
 
+      // Persist the current playback position before the authenticated session is released.
+      try{
+        persistLocalProgress();
+        await saveSession();
+      }catch(e){
+        console.warn("[Logout progress save]", e);
+      }
+
       try{
 
         await client.rpc(
