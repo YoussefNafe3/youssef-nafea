@@ -2396,6 +2396,21 @@ body.help-modal-open{overflow:hidden}
 .playerCard:fullscreen .fullscreenPinchSurface.hidden,
 .playerCard:-webkit-full-screen .fullscreenPinchSurface.hidden{display:none!important}
 
+
+/* Fullscreen zoom hint and compact zoom-out control. */
+.zoomOutBtn{white-space:nowrap}
+.fullscreenZoomHint{display:none;align-items:center;justify-content:center;gap:7px;
+ color:rgba(255,255,255,.86);font-size:12px;line-height:1.35;text-align:center;
+ padding:6px 10px;margin:0 auto;max-width:100%;pointer-events:none}
+.fullscreenZoomHint .handIcon{font-size:19px;line-height:1;filter:drop-shadow(0 0 5px rgba(110,190,255,.4))}
+.playerCard:fullscreen .fullscreenZoomHint,
+.playerCard:-webkit-full-screen .fullscreenZoomHint{display:flex}
+.playerCard:fullscreen .zoomOutBtn,.playerCard:-webkit-full-screen .zoomOutBtn{padding:4px 8px!important;font-size:11px!important;min-height:28px!important}
+@media(max-width:640px){
+ .fullscreenZoomHint{font-size:11px;padding:4px 6px}
+ .playerCard:fullscreen .zoomOutBtn,.playerCard:-webkit-full-screen .zoomOutBtn{padding:3px 6px!important;font-size:10px!important}
+}
+
 </style>
 </head>
 
@@ -2592,6 +2607,8 @@ body.help-modal-open{overflow:hidden}
     </div>
 
 
+    <div class="fullscreenZoomHint" aria-hidden="true"><span class="handIcon">✋</span><span>كبّر أو صغّر بإصبعين على الفيديو</span></div>
+
     <div class="playerControls">
 
       <div class="controlRow">
@@ -2654,6 +2671,13 @@ body.help-modal-open{overflow:hidden}
           aria-label="تكبير الفيديو"
           title="تكبير الفيديو"
         >＋ تكبير</button>
+        <button
+          id="zoomOutBtn"
+          class="btn secondary zoomOutBtn"
+          type="button"
+          aria-label="تصغير الفيديو"
+          title="تصغير الفيديو"
+        >− تصغير</button>
 
         <button
           id="fullscreenBtn"
@@ -5678,19 +5702,28 @@ async function exitFullscreen(){
 
 
 const zoomBtn = document.getElementById("zoomBtn");
+const zoomOutBtn = document.getElementById("zoomOutBtn");
+const playerZoomSteps = [1,1.12,1.22,1.4,1.7,2,2.3,2.6];
 function updatePlayerZoom(){
   state.playerZoom = Math.max(1, Math.min(2.6, Number(state.playerZoom) || 1));
   stage.style.setProperty("--player-zoom", String(state.playerZoom));
-  const steps = [1,1.12,1.22,1.4,1.7,2,2.3,2.6];
-  const next = steps.find(value => value > state.playerZoom + 0.001);
-  zoomBtn.textContent = state.playerZoom <= 1 ? "＋ تكبير" : "＋ تكبير";
+  const next = playerZoomSteps.find(value => value > state.playerZoom + 0.001);
+  const previous = [...playerZoomSteps].reverse().find(value => value < state.playerZoom - 0.001);
+  zoomBtn.textContent = "＋ تكبير";
   zoomBtn.setAttribute("aria-label", next ? "زيادة تكبير الفيديو" : "إعادة الحجم الطبيعي");
   zoomBtn.title = next ? "زيادة تكبير الفيديو" : "إعادة الحجم الطبيعي";
+  zoomOutBtn.disabled = !previous;
+  zoomOutBtn.style.opacity = previous ? "1" : ".55";
+  zoomOutBtn.title = previous ? "تصغير الفيديو درجة واحدة" : "الفيديو بالحجم الطبيعي";
 }
 zoomBtn.addEventListener("click",()=>{
-  const steps = [1,1.12,1.22,1.4,1.7,2,2.3,2.6];
-  const next = steps.find(value => value > state.playerZoom + 0.001);
+  const next = playerZoomSteps.find(value => value > state.playerZoom + 0.001);
   state.playerZoom = next || 1;
+  updatePlayerZoom();
+});
+zoomOutBtn.addEventListener("click",()=>{
+  const previous = [...playerZoomSteps].reverse().find(value => value < state.playerZoom - 0.001);
+  state.playerZoom = previous || 1;
   updatePlayerZoom();
 });
 updatePlayerZoom();
