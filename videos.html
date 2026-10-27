@@ -2422,6 +2422,60 @@ body.help-modal-open{overflow:hidden}
   .playerControls .controlRow{column-gap:4px}
 }
 
+
+/* Keep playback speed, zoom and fullscreen controls in one compact row before fullscreen. */
+.playerControls .controlRow{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:center;
+  gap:5px!important;
+  width:100%;
+  min-width:0;
+}
+.playerControls .speedGroup{
+  display:flex!important;
+  flex:0 1 auto;
+  min-width:0;
+  gap:3px!important;
+}
+.playerControls .speedBtn{
+  min-width:0!important;
+  min-height:29px!important;
+  height:29px!important;
+  padding:0 7px!important;
+  font-size:11px!important;
+  line-height:1!important;
+  border-radius:7px!important;
+  flex:0 1 auto;
+}
+.playerControls .zoomBtn,.playerControls .zoomOutBtn,
+.playerControls .fullscreenBtn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:0!important;
+  min-height:29px!important;
+  height:29px!important;
+  padding:0 8px!important;
+  margin:0!important;
+  gap:4px!important;
+  font-size:11px!important;
+  line-height:1!important;
+  border-radius:7px!important;
+  white-space:nowrap!important;
+  flex:0 0 auto!important;
+}
+.playerControls .fullscreenBtn svg{width:13px;height:13px;flex:0 0 auto}
+@media(max-width:420px){
+  .playerControls .controlRow{gap:3px!important}
+  .playerControls .speedGroup{gap:2px!important}
+  .playerControls .speedBtn{padding:0 5px!important;font-size:10px!important}
+  .playerControls .zoomBtn,.playerControls .zoomOutBtn,
+  .playerControls .fullscreenBtn{padding:0 5px!important;font-size:10px!important;gap:2px!important}
+  .playerControls .fullscreenBtn svg{width:12px;height:12px}
+}
+
 </style>
 </head>
 
