@@ -858,7 +858,8 @@ function renderSelectedVideo() {
   document.getElementById("selectedAvgTime").innerText = formatTime(agg.avgTime);
 
   const latestMap = latestSessionByStudentForVideo(state.selectedVideo.id);
-  const videoClassGroup = getVideoClassGroup(state.selectedVideo);\n  const allIds = getAllStudentIds(videoClassGroup);
+  const videoClassGroup = getVideoClassGroup(state.selectedVideo);
+  const allIds = getAllStudentIds(videoClassGroup);
 
   const rows = allIds.map(id => {
     const record = latestMap[String(id)];
@@ -987,7 +988,9 @@ function makeReportTable(rows) {
 window.openReport = function(videoId) {
   const video=state.videos.find(v=>String(v.id)===String(videoId));
   if(!video) { alert("اختَر فيديو أولًا، أو انتظر تحميل قائمة الفيديوهات."); return; }
-  // The video’s assigned class is authoritative; the sidebar filter must not mix classes in a report.\n  const classGroup=getVideoClassGroup(video) || (document.getElementById("classFilter")?.value || "all");\n  const students=getReportStudents(classGroup);
+  // The video’s assigned class is authoritative; the sidebar filter must not mix classes in a report.
+  const classGroup=getVideoClassGroup(video) || (document.getElementById("classFilter")?.value || "all");
+  const students=getReportStudents(classGroup);
   const latest=latestSessionByStudentForVideo(video.id);
   const rows=students.map(s=>reportStudentRow(s,latest[String(s.id)],video));
   const never=rows.filter(r=>!r.watched);
