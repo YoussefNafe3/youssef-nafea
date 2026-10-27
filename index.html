@@ -1371,6 +1371,12 @@ body.dark footer{background:var(--bg)!important;color:var(--muted)!important}
 .honors-metrics-single .honors-metric{max-width:190px;width:100%;justify-self:center}
 @keyframes honorsDriftLeft{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
+
+/* Robust desktop/mobile marquee: movement is driven by requestAnimationFrame */
+.honors-track{animation:none!important;transform:translate3d(0,0,0);backface-visibility:hidden;contain:layout style}
+.honors-viewport{display:block;min-width:0;touch-action:pan-y}
+.honors-group{width:max-content;max-width:none}
+
 </style>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#11152f">
@@ -1593,32 +1599,76 @@ if ("serviceWorker" in navigator) {
 
 <script>
 (function(){
- const section=document.getElementById('honor-roll');
- const track=document.getElementById('honorsTrack');
- const pauseButton=document.getElementById('honorsPause');
- if(!section||!track||!pauseButton)return;
- const reducedMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- let paused=false;
- function renderState(){
-   section.classList.toggle('is-paused',paused);
-   pauseButton.setAttribute('aria-pressed',String(paused));
-   pauseButton.innerHTML=paused
-     ? '<i class="fa-solid fa-play" aria-hidden="true"></i><span>استئناف الحركة</span>'
-     : '<i class="fa-solid fa-pause" aria-hidden="true"></i><span>إيقاف الحركة</span>';
- }
- if(reducedMotion){
-   paused=true;
-   pauseButton.setAttribute('aria-label','تشغيل حركة بطاقات التكريم');
-   pauseButton.title='جهازك مفعّل عليه تقليل الحركة';
-   renderState();
-   pauseButton.disabled=false;
- }else{
-   renderState();
- }
- pauseButton.addEventListener('click',function(){
-   paused=!paused;
-   renderState();
- });
+  const section = document.getElementById('honor-roll');
+  const viewport = document.getElementById('honorsViewport');
+  const track = document.getElementById('honorsTrack');
+  const group = document.getElementById('honorsGroup');
+  const button = document.getElementById('honorsPause');
+  if (!section || !viewport || !track || !group || !button) return;
+  let paused = false, frameId = 0, previousTime = 0, offset = 0, groupWidth = 0;
+  const speed = 38;
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  track.style.setProperty('animation', 'none', 'important');
+  track.style.setProperty('will-change', 'transform');
+  function measure(){
+    const width = group.getBoundingClientRect().width;
+    if(width > 0 && Number.isFinite(width)) groupWidth = width;
+    if(groupWidth > 0){
+      offset = offset % groupWidth;
+      track.style.setProperty('transform','translate3d(' + (-offset) + 'px,0,0)','important');
+    }
+  }
+  function updateButton(){
+    button.setAttribute('aria-pressed',String(paused));
+    button.innerHTML = paused
+      ? '<i class="fa-solid fa-play" aria-hidden="true"></i><span>استئناف الحركة</span>'
+      : '<i class="fa-solid fa-pause" aria-hidden="true"></i><span>إيقاف الحركة</span>';
+  }
+  function animate(time){
+    frameId = 0;
+    if(paused) return;
+    if(!previousTime) previousTime = time;
+    const delta = Math.min((time - previousTime) / 1000,0.06);
+    previousTime = time;
+    if(!groupWidth) measure();
+    if(groupWidth > 0){
+      offset = (offset + speed * delta) % groupWidth;
+      track.style.setProperty('transform','translate3d(' + (-offset) + 'px,0,0)','important');
+    }
+    frameId = window.requestAnimationFrame(animate);
+  }
+  function start(){
+    if(paused || frameId) return;
+    previousTime = 0;
+    frameId = window.requestAnimationFrame(animate);
+  }
+  function stop(){
+    if(frameId) window.cancelAnimationFrame(frameId);
+    frameId = 0;
+    previousTime = 0;
+  }
+  button.addEventListener('click',function(){
+    paused = !paused;
+    if(paused) stop(); else start();
+    updateButton();
+  });
+  if('ResizeObserver' in window){
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    observer.observe(group);
+  }else{
+    window.addEventListener('resize',measure,{passive:true});
+  }
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(measure).catch(()=>{});
+  window.addEventListener('load',measure,{once:true});
+  document.addEventListener('visibilitychange',function(){
+    previousTime = 0;
+    if(!document.hidden && !paused && !frameId) start();
+  });
+  measure();
+  if(reduceMotion) paused = true;
+  updateButton();
+  if(!reduceMotion) start();
 })();
 </script>
 
