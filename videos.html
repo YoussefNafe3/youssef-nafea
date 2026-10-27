@@ -2383,6 +2383,19 @@ body.help-modal-open{overflow:hidden}
   touch-action:none!important;
 }
 
+
+/* Fullscreen-only gesture surface sits over the cross-origin YouTube iframe,
+   because touch events inside that iframe do not bubble to the parent page. */
+.fullscreenPinchSurface{display:none;position:absolute;inset:0;z-index:5;background:transparent;touch-action:none}
+.playerCard:fullscreen .fullscreenPinchSurface,
+.playerCard:-webkit-full-screen .fullscreenPinchSurface{display:block}
+.playerCard:fullscreen .ytTitleBlocker,.playerCard:fullscreen .ytBlocker,
+.playerCard:fullscreen .ytBottomBlocker,.playerCard:fullscreen .captureShield,
+.playerCard:-webkit-full-screen .ytTitleBlocker,.playerCard:-webkit-full-screen .ytBlocker,
+.playerCard:-webkit-full-screen .ytBottomBlocker,.playerCard:-webkit-full-screen .captureShield{z-index:6!important}
+.playerCard:fullscreen .fullscreenPinchSurface.hidden,
+.playerCard:-webkit-full-screen .fullscreenPinchSurface.hidden{display:none!important}
+
 </style>
 </head>
 
@@ -2540,6 +2553,8 @@ body.help-modal-open{overflow:hidden}
         id="youtubePlayer"
         class="hidden"
       ></div>
+
+      <div id="fullscreenPinchSurface" class="fullscreenPinchSurface hidden" aria-hidden="true"></div>
 
       <div
         id="ytTitleBlocker"
@@ -5664,17 +5679,80 @@ async function exitFullscreen(){
 
 const zoomBtn = document.getElementById("zoomBtn");
 function updatePlayerZoom(){
-  state.playerZoom = Math.max(1, Math.min(2, Number(state.playerZoom) || 1));
+  state.playerZoom = Math.max(1, Math.min(2.6, Number(state.playerZoom) || 1));
   stage.style.setProperty("--player-zoom", String(state.playerZoom));
-  zoomBtn.textContent = state.playerZoom <= 1 ? "＋ تكبير" : state.playerZoom < 1.16 ? "＋ تكبير" : "↺ الحجم الأصلي";
-  zoomBtn.setAttribute("aria-label", state.playerZoom <= 1 ? "تكبير الفيديو" : "إعادة حجم الفيديو");
-  zoomBtn.title = state.playerZoom <= 1 ? "تكبير الفيديو" : "إعادة حجم الفيديو";
+  const steps = [1,1.12,1.22,1.4,1.7,2,2.3,2.6];
+  const next = steps.find(value => value > state.playerZoom + 0.001);
+  zoomBtn.textContent = state.playerZoom <= 1 ? "＋ تكبير" : "＋ تكبير";
+  zoomBtn.setAttribute("aria-label", next ? "زيادة تكبير الفيديو" : "إعادة الحجم الطبيعي");
+  zoomBtn.title = next ? "زيادة تكبير الفيديو" : "إعادة الحجم الطبيعي";
 }
 zoomBtn.addEventListener("click",()=>{
-  state.playerZoom = state.playerZoom <= 1 ? 1.12 : state.playerZoom < 1.16 ? 1.22 : 1;
+  const steps = [1,1.12,1.22,1.4,1.7,2,2.3,2.6];
+  const next = steps.find(value => value > state.playerZoom + 0.001);
+  state.playerZoom = next || 1;
   updatePlayerZoom();
 });
 updatePlayerZoom();
+
+// In fullscreen, capture gestures directly over the video rectangle (including the
+// cross-origin YouTube iframe). A one-finger tap toggles playback; two fingers zoom.
+(function enableFullscreenVideoPinch(){
+  const surface = document.getElementById("fullscreenPinchSurface");
+  let startDistance = 0;
+  let startZoom = 1;
+  let startCenter = null;
+  let moved = false;
+  let oneFingerTimer = null;
+  const dist = (a,b) => Math.hypot(b.clientX-a.clientX,b.clientY-a.clientY);
+  const isYouTubeVisible = () => {
+    const el = document.getElementById("youtubePlayer");
+    return !!el && !el.classList.contains("hidden") && !!el.querySelector("iframe");
+  };
+  const syncSurface = () => {
+    const fullscreen = document.fullscreenElement === playerCard ||
+      document.webkitFullscreenElement === playerCard ||
+      playerCard.matches(":fullscreen") || playerCard.matches(":-webkit-full-screen");
+    surface.classList.toggle("hidden", !fullscreen || !isYouTubeVisible());
+  };
+  document.addEventListener("fullscreenchange", syncSurface);
+  document.addEventListener("webkitfullscreenchange", syncSurface);
+  const reset = () => { startDistance=0; startCenter=null; moved=false; };
+  surface.addEventListener("touchstart", e => {
+    if(e.touches.length===2){
+      if(oneFingerTimer){clearTimeout(oneFingerTimer);oneFingerTimer=null;}
+      startDistance=dist(e.touches[0],e.touches[1]);
+      startZoom=state.playerZoom;
+      startCenter={x:(e.touches[0].clientX+e.touches[1].clientX)/2,y:(e.touches[0].clientY+e.touches[1].clientY)/2};
+      moved=true;
+      e.preventDefault();
+    }else if(e.touches.length===1){
+      moved=false;
+    }
+  },{passive:false});
+  surface.addEventListener("touchmove",e=>{
+    if(e.touches.length!==2 || !startDistance)return;
+    e.preventDefault();
+    const ratio=dist(e.touches[0],e.touches[1])/startDistance;
+    state.playerZoom=Math.max(1,Math.min(2.6,startZoom*ratio));
+    updatePlayerZoom();
+  },{passive:false});
+  surface.addEventListener("touchend",e=>{
+    if(startDistance){reset();return;}
+    if(e.changedTouches && e.changedTouches.length===1 && !moved){
+      // Preserve basic tap-to-play/pause since the transparent gesture layer sits
+      // over YouTube only while fullscreen is active.
+      if(typeof youtubePlayer!=="undefined" && youtubePlayer){
+        try{
+          const status=typeof youtubePlayer.getPlayerState==="function" ? youtubePlayer.getPlayerState() : -1;
+          if(status===1) youtubePlayer.pauseVideo(); else youtubePlayer.playVideo();
+        }catch(err){console.debug("[Fullscreen tap]",err);}
+      }
+    }
+  },{passive:true});
+  surface.addEventListener("touchcancel",reset,{passive:true});
+  syncSurface();
+})();
 
 // Pinch-to-zoom: scales only the media element, not the player frame.
 // Existing security overlays/blockers keep their original DOM layers.
