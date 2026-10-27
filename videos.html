@@ -129,6 +129,34 @@ button,input,select{
 .video-category-toggle[aria-expanded="true"] .video-category-chevron{transform:rotate(180deg)}
 .video-category-content{padding:0 9px 10px}
 .video-category-content[hidden]{display:none}
+
+/* Independent, touch-friendly scrolling for long lesson/homework lists */
+.video-category-content:not([hidden]){
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-height:min(44vh,420px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(96,165,250,.62) rgba(148,163,184,.08);
+  padding:2px 8px 10px 5px;
+  scrollbar-gutter:stable;
+}
+.video-category-content:not([hidden])::-webkit-scrollbar{width:7px}
+.video-category-content:not([hidden])::-webkit-scrollbar-track{background:rgba(148,163,184,.08);border-radius:999px}
+.video-category-content:not([hidden])::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#60a5fa,#2563eb);border-radius:999px;border:1px solid rgba(255,255,255,.12)}
+.video-category-content:not([hidden])::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#93c5fd,#3b82f6)}
+.video-category-content .videoItem{flex:0 0 auto}
+@media(max-width:900px){
+  .video-category-content:not([hidden]){max-height:min(42vh,360px)}
+}
+@media(max-width:640px){
+  .video-category-content:not([hidden]){max-height:min(48vh,390px);padding-inline:7px 4px}
+}
 .video-category-content .videoItem{padding:11px}
 .video-category-content .videoItemTitle{font-size:13px}
 .video-category-content .emptyItem,.video-category-content .loadingItem{font-size:12px;padding:12px 8px;text-align:center}
