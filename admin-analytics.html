@@ -736,18 +736,28 @@ function getStudentDisplayName(studentId) {
   return student.full_name || student.name || student.phone || `طالب #${studentId}`;
 }
 
-function getAllStudentIds() {
+function getAllStudentIds(classGroup = null) {
   const ids = new Set();
 
   state.students.forEach(s => {
-    if (s?.id !== undefined && s?.id !== null) ids.add(String(s.id));
+    if (s?.id === undefined || s?.id === null) return;
+    // When analyzing a class-specific video, never mix students from another class.
+    if (classGroup && s.class_group !== classGroup) return;
+    ids.add(String(s.id));
   });
 
   state.sessions.forEach(s => {
-    if (s?.student_id !== undefined && s?.student_id !== null) ids.add(String(s.student_id));
+    if (s?.student_id === undefined || s?.student_id === null) return;
+    if (classGroup && s.class_group !== classGroup) return;
+    ids.add(String(s.student_id));
   });
 
   return [...ids];
+}
+
+function getVideoClassGroup(video) {
+  const group = String(video?.class_group || "").trim();
+  return group || null;
 }
 
 function sessionPercent(session) {
@@ -848,7 +858,7 @@ function renderSelectedVideo() {
   document.getElementById("selectedAvgTime").innerText = formatTime(agg.avgTime);
 
   const latestMap = latestSessionByStudentForVideo(state.selectedVideo.id);
-  const allIds = getAllStudentIds();
+  const videoClassGroup = getVideoClassGroup(state.selectedVideo);\n  const allIds = getAllStudentIds(videoClassGroup);
 
   const rows = allIds.map(id => {
     const record = latestMap[String(id)];
@@ -977,8 +987,7 @@ function makeReportTable(rows) {
 window.openReport = function(videoId) {
   const video=state.videos.find(v=>String(v.id)===String(videoId));
   if(!video) { alert("اختَر فيديو أولًا، أو انتظر تحميل قائمة الفيديوهات."); return; }
-  const classGroup=document.getElementById("classFilter")?.value || "all";
-  const students=getReportStudents(classGroup);
+  // The video’s assigned class is authoritative; the sidebar filter must not mix classes in a report.\n  const classGroup=getVideoClassGroup(video) || (document.getElementById("classFilter")?.value || "all");\n  const students=getReportStudents(classGroup);
   const latest=latestSessionByStudentForVideo(video.id);
   const rows=students.map(s=>reportStudentRow(s,latest[String(s.id)],video));
   const never=rows.filter(r=>!r.watched);
