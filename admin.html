@@ -462,9 +462,37 @@ document.getElementById("viewsCount").innerText = avg.toFixed(1) + "%";
 
 }
 
-loadStudents();
-loadVideos();
-loadAnalytics();
+/* Enforce server-verified admin identity; localStorage is not an authorization boundary. */
+(async function bootstrapAdmin(){
+  const cachedUser = (() => { try { return JSON.parse(localStorage.getItem("user") || "null"); } catch (_) { return null; } })();
+  const { data: authData, error: authError } = await client.auth.getSession();
+  if (authError || !authData?.session || !cachedUser) {
+    await client.auth.signOut();
+    localStorage.removeItem("user");
+    localStorage.removeItem("platform_session_id");
+    window.location.replace("admin-login.html");
+    return;
+  }
+  const { data: isAdmin, error: roleError } = await client.rpc("is_admin");
+  if (roleError || isAdmin !== true) {
+    await client.auth.signOut();
+    localStorage.removeItem("user");
+    localStorage.removeItem("platform_session_id");
+    window.location.replace("admin-login.html");
+    return;
+  }
+  const { data: adminData, error: adminError } = await client
+    .from("students").select("full_name,role").eq("phone", cachedUser.phone).maybeSingle();
+  if (adminError || !adminData || String(adminData.role || "").toLowerCase() !== "admin") {
+    await client.auth.signOut();
+    localStorage.removeItem("user");
+    localStorage.removeItem("platform_session_id");
+    window.location.replace("admin-login.html");
+    return;
+  }
+  document.getElementById("adminName").textContent = adminData.full_name || "Admin";
+  await Promise.all([loadStudents(), loadVideos(), loadAnalytics()]);
+})();
 
 </script>
 
