@@ -563,14 +563,14 @@ button:focus-visible,.video-card:focus-visible{outline:3px solid rgba(244,215,12
     <div>
       <h1>📊 التحليلات</h1>
       <div style="margin:10px 0">
-  <select id="classFilter" onchange="loadSessions()" style="padding:10px;width:100%">
+  <select id="classFilter" onchange="handleClassFilterChange()" aria-label="تصفية الفيديوهات حسب الصف" style="padding:12px 14px;width:100%;border-radius:12px;border:1px solid rgba(174,160,255,.28);background:#151a38;color:#f8fafc;font:700 14px Cairo,sans-serif;outline:none;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.12)">
     <option value="all">كل الصفوف</option>
     <option value="first_science">أولى ثانوي (علوم متكاملة)</option>
     <option value="third_biology">تالتة ثانوي (أحياء)</option>
     <option value="third_geology">تالتة ثانوي (جيولوجيا)</option>
   </select>
 </div>
-      <div class="sub">اختار فيديو وشوف كل الطلبة</div>
+      <div class="sub">اختار الصف لعرض فيديوهاته وتحليل مشاهدة طلابه</div>
     </div>
   </div>
 
@@ -811,15 +811,33 @@ function statusBadge(percent, exists) {
   return `<span class="badge bad">ضعيف</span>`;
 }
 
+function getVisibleVideos() {
+  const group = document.getElementById("classFilter")?.value || "all";
+  if (group === "all") return state.videos;
+  return state.videos.filter(v => String(v.class_group || "").trim() === group);
+}
+
+function handleClassFilterChange() {
+  const visible = getVisibleVideos();
+  if (!visible.some(v => String(v.id) === String(state.selectedVideoId))) {
+    state.selectedVideo = visible[0] || null;
+    state.selectedVideoId = visible[0] ? String(visible[0].id) : null;
+  }
+  renderGlobalStats();
+  renderVideoCards();
+  renderSelectedVideo();
+}
+
 function renderVideoCards() {
   const container = document.getElementById("videosList");
+  const visibleVideos = getVisibleVideos();
 
-  if (!state.videos.length) {
+  if (!visibleVideos.length) {
     container.innerHTML = `<div class="empty-state">لا توجد فيديوهات.</div>`;
     return;
   }
 
-  container.innerHTML = state.videos.map(v => {
+  container.innerHTML = visibleVideos.map(v => {
     const agg = videoAggregate(v.id);
     const isActive = String(v.id) === String(state.selectedVideoId);
 
@@ -858,8 +876,8 @@ function renderSelectedVideo() {
   document.getElementById("selectedAvgTime").innerText = formatTime(agg.avgTime);
 
   const latestMap = latestSessionByStudentForVideo(state.selectedVideo.id);
-  const videoClassGroup = getVideoClassGroup(state.selectedVideo);
-  const allIds = getAllStudentIds(videoClassGroup);
+  const videoClassGroup = getVideoClassGroup(state.selectedVideo) || (document.getElementById("classFilter")?.value || "all");
+  const allIds = getAllStudentIds(videoClassGroup === "all" ? null : videoClassGroup);
 
   const rows = allIds.map(id => {
     const record = latestMap[String(id)];
@@ -903,7 +921,7 @@ function renderGlobalStats() {
     : 0;
 
   document.getElementById("totalStudents").innerText = getAllStudentIds().length;
-  document.getElementById("totalVideos").innerText = state.videos.length;
+  document.getElementById("totalVideos").innerText = getVisibleVideos().length;
   document.getElementById("totalSessions").innerText = state.sessions.length;
   document.getElementById("globalAvg").innerText = `${avgGlobal.toFixed(1)}%`;
 }
@@ -932,14 +950,9 @@ async function loadSessions() {
 
     if (error) throw error;
 
-    const all = data || [];
-
-    const classGroup = document.getElementById("classFilter")?.value || "all";
-
-    state.sessions =
-      classGroup !== "all"
-        ? all.filter(s => s?.class_group === classGroup)
-        : all;
+    // Keep all sessions loaded. The selector filters video cards; globally filtering
+    // sessions can incorrectly zero video stats when a session's class_group is missing.
+    state.sessions = data || [];
 
   } catch (err) {
     console.error("[Analytics] Failed to load video sessions:", err);
@@ -1036,9 +1049,7 @@ async function init() {
     state.selectedVideo = state.videos[0];
   }
 
-  renderGlobalStats();
-  renderVideoCards();
-  renderSelectedVideo();
+  handleClassFilterChange();
 }
 
 init();
