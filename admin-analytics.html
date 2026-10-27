@@ -544,6 +544,15 @@ button:focus-visible,.video-card:focus-visible{outline:3px solid rgba(244,215,12
  th,td{padding:10px;font-size:12px}
 }
 @media(max-width:360px){.hero-grid{grid-template-columns:1fr}.summary-card .value{font-size:18px}}
+
+/* Editable Word report modal */
+.report-modal{position:fixed;inset:0;z-index:9999;background:rgba(3,7,18,.82);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:18px}
+.report-modal.open{display:flex}.report-dialog{width:min(1120px,100%);height:min(92vh,900px);display:flex;flex-direction:column;background:#f8fafc;color:#172033;border-radius:20px;overflow:hidden;box-shadow:0 30px 100px #0008}
+.report-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px 18px;background:#11152f;color:white;border-bottom:1px solid #dbe2ef}
+.report-toolbar h3{font-size:16px;margin:0;color:#f4d77e}.report-toolbar .tools{display:flex;gap:8px;flex-wrap:wrap}.report-toolbar button{border:0;border-radius:9px;padding:9px 13px;font-weight:800;cursor:pointer;background:#8270ed;color:#fff}.report-toolbar button.light{background:#fff;color:#172033}.report-note{padding:9px 18px;background:#eef2ff;color:#414b67;font-size:12px}
+.report-editor{margin:0 auto;width:100%;max-width:900px;overflow:auto;padding:28px;background:white;color:#182235;line-height:1.8;flex:1;outline:none;direction:rtl}.report-editor:focus{box-shadow:inset 0 0 0 2px #c7d2fe}.report-editor h1{font-size:25px;color:#172554;text-align:center;margin:0 0 5px}.report-editor h2{font-size:18px;color:#312e81;margin:24px 0 8px;border-bottom:2px solid #ddd6fe;padding-bottom:5px}.report-editor .report-subtitle{text-align:center;color:#64748b;margin-bottom:22px}.report-editor .report-metrics{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.report-editor .metric{border:1px solid #dbe2ef;border-radius:9px;padding:9px 13px;min-width:120px;background:#f8fafc}.report-editor table{width:100%;min-width:0;border-collapse:collapse;margin:10px 0 18px;background:white;color:#172033;font-size:12px}.report-editor th,.report-editor td{border:1px solid #cbd5e1;padding:7px 8px;text-align:right;vertical-align:top}.report-editor th{background:#eef2ff;color:#1e1b4b;position:static}.report-editor .report-empty{padding:12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:8px;color:#64748b}.report-editor .report-footer{border-top:1px solid #dbe2ef;padding-top:10px;margin-top:25px;color:#64748b;font-size:11px}
+.video-card .report-card-btn{margin-top:10px;width:100%;border:1px solid rgba(244,215,126,.38);background:rgba(244,215,126,.09);color:#f4d77e;border-radius:9px;padding:8px;font:700 12px Cairo,sans-serif;cursor:pointer}.video-card .report-card-btn:hover{background:rgba(244,215,126,.18)}
+@media print{body>*{display:none!important}#reportModal{display:block!important;position:static;padding:0;background:white}.report-dialog{width:100%;height:auto;display:block;overflow:visible;box-shadow:none;border-radius:0}.report-toolbar,.report-note{display:none!important}.report-editor{max-width:none;overflow:visible;padding:0 8mm}.report-editor table{page-break-inside:auto}.report-editor tr{page-break-inside:avoid;page-break-after:auto}.report-editor h2{page-break-after:avoid}}
 </style>
 </head>
 
@@ -600,6 +609,7 @@ button:focus-visible,.video-card:focus-visible{outline:3px solid rgba(244,215,12
     </div>
 
     <div class="actions">
+      <button class="btn secondary" onclick="openReport(state.selectedVideoId)" id="selectedReportBtn">تقرير Word للفيديو الحالي</button>
       <button class="btn secondary" onclick="window.location.reload()">تحديث</button>
       <button class="btn" onclick="window.location.href='admin.html'">الرجوع للوحة الأدمن</button>
     </div>
@@ -668,6 +678,14 @@ button:focus-visible,.video-card:focus-visible{outline:3px solid rgba(244,215,12
     </div>
 
   </div>
+</div>
+
+<div class="report-modal" id="reportModal" role="dialog" aria-modal="true" aria-label="تقرير تحليلات الفيديو">
+ <section class="report-dialog">
+  <header class="report-toolbar"><h3>تقرير تحليلات الفيديو</h3><div class="tools"><button class="light" type="button" onclick="closeReport()">إغلاق</button><button type="button" onclick="printCurrentReport()">طباعة</button><button type="button" onclick="downloadCurrentReport()">تنزيل Word</button></div></header>
+  <div class="report-note">يمكنك تعديل النص والجداول مباشرة قبل الطباعة أو تنزيل ملف Word. التعديلات هنا لا تغيّر بيانات المنصة.</div>
+  <div id="reportEditor" class="report-editor" contenteditable="true" spellcheck="false"></div>
+ </section>
 </div>
 
 <script>
@@ -806,6 +824,7 @@ function renderVideoCards() {
           <span class="pill">✅ ${agg.completedStudents} مكتمل</span>
           <span class="pill">⏱ ${formatTime(agg.avgTime)}</span>
         </div>
+        <button class="report-card-btn" type="button" onclick="event.stopPropagation(); openReport('${String(v.id)}')">▤ إنشاء تقرير Word لهذا الفيديو</button>
       </div>
     `;
   }).join("");
@@ -921,6 +940,81 @@ async function loadStudents() {
   const { data } = await client.from("students").select("*");
   state.students = data || [];
 }
+
+
+function escapeReportHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+}
+function getClassLabel(group) {
+  return ({first_science:"أولى ثانوي — علوم متكاملة",third_biology:"تالتة ثانوي — أحياء",third_geology:"تالتة ثانوي — جيولوجيا",all:"كل الصفوف"})[group] || group || "غير محدد";
+}
+function formatReportDate(value) {
+  if (!value) return "—";
+  const d=new Date(value);
+  return Number.isNaN(d.getTime()) ? "—" : d.toLocaleString("ar-EG",{hour12:true});
+}
+function getReportStudents(classGroup) {
+  return state.students.filter(s => {
+    if (classGroup === "all") return true;
+    if (classGroup === "third_biology") return s.class_group === "third_biology";
+    if (classGroup === "third_geology") return s.class_group === "third_geology";
+    return s.class_group === classGroup;
+  }).sort((a,b)=>String(a.full_name||a.name||a.phone||"").localeCompare(String(b.full_name||b.name||b.phone||""),"ar"));
+}
+function reportStudentRow(student, record, video) {
+  const name=student.full_name||student.name||student.phone||("طالب #"+student.id);
+  const percent=record ? sessionPercent(record) : 0;
+  const watched=record ? safeNumber(record.watched_seconds) : 0;
+  const duration=record ? safeNumber(record.duration) : safeNumber(video.duration);
+  const complete=!!record && (record.completed===true || percent>=90);
+  return {name, watched, duration, percent, complete, first:record?.first_opened_at, last:record?.last_opened_at,
+    html:"<tr><td>"+escapeReportHtml(name)+"</td><td>"+escapeReportHtml(formatTime(watched))+"</td><td>"+(duration>0?escapeReportHtml(formatTime(duration)):"—")+"</td><td>"+percent.toFixed(1)+"%</td><td>"+(complete?"مكتمل":(record?"غير مكتمل":"لم يشاهد"))+"</td><td>"+escapeReportHtml(formatReportDate(record?.first_opened_at))+"</td><td>"+escapeReportHtml(formatReportDate(record?.last_opened_at))+"</td></tr>"};
+}
+function makeReportTable(rows) {
+  if (!rows.length) return '<div class="report-empty">لا يوجد طلاب ضمن هذا القسم.</div>';
+  return '<table><thead><tr><th style="width:25%">اسم الطالب</th><th>وقت المشاهدة</th><th>مدة الفيديو</th><th>نسبة المشاهدة</th><th>الحالة</th><th>أول فتح</th><th>آخر فتح</th></tr></thead><tbody>'+rows.map(r=>r.html).join("")+'</tbody></table>';
+}
+window.openReport = function(videoId) {
+  const video=state.videos.find(v=>String(v.id)===String(videoId));
+  if(!video) { alert("اختَر فيديو أولًا، أو انتظر تحميل قائمة الفيديوهات."); return; }
+  const classGroup=document.getElementById("classFilter")?.value || "all";
+  const students=getReportStudents(classGroup);
+  const latest=latestSessionByStudentForVideo(video.id);
+  const rows=students.map(s=>reportStudentRow(s,latest[String(s.id)],video));
+  const never=rows.filter(r=>!r.watched);
+  const underHalf=rows.filter(r=>r.watched>0 && r.percent<50);
+  const regular=rows.filter(r=>r.watched>0 && r.percent>=50);
+  const completed=rows.filter(r=>r.complete);
+  const avg=rows.length?rows.reduce((n,r)=>n+r.percent,0)/rows.length:0;
+  const generated=new Date().toLocaleString("ar-EG",{hour12:true});
+  const editor=document.getElementById("reportEditor");
+  editor.innerHTML=
+   '<div style="border-bottom:4px solid #312e81;padding-bottom:16px;margin-bottom:18px"><div style="text-align:center;font-size:11px;letter-spacing:1px;color:#64748b;font-weight:bold">DR YOUSSEF NAFEA · ACADEMIC ANALYTICS</div><h1>تقرير متابعة مشاهدة الفيديو</h1><div class="report-subtitle">تقرير تحليلي للطلاب ومعدلات إكمال المحتوى التعليمي</div></div>'+
+   '<div><strong>عنوان الفيديو:</strong> '+escapeReportHtml(video.title||"بدون عنوان")+'</div>'+
+   '<div><strong>الصف / الفئة:</strong> '+escapeReportHtml(getClassLabel(classGroup))+'</div>'+
+   '<div><strong>تاريخ إعداد التقرير:</strong> '+escapeReportHtml(generated)+'</div>'+
+   '<div class="report-metrics"><div class="metric"><strong>إجمالي الطلاب</strong><br>'+students.length+'</div><div class="metric"><strong>شاهدوا 50% فأكثر</strong><br>'+regular.length+'</div><div class="metric"><strong>لم يشاهدوا</strong><br>'+never.length+'</div><div class="metric"><strong>أقل من 50%</strong><br>'+underHalf.length+'</div><div class="metric"><strong>مكتملون</strong><br>'+completed.length+'</div><div class="metric"><strong>متوسط المشاهدة</strong><br>'+avg.toFixed(1)+'%</div></div>'+
+   '<h2>1. ملخص التقرير</h2><p>يعرض هذا التقرير آخر سجل مشاهدة لكل طالب لهذا الفيديو. يُعد الفيديو مكتملًا عند تسجيل حالة الاكتمال أو بلوغ نسبة مشاهدة 90% فأكثر. ويُصنَّف الطالب ضمن قائمة «أقل من 50%» إذا كانت لديه مشاهدة مسجلة ونسبتها أقل من 50%.</p>'+
+   '<h2>2. تفاصيل الطلاب الذين شاهدوا 50% فأكثر</h2>'+makeReportTable(regular)+
+   '<h2>3. الطلاب الذين شاهدوا أقل من نصف الفيديو</h2>'+makeReportTable(underHalf)+
+   '<h2>4. الطلاب الذين لم يشاهدوا الفيديو إطلاقًا</h2>'+makeReportTable(never)+
+   '<h2>5. ملاحظات منهجية</h2><p>تعتمد الأوقات والنسب على أحدث سجل متاح لكل طالب لهذا الفيديو وقت إعداد التقرير. قد تختلف النتيجة إذا كانت مدة الفيديو غير مسجلة في بيانات المشاهدة. راجع البيانات قبل اعتماد التقرير النهائي.</p>'+
+   '<div class="report-footer">منصة د. يوسف نافع · تقرير داخلي لمتابعة التقدم التعليمي · تم إنشاء التقرير '+escapeReportHtml(generated)+'</div>';
+  document.getElementById("reportModal").classList.add("open");
+};
+window.closeReport=function(){document.getElementById("reportModal").classList.remove("open");};
+window.printCurrentReport=function(){window.print();};
+window.downloadCurrentReport=function(){
+  const editor=document.getElementById("reportEditor");
+  if(!editor.innerHTML.trim()){alert("افتح تقريرًا أولًا.");return;}
+  const doc='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>تقرير تحليلات الفيديو</title><style>body{font-family:Arial,Tahoma,sans-serif;direction:rtl;color:#182235;line-height:1.8;margin:22px}h1{text-align:center;color:#172554;font-size:25px}h2{color:#312e81;border-bottom:2px solid #ddd6fe;padding-bottom:5px;margin-top:24px}table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:12px}th,td{border:1px solid #cbd5e1;padding:7px 8px;text-align:right;vertical-align:top}th{background:#eef2ff;color:#1e1b4b}.report-metrics{display:block;margin:16px 0}.metric{display:inline-block;border:1px solid #dbe2ef;padding:8px 12px;margin:3px;background:#f8fafc}.report-subtitle{text-align:center;color:#64748b}.report-footer{border-top:1px solid #dbe2ef;padding-top:10px;margin-top:25px;color:#64748b;font-size:11px}.report-empty{padding:12px;background:#f8fafc;border:1px dashed #cbd5e1}</style></head><body>'+editor.innerHTML+'</body></html>';
+  const blob=new Blob(['\ufeff',doc],{type:"application/msword;charset=utf-8"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");
+  const title=(document.querySelector("#reportEditor h1")?.textContent||"تقرير_تحليلات").replace(/[\\/:*?"<>|]/g,"-").slice(0,80);
+  a.href=url;a.download=title+".doc";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+};
+document.getElementById("reportModal")?.addEventListener("click",e=>{if(e.target.id==="reportModal")closeReport();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeReport();});
 
 async function init() {
   await Promise.all([loadVideos(), loadSessions(), loadStudents()]);
