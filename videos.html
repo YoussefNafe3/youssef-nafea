@@ -6170,9 +6170,10 @@ window.addEventListener(
         item.classList.toggle('is-selected',active);
         item.setAttribute('aria-pressed',String(active));
       });
-      const current=messageField.value.trim();
-      const defaultValues=Object.values(defaultMessages);
-      if(!current||defaultValues.includes(current))messageField.value=defaultMessages[selectedTopic]||defaultMessages['شرح نقطة في الدرس'];
+      // Always replace the previous preset message when the topic changes.
+      // This prevents content from an earlier topic being carried into the next one.
+      messageField.value=defaultMessages[selectedTopic]||defaultMessages['شرح نقطة في الدرس'];
+      messageField.setCustomValidity('');
       messageField.focus();
     });
   });
@@ -6186,9 +6187,9 @@ window.addEventListener(
       messageField.addEventListener('input',()=>messageField.setCustomValidity(''),{once:true});
       return;
     }
-    const fullMessage='السلام عليكم يا دكتور يوسف،\n'+
-      'أنا طالب على منصة د. يوسف نافع.\n'+
-      'نوع المساعدة: '+selectedTopic+'\n\n'+custom;
+    // The selected preset already contains the greeting and topic-specific message.
+    // Send exactly the current textarea content to avoid duplicated greetings or old preset text.
+    const fullMessage=custom;
     const url='https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent(fullMessage);
     window.open(url,'_blank','noopener,noreferrer');
     closeModal();
