@@ -2175,6 +2175,16 @@ body.help-modal-open{overflow:hidden}
 }
 @media(prefers-reduced-motion:reduce){.learning-help-modal,.learning-help-dialog,.learning-help-link,.help-preset,.help-send{transition:none}}
 
+
+/* Keep the WhatsApp action as a separate, centered row below the encouragement card */
+.learning-help-actions-standalone{display:flex;width:fit-content;max-width:100%;margin:10px auto 18px;justify-content:center;padding-top:0}
+.learning-help-actions-standalone .learning-help-link{min-height:44px;padding:10px 20px;border-radius:14px;gap:10px;font-size:13px;box-shadow:0 8px 22px rgba(22,163,74,.22)}
+.learning-help-actions-standalone .learning-help-link svg{width:21px;height:21px}
+@media(max-width:640px){
+ .learning-help-actions-standalone{width:100%;margin:9px auto 15px;padding:0}
+ .learning-help-actions-standalone .learning-help-link{width:min(100%,360px);min-height:44px;justify-content:center}
+}
+
 </style>
 </head>
 
@@ -2463,14 +2473,15 @@ body.help-modal-open{overflow:hidden}
     <span class="encouragement-emoji" aria-hidden="true">😄</span>
     <p>أي حاجة مش فاهمها، ابعت لدكتور يوسف وهو يفهمهالك</p>
     <span class="encouragement-check" aria-label="تمام">✓</span>
-    <div class="learning-help-actions">
+  </aside>
+
+  <div class="learning-help-actions learning-help-actions-standalone">
       <button class="learning-help-link" id="openLearningHelp" type="button" aria-haspopup="dialog" aria-controls="learningHelpModal">
         <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 .8A15 15 0 0 0 3.1 23.5L1 31l7.7-2A15.1 15.1 0 1 0 16 .8Zm0 27.5a12.4 12.4 0 0 1-6.3-1.7l-.5-.3-4.6 1.2 1.2-4.5-.3-.5A12.5 12.5 0 1 1 16 28.3Zm6.9-9.3c-.4-.2-2.2-1.1-2.5-1.2-.3-.1-.6-.2-.8.2-.2.4-1 1.2-1.2 1.5-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3-1.9-1.1-1-1.9-2.2-2.1-2.6-.2-.4 0-.6.2-.8l.6-.7c.2-.2.3-.4.4-.7.1-.2 0-.5 0-.7-.1-.2-.8-2-1.1-2.7-.3-.7-.6-.6-.8-.6h-.7c-.2 0-.7.1-1 .5-.4.4-1.3 1.3-1.3 3.1s1.3 3.6 1.5 3.9c.2.2 2.6 4 6.4 5.6.9.4 1.6.6 2.1.7.9.3 1.7.2 2.3.1.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.1-.3-.2-.7-.4Z"/></svg>
         <span>ابعت من هنا</span>
         <span class="help-link-caption">WhatsApp</span>
       </button>
-    </div>
-  </aside>
+  </div>
 
   <div class="learning-help-modal" id="learningHelpModal" aria-hidden="true">
     <section class="learning-help-dialog" role="dialog" aria-modal="true" aria-labelledby="learningHelpTitle" aria-describedby="learningHelpDescription" tabindex="-1">
@@ -2489,7 +2500,7 @@ body.help-modal-open{overflow:hidden}
         <span class="help-field-label">اختار نوع المساعدة</span>
         <div class="help-presets" role="group" aria-label="نوع السؤال">
           <button type="button" class="help-preset is-selected" data-help-preset="شرح نقطة في الدرس"><span class="help-preset-icon">📚</span>شرح نقطة في الدرس</button>
-          <button type="button" class="help-preset" data-help-preset="سؤال في الأحياء"><span class="help-preset-icon">🧬</span>سؤال في الأحياء</button>
+          <button type="button" class="help-preset" data-help-preset="سؤال في الواجب"><span class="help-preset-icon">📝</span>سؤال في الواجب</button>
           <button type="button" class="help-preset" data-help-preset="مشكلة في تشغيل الفيديو"><span class="help-preset-icon">🎬</span>مشكلة في الفيديو</button>
           <button type="button" class="help-preset" data-help-preset="استفسار عن المنصة"><span class="help-preset-icon">💡</span>استفسار عن المنصة</button>
         </div>
@@ -6120,7 +6131,7 @@ window.addEventListener(
   let selectedTopic='شرح نقطة في الدرس';
   const defaultMessages={
     'شرح نقطة في الدرس':'السلام عليكم يا دكتور يوسف، عندي سؤال في نقطة من الدرس ومحتاج حضرتك توضحها لي.',
-    'سؤال في الأحياء':'السلام عليكم يا دكتور يوسف، عندي سؤال في الأحياء ومحتاج مساعدة في فهمه.',
+    'سؤال في الواجب':'السلام عليكم يا دكتور يوسف، عندي سؤال في الواجب ومحتاج حضرتك توضح لي طريقة الحل.',
     'مشكلة في تشغيل الفيديو':'السلام عليكم يا دكتور يوسف، عندي مشكلة في تشغيل أحد الفيديوهات على المنصة.',
     'استفسار عن المنصة':'السلام عليكم يا دكتور يوسف، عندي استفسار بخصوص المنصة.'
   };
