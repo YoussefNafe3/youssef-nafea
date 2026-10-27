@@ -935,8 +935,39 @@ function dashboardNotificationTarget(n){
   return "results.html" + (params.size ? "?" + params.toString() : "");
 }
 
+const dashboardDismissedStorageKey = "dashboard_dismissed_notifications_v1_" + String(user.id);
+function readDismissedNotificationIds(){
+  try{
+    const parsed = JSON.parse(localStorage.getItem(dashboardDismissedStorageKey) || "[]");
+    return new Set(Array.isArray(parsed) ? parsed.map(String) : []);
+  }catch(error){
+    console.warn("Could not read dismissed notification IDs:",error);
+    return new Set();
+  }
+}
+let dismissedDashboardNotificationIds = readDismissedNotificationIds();
+function persistDismissedNotificationIds(){
+  try{
+    const ids = Array.from(dismissedDashboardNotificationIds).slice(-500);
+    dismissedDashboardNotificationIds = new Set(ids);
+    localStorage.setItem(dashboardDismissedStorageKey,JSON.stringify(ids));
+  }catch(error){
+    console.warn("Could not persist dismissed notification IDs:",error);
+  }
+}
+function dismissCurrentDashboardNotifications(){
+  dashboardNotifications.forEach(n=>{
+    if(n && n.id != null) dismissedDashboardNotificationIds.add(String(n.id));
+  });
+  persistDismissedNotificationIds();
+  studentNotificationsBox.classList.remove("show");
+  studentNotificationList.replaceChildren();
+}
+
 function renderDashboardNotifications(){
-  const unread = dashboardNotifications.filter(n => !n.is_read).slice(0,4);
+  const unread = dashboardNotifications
+    .filter(n => !n.is_read && !dismissedDashboardNotificationIds.has(String(n.id)))
+    .slice(0,4);
   if(!unread.length){
     studentNotificationsBox.classList.remove("show");
     studentNotificationList.replaceChildren();
@@ -1113,9 +1144,7 @@ updateDeviceNotificationButton();
 registerPlatformServiceWorker().catch(error=>console.warn("Service worker registration unavailable:",error));
 enableDeviceNotificationsButton.addEventListener("click",activateDevicePush);
 
-document.getElementById("dismissStudentNotifications").addEventListener("click",()=>{
-  studentNotificationsBox.classList.remove("show");
-});
+document.getElementById("dismissStudentNotifications").addEventListener("click",dismissCurrentDashboardNotifications);
 
 loadDashboardNotifications();
 
