@@ -3952,7 +3952,14 @@ const savedProgress =
         Number(data.progress) >= 100;
       // Resume at the latest persisted position, including after refresh/logout
       // and on another device. Do not use this device's stale localStorage value.
-      state.lastTime = Math.max(0, Number(data.last_time) || 0);
+      const savedLastTime = Math.max(0, Number(data.last_time) || 0);
+      // If the previous listen ended at the end, start a new replay from zero
+      // while retaining the historical 100% completion. Once the replay has
+      // progressed, resume its latest saved position even though "completed"
+      // remains true as a lifetime achievement.
+      state.lastTime = data.completed === true && duration > 0 && savedLastTime >= duration - 2
+        ? 0
+        : savedLastTime;
       state.completedByEnd = false;
       state.completionEventId = null;
       state.skips = Number(data.skips) || 0;
