@@ -1,45 +1,71 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>Admin Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#11152f">
+<title>دخول الإدارة | د. يوسف نافع</title>
+<style>
+*{box-sizing:border-box;font-family:Tahoma,Arial,sans-serif}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;color:#f8fafc;background:radial-gradient(ellipse at 15% 10%,rgba(118,100,223,.22),transparent 38%),linear-gradient(135deg,#080b1b,#11152f 52%,#090d20)}.card{width:min(100%,430px);padding:30px;border:1px solid rgba(174,160,255,.24);border-radius:24px;background:linear-gradient(145deg,rgba(27,32,67,.97),rgba(14,18,42,.97));box-shadow:0 28px 90px #0006}h1{text-align:center;font-size:25px;margin:0 0 8px}.hint{text-align:center;color:#cbd5e1;font-size:14px;line-height:1.8;margin:0 0 24px}label{display:block;margin:14px 0 7px;font-size:14px}input{width:100%;padding:13px;border:1px solid #ffffff24;border-radius:12px;background:#070a1d;color:white;font-size:16px}button{width:100%;margin-top:20px;padding:14px;border:0;border-radius:12px;background:linear-gradient(120deg,#8270ed,#5140aa);color:white;font-size:16px;font-weight:700;cursor:pointer}button:disabled{opacity:.6;cursor:wait}#msg{min-height:24px;line-height:1.7;text-align:center;margin-top:14px;color:#fecaca;font-size:14px}.home{display:block;text-align:center;margin-top:16px;color:#d3caff;text-decoration:none}
+</style>
 </head>
 <body>
-
-<h2>Admin Login 🔐</h2>
-
-<input id="pass" type="password" placeholder="Password">
-<button onclick="login()">Enter</button>
-
+<main class="card">
+<h1>دخول الإدارة 🔐</h1>
+<p class="hint">سجّل الدخول بحساب الإدارة المعتمد على المنصة. لا تستخدم كلمة مرور منفصلة محفوظة داخل كود الصفحة.</p>
+<form id="adminLoginForm" autocomplete="on">
+<label for="phone">رقم الهاتف المسجل</label>
+<input id="phone" name="username" inputmode="numeric" autocomplete="username" maxlength="11" required>
+<label for="password">كلمة المرور</label>
+<input id="password" name="password" type="password" autocomplete="current-password" required>
+<button id="submitBtn" type="submit">تسجيل الدخول</button>
+<div id="msg" role="status" aria-live="polite"></div>
+</form>
+<a class="home" href="index.html">العودة للصفحة الرئيسية</a>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-async function login(){
-
-  const pass = document.getElementById("pass").value;
-  const adminPassword = "youssef2003";
-
-  if(pass === adminPassword){
-
-    const ip = await fetch("https://api.ipify.org?format=json")
-      .then(r => r.json())
-      .then(d => d.ip);
-
-    const adminUser = {
-      id: "admin",
-      name: "Admin",
-      role: "admin",
-      loginTime: Date.now(),
-      ip: ip
-    };
-
-    localStorage.setItem("user", JSON.stringify(adminUser));
-
-    window.location.href = "admin.html";
-
-  } else {
-    alert("Wrong Password");
+(function(){
+'use strict';
+const SUPABASE_URL='https://nhdowqzecpwmkunczodl.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhbGciOiJIUzI1NiIsInR5cCI6MTc4MDYwMDI1NSwiZXhwIjoyMDk2MTc2MjU1fQ.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo';
+const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const form=document.getElementById('adminLoginForm');
+const msg=document.getElementById('msg');
+const btn=document.getElementById('submitBtn');
+form.addEventListener('submit',async function(event){
+ event.preventDefault();
+ const phone=document.getElementById('phone').value.trim();
+ const password=document.getElementById('password').value;
+ if(!/^\d{11}$/.test(phone)){msg.textContent='أدخل رقم هاتف صحيحًا مكوّنًا من 11 رقمًا.';return;}
+ btn.disabled=true;msg.textContent='جارٍ التحقق من بيانات الدخول...';
+ try{
+  const {data:authData,error:authError}=await client.auth.signInWithPassword({email:phone+'@phone.com',password});
+  if(authError||!authData.user){msg.textContent='بيانات الدخول غير صحيحة أو الحساب غير متاح.';return;}
+  const sessionId=crypto.randomUUID();
+  const deviceId=localStorage.getItem('platform_device_id')||('device_'+crypto.randomUUID());
+  localStorage.setItem('platform_device_id',deviceId);
+  const {data:sessionResult,error:sessionError}=await client.rpc('acquire_student_session',{p_session_id:sessionId,p_device_id:deviceId});
+  if(sessionError||!sessionResult||!sessionResult.success){
+   await client.auth.signOut();
+   msg.textContent=sessionResult?.reason==='already_active'?'الحساب مستخدم حاليًا على جهاز آخر. أنهِ الجلسة السابقة أولًا.':'تعذر إنشاء جلسة آمنة. حاول مرة أخرى.';
+   return;
   }
-}
+  if(String(sessionResult.role||'').toLowerCase()!=='admin'){
+   await client.rpc('release_student_session',{p_session_id:sessionId});
+   await client.auth.signOut();
+   msg.textContent='هذا الحساب لا يملك صلاحية الإدارة.';
+   return;
+  }
+  localStorage.setItem('platform_session_id',sessionId);
+  localStorage.setItem('user',JSON.stringify({id:sessionResult.student_id,name:sessionResult.name,full_name:sessionResult.name,phone:sessionResult.phone,email:phone+'@phone.com',role:'admin',class_group:sessionResult.class_group}));
+  window.location.replace('admin.html');
+ }catch(error){
+  console.error('Admin sign-in failed:',error);
+  msg.textContent='حدث خطأ أثناء تسجيل الدخول. حاول مرة أخرى.';
+ }finally{btn.disabled=false;}
+});
+})();
 </script>
-
 </body>
 </html>
