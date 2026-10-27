@@ -2369,6 +2369,20 @@ body.help-modal-open{overflow:hidden}
  .playerCard:fullscreen .zoomBtn,.playerCard:-webkit-full-screen .zoomBtn{padding:2px 4px!important;font-size:9px!important}
 }
 
+
+/* Keep two-finger zoom gestures available on the fullscreen lesson surface. */
+.playerCard:fullscreen .stage,
+.playerCard:-webkit-full-screen .stage{
+  touch-action:none!important;
+  overscroll-behavior:contain!important;
+}
+.playerCard:fullscreen .stage iframe,
+.playerCard:-webkit-full-screen .stage iframe,
+.playerCard:fullscreen .stage video,
+.playerCard:-webkit-full-screen .stage video{
+  touch-action:none!important;
+}
+
 </style>
 </head>
 
@@ -5668,22 +5682,30 @@ updatePlayerZoom();
   let pinchStartDistance = 0;
   let pinchStartZoom = 1;
   const distance = (a,b) => Math.hypot(b.clientX-a.clientX,b.clientY-a.clientY);
-  stage.addEventListener("touchstart", event => {
-    if(event.touches.length === 2){
+  const startPinch = event => {
+    if(event.touches && event.touches.length === 2){
       pinchStartDistance = distance(event.touches[0],event.touches[1]);
       pinchStartZoom = state.playerZoom;
     }
-  }, {passive:true});
-  stage.addEventListener("touchmove", event => {
-    if(event.touches.length !== 2 || !pinchStartDistance) return;
-    event.preventDefault();
+  };
+  const movePinch = event => {
+    if(!event.touches || event.touches.length !== 2 || !pinchStartDistance) return;
+    // Prevent browser/page zoom only while the user is performing a two-finger
+    // gesture on the lesson surface. One-finger taps and player controls remain usable.
+    if(event.cancelable) event.preventDefault();
     const ratio = distance(event.touches[0],event.touches[1]) / pinchStartDistance;
     state.playerZoom = Math.max(1, Math.min(2, pinchStartZoom * ratio));
     updatePlayerZoom();
-  }, {passive:false});
+  };
   const resetPinch = () => { pinchStartDistance = 0; };
-  stage.addEventListener("touchend", resetPinch, {passive:true});
-  stage.addEventListener("touchcancel", resetPinch, {passive:true});
+  // Listen on the stage and its fullscreen container. Capture phase helps when
+  // browser fullscreen changes the event path; the stage remains the zoom target.
+  [stage, playerCard].forEach(target => {
+    target.addEventListener("touchstart", startPinch, {passive:true, capture:true});
+    target.addEventListener("touchmove", movePinch, {passive:false, capture:true});
+    target.addEventListener("touchend", resetPinch, {passive:true, capture:true});
+    target.addEventListener("touchcancel", resetPinch, {passive:true, capture:true});
+  });
 })();
 
 fullscreenBtn.addEventListener(
