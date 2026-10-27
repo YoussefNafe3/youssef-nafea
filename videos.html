@@ -3939,27 +3939,29 @@ const savedProgress =
         ) || 0;
 
 
-      // Replace stale device-local tracking with the shared server progress.
-      // The database stores the cumulative watched seconds, so reconstruct a
-      // conservative range for the progress bar and never downgrade on device switch.
+      // The server is shared across devices and is the source of truth.
+      // Keep the saved aggregate progress rather than resetting the bar on refresh.
       state.watchedRanges = watched > 0 && duration > 0
         ? [[0, Math.min(watched, duration)]]
         : [];
-
-      // Always resume from the last server-saved playback position, not stale
-      // localStorage from this particular phone/laptop.
       state.fullCompletionCount = Math.max(0, Number(data.full_completion_count) || 0);
       state.currentAttemptNumber = state.fullCompletionCount + 1;
-
-      // Preserve the previously earned 100% while a new full-listen attempt is tracked separately.
-      state.preservedCompletedProgress = data.completed === true || Number(data.percent) >= 100 || Number(data.progress) >= 100;
-      state.lastTime = data.completed === true
+      state.preservedCompletedProgress =
+        data.completed === true ||
+        Number(data.percent) >= 100 ||
+        Number(data.progress) >= 100;
+      // Resume at the latest persisted position, including after refresh/logout
+      // and on another device. Do not use this device's stale localStorage value.
+      const savedLastTime = Math.max(0, Number(data.last_time) || 0);
+      // If the previous listen ended at the end, start a new replay from zero
+      // while retaining the historical 100% completion. Once the replay has
+      // progressed, resume its latest saved position even though "completed"
+      // remains true as a lifetime achievement.
+      state.lastTime = data.completed === true && duration > 0 && savedLastTime >= duration - 2
         ? 0
-        : Math.max(0, Number(data.last_time) || 0);
-      state.watchedRanges = [];
+        : savedLastTime;
       state.completedByEnd = false;
       state.completionEventId = null;
-
       state.skips = Number(data.skips) || 0;
 
     }
@@ -4028,7 +4030,8 @@ async function saveSession(){
       p_completed: fullyWatched,
       p_skips: Math.max(0, Math.floor(Number(state.skips) || 0)),
       p_completion_event: fullyWatched && !!state.completionEventId,
-      p_completion_event_id: fullyWatched ? state.completionEventId : null
+      p_completion_event_id: fullyWatched ? state.completionEventId : null,
+      p_position_updated_at: new Date().toISOString()
     });
 
     if (error) throw error;
@@ -4036,6 +4039,9 @@ async function saveSession(){
       throw new Error(data?.reason || "VIDEO_SESSION_SAVE_REJECTED");
     }
     state.sessionSaved = true;
+    if(Number.isFinite(Number(data.last_time)) && Number(data.last_time) >= 0){
+      state.lastTime = Number(data.last_time);
+    }
     if(Number.isFinite(Number(data.full_completion_count))){
       state.fullCompletionCount = Math.max(state.fullCompletionCount, Number(data.full_completion_count));
       updateProgressUI(current, duration);
@@ -5401,6 +5407,14 @@ if (logoutButton) logoutButton.addEventListener(
     "click",
     async function(){
 
+      // Persist the current playback position before the authenticated session is released.
+      try{
+        persistLocalProgress();
+        await saveSession();
+      }catch(e){
+        console.warn("[Logout progress save]", e);
+      }
+
       try{
 
         await client.rpc(
@@ -5636,6 +5650,7 @@ async function exitFullscreen(){
 
 const zoomBtn = document.getElementById("zoomBtn");
 function updatePlayerZoom(){
+  state.playerZoom = Math.max(1, Math.min(2, Number(state.playerZoom) || 1));
   stage.style.setProperty("--player-zoom", String(state.playerZoom));
   zoomBtn.textContent = state.playerZoom <= 1 ? "＋ تكبير" : state.playerZoom < 1.16 ? "＋ تكبير" : "↺ الحجم الأصلي";
   zoomBtn.setAttribute("aria-label", state.playerZoom <= 1 ? "تكبير الفيديو" : "إعادة حجم الفيديو");
@@ -5646,6 +5661,30 @@ zoomBtn.addEventListener("click",()=>{
   updatePlayerZoom();
 });
 updatePlayerZoom();
+
+// Pinch-to-zoom: scales only the media element, not the player frame.
+// Existing security overlays/blockers keep their original DOM layers.
+(function enablePinchZoom(){
+  let pinchStartDistance = 0;
+  let pinchStartZoom = 1;
+  const distance = (a,b) => Math.hypot(b.clientX-a.clientX,b.clientY-a.clientY);
+  stage.addEventListener("touchstart", event => {
+    if(event.touches.length === 2){
+      pinchStartDistance = distance(event.touches[0],event.touches[1]);
+      pinchStartZoom = state.playerZoom;
+    }
+  }, {passive:true});
+  stage.addEventListener("touchmove", event => {
+    if(event.touches.length !== 2 || !pinchStartDistance) return;
+    event.preventDefault();
+    const ratio = distance(event.touches[0],event.touches[1]) / pinchStartDistance;
+    state.playerZoom = Math.max(1, Math.min(2, pinchStartZoom * ratio));
+    updatePlayerZoom();
+  }, {passive:false});
+  const resetPinch = () => { pinchStartDistance = 0; };
+  stage.addEventListener("touchend", resetPinch, {passive:true});
+  stage.addEventListener("touchcancel", resetPinch, {passive:true});
+})();
 
 fullscreenBtn.addEventListener(
   "click",
