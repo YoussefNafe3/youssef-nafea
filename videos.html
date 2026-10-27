@@ -2475,7 +2475,7 @@ body.help-modal-open{overflow:hidden}
 
       <div class="progressInfo">
 
-        <span>
+        <span id="progressLabel">
           التقدم
         </span>
 
@@ -2939,6 +2939,10 @@ const state = {
   skips: 0,
 
   completedByEnd: false,
+
+  fullCompletionCount: 0,
+
+  completionEventId: null,
 
   watchedRanges: [],
 
@@ -3555,6 +3559,14 @@ function updateProgressUI(
     state.completedByEnd === true &&
     watched >= duration - 0.75;
 
+  const progressLabel = document.getElementById("progressLabel");
+  if(progressLabel){
+    progressLabel.textContent = state.fullCompletionCount > 0
+      ? "التقدم " + (state.fullCompletionCount + 1)
+      : "التقدم";
+    progressLabel.title = "عدد مرات إكمال الفيديو بالكامل: " + state.fullCompletionCount;
+  }
+
   // Never display 100% while the lesson has only been seeked to its end.
   const percent = fullyWatched
     ? 100
@@ -3685,6 +3697,8 @@ async function loadSavedSession(
   state.skips = 0;
 
   state.completedByEnd = false;
+  state.completionEventId = null;
+  state.fullCompletionCount = 0;
 
 
   const local =
@@ -3763,7 +3777,17 @@ const savedProgress =
 
       // Always resume from the last server-saved playback position, not stale
       // localStorage from this particular phone/laptop.
-      state.lastTime = Math.max(0, Number(data.last_time) || 0);
+      state.fullCompletionCount = Math.max(0, Number(data.full_completion_count) || 0);
+
+      // Completed videos reopen at the beginning for a fresh full listen.
+      if(data.completed === true){
+        state.lastTime = 0;
+        state.watchedRanges = [];
+        state.completedByEnd = false;
+        state.completionEventId = null;
+      }else{
+        state.lastTime = Math.max(0, Number(data.last_time) || 0);
+      }
 
 
       state.skips =
@@ -3772,9 +3796,8 @@ const savedProgress =
         ) || 0;
 
 
-      state.completedByEnd =
-        state.completedByEnd ||
-        data.completed === true;
+      // The server record is authoritative; each reopening starts a fresh attempt.
+    state.completedByEnd = false;
 
     }
 
@@ -3840,7 +3863,9 @@ async function saveSession(){
       p_last_time: Math.floor(Math.min(duration, Math.max(0, current))),
       p_opened_at: state.videoOpenedAt || getDeviceLocalTimestamp(),
       p_completed: fullyWatched,
-      p_skips: Math.max(0, Math.floor(Number(state.skips) || 0))
+      p_skips: Math.max(0, Math.floor(Number(state.skips) || 0)),
+      p_completion_event: fullyWatched && !!state.completionEventId,
+      p_completion_event_id: fullyWatched ? state.completionEventId : null
     });
 
     if (error) throw error;
@@ -3848,6 +3873,10 @@ async function saveSession(){
       throw new Error(data?.reason || "VIDEO_SESSION_SAVE_REJECTED");
     }
     state.sessionSaved = true;
+    if(Number.isFinite(Number(data.full_completion_count))){
+      state.fullCompletionCount = Math.max(state.fullCompletionCount, Number(data.full_completion_count));
+      updateProgressUI(current, duration);
+    }
   } catch (e) {
     console.warn("[Save session]", e);
   }
@@ -4301,6 +4330,7 @@ function createYouTubePlayer(
               ){
                 const d = Number(state.yt.getDuration?.()) || 0;
                 const completed = markCompletionIfFullyWatched(d);
+                if(completed && !state.completionEventId) state.completionEventId = (crypto.randomUUID ? crypto.randomUUID() : "completion-" + Date.now() + "-" + Math.random().toString(36).slice(2));
                 updateProgressUI(d, d);
                 saveSession();
                 if(completed){
@@ -5042,6 +5072,7 @@ video.addEventListener(
   ()=>{
     state.nativePlaying = false;
     const completed = markCompletionIfFullyWatched(video.duration);
+    if(completed && !state.completionEventId) state.completionEventId = (crypto.randomUUID ? crypto.randomUUID() : "completion-" + Date.now() + "-" + Math.random().toString(36).slice(2));
     updateProgressUI(video.duration, video.duration);
     saveSession();
     persistLocalProgress();
