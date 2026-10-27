@@ -2942,6 +2942,8 @@ const state = {
 
   fullCompletionCount: 0,
 
+  currentAttemptNumber: 1,
+
   completionEventId: null,
 
   watchedRanges: [],
@@ -3561,8 +3563,8 @@ function updateProgressUI(
 
   const progressLabel = document.getElementById("progressLabel");
   if(progressLabel){
-    progressLabel.textContent = state.fullCompletionCount > 0
-      ? "التقدم " + (state.fullCompletionCount + 1)
+    progressLabel.textContent = state.currentAttemptNumber > 1
+      ? "التقدم " + state.currentAttemptNumber
       : "التقدم";
     progressLabel.title = "عدد مرات إكمال الفيديو بالكامل: " + state.fullCompletionCount;
   }
@@ -3699,6 +3701,7 @@ async function loadSavedSession(
   state.completedByEnd = false;
   state.completionEventId = null;
   state.fullCompletionCount = 0;
+  state.currentAttemptNumber = 1;
 
 
   const local =
@@ -3778,6 +3781,7 @@ const savedProgress =
       // Always resume from the last server-saved playback position, not stale
       // localStorage from this particular phone/laptop.
       state.fullCompletionCount = Math.max(0, Number(data.full_completion_count) || 0);
+      state.currentAttemptNumber = state.fullCompletionCount + 1;
 
       // Completed videos reopen at the beginning for a fresh full listen.
       if(data.completed === true){
