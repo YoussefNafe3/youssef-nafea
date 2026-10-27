@@ -403,7 +403,46 @@ html[data-theme="light"] .actions .push-setup-btn{color:#086b58;background:linea
 .avatar-upload-hint{font-size:10px;color:var(--muted);line-height:1.8;text-align:center;margin-top:10px}.avatar-upload-hint.error{color:#ef4444}.avatar-upload-hint.success{color:#16a34a}
 .student-avatar img{display:block;width:100%;height:100%;object-fit:cover}
 @media(max-width:560px){.avatar-upload-option{min-height:110px;padding:9px 5px;gap:6px}.avatar-upload-plus{width:42px;height:42px;font-size:27px}.avatar-upload-option strong{font-size:10px}.avatar-upload-option small{font-size:8px}}
+
+/* Premium install-the-app prompt */
+.install-app-modal{position:fixed;inset:0;z-index:11000;display:grid;place-items:center;padding:18px;background:rgba(3,8,20,.72);backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .24s ease,visibility .24s ease}
+.install-app-modal.is-open{opacity:1;visibility:visible;pointer-events:auto}
+.install-app-dialog{position:relative;isolation:isolate;overflow:hidden;width:min(100%,450px);max-height:min(90vh,720px);overflow-y:auto;border:1px solid rgba(255,255,255,.13);border-radius:27px;background:radial-gradient(circle at 100% 0,rgba(56,189,248,.17),transparent 38%),radial-gradient(circle at 0 100%,rgba(34,197,94,.11),transparent 36%),linear-gradient(155deg,#15233b,#091321 78%);color:#f8fafc;box-shadow:0 28px 100px rgba(0,0,0,.52);transform:translateY(14px) scale(.98);transition:transform .24s ease}
+.install-app-modal.is-open .install-app-dialog{transform:translateY(0) scale(1)}
+.install-app-dialog:before{content:"";position:absolute;z-index:-1;top:-70px;left:-60px;width:190px;height:190px;border-radius:50%;background:rgba(56,189,248,.08);filter:blur(3px)}
+.install-app-close{position:absolute;top:15px;left:15px;z-index:2;display:grid;place-items:center;width:37px;height:37px;border:1px solid rgba(255,255,255,.12);border-radius:13px;background:rgba(255,255,255,.06);color:#dbeafe;font-size:23px;cursor:pointer}
+.install-app-hero{padding:30px 27px 22px;text-align:center}
+.install-app-icon{display:grid;place-items:center;width:78px;height:78px;margin:0 auto 17px;border:1px solid rgba(125,211,252,.35);border-radius:25px;background:linear-gradient(145deg,#1d4ed8,#0891b2 65%,#16a34a);box-shadow:0 12px 35px rgba(14,165,233,.22);font-size:35px}
+.install-app-eyebrow{margin:0 0 8px;color:#7dd3fc;font-size:11px;font-weight:900;letter-spacing:.5px}
+.install-app-title{margin:0 0 10px;color:#fff;font-size:23px;font-weight:900;line-height:1.6}
+.install-app-copy{margin:0 auto;max-width:350px;color:#b8c8dc;font-size:13px;line-height:2}
+.install-app-benefits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0 22px 21px}
+.install-app-benefit{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:77px;padding:10px 5px;border:1px solid rgba(148,163,184,.15);border-radius:15px;background:rgba(255,255,255,.035);color:#dbeafe;text-align:center;font-size:10px;font-weight:800;line-height:1.7}
+.install-app-benefit span:first-child{font-size:20px}
+.install-app-actions{display:grid;gap:9px;padding:0 24px 24px}
+.install-app-primary,.install-app-secondary{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:49px;padding:12px 16px;border-radius:15px;font-family:inherit;font-size:13px;font-weight:900;cursor:pointer;transition:transform .18s ease,filter .18s ease,background .18s ease}
+.install-app-primary{border:0;background:linear-gradient(100deg,#0284c7,#2563eb 58%,#16a34a);color:#fff;box-shadow:0 10px 26px rgba(37,99,235,.24)}
+.install-app-primary:hover{transform:translateY(-1px);filter:brightness(1.07)}
+.install-app-secondary{border:1px solid rgba(148,163,184,.2);background:rgba(255,255,255,.035);color:#cbd5e1}
+.install-app-secondary:hover{background:rgba(255,255,255,.08)}
+.install-app-help{display:none;margin:0 24px 22px;padding:13px 15px;border:1px solid rgba(125,211,252,.17);border-radius:14px;background:rgba(14,165,233,.06);color:#cbd5e1;font-size:11px;line-height:2}
+.install-app-help.is-visible{display:block}
+.install-app-help strong{display:block;margin-bottom:4px;color:#7dd3fc;font-size:12px}
+.install-app-dialog button:focus-visible{outline:3px solid #7dd3fc;outline-offset:3px}
+body.install-app-modal-open{overflow:hidden}
+@media(max-width:480px){.install-app-modal{padding:10px;align-items:end}.install-app-dialog{width:100%;max-height:92dvh;border-radius:25px 25px 18px 18px}.install-app-hero{padding:25px 19px 18px}.install-app-title{font-size:21px}.install-app-benefits{padding:0 15px 18px;gap:6px}.install-app-benefit{font-size:9px;min-height:72px}.install-app-actions{padding:0 17px 18px}.install-app-help{margin:0 17px 18px}}
+@media(prefers-reduced-motion:reduce){.install-app-modal,.install-app-dialog,.install-app-primary,.install-app-secondary{transition:none}}
+
 </style>
+
+<script>
+(function(){
+  const installedKey="youssef_nafea_app_installed_v1";
+  window.__platformInstallPromptEvent=null;
+  window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();window.__platformInstallPromptEvent=event;});
+  window.addEventListener("appinstalled",()=>{try{localStorage.setItem(installedKey,"1");}catch(error){}window.__platformInstallPromptEvent=null;});
+})();
+</script>
 
 </head>
 
@@ -1191,7 +1230,127 @@ The heartbeat keeps the session alive.
 }
 );
 
+
+/* Student app-install prompt: never show in installed/standalone mode. */
+(function(){
+  const modal=document.getElementById("installAppModal");
+  const dialog=modal?.querySelector(".install-app-dialog");
+  const closeButton=document.getElementById("closeInstallApp");
+  const laterButton=document.getElementById("installAppLater");
+  const installButton=document.getElementById("installAppNow");
+  const help=document.getElementById("installAppHelp");
+  const helpText=document.getElementById("installAppHelpText");
+  if(!modal||!dialog||!closeButton||!laterButton||!installButton||!help||!helpText)return;
+  if(!user || user.role==="admin")return;
+  const installedKey="youssef_nafea_app_installed_v1";
+  const seenKey="youssef_nafea_install_prompt_seen_v1_"+String(user.id);
+  let previousFocus=null,isOpen=false;
+  function isInstalled(){
+    let stored=false;
+    try{stored=localStorage.getItem(installedKey)==="1";}catch(error){}
+    return stored || window.matchMedia("(display-mode: standalone)").matches ||
+      window.matchMedia("(display-mode: fullscreen)").matches || navigator.standalone===true;
+  }
+  function openPrompt(){
+    if(isInstalled()||sessionStorage.getItem(seenKey)==="1")return;
+    previousFocus=document.activeElement;
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden","false");
+    document.body.classList.add("install-app-modal-open");
+    isOpen=true;
+    sessionStorage.setItem(seenKey,"1");
+    window.setTimeout(()=>installButton.focus(),80);
+  }
+  function closePrompt(){
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden","true");
+    document.body.classList.remove("install-app-modal-open");
+    isOpen=false;
+    if(previousFocus&&typeof previousFocus.focus==="function")previousFocus.focus();
+  }
+  closeButton.addEventListener("click",closePrompt);
+  laterButton.addEventListener("click",closePrompt);
+  modal.addEventListener("click",event=>{if(event.target===modal)closePrompt();});
+  document.addEventListener("keydown",event=>{
+    if(!isOpen)return;
+    if(event.key==="Escape"){event.preventDefault();closePrompt();return;}
+    if(event.key==="Tab"){
+      const focusable=[...dialog.querySelectorAll("button:not(:disabled)")];
+      const first=focusable[0],last=focusable[focusable.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    }
+  });
+  installButton.addEventListener("click",async()=>{
+    if(isInstalled()){closePrompt();return;}
+    const installEvent=window.__platformInstallPromptEvent;
+    if(installEvent){
+      installButton.disabled=true;
+      const original=installButton.innerHTML;
+      installButton.innerHTML="<span>جاري فتح خيارات التثبيت…</span>";
+      try{
+        await installEvent.prompt();
+        const choice=await installEvent.userChoice;
+        window.__platformInstallPromptEvent=null;
+        if(choice?.outcome==="accepted"){
+          try{localStorage.setItem(installedKey,"1");}catch(error){}
+          closePrompt();
+          return;
+        }
+        installButton.innerHTML=original;
+        helpText.textContent="ولا يهمك 💙 تقدر تثبّت المنصة في أي وقت من قائمة المتصفح، باختيار «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».";
+        help.classList.add("is-visible");
+      }catch(error){
+        console.info("Native install prompt was not available:",error);
+        window.__platformInstallPromptEvent=null;
+        help.classList.add("is-visible");
+      }finally{
+        installButton.disabled=false;
+        if(installButton.textContent.includes("جاري فتح"))installButton.innerHTML="<span aria-hidden=\"true\">＋</span><span>أيوه، خلّيني أثبّت المنصة</span>";
+      }
+      return;
+    }
+    const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+    const isAppleDesktop=/macintosh|mac os x/i.test(navigator.userAgent)&&!isIOS;
+    if(isIOS){
+      helpText.textContent="على iPhone أو iPad: اضغط مشاركة ⬆️ في Safari، ثم اختر «إضافة إلى الشاشة الرئيسية»، وبعدها اضغط «إضافة».";
+    }else if(isAppleDesktop){
+      helpText.textContent="على Mac: افتح قائمة المتصفح وابحث عن «Add to Dock» أو «Install page as app» إن كان الخيار متاحًا.";
+    }else{
+      helpText.textContent="على الكمبيوتر: افتح قائمة ⋮ بجوار شريط العنوان واختر «تثبيت الصفحة كتطبيق» أو «تثبيت منصة د. يوسف نافع». على الموبايل: افتح قائمة المتصفح واختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».";
+    }
+    help.classList.add("is-visible");
+  });
+  if(!isInstalled())window.setTimeout(openPrompt,1300);
+})();
+
 </script>
+
+
+<div class="install-app-modal" id="installAppModal" aria-hidden="true">
+  <section class="install-app-dialog" role="dialog" aria-modal="true" aria-labelledby="installAppTitle" aria-describedby="installAppDescription" tabindex="-1">
+    <button type="button" class="install-app-close" id="closeInstallApp" aria-label="إغلاق">×</button>
+    <div class="install-app-hero">
+      <div class="install-app-icon" aria-hidden="true">📲</div>
+      <p class="install-app-eyebrow">تجربة تعليمية أسهل ✦</p>
+      <h2 class="install-app-title" id="installAppTitle">عاوز المنصة تبقى تطبيق؟</h2>
+      <p class="install-app-copy" id="installAppDescription">ثبّت منصة د. يوسف نافع على جهازك وافتحها بسهولة من أيقونتها، كأنها تطبيق مستقل.</p>
+    </div>
+    <div class="install-app-benefits" aria-label="مميزات تثبيت المنصة">
+      <div class="install-app-benefit"><span aria-hidden="true">⚡</span><span>وصول أسرع</span></div>
+      <div class="install-app-benefit"><span aria-hidden="true">📱</span><span>أيقونة على جهازك</span></div>
+      <div class="install-app-benefit"><span aria-hidden="true">🎓</span><span>تجربة مركّزة</span></div>
+    </div>
+    <div class="install-app-actions">
+      <button type="button" class="install-app-primary" id="installAppNow"><span aria-hidden="true">＋</span><span>أيوه، خلّيني أثبّت المنصة</span></button>
+      <button type="button" class="install-app-secondary" id="installAppLater">خلّيني أكمل مذاكرة دلوقتي</button>
+    </div>
+    <div class="install-app-help" id="installAppHelp" role="status" aria-live="polite">
+      <strong>تقدر تثبّتها من قائمة المتصفح</strong>
+      <span id="installAppHelpText">افتح قائمة المتصفح وابحث عن «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».</span>
+    </div>
+  </section>
+</div>
 
 </body>
 </html>
