@@ -632,7 +632,7 @@ button:focus-visible,.video-card:focus-visible{outline:3px solid rgba(244,215,12
           <div class="v gold" id="selectedViews">0</div>
         </div>
         <div class="mini-card">
-          <div class="k">المكتمل</div>
+          <div class="k">الطلاب المكتملون</div>
           <div class="v green" id="selectedCompleted">0</div>
         </div>
         <div class="mini-card">
@@ -642,6 +642,10 @@ button:focus-visible,.video-card:focus-visible{outline:3px solid rgba(244,215,12
         <div class="mini-card">
           <div class="k">متوسط الوقت</div>
           <div class="v amber" id="selectedAvgTime">0s</div>
+        </div>
+        <div class="mini-card">
+          <div class="k">مرات الإكمال بالكامل</div>
+          <div class="v green" id="selectedFullCompletionCount">0</div>
         </div>
       </div>
     </div>
@@ -662,6 +666,7 @@ button:focus-visible,.video-card:focus-visible{outline:3px solid rgba(244,215,12
               <th>الطالب</th>
               <th>الفيديو</th>
               <th>سمع</th>
+              <th>مرات الإكمال بالكامل</th>
               <th>النسبة</th>
               <th>الحالة</th>
               <th>أول فتح للفيديو</th>
@@ -800,8 +805,9 @@ function videoAggregate(videoId) {
   const avgTime = rows.length
     ? rows.reduce((sum, r) => sum + safeNumber(r.watched_seconds), 0) / rows.length
     : 0;
+  const fullCompletionCount = rows.reduce((sum, r) => sum + Math.max(0, safeNumber(r.full_completion_count)), 0);
 
-  return { watchedStudents, completedStudents, avgPercent, avgTime, rows };
+  return { watchedStudents, completedStudents, avgPercent, avgTime, fullCompletionCount, rows };
 }
 
 function statusBadge(percent, exists) {
@@ -874,6 +880,7 @@ function renderSelectedVideo() {
   document.getElementById("selectedCompleted").innerText = agg.completedStudents;
   document.getElementById("selectedAvgPercent").innerText = `${agg.avgPercent.toFixed(1)}%`;
   document.getElementById("selectedAvgTime").innerText = formatTime(agg.avgTime);
+  document.getElementById("selectedFullCompletionCount").innerText = String(agg.fullCompletionCount);
 
   const latestMap = latestSessionByStudentForVideo(state.selectedVideo.id);
   const videoClassGroup = getVideoClassGroup(state.selectedVideo) || (document.getElementById("classFilter")?.value || "all");
@@ -889,6 +896,7 @@ function renderSelectedVideo() {
           <td>${name}</td>
           <td>${toText(state.selectedVideo.title)}</td>
           <td>0s</td>
+          <td>0</td>
           <td>0%</td>
           <td>${statusBadge(0, false)}</td>
           <td>-</td>
@@ -904,6 +912,7 @@ function renderSelectedVideo() {
         <td>${name}</td>
         <td>${toText(state.selectedVideo.title)}</td>
         <td>${formatTime(record.watched_seconds)}</td>
+        <td><strong class="full-completion-count">${Math.max(0, safeNumber(record.full_completion_count))}</strong></td>
         <td>${percent.toFixed(1)}%</td>
         <td>${statusBadge(percent, true)}</td>
         <td>${formatDate(record.first_opened_at)}</td>
@@ -991,12 +1000,13 @@ function reportStudentRow(student, record, video) {
   const watched=record ? safeNumber(record.watched_seconds) : 0;
   const duration=record ? safeNumber(record.duration) : safeNumber(video.duration);
   const complete=!!record && (record.completed===true || percent>=90);
-  return {name, watched, duration, percent, complete, first:record?.first_opened_at, last:record?.last_opened_at,
-    html:"<tr><td>"+escapeReportHtml(name)+"</td><td>"+escapeReportHtml(formatTime(watched))+"</td><td>"+(duration>0?escapeReportHtml(formatTime(duration)):"—")+"</td><td>"+percent.toFixed(1)+"%</td><td>"+(complete?"مكتمل":(record?"غير مكتمل":"لم يشاهد"))+"</td><td>"+escapeReportHtml(formatReportDate(record?.first_opened_at))+"</td><td>"+escapeReportHtml(formatReportDate(record?.last_opened_at))+"</td></tr>"};
+  const fullCompletionCount=record?Math.max(0,safeNumber(record.full_completion_count)):0;
+  return {name, watched, duration, percent, complete, fullCompletionCount, first:record?.first_opened_at, last:record?.last_opened_at,
+    html:"<tr><td>"+escapeReportHtml(name)+"</td><td>"+escapeReportHtml(formatTime(watched))+"</td><td>"+(duration>0?escapeReportHtml(formatTime(duration)):"—")+"</td><td><strong>"+fullCompletionCount+"</strong></td><td>"+percent.toFixed(1)+"%</td><td>"+(complete?"مكتمل":(record?"غير مكتمل":"لم يشاهد"))+"</td><td>"+escapeReportHtml(formatReportDate(record?.first_opened_at))+"</td><td>"+escapeReportHtml(formatReportDate(record?.last_opened_at))+"</td></tr>"};
 }
 function makeReportTable(rows) {
   if (!rows.length) return '<div class="report-empty">لا يوجد طلاب ضمن هذا القسم.</div>';
-  return '<table><thead><tr><th style="width:25%">اسم الطالب</th><th>وقت المشاهدة</th><th>مدة الفيديو</th><th>نسبة المشاهدة</th><th>الحالة</th><th>أول فتح</th><th>آخر فتح</th></tr></thead><tbody>'+rows.map(r=>r.html).join("")+'</tbody></table>';
+  return '<table><thead><tr><th style="width:25%">اسم الطالب</th><th>وقت المشاهدة</th><th>مدة الفيديو</th><th>مرات الإكمال بالكامل</th><th>نسبة المشاهدة</th><th>الحالة</th><th>أول فتح</th><th>آخر فتح</th></tr></thead><tbody>'+rows.map(r=>r.html).join("")+'</tbody></table>';
 }
 window.openReport = function(videoId) {
   const video=state.videos.find(v=>String(v.id)===String(videoId));
