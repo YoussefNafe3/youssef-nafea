@@ -2411,6 +2411,26 @@ body.help-modal-open{overflow:hidden}
  .playerCard:fullscreen .zoomOutBtn,.playerCard:-webkit-full-screen .zoomOutBtn{padding:3px 6px!important;font-size:10px!important}
 }
 
+
+/* Compact, aligned zoom controls; keep fullscreen control bar slim. */
+.playerControls{gap:6px!important;align-items:center}
+.zoomBtn,.zoomOutBtn{
+  display:inline-flex!important;align-items:center;justify-content:center;
+  width:auto!important;min-width:0!important;min-height:30px!important;
+  height:30px!important;padding:0 9px!important;margin:0!important;
+  border-radius:8px!important;font-size:12px!important;line-height:1!important;
+  white-space:nowrap!important;flex:0 0 auto!important
+}
+.playerCard:fullscreen .zoomBtn,.playerCard:fullscreen .zoomOutBtn,
+.playerCard:-webkit-full-screen .zoomBtn,.playerCard:-webkit-full-screen .zoomOutBtn{
+  min-height:26px!important;height:26px!important;padding:0 7px!important;
+  font-size:11px!important;border-radius:7px!important
+}
+@media(max-width:640px){
+  .playerControls{gap:4px!important}
+  .zoomBtn,.zoomOutBtn{height:27px!important;min-height:27px!important;padding:0 7px!important;font-size:11px!important}
+}
+
 </style>
 </head>
 
@@ -2606,8 +2626,6 @@ body.help-modal-open{overflow:hidden}
 
     </div>
 
-
-    <div class="fullscreenZoomHint" aria-hidden="true"><span class="handIcon">✋</span><span>كبّر أو صغّر بإصبعين على الفيديو</span></div>
 
     <div class="playerControls">
 
