@@ -2807,6 +2807,12 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
   -webkit-text-fill-color:#fff!important;
 }
 
+
+/* Distinct, compact data-saver quality option */
+#qualitySelect option[value="data_saver"]{
+  font-weight:800;
+}
+
 </style>
 </head>
 
@@ -4738,7 +4744,6 @@ function fillYouTubeQuality(){
 
 
   const labels = {
-
     highres:"1080p",
     hd1080:"1080p",
     hd720:"720p",
@@ -4746,44 +4751,25 @@ function fillYouTubeQuality(){
     medium:"360p",
     small:"240p",
     tiny:"144p",
-    auto:"تلقائية"
-
+    auto:"تلقائية",
+    data_saver:"موفرة للنت · ~144p"
   };
 
+  qualitySelect.innerHTML = "";
 
-  qualitySelect.innerHTML =
-    "";
-
-
-  const add =
-    v => {
-
-      const o =
-        document.createElement(
-          "option"
-        );
-
-      o.value =
-        v;
-
-      o.textContent =
-        labels[v] || v;
-
-      qualitySelect.appendChild(
-        o
-      );
-
-    };
-
+  const add = (value, label) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label || labels[value] || value;
+    qualitySelect.appendChild(option);
+  };
 
   add("auto");
+  // A user-friendly preset maps to 144p when available, otherwise to the
+  // lowest resolution actually exposed by YouTube for this video.
+  add("data_saver", "موفرة للنت (~144p)");
 
-
-  [
-    ...new Set(levels)
-  ].forEach(
-    q => add(q)
-  );
+  [...new Set(levels)].forEach(q => add(q));
 
 
   // Quality availability can be delayed until playback starts.
@@ -5874,30 +5860,52 @@ qualitySelect.addEventListener(
     }
 
 
-    const q =
-      qualitySelect.value;
+    const selectedQuality = qualitySelect.value;
 
-
-    try{
-
-      if(q === "auto"){
-
-        state.yt.setPlaybackQuality(
-          "default"
-        );
-
-      }else{
-
-        state.yt.setPlaybackQuality(
-          q
-        );
-
+    try {
+      if (selectedQuality === "auto") {
+        state.yt.setPlaybackQuality("default");
+        return;
       }
 
-    }catch(e){
+      if (selectedQuality === "data_saver") {
+        // Prefer true 144p ("tiny"). If unavailable, choose the lowest
+        // quality level returned for this specific video.
+        const available = state.yt.getAvailableQualityLevels?.() || [];
+        const qualityRank = {
+          tiny: 144,
+          small: 240,
+          medium: 360,
+          large: 480,
+          hd720: 720,
+          hd1080: 1080,
+          highres: 2160
+        };
+        const lowestAvailable = [...new Set(available)]
+          .filter(level => Object.prototype.hasOwnProperty.call(qualityRank, level))
+          .sort((a, b) => qualityRank[a] - qualityRank[b])[0];
 
-      console.warn(e);
+        const target = available.includes("tiny")
+          ? "tiny"
+          : (lowestAvailable || available[available.length - 1]);
 
+        if (!target) {
+          toast("لم يوفّر YouTube جودة منخفضة لهذا الفيديو؛ سيستمر التشغيل بالجودة التلقائية.");
+          state.yt.setPlaybackQuality("default");
+          return;
+        }
+
+        state.yt.setPlaybackQuality(target);
+        toast(target === "tiny"
+          ? "تم طلب الجودة الموفرة للنت (144p). قد يقرر YouTube الجودة الفعلية تلقائيًا."
+          : "تم طلب أقل جودة متاحة لهذا الفيديو لتقليل استهلاك الإنترنت.");
+        return;
+      }
+
+      state.yt.setPlaybackQuality(selectedQuality);
+    } catch (e) {
+      console.warn("[Video quality]", e);
+      toast("تعذر تغيير الجودة حاليًا؛ سيستمر الفيديو بالجودة التلقائية.");
     }
 
   }
