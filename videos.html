@@ -882,6 +882,8 @@ html[data-theme="light"] .speedBtn.active{
   font-weight:800;
   cursor:pointer
 }
+#qualitySelect{display:inline-flex!important;align-items:center}
+#captionsBtn{display:inline-flex!important;align-items:center;justify-content:center}
 .playerUtilityBtn{
   display:inline-flex;align-items:center;justify-content:center;gap:5px;
   min-height:32px;padding:5px 9px;border:1px solid var(--line);
@@ -4526,10 +4528,14 @@ function fillYouTubeQuality(){
 
   // Quality availability can be delayed until playback starts.
   qualitySelect.classList.remove("hidden");
-  qualitySelect.disabled = levels.length === 0;
+  qualitySelect.disabled = false;
   qualitySelect.title = levels.length
     ? "اختيار جودة الفيديو"
-    : "الجودة التلقائية من YouTube";
+    : "جودة تلقائية؛ سيظهر الاختيار اليدوي إذا وفّره YouTube";
+  if(!levels.length){
+    qualitySelect.innerHTML = '<option value="auto">تلقائي</option>';
+    return;
+  }
   if(!levels.includes(qualitySelect.value)) qualitySelect.value = "auto";
 }
 
@@ -4538,10 +4544,14 @@ let captionsEnabled = false;
 function setCaptionsButton(enabled, available = true){
   if(!captionsBtn) return;
   captionsEnabled = Boolean(enabled);
+  captionsBtn.classList.remove("hidden");
   captionsBtn.classList.toggle("active", captionsEnabled);
   captionsBtn.setAttribute("aria-pressed", String(captionsEnabled));
-  captionsBtn.title = captionsEnabled ? "إيقاف الترجمة النصية" : "تشغيل الترجمة النصية";
-  captionsBtn.classList.toggle("hidden", !available);
+  captionsBtn.dataset.available = String(Boolean(available));
+  captionsBtn.title = available
+    ? (captionsEnabled ? "إيقاف الترجمة النصية" : "تشغيل الترجمة النصية")
+    : "قد لا تتوفر ترجمة لهذا الفيديو؛ اضغط للتحقق";
+  captionsBtn.setAttribute("aria-label", captionsEnabled ? "إيقاف الترجمة النصية" : "تشغيل الترجمة النصية");
 }
 
 function refreshNativeCaptionAvailability(){
@@ -4604,7 +4614,7 @@ if(captionsBtn){
       }
     }
     setCaptionsButton(next && available, available);
-    if(!available) toast("لا توجد ترجمة مرفقة بهذا الفيديو");
+    if(!available) toast("لا توجد ترجمة مرفقة بهذا الفيديو. إذا كان الفيديو يحتوي على ملف ترجمة منفصل، يجب إضافته من مصدر الفيديو.");
   });
 }
 
@@ -4614,6 +4624,7 @@ function createYouTubePlayer(
 
   qualitySelect.classList.remove("hidden");
   qualitySelect.disabled = true;
+  qualitySelect.innerHTML = '<option value="auto">جارٍ التحميل…</option>';
   setCaptionsButton(false, true);
 
   const id =
@@ -5074,9 +5085,15 @@ function prepareNativeVideo(
   item
 ){
 
-  setCaptionsButton(false, false);
-  qualitySelect.classList.add("hidden");
-  qualitySelect.disabled = false;
+  setCaptionsButton(false, true);
+  qualitySelect.classList.remove("hidden");
+  qualitySelect.innerHTML = "";
+  const sourceOption = document.createElement("option");
+  sourceOption.value = "source";
+  sourceOption.textContent = "المصدر";
+  qualitySelect.appendChild(sourceOption);
+  qualitySelect.disabled = true;
+  qualitySelect.title = "الفيديو المباشر يعمل بجودته الأصلية؛ تغيير الجودة يحتاج نسخًا متعددة من الفيديو.";
   resetNativeTracking();
 
   clearNativeVideo();
@@ -5591,8 +5608,10 @@ qualitySelect.addEventListener(
   "change",
   ()=>{
 
-    if(!state.yt)
+    if(!state.yt){
+      toast("اختيار الجودة اليدوي متاح لفيديوهات YouTube فقط؛ الفيديو الحالي يعمل بجودته الأصلية.");
       return;
+    }
 
 
     const q =
