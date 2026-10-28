@@ -2738,6 +2738,75 @@ html[data-theme="light"] .playerControls .controlRowPrimary{
   }
 }
 
+
+/* Clear, crisp iconography for the compact video toolbar */
+.playerControls .controlRowPrimary .zoomBtn,
+.playerControls .controlRowPrimary .zoomOutBtn,
+.playerControls .controlRowPrimary .fullscreenBtn{
+  position:relative!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:visible!important;
+  color:var(--text,#f8fafc)!important;
+  -webkit-text-fill-color:currentColor!important;
+  font-size:0!important;
+  line-height:1!important;
+}
+.playerControls .controlRowPrimary .zoomBtn::before,
+.playerControls .controlRowPrimary .zoomOutBtn::before{
+  display:block!important;
+  position:static!important;
+  width:16px!important;
+  height:16px!important;
+  color:currentColor!important;
+  -webkit-text-fill-color:currentColor!important;
+  font-family:Arial,sans-serif!important;
+  font-size:19px!important;
+  font-weight:500!important;
+  line-height:16px!important;
+  text-align:center!important;
+  opacity:1!important;
+}
+.playerControls .controlRowPrimary .zoomBtn::before{content:"+"!important}
+.playerControls .controlRowPrimary .zoomOutBtn::before{content:"−"!important}
+.playerControls .controlRowPrimary .fullscreenBtn::before{
+  content:""!important;
+  display:block!important;
+  width:13px!important;
+  height:13px!important;
+  border:2px solid currentColor!important;
+  border-radius:2px!important;
+  box-sizing:border-box!important;
+  opacity:1!important;
+  background:
+    linear-gradient(currentColor,currentColor) left top/5px 2px no-repeat,
+    linear-gradient(currentColor,currentColor) left top/2px 5px no-repeat,
+    linear-gradient(currentColor,currentColor) right top/5px 2px no-repeat,
+    linear-gradient(currentColor,currentColor) right top/2px 5px no-repeat,
+    linear-gradient(currentColor,currentColor) left bottom/5px 2px no-repeat,
+    linear-gradient(currentColor,currentColor) left bottom/2px 5px no-repeat,
+    linear-gradient(currentColor,currentColor) right bottom/5px 2px no-repeat,
+    linear-gradient(currentColor,currentColor) right bottom/2px 5px no-repeat!important;
+}
+.playerControls .controlRowPrimary .fullscreenBtn svg{display:none!important}
+.playerControls .controlRowPrimary .zoomBtn:focus-visible,
+.playerControls .controlRowPrimary .zoomOutBtn:focus-visible,
+.playerControls .controlRowPrimary .fullscreenBtn:focus-visible{
+  outline:2px solid #60a5fa!important;
+  outline-offset:2px!important;
+}
+html[data-theme="light"] .playerControls .controlRowPrimary .zoomBtn,
+html[data-theme="light"] .playerControls .controlRowPrimary .zoomOutBtn,
+html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
+  color:#24364b!important;
+  -webkit-text-fill-color:#24364b!important;
+}
+html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+
 </style>
 </head>
 
