@@ -2629,6 +2629,115 @@ html[data-theme="light"] .playerControls .controlRowPrimary{
   .playerControls .speedLabel{display:none}
 }
 
+
+/* Single-row micro-toolbar: equal rhythm, no overlap, mobile-first. */
+.playerControls{
+  display:block!important;
+  padding:8px 9px!important;
+}
+.playerControls .controlRowPrimary{
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+  width:100%!important;
+  min-width:0!important;
+  padding:0!important;
+  border:0!important;
+}
+.playerControls .utilityGroup{
+  flex:0 1 86px!important;
+  min-width:0!important;
+  height:30px!important;
+  min-height:30px!important;
+  padding:2px 4px!important;
+  gap:0!important;
+  border-radius:8px!important;
+}
+.playerControls .controlMiniLabel,
+.playerControls .controlDivider,
+.playerControls .captionsLabel{display:none!important}
+.playerControls #qualitySelect{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:25px!important;
+  padding:2px 4px!important;
+  font-size:10px!important;
+  text-align:center;
+}
+.playerControls #captionsBtn{
+  display:inline-flex!important;
+  flex:0 0 31px!important;
+  width:31px!important;
+  min-width:31px!important;
+  height:30px!important;
+  min-height:30px!important;
+  padding:0!important;
+  border-radius:8px!important;
+}
+.playerControls .captionsIcon{min-width:19px;height:16px;font-size:9px}
+.playerControls #speedGroup{
+  display:inline-flex!important;
+  flex:0 1 auto!important;
+  min-width:0!important;
+  height:30px!important;
+  padding:2px!important;
+  gap:2px!important;
+  border-radius:8px!important;
+}
+.playerControls #speedGroup .speedBtn{
+  flex:0 1 auto!important;
+  min-width:0!important;
+  width:auto!important;
+  height:24px!important;
+  min-height:24px!important;
+  padding:0 5px!important;
+  font-size:10px!important;
+  line-height:1!important;
+  border-radius:6px!important;
+}
+.playerControls .controlRowPrimary .zoomBtn,
+.playerControls .controlRowPrimary .zoomOutBtn,
+.playerControls .controlRowPrimary .fullscreenBtn{
+  flex:0 0 30px!important;
+  width:30px!important;
+  min-width:30px!important;
+  height:30px!important;
+  min-height:30px!important;
+  padding:0!important;
+  margin:0!important;
+  gap:0!important;
+  justify-content:center!important;
+  border-radius:8px!important;
+  font-size:0!important;
+  line-height:1!important;
+}
+.playerControls .controlRowPrimary .zoomBtn::first-letter,
+.playerControls .controlRowPrimary .zoomOutBtn::first-letter{font-size:15px!important}
+.playerControls .controlRowPrimary .zoomBtn,
+.playerControls .controlRowPrimary .zoomOutBtn{
+  font-size:0!important;
+}
+.playerControls .controlRowPrimary .zoomBtn{font-size:0!important}
+.playerControls .controlRowPrimary .fullscreenBtn svg{width:14px;height:14px}
+.playerControls .controlRowPrimary .fullscreenBtn span{display:none!important}
+@media(max-width:380px){
+  .playerControls{padding:7px 5px!important}
+  .playerControls .controlRowPrimary{gap:3px!important}
+  .playerControls .utilityGroup{flex-basis:70px!important}
+  .playerControls #captionsBtn{flex-basis:28px!important;width:28px!important;min-width:28px!important}
+  .playerControls #speedGroup{gap:1px!important;padding:2px!important}
+  .playerControls #speedGroup .speedBtn{padding:0 3px!important;font-size:9px!important}
+  .playerControls .controlRowPrimary .zoomBtn,
+  .playerControls .controlRowPrimary .zoomOutBtn,
+  .playerControls .controlRowPrimary .fullscreenBtn{
+    flex-basis:27px!important;width:27px!important;min-width:27px!important;height:28px!important;min-height:28px!important
+  }
+}
+
 </style>
 </head>
 
@@ -2850,6 +2959,13 @@ html[data-theme="light"] .playerControls .controlRowPrimary{
           title="الترجمة النصية"
         ><span class="captionsIcon" aria-hidden="true">CC</span><span class="captionsLabel">الترجمة</span></button>
 
+        <div class="speedGroup" id="speedGroup" role="group" aria-label="سرعة تشغيل الفيديو">
+          <button class="speedBtn active" data-speed="1" type="button" aria-label="سرعة عادية">1x</button>
+          <button class="speedBtn" data-speed="1.25" type="button" aria-label="سرعة 1.25">1.25</button>
+          <button class="speedBtn" data-speed="1.5" type="button" aria-label="سرعة 1.5">1.5</button>
+          <button class="speedBtn" data-speed="2" type="button" aria-label="سرعة مضاعفة">2x</button>
+        </div>
+
         <span class="controlDivider" aria-hidden="true"></span>
 
         <button
@@ -2858,14 +2974,14 @@ html[data-theme="light"] .playerControls .controlRowPrimary{
           type="button"
           aria-label="تكبير الفيديو"
           title="تكبير الفيديو"
-        >＋ تكبير</button>
+        >＋</button>
         <button
           id="zoomOutBtn"
           class="btn secondary zoomOutBtn"
           type="button"
           aria-label="تصغير الفيديو"
           title="تصغير الفيديو"
-        >− تصغير</button>
+        >−</button>
 
         <button
           id="fullscreenBtn"
@@ -2877,15 +2993,7 @@ html[data-theme="light"] .playerControls .controlRowPrimary{
 
       </div>
 
-      <div class="controlRow controlRowSpeed" aria-label="سرعة تشغيل الفيديو">
-        <span class="speedLabel">سرعة التشغيل</span>
-        <div class="speedGroup" id="speedGroup">
-          <button class="speedBtn active" data-speed="1" type="button">1x</button>
-          <button class="speedBtn" data-speed="1.25" type="button">1.25x</button>
-          <button class="speedBtn" data-speed="1.5" type="button">1.5x</button>
-          <button class="speedBtn" data-speed="2" type="button">2x</button>
-        </div>
-      </div>
+
 
       <div class="progressInfo">
 
