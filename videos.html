@@ -870,11 +870,52 @@ html[data-theme="light"] .speedBtn.active{
 }
 
 .qualitySelect{
-  padding:8px 10px;
+  min-width:76px;
+  max-width:104px;
+  padding:6px 8px;
   background:#12223a;
   border:1px solid var(--line);
   border-radius:9px;
-  color:#fff
+  color:#fff;
+  font:inherit;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer
+}
+.playerUtilityBtn{
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  min-height:32px;padding:5px 9px;border:1px solid var(--line);
+  border-radius:9px;background:#12223a;color:#eaf1fb;font:inherit;
+  font-size:11px;font-weight:800;line-height:1;white-space:nowrap;cursor:pointer;
+  transition:background .18s ease,border-color .18s ease,color .18s ease
+}
+.playerUtilityBtn:hover{border-color:rgba(96,165,250,.5)}
+.playerUtilityBtn.active{
+  color:#fff;background:linear-gradient(135deg,#2563eb,#4f46e5);
+  border-color:rgba(147,197,253,.55);box-shadow:0 0 0 2px rgba(59,130,246,.12)
+}
+.captionsIcon{
+  display:inline-grid;place-items:center;min-width:20px;height:17px;padding:0 3px;
+  border:1px solid currentColor;border-radius:4px;font-size:9px;letter-spacing:-.4px
+}
+.playerControls .controlRow{row-gap:7px;column-gap:7px}
+.playerControls .speedGroup{gap:3px;padding:3px;border-radius:10px}
+.playerControls .speedBtn{min-width:37px;min-height:32px;padding:5px 7px;font-size:11px;border-radius:7px}
+.playerControls .zoomBtn,.playerControls .zoomOutBtn,.playerControls .fullscreenBtn{
+  min-height:32px;padding:5px 9px;border-radius:9px;font-size:11px;white-space:nowrap
+}
+html[data-theme="light"] .playerUtilityBtn{background:#fff;color:#263750;border-color:rgba(30,58,95,.16)}
+html[data-theme="light"] .playerUtilityBtn.active{background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;border-color:#4f46e5}
+@media(max-width:640px){
+  .playerControls{padding:9px 10px;gap:9px}
+  .playerControls .controlRow{gap:5px}
+  .playerControls .speedGroup{gap:2px;padding:2px}
+  .playerControls .speedBtn{min-width:32px;min-height:30px;padding:4px 5px;font-size:10px}
+  .playerControls .qualitySelect{min-width:68px;max-width:82px;padding:5px 5px;font-size:10px}
+  .playerUtilityBtn{min-height:30px;padding:4px 7px;font-size:10px}
+  .captionsLabel{display:none}
+  .playerControls .zoomBtn,.playerControls .zoomOutBtn,.playerControls .fullscreenBtn{min-height:30px;padding:4px 7px;font-size:10px}
+  .playerControls .fullscreenBtn span{font-size:10px}
 }
 
 .completeBtn{
@@ -2720,11 +2761,19 @@ body.help-modal-open{overflow:hidden}
           id="qualitySelect"
           class="qualitySelect hidden"
           aria-label="جودة الفيديو"
+          title="جودة الفيديو"
         >
-          <option value="auto">
-            جودة تلقائية
-          </option>
+          <option value="auto">تلقائي</option>
         </select>
+
+        <button
+          id="captionsBtn"
+          class="playerUtilityBtn hidden"
+          type="button"
+          aria-label="تشغيل أو إيقاف الترجمة"
+          aria-pressed="false"
+          title="الترجمة النصية"
+        ><span class="captionsIcon" aria-hidden="true">CC</span><span class="captionsLabel">الترجمة</span></button>
 
 
         <button
@@ -2989,6 +3038,9 @@ const percentBox =
 
 const qualitySelect =
   $("qualitySelect");
+
+const captionsBtn =
+  $("captionsBtn");
 
 const watermark =
   $("watermark");
@@ -4472,21 +4524,97 @@ function fillYouTubeQuality(){
   );
 
 
-  qualitySelect.classList.toggle(
-    "hidden",
-    levels.length === 0
-  );
-
-
-  qualitySelect.value =
-    "auto";
-
+  // Quality availability can be delayed until playback starts.
+  qualitySelect.classList.remove("hidden");
+  qualitySelect.disabled = levels.length === 0;
+  qualitySelect.title = levels.length
+    ? "اختيار جودة الفيديو"
+    : "الجودة التلقائية من YouTube";
+  if(!levels.includes(qualitySelect.value)) qualitySelect.value = "auto";
 }
 
+let captionsEnabled = false;
+
+function setCaptionsButton(enabled, available = true){
+  if(!captionsBtn) return;
+  captionsEnabled = Boolean(enabled);
+  captionsBtn.classList.toggle("active", captionsEnabled);
+  captionsBtn.setAttribute("aria-pressed", String(captionsEnabled));
+  captionsBtn.title = captionsEnabled ? "إيقاف الترجمة النصية" : "تشغيل الترجمة النصية";
+  captionsBtn.classList.toggle("hidden", !available);
+}
+
+function refreshNativeCaptionAvailability(){
+  const tracks = video.textTracks;
+  let available = false;
+  if(tracks){
+    for(let i=0;i<tracks.length;i++){
+      const track = tracks[i];
+      if(track && (track.kind === "captions" || track.kind === "subtitles")){
+        available = true;
+        break;
+      }
+    }
+  }
+  if(!available){ setCaptionsButton(false, false); return; }
+  let enabled = false;
+  for(let i=0;i<tracks.length;i++){
+    const track = tracks[i];
+    if(track && (track.kind === "captions" || track.kind === "subtitles") && track.mode === "showing"){
+      enabled = true;
+      break;
+    }
+  }
+  setCaptionsButton(enabled, true);
+}
+
+if(video){
+  video.addEventListener("loadedmetadata", refreshNativeCaptionAvailability);
+  video.addEventListener("loadeddata", refreshNativeCaptionAvailability);
+  video.addEventListener("texttrackchange", refreshNativeCaptionAvailability);
+}
+
+if(captionsBtn){
+  captionsBtn.addEventListener("click", ()=>{
+    const next = !captionsEnabled;
+    if(state.currentVideo?.is_youtube && state.yt){
+      try{
+        if(next){
+          state.yt.loadModule?.("captions");
+          state.yt.setOption?.("captions", "track", {languageCode:"ar"});
+          setCaptionsButton(true, true);
+        }else{
+          state.yt.setOption?.("captions", "track", {});
+          setCaptionsButton(false, true);
+        }
+      }catch(error){
+        console.warn("[Captions]", error);
+        toast("تعذر تغيير الترجمة لهذا الفيديو");
+      }
+      return;
+    }
+    const tracks = video.textTracks;
+    let available = false;
+    if(tracks){
+      for(let i=0;i<tracks.length;i++){
+        const track = tracks[i];
+        if(!track || (track.kind !== "captions" && track.kind !== "subtitles")) continue;
+        available = true;
+        track.mode = next ? "showing" : "disabled";
+      }
+    }
+    setCaptionsButton(next && available, available);
+    if(!available) toast("لا توجد ترجمة مرفقة بهذا الفيديو");
+  });
+}
 
 function createYouTubePlayer(
   item
 ){
+
+  qualitySelect.classList.remove("hidden");
+  qualitySelect.disabled = true;
+  setCaptionsButton(false, true);
 
   const id =
     getYouTubeId(
@@ -4552,6 +4680,7 @@ function createYouTubePlayer(
             async()=>{
 
               fillYouTubeQuality();
+              setCaptionsButton(false, true);
 
               await loadSavedSession(
                 item.id
@@ -4595,6 +4724,7 @@ function createYouTubePlayer(
               ){
 
                 startYouTubeProgress();
+                fillYouTubeQuality();
 
               }
 
@@ -4944,6 +5074,9 @@ function prepareNativeVideo(
   item
 ){
 
+  setCaptionsButton(false, false);
+  qualitySelect.classList.add("hidden");
+  qualitySelect.disabled = false;
   resetNativeTracking();
 
   clearNativeVideo();
