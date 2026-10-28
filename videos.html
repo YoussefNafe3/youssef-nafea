@@ -2519,6 +2519,116 @@ body.help-modal-open{overflow:hidden}
   .playerControls .fullscreenBtn svg{width:12px;height:12px}
 }
 
+
+/* Organized two-row video control panel */
+.playerControls{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:10px!important;
+  padding:12px 14px!important;
+  border-top:1px solid rgba(148,163,184,.14);
+}
+.playerControls .controlRow{
+  display:flex!important;
+  width:100%!important;
+  min-width:0!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex-wrap:wrap!important;
+  gap:8px!important;
+}
+.playerControls .controlRowPrimary{
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(148,163,184,.12);
+}
+.playerControls .utilityGroup{
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  min-height:32px;padding:3px 7px;border:1px solid rgba(148,163,184,.18);
+  border-radius:10px;background:rgba(15,23,42,.38);
+}
+.playerControls .controlMiniLabel{
+  font-size:10px;font-weight:800;color:var(--muted);white-space:nowrap;
+}
+.playerControls #qualitySelect{
+  display:inline-flex!important;max-width:100px;min-width:78px;height:28px;
+  padding:3px 7px!important;border-radius:7px;font-size:11px!important;
+}
+.playerControls #captionsBtn{
+  display:inline-flex!important;min-height:34px;padding:5px 10px;
+}
+.playerControls .controlDivider{
+  width:1px;height:22px;background:rgba(148,163,184,.22);margin:0 1px;
+}
+.playerControls .controlRowPrimary .zoomBtn,
+.playerControls .controlRowPrimary .zoomOutBtn,
+.playerControls .controlRowPrimary .fullscreenBtn{
+  display:inline-flex!important;align-items:center;justify-content:center;
+  min-width:0!important;min-height:34px!important;height:34px!important;
+  padding:0 10px!important;margin:0!important;gap:5px!important;
+  border-radius:9px!important;font-size:11px!important;line-height:1!important;
+  white-space:nowrap!important;flex:0 0 auto!important;
+}
+.playerControls .controlRowPrimary .fullscreenBtn{
+  background:linear-gradient(135deg,#2563eb,#4338ca)!important;
+  border:1px solid rgba(147,197,253,.35)!important;
+}
+.playerControls .fullscreenBtn svg{width:14px;height:14px;flex:0 0 auto}
+.playerControls .controlRowSpeed{
+  justify-content:center!important;
+  gap:10px!important;
+  padding-top:0;
+}
+.playerControls .speedLabel{
+  color:var(--muted);font-size:11px;font-weight:800;white-space:nowrap;
+}
+.playerControls .speedGroup{
+  display:inline-flex!important;align-items:center;justify-content:center;
+  gap:4px!important;padding:3px!important;border:1px solid rgba(148,163,184,.18);
+  border-radius:10px!important;background:rgba(15,23,42,.42);
+}
+.playerControls .speedBtn{
+  display:inline-flex!important;align-items:center;justify-content:center;
+  min-width:42px!important;min-height:30px!important;height:30px!important;
+  padding:0 9px!important;border-radius:7px!important;font-size:11px!important;
+  line-height:1!important;white-space:nowrap;flex:0 0 auto!important;
+}
+html[data-theme="light"] .playerControls .utilityGroup,
+html[data-theme="light"] .playerControls .speedGroup{
+  background:#fff;border-color:rgba(30,58,95,.14);
+}
+html[data-theme="light"] .playerControls .controlRowPrimary{
+  border-bottom-color:rgba(30,58,95,.12);
+}
+@media(max-width:520px){
+  .playerControls{padding:10px 8px!important;gap:8px!important}
+  .playerControls .controlRow{gap:6px!important}
+  .playerControls .controlRowPrimary{padding-bottom:8px}
+  .playerControls .utilityGroup{gap:4px;padding:3px 5px;min-height:31px}
+  .playerControls .controlMiniLabel{font-size:9px}
+  .playerControls #qualitySelect{min-width:70px;max-width:82px;font-size:10px!important}
+  .playerControls #captionsBtn{min-height:31px;padding:4px 7px;font-size:10px}
+  .playerControls .captionsLabel{display:none}
+  .playerControls .controlRowPrimary .zoomBtn,
+  .playerControls .controlRowPrimary .zoomOutBtn,
+  .playerControls .controlRowPrimary .fullscreenBtn{min-height:31px!important;height:31px!important;padding:0 7px!important;font-size:10px!important;gap:3px!important}
+  .playerControls .controlRowPrimary .fullscreenBtn span{font-size:10px}
+  .playerControls .controlDivider{height:18px}
+  .playerControls .controlRowSpeed{gap:7px!important}
+  .playerControls .speedLabel{font-size:10px}
+  .playerControls .speedGroup{gap:3px!important;padding:2px!important}
+  .playerControls .speedBtn{min-width:36px!important;min-height:28px!important;height:28px!important;padding:0 6px!important;font-size:10px!important}
+}
+@media(max-width:360px){
+  .playerControls .controlRowPrimary{gap:5px!important}
+  .playerControls .controlMiniLabel{display:none}
+  .playerControls #qualitySelect{min-width:72px}
+  .playerControls .controlRowPrimary .zoomBtn,
+  .playerControls .controlRowPrimary .zoomOutBtn{font-size:9px!important;padding:0 5px!important}
+  .playerControls .controlRowPrimary .fullscreenBtn{padding:0 6px!important}
+  .playerControls .speedLabel{display:none}
+}
+
 </style>
 </head>
 
@@ -2717,56 +2827,19 @@ body.help-modal-open{overflow:hidden}
 
     <div class="playerControls">
 
-      <div class="controlRow">
+      <div class="controlRow controlRowPrimary" aria-label="أدوات الفيديو">
 
-        <div
-          class="speedGroup"
-          id="speedGroup"
-        >
-
-          <button
-            class="speedBtn active"
-            data-speed="1"
-            type="button"
+        <div class="utilityGroup">
+          <label class="controlMiniLabel" for="qualitySelect">الجودة</label>
+          <select
+            id="qualitySelect"
+            class="qualitySelect hidden"
+            aria-label="جودة الفيديو"
+            title="جودة الفيديو"
           >
-            1x
-          </button>
-
-          <button
-            class="speedBtn"
-            data-speed="1.25"
-            type="button"
-          >
-            1.25x
-          </button>
-
-          <button
-            class="speedBtn"
-            data-speed="1.5"
-            type="button"
-          >
-            1.5x
-          </button>
-
-          <button
-            class="speedBtn"
-            data-speed="2"
-            type="button"
-          >
-            2x
-          </button>
-
+            <option value="auto">تلقائي</option>
+          </select>
         </div>
-
-
-        <select
-          id="qualitySelect"
-          class="qualitySelect hidden"
-          aria-label="جودة الفيديو"
-          title="جودة الفيديو"
-        >
-          <option value="auto">تلقائي</option>
-        </select>
 
         <button
           id="captionsBtn"
@@ -2777,6 +2850,7 @@ body.help-modal-open{overflow:hidden}
           title="الترجمة النصية"
         ><span class="captionsIcon" aria-hidden="true">CC</span><span class="captionsLabel">الترجمة</span></button>
 
+        <span class="controlDivider" aria-hidden="true"></span>
 
         <button
           id="zoomBtn"
@@ -2803,6 +2877,15 @@ body.help-modal-open{overflow:hidden}
 
       </div>
 
+      <div class="controlRow controlRowSpeed" aria-label="سرعة تشغيل الفيديو">
+        <span class="speedLabel">سرعة التشغيل</span>
+        <div class="speedGroup" id="speedGroup">
+          <button class="speedBtn active" data-speed="1" type="button">1x</button>
+          <button class="speedBtn" data-speed="1.25" type="button">1.25x</button>
+          <button class="speedBtn" data-speed="1.5" type="button">1.5x</button>
+          <button class="speedBtn" data-speed="2" type="button">2x</button>
+        </div>
+      </div>
 
       <div class="progressInfo">
 
