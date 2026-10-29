@@ -356,44 +356,75 @@ html[data-theme="light"] .calligraphy-orbits .electron-three{fill:#2684bb}
 }
 .topbar .actions .push-setup-btn{width:auto;box-shadow:none}
 .topbar .actions .theme-btn{box-shadow:none}
-.hero{grid-template-columns:minmax(0,1fr);text-align:right;min-height:245px;padding:clamp(28px,4vw,48px);isolation:isolate}
+.hero{
+  position:relative;overflow:hidden;isolation:isolate;
+  display:block;min-height:clamp(228px,24vw,278px);
+  padding:clamp(34px,4.2vw,52px) clamp(24px,4.5vw,58px) 30px;
+  text-align:right;
+}
 .hero h1,.hero p,.hero-tags{position:relative;z-index:2}
-.hero h1{max-width:100%;padding-inline-start:clamp(0px,12vw,120px)}
+.hero h1{
+  max-width:100%;margin:0 0 14px;
+  padding:0;font-family:'Alexandria',sans-serif;
+  font-size:clamp(25px,2.5vw,34px);font-weight:800;
+  line-height:1.55;letter-spacing:-.35px;
+  color:#e9eef7;text-shadow:0 2px 18px rgba(0,0,0,.14);
+}
+.hero p{max-width:780px;font-size:clamp(13px,1.15vw,15px);line-height:1.95}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .hero-brand-animation{
-  position:absolute;z-index:1;inset:0;display:flex;align-items:center;justify-content:flex-start;
-  width:min(52%,510px);min-width:270px;pointer-events:none;opacity:.8;
+  position:absolute;z-index:1;top:-18px;bottom:auto;left:clamp(12px,3vw,38px);
+  display:flex;align-items:center;justify-content:center;
+  width:min(47%,440px);height:178px;min-width:230px;
+  pointer-events:none;opacity:.94;
 }
 .hero-brand-animation .calligraphy-logo{
-  position:relative;width:100%;min-height:150px;isolation:isolate;display:flex;align-items:center;justify-content:center;
-  filter:drop-shadow(0 10px 22px rgba(59,130,246,.12));
+  position:relative;width:100%;height:100%;min-height:0;isolation:isolate;
+  display:flex;align-items:center;justify-content:center;
+  filter:drop-shadow(0 7px 16px rgba(59,130,246,.14));
 }
-.hero-brand-animation .calligraphy-name{
-  position:relative;z-index:2;white-space:nowrap;text-align:center;width:100%;
-  font-family:'Alexandria',sans-serif;font-size:clamp(23px,3vw,40px);font-weight:800;line-height:1.6;
-  color:rgba(244,207,130,.18);text-shadow:none;-webkit-text-fill-color:currentColor;
+.hero-brand-animation .calligraphy-name{display:none!important}
+.hero-brand-animation .calligraphy-orbits{opacity:.98;overflow:visible}
+html[data-theme="light"] .hero h1{
+  color:#183b69;text-shadow:0 1px 0 rgba(255,255,255,.8);
 }
-html[data-theme="light"] .hero-brand-animation .calligraphy-name{color:rgba(36,79,145,.10);text-shadow:none;-webkit-text-fill-color:currentColor}
-.hero-brand-animation .calligraphy-orbits{opacity:.8}
-html[data-theme="light"] .hero-brand-animation .calligraphy-orbits{opacity:.5}
+html[data-theme="light"] .hero p{color:#43566e}
+html[data-theme="light"] .hero-brand-animation{opacity:.92;filter:drop-shadow(0 5px 14px rgba(37,99,235,.08))}
+html[data-theme="light"] .hero-brand-animation .calligraphy-orbits{opacity:.92}
+html[data-theme="dark"] .hero-brand-animation .calligraphy-orbits{opacity:.98}
 @media(max-width:768px){
   .topbar{justify-content:center;gap:7px;padding:8px}
   .topbar .dashboard-student-profile{order:1;margin-inline-start:0}
   .topbar .actions{order:2;justify-content:center}
-  .hero{min-height:220px;padding:27px 21px}
-  .hero h1{padding-inline-start:clamp(0px,7vw,45px)}
-  .hero-brand-animation{width:60%;min-width:220px;opacity:.58}
-  .hero-brand-animation .calligraphy-logo{min-height:125px}
+  .hero{min-height:235px;padding:30px 23px 25px}
+  .hero h1{font-size:clamp(24px,4.2vw,30px);max-width:100%}
+  .hero p{max-width:100%;font-size:13px}
+  .hero-brand-animation{top:-15px;left:12px;width:42%;height:150px;min-width:190px;opacity:.88}
 }
 @media(max-width:560px){
   .topbar{align-items:center}
   .topbar .actions{width:100%;justify-content:center;gap:6px}
   .topbar .dashboard-student-profile .user-name{font-size:11px}
   .topbar .actions .btn,.topbar .actions .push-setup-btn{min-height:31px;padding:5px 8px;font-size:10px}
-  .hero{min-height:225px;padding:24px 17px}
-  .hero h1{font-size:clamp(23px,6vw,29px);padding-inline-start:0}
-  .hero-brand-animation{width:100%;min-width:0;justify-content:center;opacity:.42}
-  .hero-brand-animation .calligraphy-logo{min-height:120px}
-  .hero-brand-animation .calligraphy-name{font-size:clamp(24px,7vw,33px)}
+  .hero{min-height:245px;padding:28px 18px 24px}
+  .hero h1{font-size:clamp(22px,6vw,27px);line-height:1.55;margin-bottom:12px}
+  .hero p{font-size:12.5px;line-height:1.9}
+  .hero-tags{gap:6px;margin-top:14px}
+  .hero-brand-animation{top:-13px;left:50%;transform:translateX(-50%);width:78%;height:130px;min-width:0;opacity:.76}
+}
+
+/* Fine tune hero spacing and readable type across themes */
+.hero{gap:0}
+.hero h1{letter-spacing:0}
+html[data-theme="light"] .hero h1{color:#1e4678}
+html[data-theme="dark"] .hero h1{color:#f0f4fb}
+@media(min-width:769px){
+ .hero h1{max-width:72%;font-size:clamp(27px,2.4vw,33px)}
+ .hero p{max-width:72%}
+}
+@media(max-width:560px){
+ .hero h1{max-width:100%}
+ .hero-brand-animation{height:122px}
 }
 
 /* Student-wide notifications: visible immediately on dashboard open */
