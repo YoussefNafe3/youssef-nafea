@@ -1622,6 +1622,11 @@ id="notificationList"
 ====================================================== -->
 
 <section class="section latest-exam-section" aria-labelledby="latestExamTitle">
+  <div class="section-head"><div class="section-title"><div class="section-title-icon latest-section-icon" aria-hidden="true">🖥️</div><div><h2>الامتحانات الـ online</h2><p>نتائج الامتحانات التي أديتها على المنصة</p></div></div><span class="latest-updated-label">نتائج إلكترونية</span></div>
+  <div id="onlineExamResults" class="latest-result-wrap"><div class="loading"><div class="loading-icon">◷</div><div class="loading-text">جاري تحميل نتائج الامتحانات الإلكترونية...</div></div></div>
+</section>
+
+<section class="section latest-exam-section" aria-labelledby="latestExamTitle">
   <div class="section-head">
     <div class="section-title">
       <div class="section-title-icon latest-section-icon" aria-hidden="true">
@@ -2269,71 +2274,25 @@ let examData=[];
 
 
 async function loadExamResults(){
-
-const container =
-document.getElementById(
-"examResults"
-);
-
-
-const {
-data,
-error
-} =
-await client
-.from("exam_results")
-.select("*")
-.eq("student_id",studentId)
-.order("created_at",{ascending:false,nullsFirst:false})
-.order("exam_date",{ascending:false,nullsFirst:false});
-
-
-if(error){
-
-console.error(error);
-
-container.innerHTML=`
-
-<div class="empty">
-
-<div class="empty-icon">
-⚠️
-</div>
-
-<strong>
-تعذر تحميل نتائج الامتحانات
-</strong>
-
-<span>
-حدث خطأ أثناء الاتصال بقاعدة البيانات.
-</span>
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-examData=(data || []).slice().sort((a,b)=>{
-  const createdA = a.created_at ? new Date(a.created_at).getTime() : 0;
-  const createdB = b.created_at ? new Date(b.created_at).getTime() : 0;
-  if(createdA !== createdB) return createdB - createdA;
-  const dateA = a.exam_date ? new Date(a.exam_date).getTime() : 0;
-  const dateB = b.exam_date ? new Date(b.exam_date).getTime() : 0;
-  return dateB - dateA;
-});
-
-renderLatestExam(examData[0] || null);
-renderExams(examData.slice(1));
-
-
+const container=document.getElementById("examResults");
+const onlineContainer=document.getElementById("onlineExamResults");
+const {data,error}=await client.from("exam_results").select("*").eq("student_id",studentId).order("created_at",{ascending:false,nullsFirst:false}).order("exam_date",{ascending:false,nullsFirst:false});
+if(error){console.error(error);container.innerHTML='<div class="empty"><strong>تعذر تحميل نتائج امتحانات المركز</strong></div>';onlineContainer.innerHTML='<div class="empty"><strong>تعذر تحميل نتائج الامتحانات الإلكترونية</strong></div>';return;}
+const all=(data||[]).slice().sort((a,b)=>{const ca=a.created_at?new Date(a.created_at).getTime():0,cb=b.created_at?new Date(b.created_at).getTime():0;if(ca!==cb)return cb-ca;return (b.exam_date?new Date(b.exam_date).getTime():0)-(a.exam_date?new Date(a.exam_date).getTime():0);});
+const isOnline=r=>r.source_type==="online_exam"||String(r.notes||"").includes("online_exam_attempt_id:");
+const online=all.filter(isOnline),center=all.filter(r=>!isOnline(r));
+examData=center;
+renderOnlineExamResults(online);
+renderLatestExam(center[0]||null);
+renderExams(center.slice(1));
 updateAllExamsButton();
-
 }
-
+function renderOnlineExamResults(data){
+const container=document.getElementById("onlineExamResults");if(!container)return;
+if(!data.length){container.innerHTML='<div class="empty"><div class="empty-icon">🖥️</div><strong>لا توجد نتائج امتحانات online حتى الآن</strong><span>ستظهر هنا نتائج الامتحانات التي تؤديها على المنصة.</span></div>';return;}
+container.innerHTML=data.map(result=>{const percent=percentage(result.score,result.total),status=statusInfo(percent);return '<article class="result '+status.className+' fade" data-result-id="'+escapeHTML(result.id)+'"><div class="result-head"><div><div class="result-title">'+escapeHTML(result.title||"امتحان online")+'</div><div class="result-subtitle">'+escapeHTML(result.subject||"أحياء")+'</div></div><span class="status '+status.badgeClass+'">'+status.badge+'</span></div><div class="score-row"><div class="score"><strong>'+escapeHTML(result.score)+'</strong><span> / '+escapeHTML(result.total)+'</span></div><div class="percent-ring" style="--score-angle:'+percent*3.6+'deg" role="img" aria-label="النسبة '+percent+' بالمئة"><span>'+percent+'<small>%</small></span></div></div><div class="progress"><div class="progress-bar" data-width="'+percent+'%"></div></div><div class="result-footer"><span>📅 '+formatDate(result.exam_date)+'</span><span>🖥️ امتحان online</span></div></article>';}).join("");
+animateProgress();
+}
 
 function updateAllExamsButton(){
   const button = document.getElementById("toggleAllExams");
@@ -3055,6 +3014,8 @@ async function openResultNotification(element){
   document.getElementById("notificationPanel").classList.remove("show");
 
   if(resultType === "exam"){
+    const onlineCard = document.getElementById("onlineExamResults")?.querySelector(`[data-result-id="${CSS.escape(String(resultId))}"]`);
+    if(onlineCard){onlineCard.scrollIntoView({behavior:"smooth",block:"center"});onlineCard.style.outline="3px solid var(--primary)";onlineCard.style.outlineOffset="4px";setTimeout(()=>{onlineCard.style.outline="";onlineCard.style.outlineOffset="";},3200);return;}
     const latestContainer = document.getElementById("latestExamResult");
     const latestCard = latestContainer?.querySelector(`[data-result-id="${CSS.escape(String(resultId))}"]`);
     if(latestCard){
