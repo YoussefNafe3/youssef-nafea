@@ -17,24 +17,49 @@ function renderQuestion(){if(!questions.length)return;current=Math.max(0,Math.mi
 function renderState(){const n=questions.filter(isAnswered).length;$("answered").textContent="تمت الإجابة عن "+n+" من "+questions.length;document.querySelectorAll("[data-nav]").forEach(b=>{let q=questions[+b.dataset.nav];b.classList.toggle("done",isAnswered(q));b.classList.toggle("current",+b.dataset.nav===current);});}function renderNav(){$("nav").innerHTML=questions.map((q,i)=>'<button class="navq '+(isAnswered(q)?"done ":"")+(i===current?"current":"")+'" data-nav="'+i+'" type="button">'+(i+1)+'</button>').join("");document.querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>go(+b.dataset.nav));}function go(i){if(i<0||i>=questions.length)return;current=i;renderQuestion();if(innerWidth<700)$("qContent").scrollIntoView({behavior:"smooth",block:"start"});}
 function scheduleSave(id){if(expired||submitting)return;clearTimeout(saveTimers[id]);saveTimers[id]=setTimeout(()=>saveAnswer(id),450);setSave("جارٍ حفظ الإجابة...");}async function saveAnswer(id,force=false){if(!attempt||((expired||submitting)&&!force))return true;clearTimeout(saveTimers[id]);const value=Object.prototype.hasOwnProperty.call(answers,id)?answers[id]:null;try{const r=await db.rpc("save_online_exam_answer",{p_attempt_id:attempt.attempt_id,p_question_id:id,p_answer:value});if(r.error)throw r.error;if(!r.data||!r.data.success){if(r.data&&r.data.reason==="time_expired"){expired=true;await submit(true);return true;}throw Error(r.data&&r.data.reason||"save_failed");}setSave("تم حفظ الإجابات تلقائيًا.","ok");return true;}catch(e){setSave("تعذر حفظ الإجابة. تحقق من الاتصال.","bad");console.error(e);return false;}}
 async function flush(){Object.keys(saveTimers).forEach(id=>clearTimeout(saveTimers[id]));const results=await Promise.all(questions.filter(q=>Object.prototype.hasOwnProperty.call(answers,q.id)).map(q=>saveAnswer(q.id,true)));return results.every(x=>x!==false);}
+function showCheatingLock(persisted){
+ cheatingLocked=true;expired=true;clearInterval(timerId);$("confirm").classList.remove("open");$("listing").hidden=true;$("result").hidden=false;$("exam").classList.remove("active");
+ $("resultTitle").textContent="تم اكتشاف محاولة غش";
+ $("resultText").textContent="تم إغلاق الامتحان بسبب مغادرة صفحة الاختبار أو الانتقال إلى نافذة/تطبيق آخر. لن يمكن استئناف هذه المحاولة.";
+ $("score").textContent="الامتحان مغلق";
+ $("resultStatus").textContent=persisted?"تم تسجيل المخالفة ولا يمكن إعادة فتح المحاولة.":"تم قفل الامتحان محليًا، وجارٍ تأكيد تسجيل المخالفة. لا تغلق هذه الصفحة حتى يكتمل التحقق.";
+ window.scrollTo(0,0);
+}
+async function persistCheatingFlag(attemptId,reason){
+ const session=await db.auth.getSession();const token=session.data&&session.data.session&&session.data.session.access_token;
+ const response=await fetch("https://nhdowqzecpwmkunczodl.supabase.co/rest/v1/rpc/flag_online_exam_cheating",{method:"POST",headers:{apikey:SUPABASE_ANON_KEY,Authorization:"Bearer "+(token||accessToken||""),"Content-Type":"application/json"},body:JSON.stringify({p_attempt_id:attemptId,p_reason:reason}),keepalive:true});
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok||data.success!==true)throw Error(data.reason||"Could not persist violation");
+ try{localStorage.removeItem("online_exam_violation_pending");}catch(e){}
+ return true;
+}
 async function flagCheating(reason){
  if(!attempt||cheatingLocked||cheatingInFlight||submitting)return;
- cheatingInFlight=true;cheatingLocked=true;clearInterval(timerId);
- Object.keys(saveTimers).forEach(k=>clearTimeout(saveTimers[k]));expired=true;
+ cheatingInFlight=true;cheatingLocked=true;expired=true;clearInterval(timerId);
+ Object.keys(saveTimers).forEach(k=>clearTimeout(saveTimers[k]));
+ const violation={attempt_id:attempt.attempt_id,reason:reason||"tab_hidden",exam_id:attempt.exam_id||exam&&exam.id||null,at:new Date().toISOString()};
+ try{localStorage.setItem("online_exam_violation_pending",JSON.stringify(violation));}catch(e){}
+ showCheatingLock(false);
  try{
-  const response=await fetch("https://nhdowqzecpwmkunczodl.supabase.co/rest/v1/rpc/flag_online_exam_cheating",{method:"POST",headers:{apikey:SUPABASE_ANON_KEY,Authorization:"Bearer "+(accessToken||""),"Content-Type":"application/json"},body:JSON.stringify({p_attempt_id:attempt.attempt_id,p_reason:reason}),keepalive:true});
-  const data=await response.json().catch(()=>({}));
-  if(!response.ok||data.success!==true){cheatingLocked=false;console.error("Could not record exam violation",data);return;}
-  attempt.status="flagged";$("confirm").classList.remove("open");$("listing").hidden=true;$("result").hidden=false;$("exam").classList.remove("active");
-  $("resultTitle").textContent="تم اكتشاف محاولة غش";$("resultText").textContent="تم إغلاق الامتحان بسبب مغادرة صفحة الاختبار أو الانتقال إلى نافذة/تطبيق آخر. لن يمكن استئناف هذه المحاولة.";
-  $("score").textContent="الامتحان مغلق";$("resultStatus").textContent="تم تسجيل المخالفة ولا يمكن إعادة فتح المحاولة.";window.scrollTo(0,0);
- }catch(e){cheatingLocked=false;console.error("Could not record exam violation",e);}finally{cheatingInFlight=false;}
+  await persistCheatingFlag(violation.attempt_id,violation.reason);
+  attempt.status="flagged";showCheatingLock(true);
+ }catch(e){
+  console.error("Could not record exam violation; retrying when online",e);
+  $("resultStatus").textContent="تعذر تأكيد المخالفة بسبب الاتصال. تم قفل الصفحة وسيُعاد إرسال التسجيل عند عودة الاتصال.";
+ }finally{cheatingInFlight=false;}
+}
+async function retryPendingCheating(){
+ let pending=null;try{pending=JSON.parse(localStorage.getItem("online_exam_violation_pending")||"null");}catch(e){}
+ if(!pending||!pending.attempt_id)return;
+ cheatingLocked=true;expired=true;
+ try{await persistCheatingFlag(pending.attempt_id,pending.reason||"tab_hidden");}
+ catch(e){console.error("Pending exam violation is still waiting for connection",e);}
 }
 function installCheatingGuards(){
  document.addEventListener("visibilitychange",()=>{if(document.hidden&&attempt&&!expired&&!submitting&&!cheatingLocked)flagCheating("tab_hidden");});
  window.addEventListener("pagehide",()=>{if(attempt&&!expired&&!submitting&&!cheatingLocked)flagCheating("page_exit");});
  window.addEventListener("blur",()=>{if(!attempt||expired||submitting||cheatingLocked)return;clearTimeout(blurTimer);blurTimer=setTimeout(()=>{if(attempt&&!document.hidden&&!document.hasFocus()&&!expired&&!submitting&&!cheatingLocked)flagCheating("window_blur");},1400);});
- window.addEventListener("focus",()=>clearTimeout(blurTimer));
+ window.addEventListener("focus",()=>clearTimeout(blurTimer));window.addEventListener("online",()=>retryPendingCheating());
 }
 function updateTimer(){if(!deadline||!attempt)return;const left=Math.max(0,deadline-Date.now()),sec=Math.ceil(left/1000);$("timer").textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");$("timerBox").classList.toggle("urgent",left<=300000);if(left<=0&&!expired&&!submitting){expired=true;clearInterval(timerId);$("confirm").classList.remove("open");submit(true);}}
 function askSubmit(){if(expired){submit(true);return;}const n=questions.filter(q=>q.is_required&&!isAnswered(q)).length;$("confirmText").textContent=n?"هناك "+n+" سؤال مطلوب لم تتم الإجابة عنه. هل تريد التسليم؟":"تمت الإجابة عن "+questions.filter(isAnswered).length+" من "+questions.length+" سؤال. هل تريد التسليم الآن؟";$("confirm").classList.add("open");}
