@@ -1622,7 +1622,7 @@ id="notificationList"
 ====================================================== -->
 
 <section class="section latest-exam-section" aria-labelledby="latestExamTitle">
-  <div class="section-head"><div class="section-title"><div class="section-title-icon latest-section-icon" aria-hidden="true">🖥️</div><div><h2>الامتحانات الـ online</h2><p>نتائج الامتحانات التي أديتها على المنصة</p></div></div><span class="latest-updated-label">نتائج إلكترونية</span></div>
+  <div class="section-head"><div class="section-title"><div class="section-title-icon latest-section-icon" aria-hidden="true">🖥️</div><div><h2>الامتحانات الأونلاين</h2><p>نتائج الامتحانات التي أديتها على المنصة</p></div></div><span class="latest-updated-label">نتائج إلكترونية</span></div>
   <div id="onlineExamResults" class="latest-result-wrap"><div class="loading"><div class="loading-icon">◷</div><div class="loading-text">جاري تحميل نتائج الامتحانات الإلكترونية...</div></div></div>
 </section>
 
@@ -2289,8 +2289,8 @@ updateAllExamsButton();
 }
 function renderOnlineExamResults(data){
 const container=document.getElementById("onlineExamResults");if(!container)return;
-if(!data.length){container.innerHTML='<div class="empty"><div class="empty-icon">🖥️</div><strong>لا توجد نتائج امتحانات online حتى الآن</strong><span>ستظهر هنا نتائج الامتحانات التي تؤديها على المنصة.</span></div>';return;}
-container.innerHTML=data.map(result=>{const percent=percentage(result.score,result.total),status=statusInfo(percent);return '<article class="result '+status.className+' fade" data-result-id="'+escapeHTML(result.id)+'"><div class="result-head"><div><div class="result-title">'+escapeHTML(result.title||"امتحان online")+'</div><div class="result-subtitle">'+escapeHTML(result.subject||"أحياء")+' · امتحان الـ center / الدرس</div></div><span class="status '+status.badgeClass+'">'+status.badge+'</span></div><div class="score-row"><div class="score"><strong>'+escapeHTML(result.score)+'</strong><span> / '+escapeHTML(result.total)+'</span></div><div class="percent-ring" style="--score-angle:'+percent*3.6+'deg" role="img" aria-label="النسبة '+percent+' بالمئة"><span>'+percent+'<small>%</small></span></div></div><div class="progress"><div class="progress-bar" data-width="'+percent+'%"></div></div><div class="result-footer"><span>📅 '+formatDate(result.exam_date)+'</span><span>🖥️ امتحان online</span></div></article>';}).join("");
+if(!data.length){container.innerHTML='<div class="empty"><div class="empty-icon">🖥️</div><strong>لا توجد نتائج امتحانات أونلاين حتى الآن</strong><span>ستظهر هنا نتائج الامتحانات التي تؤديها على المنصة.</span></div>';return;}
+container.innerHTML=data.map(result=>{const percent=percentage(result.score,result.total),status=statusInfo(percent);return '<article class="result '+status.className+' fade" data-result-id="'+escapeHTML(result.id)+'"><div class="result-head"><div><div class="result-title">'+escapeHTML(result.title||"امتحان أونلاين")+'</div><div class="result-subtitle">'+escapeHTML(result.subject||"أحياء")+' · امتحان أونلاين</div></div><span class="status '+status.badgeClass+'">'+status.badge+'</span></div><div class="score-row"><div class="score"><strong>'+escapeHTML(result.score)+'</strong><span> / '+escapeHTML(result.total)+'</span></div><div class="percent-ring" style="--score-angle:'+percent*3.6+'deg" role="img" aria-label="النسبة '+percent+' بالمئة"><span>'+percent+'<small>%</small></span></div></div><div class="progress"><div class="progress-bar" data-width="'+percent+'%"></div></div><div class="result-footer"><span>📅 '+formatDate(result.exam_date)+'</span><span>🖥️ امتحان أونلاين</span></div></article>';}).join("");
 animateProgress();
 }
 
