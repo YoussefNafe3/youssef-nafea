@@ -1633,8 +1633,8 @@ id="notificationList"
         <svg viewBox="0 0 24 24"><path d="M4 19.5V14"/><path d="M10 19.5V9"/><path d="M16 19.5V4.5"/><path d="M22 19.5H2"/></svg>
       </div>
       <div>
-        <h2 id="latestExamTitle">أحدث نتيجة امتحان</h2>
-        <p>آخر نتيجة وصلتك من الدكتور</p>
+        <h2 id="latestExamTitle">امتحان الـ center / امتحان الدرس</h2>
+        <p>النتائج التي يضيفها الدكتور يدويًا من المركز أو الدرس</p>
       </div>
     </div>
     <span class="latest-updated-label"><span aria-hidden="true"></span> الأحدث أولًا</span>
@@ -1669,11 +1669,11 @@ id="notificationList"
 <div>
 
 <h2>
-كل نتائج الامتحانات
+كل نتائج امتحانات الـ center والدرس
 </h2>
 
 <p>
-نتائجك السابقة مرتبة من الأحدث إلى الأقدم
+نتائجك اليدوية السابقة مرتبة من الأحدث إلى الأقدم
 </p>
 
 </div>
@@ -2290,7 +2290,7 @@ updateAllExamsButton();
 function renderOnlineExamResults(data){
 const container=document.getElementById("onlineExamResults");if(!container)return;
 if(!data.length){container.innerHTML='<div class="empty"><div class="empty-icon">🖥️</div><strong>لا توجد نتائج امتحانات online حتى الآن</strong><span>ستظهر هنا نتائج الامتحانات التي تؤديها على المنصة.</span></div>';return;}
-container.innerHTML=data.map(result=>{const percent=percentage(result.score,result.total),status=statusInfo(percent);return '<article class="result '+status.className+' fade" data-result-id="'+escapeHTML(result.id)+'"><div class="result-head"><div><div class="result-title">'+escapeHTML(result.title||"امتحان online")+'</div><div class="result-subtitle">'+escapeHTML(result.subject||"أحياء")+'</div></div><span class="status '+status.badgeClass+'">'+status.badge+'</span></div><div class="score-row"><div class="score"><strong>'+escapeHTML(result.score)+'</strong><span> / '+escapeHTML(result.total)+'</span></div><div class="percent-ring" style="--score-angle:'+percent*3.6+'deg" role="img" aria-label="النسبة '+percent+' بالمئة"><span>'+percent+'<small>%</small></span></div></div><div class="progress"><div class="progress-bar" data-width="'+percent+'%"></div></div><div class="result-footer"><span>📅 '+formatDate(result.exam_date)+'</span><span>🖥️ امتحان online</span></div></article>';}).join("");
+container.innerHTML=data.map(result=>{const percent=percentage(result.score,result.total),status=statusInfo(percent);return '<article class="result '+status.className+' fade" data-result-id="'+escapeHTML(result.id)+'"><div class="result-head"><div><div class="result-title">'+escapeHTML(result.title||"امتحان online")+'</div><div class="result-subtitle">'+escapeHTML(result.subject||"أحياء")+' · امتحان الـ center / الدرس</div></div><span class="status '+status.badgeClass+'">'+status.badge+'</span></div><div class="score-row"><div class="score"><strong>'+escapeHTML(result.score)+'</strong><span> / '+escapeHTML(result.total)+'</span></div><div class="percent-ring" style="--score-angle:'+percent*3.6+'deg" role="img" aria-label="النسبة '+percent+' بالمئة"><span>'+percent+'<small>%</small></span></div></div><div class="progress"><div class="progress-bar" data-width="'+percent+'%"></div></div><div class="result-footer"><span>📅 '+formatDate(result.exam_date)+'</span><span>🖥️ امتحان online</span></div></article>';}).join("");
 animateProgress();
 }
 
@@ -2330,7 +2330,7 @@ function renderLatestExam(result){
           <span class="status ${status.badgeClass}">${status.badge}</span>
         </div>
         <h3 class="latest-result-title">${escapeHTML(result.title || "امتحان")}</h3>
-        <p class="latest-result-subject">${escapeHTML(result.subject || "أحياء")}</p>
+        <p class="latest-result-subject">${escapeHTML(result.subject || "أحياء")} · امتحان الـ center / الدرس</p>
         <div class="latest-result-meta">
           <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="2"/><path d="M7.5 3.5v4M16.5 3.5v4M3.5 10h17"/></svg>${formatDate(result.exam_date)}</span>
           ${result.duration_minutes ? `<span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg>${escapeHTML(result.duration_minutes)} دقيقة</span>` : ""}
