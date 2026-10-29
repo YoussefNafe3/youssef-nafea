@@ -3414,105 +3414,90 @@ if(
 
 
 let videoSessionAlive = true;
-
+let sessionVerificationInProgress = false;
 
 /* =========================================================
-   VERIFY SESSION
+   VERIFY ACTIVE PLATFORM SESSION
+   A delayed heartbeat is not, by itself, proof that the session
+   is invalid. Only an explicit server-side invalid-session result
+   may end this local session.
 ========================================================= */
 
 async function verifyPlatformSession(){
 
-  if(!videoSessionAlive)
+  if(!videoSessionAlive || sessionVerificationInProgress)
     return;
 
+  sessionVerificationInProgress = true;
 
   try{
 
-    const {
-      data,
-      error
-    } =
-      await client.rpc(
-        "refresh_student_session",
-        {
-          p_session_id:
-            platformSessionId
-        }
-      );
-
+    const { data, error } = await client.rpc(
+      "refresh_student_session",
+      { p_session_id: platformSessionId }
+    );
 
     if(error){
-
-      console.error(
-        "Session verification error:",
-        error
-      );
-
+      // Network interruptions, temporary Supabase failures, and
+      // refresh-token transport errors must not cause a forced logout.
+      console.warn("Session verification temporarily unavailable:", error);
       return;
-
     }
 
+    // A successful RPC with an explicit negative result means that
+    // the server no longer recognizes this exact session ID.
+    if(data && data.success === false){
 
-    if(
-      !data ||
-      !data.success
-    ){
-
-      videoSessionAlive =
-        false;
-
+      videoSessionAlive = false;
+      clearInterval(videoSessionHeartbeat);
 
       try{
-
         await client.auth.signOut();
-
       }catch(e){
-
-        console.error(e);
-
+        console.warn("Auth sign-out after invalid session failed:", e);
       }
 
+      try{
+        localStorage.removeItem("platform_session_id");
+        localStorage.removeItem("user");
+      }catch(e){
+        console.warn("Could not clear local session data:", e);
+      }
 
-      localStorage.removeItem(
-        "platform_session_id"
-      );
+      alert("🔒 انتهت جلسة الدخول أو تم تسجيل الدخول من جهاز آخر.");
+      window.location.replace("login.html");
+      return;
+    }
 
-      localStorage.removeItem(
-        "user"
-      );
-
-
-      alert(
-        "🔒 انتهت جلسة الدخول أو تم تسجيل الدخول من جهاز آخر."
-      );
-
-
-      window.location.replace(
-        "login.html"
-      );
-
+    // Unexpected/empty payloads are treated as a temporary verification
+    // problem, not as permission to destroy a potentially valid session.
+    if(!data || data.success !== true){
+      console.warn("Session verification returned an unexpected response.");
     }
 
   }catch(err){
-
-    console.error(
-      "Platform session error:",
-      err
-    );
-
+    // Keep the current session during transient browser/network failures.
+    console.warn("Platform session verification temporarily failed:", err);
+  }finally{
+    sessionVerificationInProgress = false;
   }
-
 }
 
+const videoSessionHeartbeat = setInterval(verifyPlatformSession, 30000);
 
-verifyPlatformSession();
+// Mobile browsers may suspend timers while the tab is hidden or the
+// device is locked. Re-check when the learner returns to the page.
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "visible"){
+    void verifyPlatformSession();
+  }
+});
 
+window.addEventListener("focus", () => {
+  void verifyPlatformSession();
+});
 
-const videoSessionHeartbeat =
-  setInterval(
-    verifyPlatformSession,
-    30000
-  );
+void verifyPlatformSession();
 
 
 /* =========================================================
@@ -6767,7 +6752,16 @@ window.addEventListener(
       if(
         state.securityAcknowledged
       ){
-        void forceLogoutForCapture("printscr");
+        // PrintScreen key events are not reliable proof of a screenshot:
+        // browsers/OS utilities may generate them without capturing this page.
+        // Keep the protective overlay and warning, but do not destroy the
+        // student's authenticated session on this ambiguous signal.
+        try{
+          showCaptureShield("printscr");
+        }catch(e){
+          console.warn("Could not show screenshot warning shield:", e);
+        }
+        toast("تنبيه: لا تشارك محتوى الدرس أو تحفظه خارج المنصة حفاظًا على حقوق المحتوى.");
       }
 
 
