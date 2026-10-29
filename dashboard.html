@@ -10,7 +10,7 @@
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#11152f">
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
 
@@ -28,7 +28,7 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Cairo',sans-serif;
+font-family:'Alexandria',sans-serif;
 }
 
 body{
@@ -290,16 +290,30 @@ html[data-theme="light"] .card{color:var(--text);background:var(--card)}
 .topbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,auto) minmax(0,1fr);align-items:center;gap:14px;position:relative}
 .calligraphy-logo{
   grid-column:2;grid-row:1;position:relative;display:flex;align-items:center;justify-content:center;
-  width:clamp(300px,34vw,430px);min-height:92px;isolation:isolate;color:#f5d58a;
+  width:clamp(300px,34vw,430px);min-height:92px;isolation:isolate;color:#f4cf82;
+  transition:color .25s ease,filter .25s ease;
 }
 .calligraphy-name{
   position:relative;z-index:2;display:block;width:100%;text-align:center;white-space:nowrap;
-  font-family:'Cairo',sans-serif;font-size:clamp(30px,2.9vw,41px);
-  font-weight:900;line-height:1.55;letter-spacing:0;
-  color:#f4d38b;
-  text-shadow:0 1px 0 rgba(255,255,255,.14),0 3px 14px rgba(91,191,232,.18);
+  font-family:'Alexandria',sans-serif;font-size:clamp(30px,2.9vw,41px);
+  font-weight:800;line-height:1.55;letter-spacing:0;
+  color:#f4cf82;
+  text-shadow:0 2px 12px rgba(244,207,130,.12);
   -webkit-text-fill-color:currentColor;
 }
+html[data-theme="light"] .calligraphy-logo{color:#2456a6;filter:none}
+html[data-theme="light"] .calligraphy-name{
+  color:#244f91;
+  text-shadow:0 1px 0 rgba(255,255,255,.85),0 3px 12px rgba(37,99,235,.10);
+  -webkit-text-fill-color:currentColor;
+}
+html[data-theme="light"] .calligraphy-orbits{opacity:.78}
+html[data-theme="light"] .calligraphy-orbits #orbitGradient stop:first-child{stop-color:#9cc8ff}
+html[data-theme="light"] .calligraphy-orbits #orbitGradient stop:nth-child(2){stop-color:#477ed2}
+html[data-theme="light"] .calligraphy-orbits #orbitGradient stop:last-child{stop-color:#d7a94b}
+html[data-theme="light"] .calligraphy-orbits .electron-one{fill:#3979d8}
+html[data-theme="light"] .calligraphy-orbits .electron-two{fill:#b98224}
+html[data-theme="light"] .calligraphy-orbits .electron-three{fill:#2684bb}
 .calligraphy-orbits{
   position:absolute;z-index:1;inset:0;width:100%;height:100%;overflow:visible;
   pointer-events:none;opacity:.95;
@@ -370,7 +384,7 @@ html[data-theme="light"] .card{color:var(--text);background:var(--card)}
 
 /* Unified dashboard actions: home, theme, and device notifications */
 .actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px}
-.actions .btn,.actions .push-setup-btn{min-height:40px;padding:8px 13px;border-radius:12px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:800;line-height:1.35;gap:8px;white-space:nowrap;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease}
+.actions .btn,.actions .push-setup-btn{min-height:40px;padding:8px 13px;border-radius:12px;font-family:'Alexandria',sans-serif;font-size:12px;font-weight:800;line-height:1.35;gap:8px;white-space:nowrap;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease}
 .actions .btn:hover,.actions .push-setup-btn:hover:not(:disabled){transform:translateY(-2px)}
 .actions .home-btn{color:#f5f1ff;background:linear-gradient(135deg,#7867e8,#5545bd);border:1px solid rgba(196,181,253,.3);box-shadow:0 6px 17px rgba(91,74,199,.18)}
 .actions .home-btn:hover{background:linear-gradient(135deg,#8878f0,#6351ce);box-shadow:0 9px 22px rgba(91,74,199,.24)}
