@@ -58,7 +58,7 @@ async function retryPendingCheating(){
 function installCheatingGuards(){
  document.addEventListener("visibilitychange",()=>{if(document.hidden&&attempt&&!expired&&!submitting&&!cheatingLocked)flagCheating("tab_hidden");});
  window.addEventListener("pagehide",()=>{if(attempt&&!expired&&!submitting&&!cheatingLocked)flagCheating("page_exit");});
- window.addEventListener("blur",()=>{if(!attempt||expired||submitting||cheatingLocked)return;clearTimeout(blurTimer);blurTimer=setTimeout(()=>{if(attempt&&!document.hidden&&!document.hasFocus()&&!expired&&!submitting&&!cheatingLocked)flagCheating("window_blur");},1400);});
+ window.addEventListener("blur",()=>{if(!attempt||expired||submitting||cheatingLocked)return;clearTimeout(blurTimer);blurTimer=setTimeout(()=>{if(attempt&&!document.hidden&&!document.hasFocus()&&!expired&&!submitting&&!cheatingLocked)flagCheating("window_blur");},500);});
  window.addEventListener("focus",()=>clearTimeout(blurTimer));window.addEventListener("online",()=>retryPendingCheating());
 }
 function updateTimer(){if(!deadline||!attempt)return;const left=Math.max(0,deadline-Date.now()),sec=Math.ceil(left/1000);$("timer").textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");$("timerBox").classList.toggle("urgent",left<=300000);if(left<=0&&!expired&&!submitting){expired=true;clearInterval(timerId);$("confirm").classList.remove("open");submit(true);}}
