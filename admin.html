@@ -296,7 +296,62 @@ onclick="forceStudentLogout('${s.id}')"
 </div>
 
 <!-- STUDENTS -->
-<style>.assignment-admin-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}.assignment-admin-form label{display:grid;gap:6px;color:#cbd5e1;font-size:12px;font-weight:700}.assignment-admin-form input,.assignment-admin-form textarea,.assignment-admin-form select{width:100%;padding:11px;border-radius:10px;border:1px solid #334155;background:#0b1424;color:white;font:12px Cairo,sans-serif}.assignment-admin-form textarea{min-height:80px}.assignment-admin-form .wide{grid-column:1/-1}.assignment-days-options{display:flex;gap:8px;flex-wrap:wrap}.assignment-days-options label{display:flex;align-items:center;gap:5px;padding:7px;border:1px solid #334155;border-radius:8px}.assignment-days-options input{width:auto}.assignment-admin-btn{padding:10px 15px;border:0;border-radius:10px;background:#d8b66a;color:#111827;font:800 12px Cairo,sans-serif;cursor:pointer}.assignment-admin-list{display:grid;gap:9px;margin-top:16px}.assignment-admin-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid #334155;border-radius:11px}.assignment-admin-row strong{display:block;font-size:13px}.assignment-admin-row small{color:#94a3b8;font-size:11px}.assignment-admin-row button{padding:7px 10px;border:1px solid #7f1d1d;border-radius:8px;background:#451a1a;color:#fecaca;cursor:pointer}@media(max-width:650px){.assignment-admin-form{grid-template-columns:1fr}.assignment-admin-form .wide{grid-column:auto}.assignment-admin-row{align-items:flex-start;flex-direction:column}}</style><div class="section" id="assignmentsAdminSection" style="margin-bottom:20px"><h3>🗂️ إدارة التكليفات</h3><p style="color:#94a3b8;font-size:12px;line-height:1.9;margin-top:6px">أنشئ تسميعًا أو واجبًا أو أي مهمة، وحدد الصف وأيام المجموعة والتاريخ. التكليفات محفوظة على قاعدة البيانات.</p><form id="assignmentAdminForm" class="assignment-admin-form"><label>عنوان التكليف <span style="color:#94a3b8;font-weight:400">(اختياري)</span><input id="assignmentTitleInput" maxlength="180" placeholder="يمكنك تركه فارغًا"></label><label>نوع التكليف<select id="assignmentTypeInput"><option value="recitation">تسميع</option><option value="homework">واجب منزلي</option><option value="homework_recitation">واجب وتسميع</option><option value="worksheet">ورقة عمل</option><option value="other">تكليف آخر</option></select></label><label>الصف المستهدف<select id="assignmentClassInput"><option value="all">كل الصفوف</option><option value="first_science">أولى ثانوي – علوم متكاملة</option><option value="third_biology">تالتة ثانوي – أحياء</option><option value="third_geology">تالتة ثانوي – جيولوجيا</option></select></label><label>تاريخ التكليف<input id="assignmentDateInput" type="date" required></label><div class="wide" style="padding:12px;border:1px solid #334155;border-radius:12px;background:#ffffff05"><strong style="font-size:12px">📅 تحديد المجموعة تلقائيًا من التاريخ</strong><p style="color:#94a3b8;font-size:11px;line-height:1.9;margin:5px 0 0">اختار تاريخ يوم واحد فقط. السبت أو الأحد أو الإثنين = مجموعة الأيام الثلاثة الأولى. الثلاثاء أو الأربعاء أو الخميس = مجموعة الأيام الثلاثة الثانية. الطالب سيشاهد التكليف في تاريخ يومه المختار داخل المجموعة.</p></div><label class="wide">وصف التكليف<textarea id="assignmentDescriptionInput" placeholder="تعليمات إضافية للطالب"></textarea></label><label class="wide">المهام المطلوبة (كل مهمة في سطر منفصل)<textarea id="assignmentItemsInput" placeholder="حفظ التعريفات&#10;حل أسئلة الكتاب&#10;مراجعة الملخص"></textarea></label><div class="wide"><button type="submit" class="assignment-admin-btn" id="saveAssignmentBtn">＋ إنشاء التكليف</button> <span id="assignmentAdminStatus" role="status" style="font-size:12px;color:#94a3b8"></span></div></form><div id="assignmentAdminList" class="assignment-admin-list"></div></div>
+<style>.assignment-admin-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}.assignment-admin-form label{display:grid;gap:6px;color:#cbd5e1;font-size:12px;font-weight:700}.assignment-admin-form input,.assignment-admin-form textarea,.assignment-admin-form select{width:100%;padding:11px;border-radius:10px;border:1px solid #334155;background:#0b1424;color:white;font:12px Cairo,sans-serif}.assignment-admin-form textarea{min-height:80px}.assignment-admin-form .wide{grid-column:1/-1}.assignment-days-options{display:flex;gap:8px;flex-wrap:wrap}.assignment-days-options label{display:flex;align-items:center;gap:5px;padding:7px;border:1px solid #334155;border-radius:8px}.assignment-days-options input{width:auto}.assignment-admin-btn{padding:10px 15px;border:0;border-radius:10px;background:#d8b66a;color:#111827;font:800 12px Cairo,sans-serif;cursor:pointer}.assignment-admin-list{display:grid;gap:9px;margin-top:16px}.assignment-admin-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid #334155;border-radius:11px}.assignment-admin-row strong{display:block;font-size:13px}.assignment-admin-row small{color:#94a3b8;font-size:11px}.assignment-admin-row button{padding:7px 10px;border:1px solid #7f1d1d;border-radius:8px;background:#451a1a;color:#fecaca;cursor:pointer}@media(max-width:650px){.assignment-admin-form{grid-template-columns:1fr}.assignment-admin-form .wide{grid-column:auto}.assignment-admin-row{align-items:flex-start;flex-direction:column}}
+/* Final admin dashboard polish: independently scrollable navigation */
+html{scroll-behavior:smooth;scrollbar-gutter:stable}
+body{min-width:320px}
+.sidebar{
+  flex:0 0 260px;
+  width:260px;
+  height:100vh;
+  height:100dvh;
+  max-height:100vh;
+  max-height:100dvh;
+  position:sticky;
+  top:0;
+  align-self:flex-start;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior-y:contain;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(174,160,255,.5) rgba(255,255,255,.035);
+  padding:20px 16px 24px;
+  z-index:20;
+}
+.sidebar::-webkit-scrollbar{width:7px}
+.sidebar::-webkit-scrollbar-track{background:rgba(255,255,255,.025);border-radius:10px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(174,160,255,.38);border-radius:10px;border:1px solid rgba(255,255,255,.06)}
+.sidebar::-webkit-scrollbar-thumb:hover{background:rgba(244,215,126,.7)}
+.brand{line-height:1.65;padding:8px 5px 14px}
+.admin-card{border:1px solid var(--admin-line);box-shadow:inset 0 1px rgba(255,255,255,.035)}
+.menu{display:flex;flex-direction:column;gap:7px;min-width:0;padding-bottom:10px}
+.menu a{
+  display:flex;align-items:center;gap:10px;
+  min-height:44px;margin:0;padding:11px 12px;
+  border:1px solid transparent;border-radius:12px;
+  background:rgba(255,255,255,.035);
+  color:#e7e9f7;font-size:13px;font-weight:700;line-height:1.65;
+  white-space:normal;overflow-wrap:anywhere;
+  transition:background .2s ease,border-color .2s ease,transform .2s ease,color .2s ease;
+}
+.menu a:hover,.menu a:focus-visible{
+  background:linear-gradient(100deg,rgba(118,100,223,.24),rgba(244,215,126,.07));
+  border-color:var(--admin-line);color:#fff;transform:translateX(-3px);outline:none
+}
+.menu a:focus-visible{box-shadow:0 0 0 3px rgba(118,100,223,.22)}
+.main{flex:1 1 auto;min-width:0}
+@media(max-width:900px){
+  .sidebar{
+    flex:0 0 auto;width:100%;height:auto;height:auto;max-height:none;
+    position:relative;top:auto;align-self:stretch;overflow:visible;
+    padding:14px;z-index:10
+  }
+  .menu{flex-direction:row;gap:8px;overflow-x:auto;overflow-y:hidden;padding:3px 2px 10px;scrollbar-width:thin}
+  .menu a{flex:0 0 auto;white-space:nowrap;min-height:40px;padding:9px 12px;overflow-wrap:normal}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.menu a{transition:none}}
+
+</style><div class="section" id="assignmentsAdminSection" style="margin-bottom:20px"><h3>🗂️ إدارة التكليفات</h3><p style="color:#94a3b8;font-size:12px;line-height:1.9;margin-top:6px">أنشئ تسميعًا أو واجبًا أو أي مهمة، وحدد الصف وأيام المجموعة والتاريخ. التكليفات محفوظة على قاعدة البيانات.</p><form id="assignmentAdminForm" class="assignment-admin-form"><label>عنوان التكليف <span style="color:#94a3b8;font-weight:400">(اختياري)</span><input id="assignmentTitleInput" maxlength="180" placeholder="يمكنك تركه فارغًا"></label><label>نوع التكليف<select id="assignmentTypeInput"><option value="recitation">تسميع</option><option value="homework">واجب منزلي</option><option value="homework_recitation">واجب وتسميع</option><option value="worksheet">ورقة عمل</option><option value="other">تكليف آخر</option></select></label><label>الصف المستهدف<select id="assignmentClassInput"><option value="all">كل الصفوف</option><option value="first_science">أولى ثانوي – علوم متكاملة</option><option value="third_biology">تالتة ثانوي – أحياء</option><option value="third_geology">تالتة ثانوي – جيولوجيا</option></select></label><label>تاريخ التكليف<input id="assignmentDateInput" type="date" required></label><div class="wide" style="padding:12px;border:1px solid #334155;border-radius:12px;background:#ffffff05"><strong style="font-size:12px">📅 تحديد المجموعة تلقائيًا من التاريخ</strong><p style="color:#94a3b8;font-size:11px;line-height:1.9;margin:5px 0 0">اختار تاريخ يوم واحد فقط. السبت أو الأحد أو الإثنين = مجموعة الأيام الثلاثة الأولى. الثلاثاء أو الأربعاء أو الخميس = مجموعة الأيام الثلاثة الثانية. الطالب سيشاهد التكليف في تاريخ يومه المختار داخل المجموعة.</p></div><label class="wide">وصف التكليف<textarea id="assignmentDescriptionInput" placeholder="تعليمات إضافية للطالب"></textarea></label><label class="wide">المهام المطلوبة (كل مهمة في سطر منفصل)<textarea id="assignmentItemsInput" placeholder="حفظ التعريفات&#10;حل أسئلة الكتاب&#10;مراجعة الملخص"></textarea></label><div class="wide"><button type="submit" class="assignment-admin-btn" id="saveAssignmentBtn">＋ إنشاء التكليف</button> <span id="assignmentAdminStatus" role="status" style="font-size:12px;color:#94a3b8"></span></div></form><div id="assignmentAdminList" class="assignment-admin-list"></div></div>
 <div class="section">
 <h3>الطلاب</h3>
 
