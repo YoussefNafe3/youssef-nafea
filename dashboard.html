@@ -342,6 +342,60 @@ html[data-theme="light"] .calligraphy-orbits .electron-three{fill:#2684bb}
 @media(prefers-reduced-motion:reduce){.orbit-system,.sprout{animation:none!important}.electron animateMotion{display:none}}
 
 
+/* Compact student dashboard controls + animated hero wordmark */
+.topbar{
+  display:flex;align-items:center;justify-content:flex-end;gap:8px;
+  min-height:0;margin:0 auto 14px;padding:8px 10px;
+  border-radius:16px;flex-wrap:wrap;
+}
+.topbar .dashboard-student-profile{margin-inline-start:auto;order:3}
+.topbar .actions{order:2;display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.topbar .dashboard-student-profile .user-name{font-size:12px}
+.topbar .actions .btn,.topbar .actions .push-setup-btn{
+  min-height:33px;padding:6px 10px;border-radius:10px;font-size:11px;gap:6px;
+}
+.topbar .actions .push-setup-btn{width:auto;box-shadow:none}
+.topbar .actions .theme-btn{box-shadow:none}
+.hero{grid-template-columns:minmax(0,1fr);text-align:right;min-height:245px;padding:clamp(28px,4vw,48px);isolation:isolate}
+.hero h1,.hero p,.hero-tags{position:relative;z-index:2}
+.hero h1{max-width:100%;padding-inline-start:clamp(0px,12vw,120px)}
+.hero-brand-animation{
+  position:absolute;z-index:1;inset:0;display:flex;align-items:center;justify-content:flex-start;
+  width:min(52%,510px);min-width:270px;pointer-events:none;opacity:.8;
+}
+.hero-brand-animation .calligraphy-logo{
+  position:relative;width:100%;min-height:150px;isolation:isolate;display:flex;align-items:center;justify-content:center;
+  filter:drop-shadow(0 10px 22px rgba(59,130,246,.12));
+}
+.hero-brand-animation .calligraphy-name{
+  position:relative;z-index:2;white-space:nowrap;text-align:center;width:100%;
+  font-family:'Alexandria',sans-serif;font-size:clamp(23px,3vw,40px);font-weight:800;line-height:1.6;
+  color:rgba(244,207,130,.18);text-shadow:none;-webkit-text-fill-color:currentColor;
+}
+html[data-theme="light"] .hero-brand-animation .calligraphy-name{color:rgba(36,79,145,.10);text-shadow:none;-webkit-text-fill-color:currentColor}
+.hero-brand-animation .calligraphy-orbits{opacity:.8}
+html[data-theme="light"] .hero-brand-animation .calligraphy-orbits{opacity:.5}
+@media(max-width:768px){
+  .topbar{justify-content:center;gap:7px;padding:8px}
+  .topbar .dashboard-student-profile{order:1;margin-inline-start:0}
+  .topbar .actions{order:2;justify-content:center}
+  .hero{min-height:220px;padding:27px 21px}
+  .hero h1{padding-inline-start:clamp(0px,7vw,45px)}
+  .hero-brand-animation{width:60%;min-width:220px;opacity:.58}
+  .hero-brand-animation .calligraphy-logo{min-height:125px}
+}
+@media(max-width:560px){
+  .topbar{align-items:center}
+  .topbar .actions{width:100%;justify-content:center;gap:6px}
+  .topbar .dashboard-student-profile .user-name{font-size:11px}
+  .topbar .actions .btn,.topbar .actions .push-setup-btn{min-height:31px;padding:5px 8px;font-size:10px}
+  .hero{min-height:225px;padding:24px 17px}
+  .hero h1{font-size:clamp(23px,6vw,29px);padding-inline-start:0}
+  .hero-brand-animation{width:100%;min-width:0;justify-content:center;opacity:.42}
+  .hero-brand-animation .calligraphy-logo{min-height:120px}
+  .hero-brand-animation .calligraphy-name{font-size:clamp(24px,7vw,33px)}
+}
+
 /* Student-wide notifications: visible immediately on dashboard open */
 .student-notifications{display:none;width:min(1180px,calc(100% - 36px));margin:0 auto 22px;padding:18px;border:1px solid rgba(139,124,255,.28);border-radius:22px;background:linear-gradient(125deg,rgba(38,36,85,.96),rgba(14,25,48,.96));box-shadow:0 18px 44px rgba(0,0,0,.18);color:#f6f7ff;position:relative;overflow:hidden}
 .student-notifications.show{display:block;animation:studentNoticeIn .45s ease both}
@@ -466,44 +520,7 @@ body.install-app-modal-open{overflow:hidden}
 
 <div class="topbar">
 
-<div class="logo calligraphy-logo" aria-label="دكتور يوسف نافع">
-  <span class="calligraphy-name">دكتور يوسف نافع</span>
-  <svg class="calligraphy-orbits" viewBox="0 0 420 150" role="img" aria-label="مدارات إلكترونية مضيئة ونبتة صغيرة">
-    <defs>
-      <linearGradient id="orbitGradient" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#70e1ff" stop-opacity=".15"/>
-        <stop offset="48%" stop-color="#83bfff" stop-opacity=".85"/>
-        <stop offset="100%" stop-color="#f5d58a" stop-opacity=".5"/>
-      </linearGradient>
-      <filter id="electronGlow" x="-250%" y="-250%" width="600%" height="600%">
-        <feGaussianBlur stdDeviation="3.2" result="blur"/>
-        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>
-      <linearGradient id="sproutGradient" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#b5f5c8"/><stop offset="100%" stop-color="#38c994"/>
-      </linearGradient>
-    </defs>
-    <g class="orbit-system">
-      <ellipse cx="104" cy="76" rx="82" ry="27" transform="rotate(-20 104 76)" fill="none" stroke="url(#orbitGradient)" stroke-width="1.15" stroke-dasharray="3 5"/>
-      <ellipse cx="104" cy="76" rx="78" ry="23" transform="rotate(27 104 76)" fill="none" stroke="#8bdcff" stroke-opacity=".48" stroke-width="1.05"/>
-      <circle class="electron electron-one" r="3.5" fill="#a8edff" filter="url(#electronGlow)">
-        <animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto" path="M 22,76 A 82,27 -20 1 1 186,76 A 82,27 -20 1 1 22,76"/>
-      </circle>
-      <circle class="electron electron-two" r="2.8" fill="#ffe6a1" filter="url(#electronGlow)">
-        <animateMotion dur="3.1s" begin="-1.4s" repeatCount="indefinite" rotate="auto" path="M 26,76 A 78,23 27 1 0 182,76 A 78,23 27 1 0 26,76"/>
-      </circle>
-      <circle class="electron electron-three" r="2.2" fill="#b9a8ff" filter="url(#electronGlow)">
-        <animateMotion dur="5.3s" begin="-2s" repeatCount="indefinite" rotate="auto" path="M 22,76 A 82,27 -20 1 0 186,76 A 82,27 -20 1 0 22,76"/>
-      </circle>
-    </g>
-    <g class="sprout" transform="translate(105 17)">
-      <path d="M0 26 C1 17 2 10 7 3" fill="none" stroke="#67d6a0" stroke-width="2.4" stroke-linecap="round"/>
-      <path d="M5 12 C-8 12 -13 4 -12 -3 C-2 -3 5 1 5 12Z" fill="url(#sproutGradient)" stroke="#8ae8b2" stroke-width=".7"/>
-      <path d="M7 5 C8 -5 18 -10 27 -8 C27 2 18 8 7 5Z" fill="url(#sproutGradient)" stroke="#8ae8b2" stroke-width=".7"/>
-      <path d="M-9 0 -1 7 M23 -5 10 3" stroke="#e0ffe9" stroke-opacity=".8" stroke-width="1" stroke-linecap="round"/>
-    </g>
-  </svg>
-</div>
+
 
 <div class="dashboard-student-profile" aria-label="ملف الطالب">
 <button type="button" class="dashboard-avatar-trigger" id="dashboardAvatarTrigger" aria-label="تغيير الصورة الشخصية" title="تغيير الصورة الشخصية"><span class="dashboard-avatar" id="dashboardStudentAvatar" aria-hidden="true"></span><span class="dashboard-avatar-plus" aria-hidden="true">+</span></button>
@@ -559,12 +576,51 @@ body.install-app-modal-open{overflow:hidden}
 <h1>
 منصة د. يوسف نافع
 </h1>
+<div class="hero-brand-animation" aria-hidden="true"><div class="calligraphy-logo" aria-hidden="true">
+  <span class="calligraphy-name">دكتور يوسف نافع</span>
+  <svg class="calligraphy-orbits" viewBox="0 0 420 150" aria-hidden="true">
+    <defs>
+      <linearGradient id="orbitGradient" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#70e1ff" stop-opacity=".15"/>
+        <stop offset="48%" stop-color="#83bfff" stop-opacity=".85"/>
+        <stop offset="100%" stop-color="#f5d58a" stop-opacity=".5"/>
+      </linearGradient>
+      <filter id="electronGlow" x="-250%" y="-250%" width="600%" height="600%">
+        <feGaussianBlur stdDeviation="3.2" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <linearGradient id="sproutGradient" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#b5f5c8"/><stop offset="100%" stop-color="#38c994"/>
+      </linearGradient>
+    </defs>
+    <g class="orbit-system">
+      <ellipse cx="104" cy="76" rx="82" ry="27" transform="rotate(-20 104 76)" fill="none" stroke="url(#orbitGradient)" stroke-width="1.15" stroke-dasharray="3 5"/>
+      <ellipse cx="104" cy="76" rx="78" ry="23" transform="rotate(27 104 76)" fill="none" stroke="#8bdcff" stroke-opacity=".48" stroke-width="1.05"/>
+      <circle class="electron electron-one" r="3.5" fill="#a8edff" filter="url(#electronGlow)">
+        <animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto" path="M 22,76 A 82,27 -20 1 1 186,76 A 82,27 -20 1 1 22,76"/>
+      </circle>
+      <circle class="electron electron-two" r="2.8" fill="#ffe6a1" filter="url(#electronGlow)">
+        <animateMotion dur="3.1s" begin="-1.4s" repeatCount="indefinite" rotate="auto" path="M 26,76 A 78,23 27 1 0 182,76 A 78,23 27 1 0 26,76"/>
+      </circle>
+      <circle class="electron electron-three" r="2.2" fill="#b9a8ff" filter="url(#electronGlow)">
+        <animateMotion dur="5.3s" begin="-2s" repeatCount="indefinite" rotate="auto" path="M 22,76 A 82,27 -20 1 0 186,76 A 82,27 -20 1 0 22,76"/>
+      </circle>
+    </g>
+    <g class="sprout" transform="translate(105 17)">
+      <path d="M0 26 C1 17 2 10 7 3" fill="none" stroke="#67d6a0" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M5 12 C-8 12 -13 4 -12 -3 C-2 -3 5 1 5 12Z" fill="url(#sproutGradient)" stroke="#8ae8b2" stroke-width=".7"/>
+      <path d="M7 5 C8 -5 18 -10 27 -8 C27 2 18 8 7 5Z" fill="url(#sproutGradient)" stroke="#8ae8b2" stroke-width=".7"/>
+      <path d="M-9 0 -1 7 M23 -5 10 3" stroke="#e0ffe9" stroke-opacity=".8" stroke-width="1" stroke-linecap="round"/>
+    </g>
+  </svg>
+</div></div>
+
 
 <p>
 رحلتك نحو التفوق تبدأ بخطوة. افتح محاضراتك، راجع نتائجك، ونظّم مذاكرتك من لوحة واحدة مصممة لتجعل الوصول إلى محتواك أسهل وأسرع.
 </p>
 <div class="hero-tags"><span>✦ تعلّم بتركيز</span><span>⌁ تقدّم بثبات</span><span>✓ استعدّ للتفوّق</span></div>
-<svg class="science-art" viewBox="0 0 240 150" fill="none" aria-hidden="true"><circle cx="120" cy="75" r="57" stroke="#83d5ff" stroke-opacity=".35" stroke-dasharray="4 7"/><ellipse cx="120" cy="75" rx="28" ry="60" transform="rotate(48 120 75)" stroke="#76c7ff"/><ellipse cx="120" cy="75" rx="28" ry="60" transform="rotate(-48 120 75)" stroke="#b4a1ff"/><circle cx="120" cy="75" r="7" fill="#f4cf82"/><circle cx="73" cy="47" r="4" fill="#f4cf82"/><circle cx="165" cy="47" r="4" fill="#83d5ff"/><path d="M12 132h55l12-12 12 19 16-29 13 22h38" stroke="#83d5ff" stroke-width="2" stroke-linecap="round" opacity=".7"/></svg>
+
 
 </div>
 

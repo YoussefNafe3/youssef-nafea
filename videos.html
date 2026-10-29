@@ -2813,6 +2813,30 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
   font-weight:800;
 }
 
+
+/* Compact, centered WhatsApp help action on all screen sizes */
+.learning-help-actions-standalone{
+  display:flex!important;
+  width:fit-content!important;
+  max-width:calc(100% - 28px)!important;
+  margin:12px auto 20px!important;
+  justify-content:center!important;
+  align-items:center;
+}
+.learning-help-actions-standalone .learning-help-link{
+  width:auto!important;
+  min-width:0;
+  max-width:100%;
+  min-height:42px;
+  padding:9px 20px;
+  gap:9px;
+  border-radius:13px;
+  font-size:12px;
+}
+@media(max-width:640px){
+  .learning-help-actions-standalone{width:fit-content!important;max-width:calc(100% - 24px)!important;margin:10px auto 16px!important}
+  .learning-help-actions-standalone .learning-help-link{width:auto!important;min-height:40px;padding:8px 17px;font-size:12px;gap:8px}
+}
 </style>
 </head>
 
