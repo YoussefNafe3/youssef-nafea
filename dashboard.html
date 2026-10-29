@@ -10,7 +10,7 @@
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#11152f">
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
 
@@ -28,7 +28,7 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Cairo',sans-serif;
+font-family:'Alexandria',sans-serif;
 }
 
 body{
@@ -290,16 +290,30 @@ html[data-theme="light"] .card{color:var(--text);background:var(--card)}
 .topbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,auto) minmax(0,1fr);align-items:center;gap:14px;position:relative}
 .calligraphy-logo{
   grid-column:2;grid-row:1;position:relative;display:flex;align-items:center;justify-content:center;
-  width:clamp(300px,34vw,430px);min-height:92px;isolation:isolate;color:#f5d58a;
+  width:clamp(300px,34vw,430px);min-height:92px;isolation:isolate;color:#f4cf82;
+  transition:color .25s ease,filter .25s ease;
 }
 .calligraphy-name{
   position:relative;z-index:2;display:block;width:100%;text-align:center;white-space:nowrap;
-  font-family:'Cairo',sans-serif;font-size:clamp(30px,2.9vw,41px);
-  font-weight:900;line-height:1.55;letter-spacing:0;
-  color:#f4d38b;
-  text-shadow:0 1px 0 rgba(255,255,255,.14),0 3px 14px rgba(91,191,232,.18);
+  font-family:'Alexandria',sans-serif;font-size:clamp(30px,2.9vw,41px);
+  font-weight:800;line-height:1.55;letter-spacing:0;
+  color:#f4cf82;
+  text-shadow:0 2px 12px rgba(244,207,130,.12);
   -webkit-text-fill-color:currentColor;
 }
+html[data-theme="light"] .calligraphy-logo{color:#2456a6;filter:none}
+html[data-theme="light"] .calligraphy-name{
+  color:#244f91;
+  text-shadow:0 1px 0 rgba(255,255,255,.85),0 3px 12px rgba(37,99,235,.10);
+  -webkit-text-fill-color:currentColor;
+}
+html[data-theme="light"] .calligraphy-orbits{opacity:.78}
+html[data-theme="light"] .calligraphy-orbits #orbitGradient stop:first-child{stop-color:#9cc8ff}
+html[data-theme="light"] .calligraphy-orbits #orbitGradient stop:nth-child(2){stop-color:#477ed2}
+html[data-theme="light"] .calligraphy-orbits #orbitGradient stop:last-child{stop-color:#d7a94b}
+html[data-theme="light"] .calligraphy-orbits .electron-one{fill:#3979d8}
+html[data-theme="light"] .calligraphy-orbits .electron-two{fill:#b98224}
+html[data-theme="light"] .calligraphy-orbits .electron-three{fill:#2684bb}
 .calligraphy-orbits{
   position:absolute;z-index:1;inset:0;width:100%;height:100%;overflow:visible;
   pointer-events:none;opacity:.95;
@@ -370,7 +384,7 @@ html[data-theme="light"] .card{color:var(--text);background:var(--card)}
 
 /* Unified dashboard actions: home, theme, and device notifications */
 .actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px}
-.actions .btn,.actions .push-setup-btn{min-height:40px;padding:8px 13px;border-radius:12px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:800;line-height:1.35;gap:8px;white-space:nowrap;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease}
+.actions .btn,.actions .push-setup-btn{min-height:40px;padding:8px 13px;border-radius:12px;font-family:'Alexandria',sans-serif;font-size:12px;font-weight:800;line-height:1.35;gap:8px;white-space:nowrap;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease}
 .actions .btn:hover,.actions .push-setup-btn:hover:not(:disabled){transform:translateY(-2px)}
 .actions .home-btn{color:#f5f1ff;background:linear-gradient(135deg,#7867e8,#5545bd);border:1px solid rgba(196,181,253,.3);box-shadow:0 6px 17px rgba(91,74,199,.18)}
 .actions .home-btn:hover{background:linear-gradient(135deg,#8878f0,#6351ce);box-shadow:0 9px 22px rgba(91,74,199,.24)}
@@ -394,7 +408,7 @@ html[data-theme="light"] .actions .push-setup-btn{color:#086b58;background:linea
 @keyframes avatarDialogEnter{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(prefers-reduced-motion:reduce){.dashboard-avatar-modal .avatar-dialog{animation:none}}.dashboard-avatar-modal h2{text-align:center;font-size:20px;font-weight:900;margin-bottom:5px}.dashboard-avatar-modal .avatar-dialog>p{text-align:center;color:var(--muted);font-size:11px;line-height:1.8;margin-bottom:18px}
 .dashboard-avatar-modal .avatar-choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.dashboard-avatar-modal .avatar-option{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;padding:10px 5px;border:1px solid var(--border);border-radius:15px;background:var(--card);color:var(--text);cursor:pointer}.dashboard-avatar-modal .avatar-option[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 2px #6366f126}.dashboard-avatar-modal .student-avatar{display:flex;width:58px;height:58px;overflow:hidden;border-radius:50%;line-height:0}.dashboard-avatar-modal .student-avatar svg{width:100%;height:100%}.dashboard-avatar-modal .avatar-option-label{font-size:10px;font-weight:900}.dashboard-avatar-modal .avatar-option-kind{font-size:9px;color:var(--muted)}
-.dashboard-avatar-modal .avatar-dialog-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:15px;padding-top:13px;border-top:1px solid var(--border)}.dashboard-avatar-modal .avatar-save-btn{padding:10px 15px;border:0;border-radius:11px;background:linear-gradient(135deg,#6255dc,#3288d8);color:white;font:800 11px 'Cairo',sans-serif;cursor:pointer}.dashboard-avatar-modal .avatar-save-btn:disabled{opacity:.45;cursor:not-allowed}.dashboard-avatar-modal .avatar-modal-close{position:sticky;top:0;float:left;z-index:3;display:grid;place-items:center;width:36px;height:36px;margin:-8px -8px 0 0;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-size:24px;line-height:1;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.08);transition:background .18s ease,border-color .18s ease,transform .18s ease}.dashboard-avatar-modal .avatar-modal-close:hover{background:var(--card2);border-color:var(--accent);transform:scale(1.04)}.dashboard-avatar-modal .avatar-modal-close:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.dashboard-avatar-modal .avatar-dialog-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:15px;padding-top:13px;border-top:1px solid var(--border)}.dashboard-avatar-modal .avatar-save-btn{padding:10px 15px;border:0;border-radius:11px;background:linear-gradient(135deg,#6255dc,#3288d8);color:white;font:800 11px 'Alexandria',sans-serif;cursor:pointer}.dashboard-avatar-modal .avatar-save-btn:disabled{opacity:.45;cursor:not-allowed}.dashboard-avatar-modal .avatar-modal-close{position:sticky;top:0;float:left;z-index:3;display:grid;place-items:center;width:36px;height:36px;margin:-8px -8px 0 0;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-size:24px;line-height:1;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.08);transition:background .18s ease,border-color .18s ease,transform .18s ease}.dashboard-avatar-modal .avatar-modal-close:hover{background:var(--card2);border-color:var(--accent);transform:scale(1.04)}.dashboard-avatar-modal .avatar-modal-close:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 @media(max-width:560px){.dashboard-student-profile{gap:6px}.dashboard-avatar-trigger{flex-basis:35px;width:35px;height:35px}.dashboard-student-profile .user-name{font-size:11px;max-width:150px}.dashboard-avatar-modal .avatar-dialog{padding:22px 14px 16px}.dashboard-avatar-modal .student-avatar{width:51px;height:51px}.dashboard-avatar-modal .avatar-choice-grid{gap:6px}}
 .avatar-upload-option{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:120px;padding:12px 7px;border:1px dashed rgba(99,102,241,.5);border-radius:16px;background:linear-gradient(145deg,rgba(99,102,241,.08),rgba(14,165,233,.06));color:var(--text);font:inherit;cursor:pointer}
 .avatar-upload-plus{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#6255dc,#3288d8);color:#fff;font-size:30px;line-height:1}
@@ -600,7 +614,7 @@ body.install-app-modal-open{overflow:hidden}
 
 
 <style>
-.assignment-hub{max-width:1240px;margin:24px auto;padding:22px;border:1px solid var(--border);border-radius:24px;background:var(--card);box-shadow:var(--shadow)}.assignment-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}.assignment-title{font-size:26px;font-weight:900;margin:5px 0}.assignment-muted{color:var(--muted);font-size:12px;line-height:1.9}.assignment-group-box{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px;border:1px solid var(--border);border-radius:14px}.assignment-group-box select{padding:10px;border-radius:10px;background:#14243b;color:white;border:1px solid #526b8c;font:700 12px Cairo,sans-serif}.assignment-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:20px}.assignment-card{padding:17px;border:1px solid var(--border);border-radius:18px;background:rgba(255,255,255,.035)}.assignment-card.upcoming{border-color:#f4cf82;box-shadow:0 0 0 1px #f4cf8240,0 0 25px #f4cf821c;animation:aglow 2.5s infinite}@keyframes aglow{50%{box-shadow:0 0 0 1px #f4cf8280,0 0 28px #f4cf8233}}.assignment-card-top{display:flex;justify-content:space-between;gap:8px;color:var(--gold);font-size:11px;font-weight:800}.assignment-card h3{margin:12px 0 6px;font-size:17px}.assignment-items{list-style:none;display:grid;gap:8px;margin-top:14px}.assignment-item{display:flex;gap:9px;padding:10px;border:1px solid var(--border);border-radius:11px;font-size:12px;line-height:1.8;cursor:pointer}.assignment-item input{accent-color:#34d399;margin-top:5px}.assignment-item.done span{text-decoration:line-through;opacity:.5}.assignment-progress{height:5px;margin-top:14px;background:#94a3b822;border-radius:8px;overflow:hidden}.assignment-progress span{display:block;height:100%;background:linear-gradient(90deg,#34d399,#73b8ff)}.assignment-empty{grid-column:1/-1;padding:26px;text-align:center;border:1px dashed var(--border);border-radius:16px;color:var(--muted);font-size:13px;line-height:2}.assignment-status{font-size:11px;color:var(--muted);margin-top:10px}@media(max-width:560px){.assignment-hub{padding:14px}.assignment-group-box{width:100%}.assignment-group-box select{width:100%}}
+.assignment-hub{max-width:1240px;margin:24px auto;padding:22px;border:1px solid var(--border);border-radius:24px;background:var(--card);box-shadow:var(--shadow)}.assignment-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}.assignment-title{font-size:26px;font-weight:900;margin:5px 0}.assignment-muted{color:var(--muted);font-size:12px;line-height:1.9}.assignment-group-box{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px;border:1px solid var(--border);border-radius:14px}.assignment-group-box select{padding:10px;border-radius:10px;background:#14243b;color:white;border:1px solid #526b8c;font:700 12px 'Alexandria',sans-serif}.assignment-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:20px}.assignment-card{padding:17px;border:1px solid var(--border);border-radius:18px;background:rgba(255,255,255,.035)}.assignment-card.upcoming{border-color:#f4cf82;box-shadow:0 0 0 1px #f4cf8240,0 0 25px #f4cf821c;animation:aglow 2.5s infinite}@keyframes aglow{50%{box-shadow:0 0 0 1px #f4cf8280,0 0 28px #f4cf8233}}.assignment-card-top{display:flex;justify-content:space-between;gap:8px;color:var(--gold);font-size:11px;font-weight:800}.assignment-card h3{margin:12px 0 6px;font-size:17px}.assignment-items{list-style:none;display:grid;gap:8px;margin-top:14px}.assignment-item{display:flex;gap:9px;padding:10px;border:1px solid var(--border);border-radius:11px;font-size:12px;line-height:1.8;cursor:pointer}.assignment-item input{accent-color:#34d399;margin-top:5px}.assignment-item.done span{text-decoration:line-through;opacity:.5}.assignment-progress{height:5px;margin-top:14px;background:#94a3b822;border-radius:8px;overflow:hidden}.assignment-progress span{display:block;height:100%;background:linear-gradient(90deg,#34d399,#73b8ff)}.assignment-empty{grid-column:1/-1;padding:26px;text-align:center;border:1px dashed var(--border);border-radius:16px;color:var(--muted);font-size:13px;line-height:2}.assignment-status{font-size:11px;color:var(--muted);margin-top:10px}@media(max-width:560px){.assignment-hub{padding:14px}.assignment-group-box{width:100%}.assignment-group-box select{width:100%}}
 </style><section class="assignment-hub"><div class="assignment-head"><div><div style="color:var(--gold);font-size:11px;font-weight:900">YOUR STUDY PLAN</div><h2 class="assignment-title">التكليفات والمتابعة</h2><p class="assignment-muted">اختار أيام مجموعتك؛ هتظهر التكليفات المناسبة وتواريخها، وعلّم على كل مهمة بعد إنجازها.</p></div><div class="assignment-group-box"><label for="assignmentGroup">📅 مجموعتك</label><div style="display:grid;gap:8px;min-width:190px"><label style="font-size:11px">يوم الحضور الأول</label><select id="assignmentGroupFirst"><option value="">اختار السبت أو الأحد أو الإثنين</option><option value="saturday">السبت</option><option value="sunday">الأحد</option><option value="monday">الإثنين</option></select><label style="font-size:11px">يوم الحضور الثاني</label><select id="assignmentGroupSecond"><option value="">اختار الثلاثاء أو الأربعاء أو الخميس</option><option value="tuesday">الثلاثاء</option><option value="wednesday">الأربعاء</option><option value="thursday">الخميس</option></select><select id="assignmentGroup" aria-hidden="true" tabindex="-1" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"><option value="">اختار مجموعتك</option><option value="saturday,tuesday">saturday,tuesday</option><option value="saturday,wednesday">saturday,wednesday</option><option value="saturday,thursday">saturday,thursday</option><option value="sunday,tuesday">sunday,tuesday</option><option value="sunday,wednesday">sunday,wednesday</option><option value="sunday,thursday">sunday,thursday</option><option value="monday,tuesday">monday,tuesday</option><option value="monday,wednesday">monday,wednesday</option><option value="monday,thursday">monday,thursday</option></select><p id="assignmentGroupSummary" class="assignment-muted">اختار يومًا من كل قائمة لتكوين مجموعتك.</p></div></div></div><div class="assignment-list" id="assignmentList"><div class="assignment-empty">اختار مجموعتك لعرض التكليفات.</div></div><p class="assignment-status" id="assignmentStatus" role="status"></p></section>
 <div class="footer">
 © 2026 Dr Youssef Nafea
