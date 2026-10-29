@@ -6752,7 +6752,16 @@ window.addEventListener(
       if(
         state.securityAcknowledged
       ){
-        void forceLogoutForCapture("printscr");
+        // PrintScreen key events are not reliable proof of a screenshot:
+        // browsers/OS utilities may generate them without capturing this page.
+        // Keep the protective overlay and warning, but do not destroy the
+        // student's authenticated session on this ambiguous signal.
+        try{
+          showCaptureShield("printscr");
+        }catch(e){
+          console.warn("Could not show screenshot warning shield:", e);
+        }
+        toast("تنبيه: لا تشارك محتوى الدرس أو تحفظه خارج المنصة حفاظًا على حقوق المحتوى.");
       }
 
 
