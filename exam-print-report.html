@@ -19,7 +19,7 @@
 "use strict";
 const URL="https://nhdowqzecpwmkunczodl.supabase.co";
 const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhbGciOiJIUzI1NiIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
-const db=window.supabase.createClient(URL,KEY),$=id=>document.getElementById(id),params=new URLSearchParams(location.search),examId=params.get("exam_id"),attemptId=params.get("attempt_id");
+const db=window.supabase.createClient(URL,KEY),$=id=>document.getElementById(id),params=new URLSearchParams(location.search),attemptId=params.get("attempt_id");let examId=params.get("exam_id");
 const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const date=v=>v?new Date(v).toLocaleString("ar-EG"):"—";
 const types={single_choice:"اختيار من متعدد",multiple_select:"اختيارات متعددة",true_false:"صح أو خطأ",short_answer:"إجابة قصيرة",essay:"مقالي"};
