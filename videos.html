@@ -4765,8 +4765,8 @@ function fillYouTubeQuality(){
   };
 
   add("auto");
-  // A user-friendly preset maps to 144p when available, otherwise to the
-  // lowest resolution actually exposed by YouTube for this video.
+  // YouTube controls adaptive streaming quality; this option provides
+  // honest instructions rather than promising a resolution we cannot force.
   add("data_saver", "توفير البيانات (يدوي)");
 
   [...new Set(levels)].forEach(q => add(q));
@@ -4779,7 +4779,11 @@ function fillYouTubeQuality(){
     ? "اختيار جودة الفيديو"
     : "جودة تلقائية؛ سيظهر الاختيار اليدوي إذا وفّره YouTube";
   if(!levels.length){
-    qualitySelect.innerHTML = '<option value="auto">تلقائي</option>';
+    // Keep the data-saver guidance available while YouTube's quality
+    // levels are delayed or unavailable for this video.
+    if(![...qualitySelect.options].some(option => option.value === "data_saver")){
+      add("data_saver", "توفير البيانات (يدوي)");
+    }
     return;
   }
   if(!levels.includes(qualitySelect.value)) qualitySelect.value = "auto";
