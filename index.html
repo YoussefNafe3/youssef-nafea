@@ -365,13 +365,24 @@ box-shadow:0 8px 20px rgba(0,0,0,.2);
 transition:.3s;
 }
 
-.contact a:first-child{
-background:#25D366;
+.contact a.social-whatsapp{background:#25D366;color:#073b20}
+.contact a.social-facebook{background:#1877F2;color:#fff}
+.contact a.social-youtube{background:#ff0033;color:#fff}
+.contact a.social-whatsapp:hover{background:#20bd5a}
+.contact a.social-facebook:hover{background:#166be0}
+.contact a.social-youtube:hover{background:#e6002e}
+.contact .section-title{display:flex;align-items:center;justify-content:center;gap:12px}
+.contact .section-title i{font-size:.78em;color:var(--gold)}
+.contact .social-links{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:14px;max-width:850px;margin:0 auto}
+.contact .social-links a{min-width:165px;justify-content:center;box-shadow:0 8px 22px rgba(15,23,42,.14);border:1px solid rgba(255,255,255,.24)}
+.contact .social-links a i{font-size:1.2em}
+@media(max-width:560px){
+ .contact{padding:52px 16px}
+ .contact .social-links{gap:10px}
+ .contact .social-links a{flex:1 1 135px;min-width:0;margin:0;padding:13px 16px}
 }
 
-.contact a:last-child{
-background:#1877F2;
-}
+
 
 /* 🔥 رجوع اللون */
 background:var(--primary);
@@ -1523,20 +1534,13 @@ body.dark footer{background:var(--bg)!important;color:var(--muted)!important}
 </section>
 
 <!-- CONTACT -->
-<section class="contact">
-
-<h2 class="section-title">📞 تواصل معنا</h2>
-
-<a href="https://api.whatsapp.com/send?phone=201027065087" target="_blank">
-<i class="fa-brands fa-whatsapp"></i>
-واتساب
-</a>
-
-<a href="https://www.facebook.com/share/1HKACt3iYS/" target="_blank">
-<i class="fa-brands fa-facebook-f"></i>
-فيسبوك
-</a>
-
+<section class="contact" aria-label="تابعنا وتواصل معنا">
+<h2 class="section-title"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> تابعنا وتواصل معنا</h2>
+<div class="social-links">
+<a class="social-whatsapp" href="https://api.whatsapp.com/send?phone=201027065087" target="_blank" rel="noopener noreferrer" aria-label="تواصل معنا عبر واتساب"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> واتساب</a>
+<a class="social-facebook" href="https://www.facebook.com/share/1HKACt3iYS/" target="_blank" rel="noopener noreferrer" aria-label="تابعنا على فيسبوك"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i> فيسبوك</a>
+<a class="social-youtube" href="https://www.youtube.com/channel/UCgicKdLLq5zdfmJZ68TpWXw" target="_blank" rel="noopener noreferrer" aria-label="اشترك في قناة د. يوسف نافع على يوتيوب"><i class="fa-brands fa-youtube" aria-hidden="true"></i> يوتيوب</a>
+</div>
 </section>
 
 <!-- FORM AREA RESERVED -->
