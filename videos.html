@@ -817,6 +817,9 @@ html[data-theme="light"] .speedBtn.active{
   z-index:20
 }
 
+/* Keep YouTube's own Settings > Quality menu clickable. */
+.ytBottomBlocker{pointer-events:none!important}
+
 .watermark{
   position:absolute;
   z-index:12;
@@ -4872,7 +4875,7 @@ function fillYouTubeQuality(){
   qualitySelect.innerHTML = "";
   const autoOption = document.createElement("option");
   autoOption.value = "auto";
-  autoOption.textContent = "تلقائي";
+  autoOption.textContent = "تلقائي · يحددها YouTube";
   autoOption.selected = true;
   qualitySelect.appendChild(autoOption);
   qualitySelect.value = "auto";
@@ -4884,8 +4887,17 @@ function fillYouTubeQuality(){
 }
 
 function updateYouTubeQualityIndicator(level){
-  // Kept intentionally read-only: YouTube controls its adaptive stream.
-  // The embedded API's quality event is informational, not a manual selector.
+  if(!qualitySelect) return;
+  // Show the quality YouTube actually selected; never try to force it.
+  const names = {
+    highres:"أعلى جودة", hd1080:"1080p", hd720:"720p",
+    large:"480p", medium:"360p", small:"240p", tiny:"144p"
+  };
+  const label = names[level] || "";
+  const option = qualitySelect.options[0];
+  if(option) option.textContent = label
+    ? "تلقائي · " + label
+    : "تلقائي · يحددها YouTube";
 }
 
 let captionsEnabled = false;
