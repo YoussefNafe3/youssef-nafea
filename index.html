@@ -1388,6 +1388,45 @@ body.dark footer{background:var(--bg)!important;color:var(--muted)!important}
 .honors-viewport{display:block;min-width:0;touch-action:pan-y}
 .honors-group{width:max-content;max-width:none}
 
+
+/* Refined social links positioned with the homepage footer */
+.contact{
+  max-width:980px;
+  margin:34px auto 18px;
+  padding:28px 22px 24px;
+  text-align:center;
+  border-top:1px solid rgba(148,163,184,.22);
+  background:linear-gradient(180deg,rgba(148,163,184,.045),transparent);
+}
+.contact .section-title{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin:0 0 16px;font-size:clamp(17px,2vw,21px);font-weight:850;
+}
+.contact .section-title i{font-size:.85em;color:var(--gold)}
+.contact .social-links{
+  display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
+  gap:10px;max-width:620px;margin:0 auto;
+}
+.contact .social-links a{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  min-width:132px;min-height:42px;margin:0;padding:9px 17px;
+  border-radius:12px;text-decoration:none;font-size:13px;font-weight:800;
+  box-shadow:0 4px 12px rgba(15,23,42,.10);
+  border:1px solid rgba(255,255,255,.18);
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+}
+.contact .social-links a:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(15,23,42,.15);filter:brightness(1.04)}
+.contact .social-links a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.contact .social-links a i{font-size:16px}
+.contact .social-whatsapp{background:#25D366;color:#073b20}
+.contact .social-facebook{background:#1877F2;color:#fff}
+.contact .social-youtube{background:#ff0033;color:#fff}
+@media(max-width:560px){
+  .contact{margin:24px 12px 14px;padding:22px 12px 18px}
+  .contact .social-links{gap:8px}
+  .contact .social-links a{flex:1 1 105px;min-width:0;min-height:40px;padding:8px 10px;font-size:12px}
+}
+
 </style>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#11152f">
@@ -1534,15 +1573,6 @@ body.dark footer{background:var(--bg)!important;color:var(--muted)!important}
 </section>
 
 <!-- CONTACT -->
-<section class="contact" aria-label="تابعنا وتواصل معنا">
-<h2 class="section-title"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> تابعنا وتواصل معنا</h2>
-<div class="social-links">
-<a class="social-whatsapp" href="https://api.whatsapp.com/send?phone=201027065087" target="_blank" rel="noopener noreferrer" aria-label="تواصل معنا عبر واتساب"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> واتساب</a>
-<a class="social-facebook" href="https://www.facebook.com/share/1HKACt3iYS/" target="_blank" rel="noopener noreferrer" aria-label="تابعنا على فيسبوك"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i> فيسبوك</a>
-<a class="social-youtube" href="https://www.youtube.com/channel/UCgicKdLLq5zdfmJZ68TpWXw" target="_blank" rel="noopener noreferrer" aria-label="اشترك في قناة د. يوسف نافع على يوتيوب"><i class="fa-brands fa-youtube" aria-hidden="true"></i> يوتيوب</a>
-</div>
-</section>
-
 <!-- FORM AREA RESERVED -->
 
 <!-- WHATSAPP FLOAT -->
@@ -1565,6 +1595,16 @@ The ability to understand a problem from its roots is what separates ordinary an
 
   </div>
 </section>
+<section class="contact" aria-label="تابعنا وتواصل معنا">
+<h2 class="section-title"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> تابعنا وتواصل معنا</h2>
+<div class="social-links">
+<a class="social-whatsapp" href="https://api.whatsapp.com/send?phone=201027065087" target="_blank" rel="noopener noreferrer" aria-label="تواصل معنا عبر واتساب"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> واتساب</a>
+<a class="social-facebook" href="https://www.facebook.com/share/1HKACt3iYS/" target="_blank" rel="noopener noreferrer" aria-label="تابعنا على فيسبوك"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i> فيسبوك</a>
+<a class="social-youtube" href="https://www.youtube.com/channel/UCgicKdLLq5zdfmJZ68TpWXw" target="_blank" rel="noopener noreferrer" aria-label="اشترك في قناة د. يوسف نافع على يوتيوب"><i class="fa-brands fa-youtube" aria-hidden="true"></i> يوتيوب</a>
+</div>
+</section>
+
+
 <!-- FOOTER -->
 <footer>
 جميع الحقوق محفوظة
