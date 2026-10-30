@@ -2920,7 +2920,7 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 
 /* Keep YouTube's own playback controls reachable, especially the Settings > Quality menu. */
 .ytBottomBlocker{pointer-events:none!important}
-</style>
+\n/* YouTube quality is selected in the embedded player's own Settings menu. */\n.ytBottomBlocker{pointer-events:none!important}\n</style>
 </head>
 
 <body>
@@ -3121,7 +3121,7 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
       <div class="controlRow controlRowPrimary" aria-label="أدوات الفيديو">
 
         <div class="utilityGroup">
-          <label class="controlMiniLabel" for="qualitySelect">الجودة</label>
+          <label id="qualityLabel" class="controlMiniLabel" for="qualitySelect">الجودة</label>
           <select
             id="qualitySelect"
             class="qualitySelect hidden"
@@ -4868,38 +4868,19 @@ function fillYouTubeQuality(){
 
   if(!qualitySelect) return;
 
-  // YouTube owns adaptive quality selection. Its IFrame API no longer
-  // supports forcing or enumerating playback resolutions.
+  // YouTube's embedded-player API does not support manual quality selection.
+  // Do not show a fake dropdown: use YouTube's own Settings > Quality menu.
   qualitySelect.innerHTML = "";
-  const option = document.createElement("option");
-  option.value = "auto";
-  option.textContent = "تلقائية · يحددها YouTube";
-  qualitySelect.appendChild(option);
-  qualitySelect.value = "auto";
-  // The IFrame API does not expose reliable manual quality selection.
-  // Keep this indicator read-only; students can choose a fixed resolution
-  // from YouTube's own Settings (gear) menu inside the player.
+  qualitySelect.classList.add("hidden");
   qualitySelect.disabled = true;
-  qualitySelect.classList.remove("hidden");
-  qualitySelect.title = "يختار YouTube الجودة تلقائيًا. لتغييرها يدويًا افتح ⚙ إعدادات الفيديو داخل مشغل YouTube ثم الجودة.";
+  qualitySelect.title = "اختيار الجودة يدويًا متاح من ⚙ داخل مشغل YouTube.";
+  const label = document.getElementById("qualityLabel");
+  if(label) label.textContent = "الجودة: من ⚙ داخل الفيديو";
 }
 
 function updateYouTubeQualityIndicator(level){
-  if(!qualitySelect) return;
-  const names = {
-    highres:"أعلى جودة",
-    hd1080:"1080p",
-    hd720:"720p",
-    large:"480p",
-    medium:"360p",
-    small:"240p",
-    tiny:"144p"
-  };
-  const label = names[level] || "";
-  const option = qualitySelect.options[0];
-  if(option) option.textContent = label
-    ? "تلقائية · " + label
-    : "تلقائية · حسب سرعة الإنترنت";
+  // Kept intentionally read-only: YouTube controls its adaptive stream.
+  // The embedded API's quality event is informational, not a manual selector.
 }
 
 let captionsEnabled = false;
@@ -4985,9 +4966,8 @@ function createYouTubePlayer(
   item
 ){
 
-  qualitySelect.classList.remove("hidden");
-  qualitySelect.disabled = true;
-  qualitySelect.innerHTML = '<option value="auto">جارٍ التحميل…</option>';
+  fillYouTubeQuality();
+  setCaptionsButton(false, true);
   setCaptionsButton(false, true);
 
   const id =
@@ -5456,6 +5436,8 @@ function prepareNativeVideo(
 ){
 
   setCaptionsButton(false, true);
+  const qualityLabel = document.getElementById("qualityLabel");
+  if(qualityLabel) qualityLabel.textContent = "الجودة";
   qualitySelect.classList.remove("hidden");
   qualitySelect.innerHTML = "";
   const sourceOption = document.createElement("option");
