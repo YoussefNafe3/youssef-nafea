@@ -957,7 +957,15 @@ window.selectVideo = function(videoId) {
 async function loadVideos() {
   const { data, error } = await client.from("videos").select("*");
   if (error) throw error;
-  state.videos = data || [];
+
+  // Newest uploaded videos first; older or undated entries follow.
+  state.videos = (data || []).slice().sort((a, b) => {
+    const dateA = new Date(a.created_at || a.uploaded_at || a.updated_at || 0).getTime();
+    const dateB = new Date(b.created_at || b.uploaded_at || b.updated_at || 0).getTime();
+    const validA = Number.isFinite(dateA) ? dateA : 0;
+    const validB = Number.isFinite(dateB) ? dateB : 0;
+    return validB - validA;
+  });
 }
 
 /* ✅ FIXED: بدون join (سبب الـ 400 error) */
