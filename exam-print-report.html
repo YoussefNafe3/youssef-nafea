@@ -27,6 +27,8 @@ body.compact-print .report-editor .answer{background:#f1f7f3;border-right:2px so
 body.compact-print .report-editor .explanation{font-size:8pt;margin-top:2px}
 body.compact-print .report-editor img{max-width:65%;max-height:210px;object-fit:contain;margin:4px auto;border:0}
 body.compact-print .report-editor table{font-size:8pt}
+/* Small branded footer; it appears only on the compact all-forms print layout. */
+body.compact-print::after{content:"تسميعات Online | منصة د. يوسف نافع";display:none}
 @media print{
  body.compact-print .toolbar,body.compact-print .note,body.compact-print .no-print{display:none!important}
  body.compact-print .report-editor{font-size:8.7pt;line-height:1.25}
@@ -35,7 +37,14 @@ body.compact-print .report-editor table{font-size:8pt}
  body.compact-print .report-editor .choices{grid-template-columns:1fr 1fr}
  body.compact-print .report-editor .answer{print-color-adjust:exact;-webkit-print-color-adjust:exact}
  body.compact-print .report-editor h2{print-color-adjust:exact;-webkit-print-color-adjust:exact}
- @page{size:A4;margin:9mm}
+ body.compact-print::after{
+   content:"تسميعات Online | منصة د. يوسف نافع";
+   display:block;position:fixed;right:0;left:0;bottom:-4mm;
+   padding:1.2mm 0 0;border-top:.35pt solid #d6dce5;
+   color:#64748b;text-align:center;font-size:7pt;font-weight:700;
+   letter-spacing:.15px;line-height:1.2;background:#fff;
+ }
+ @page{size:A4;margin:7mm 9mm 7mm}
 }
 
 </style>
