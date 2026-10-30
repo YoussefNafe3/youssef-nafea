@@ -4870,34 +4870,39 @@ function fillYouTubeQuality(){
 
   if(!qualitySelect) return;
 
-  // Keep the platform quality control visible and clearly set to Auto.
-  // YouTube's embedded-player API cannot force a resolution from this page.
+  // Cosmetic quality presets only. YouTube remains fully responsible for
+  // adaptive playback quality; no selection below calls YouTube quality APIs.
+  const options = [
+    ["auto", "تلقائية · YouTube يحدد الجودة"],
+    ["highres", "1080p"],
+    ["hd720", "720p"],
+    ["large", "480p"],
+    ["medium", "360p"],
+    ["small", "240p"],
+    ["tiny", "144p"],
+    ["data_saver", "توفير البيانات"]
+  ];
+
   qualitySelect.innerHTML = "";
-  const autoOption = document.createElement("option");
-  autoOption.value = "auto";
-  autoOption.textContent = "تلقائي · يحددها YouTube";
-  autoOption.selected = true;
-  qualitySelect.appendChild(autoOption);
+  options.forEach(([value, label]) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label;
+    qualitySelect.appendChild(option);
+  });
+
+  // Keep the familiar menu visible. Its choices are visual only.
   qualitySelect.value = "auto";
+  qualitySelect.disabled = false;
   qualitySelect.classList.remove("hidden");
-  qualitySelect.disabled = true;
-  qualitySelect.title = "الجودة تلقائية، ويختار YouTube الدقة المناسبة تلقائيًا.";
+  qualitySelect.title = "القائمة شكلية فقط؛ جودة فيديو YouTube تظل تلقائية ويحددها YouTube دائمًا.";
   const label = document.getElementById("qualityLabel");
   if(label) label.textContent = "الجودة";
 }
 
 function updateYouTubeQualityIndicator(level){
-  if(!qualitySelect) return;
-  // Show the quality YouTube actually selected; never try to force it.
-  const names = {
-    highres:"أعلى جودة", hd1080:"1080p", hd720:"720p",
-    large:"480p", medium:"360p", small:"240p", tiny:"144p"
-  };
-  const label = names[level] || "";
-  const option = qualitySelect.options[0];
-  if(option) option.textContent = label
-    ? "تلقائي · " + label
-    : "تلقائي · يحددها YouTube";
+  // Intentionally do not alter the menu or playback quality.
+  // YouTube independently manages adaptive quality.
 }
 
 let captionsEnabled = false;
