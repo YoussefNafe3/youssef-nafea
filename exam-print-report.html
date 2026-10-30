@@ -7,9 +7,40 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0b1020;--panel:#151c32;--line:#ffffff18;--text:#f2f5ff;--muted:#aab5ce;--gold:#f4d77e;--violet:#8270ed;--red:#ff9b9b}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 8% 0%,#8270ed22,transparent 32%),linear-gradient(135deg,#090d1b,#111832);color:var(--text);font-family:Cairo,Arial,sans-serif}.shell{max-width:1100px;margin:auto;padding:20px}.toolbar,.card{background:#151c32eF;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 15px 45px #0003}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.toolbar h1{font-size:clamp(19px,3vw,27px);color:var(--gold);margin:0}.muted{color:var(--muted);font-size:12px;line-height:1.8}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);border-radius:11px;padding:10px 14px;background:linear-gradient(120deg,#8270ed,#5140aa);color:#fff;font:700 13px Cairo;cursor:pointer}.btn.gold{background:linear-gradient(120deg,#f4d77e,#d4a93c);color:#241b05}.btn.secondary{background:#ffffff0a}.note{padding:11px 13px;border:1px solid #f4d77e40;background:#f4d77e0d;border-radius:12px;margin-bottom:12px;font-size:12px;line-height:1.8;color:#f8e7b5}.report-editor{background:white;color:#182033;border-radius:14px;padding:clamp(18px,4vw,42px);min-height:400px;line-height:1.9;outline:2px solid transparent;overflow-wrap:anywhere}.report-editor:focus{outline-color:#8270ed}.report-editor h1,.report-editor h2,.report-editor h3{color:#18254a}.report-editor .report-head{text-align:center;border-bottom:2px solid #d4b65d;padding-bottom:16px;margin-bottom:22px}.report-editor .report-head h1{font-size:25px;margin:0 0 8px}.report-editor .meta{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.report-editor .meta span{background:#f3f5fb;border:1px solid #dfe4ef;border-radius:8px;padding:4px 10px;font-size:12px}.report-editor .question{border:1px solid #dfe4ef;border-radius:12px;padding:15px;margin:14px 0;break-inside:avoid}.report-editor .qtitle{font-weight:900;margin-bottom:8px}.report-editor .points{float:left;color:#6d55b8;font-weight:800}.report-editor .choices{padding-right:20px}.report-editor .answer{background:#f2f8f5;border-right:4px solid #15966b;padding:9px 12px;margin-top:9px;border-radius:7px}.report-editor .student-answer{background:#f2f5ff;border-right:4px solid #6478ce;padding:9px 12px;margin-top:9px;border-radius:7px}.report-editor .explanation{color:#49566d;font-size:12px;margin-top:7px}.report-editor img{display:block;max-width:100%;max-height:520px;object-fit:contain;margin:12px auto;border:1px solid #e0e5ed;border-radius:7px}.report-editor table{width:100%;border-collapse:collapse}.report-editor td,.report-editor th{border:1px solid #dfe4ef;padding:8px;text-align:right}.score-box{display:inline-flex;align-items:center;gap:10px;background:#f8f5e9;border:1px solid #ead9a6;padding:10px 15px;border-radius:12px;font-weight:900}.error{color:#ffb4b4;padding:20px}.loading{padding:28px;text-align:center;color:var(--muted)}@media print{body{background:white;color:#111}.shell{max-width:none;padding:0}.toolbar,.note,.no-print{display:none!important}.card{border:0;box-shadow:none;padding:0;background:white}.report-editor{padding:0;border-radius:0;outline:0!important}.report-editor .question{break-inside:avoid}.report-editor img{max-height:480px} @page{size:A4;margin:14mm}}@media(max-width:600px){.shell{padding:10px}.toolbar,.card{padding:13px}.report-editor{padding:16px}}
+
+/* Compact editorial layout for the combined all-forms answer-key printout */
+body.compact-print .shell{max-width:100%;padding:0}
+body.compact-print .card{padding:0;border:0;box-shadow:none;background:#fff}
+body.compact-print .report-editor{padding:0;border:0;outline:0;background:#fff;color:#182235;font-size:9.2pt;line-height:1.32}
+body.compact-print .report-head{text-align:center;margin:0 0 8px;padding:0 0 6px;border-bottom:1.5px solid #26364d}
+body.compact-print .report-head h1{display:none}
+body.compact-print .report-head h2{font-size:15pt;margin:0;font-weight:900}
+body.compact-print .report-head .meta,
+body.compact-print .report-head p{display:none}
+body.compact-print .report-editor h2{font-size:10.5pt;margin:9px 0 5px;padding:4px 7px;background:#edf1f6;border-right:3px solid #334b68;break-after:avoid}
+body.compact-print .report-editor .question{border:0;border-bottom:1px solid #d9dee7;border-radius:0;padding:5px 1px;margin:0 0 5px;break-inside:avoid}
+body.compact-print .report-editor .qtitle{font-size:9.5pt;margin:0 0 2px}
+body.compact-print .report-editor .points{font-size:8pt}
+body.compact-print .report-editor .choices{display:grid;grid-template-columns:1fr 1fr;column-gap:14px;row-gap:1px;padding:0 19px 0 0;margin:3px 0;list-style-type:lower-alpha}
+body.compact-print .report-editor .choices li{padding:0;margin:0;line-height:1.25}
+body.compact-print .report-editor .answer{background:#f1f7f3;border-right:2px solid #25835d;border-radius:3px;padding:3px 6px;margin-top:3px;font-size:8.6pt}
+body.compact-print .report-editor .explanation{font-size:8pt;margin-top:2px}
+body.compact-print .report-editor img{max-width:65%;max-height:210px;object-fit:contain;margin:4px auto;border:0}
+body.compact-print .report-editor table{font-size:8pt}
+@media print{
+ body.compact-print .toolbar,body.compact-print .note,body.compact-print .no-print{display:none!important}
+ body.compact-print .report-editor{font-size:8.7pt;line-height:1.25}
+ body.compact-print .report-editor .question{break-inside:avoid}
+ body.compact-print .report-editor img{max-height:175px}
+ body.compact-print .report-editor .choices{grid-template-columns:1fr 1fr}
+ body.compact-print .report-editor .answer{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+ body.compact-print .report-editor h2{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+ @page{size:A4;margin:9mm}
+}
+
 </style>
 </head>
-<body><main class="shell">
+<body class=""><main class="shell">
 <header class="toolbar no-print"><div><h1>تقارير الامتحانات | د. يوسف نافع</h1><div class="muted">عدّل التقرير مباشرة، ثم اطبعه أو نزّله كملف Word.</div></div><div class="actions"><button class="btn secondary" id="reload">إعادة تحميل</button><button class="btn" id="print">طباعة / حفظ PDF</button><button class="btn gold" id="word">تنزيل Word</button></div></header>
 <div class="note no-print">يمكنك تعديل النص داخل التقرير قبل الطباعة أو تنزيل Word. هذه التعديلات تخص النسخة المطبوعة فقط ولا تغيّر درجات الطلاب أو بيانات الامتحان في المنصة.</div>
 <section class="card"><div id="status" class="loading">جارٍ تجهيز التقرير...</div><article id="editor" class="report-editor" contenteditable="true" spellcheck="true" hidden></article></section>
@@ -20,6 +51,8 @@
 const URL="https://nhdowqzecpwmkunczodl.supabase.co";
 const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 const db=window.supabase.createClient(URL,KEY),$=id=>document.getElementById(id),params=new URLSearchParams(location.search),attemptId=params.get("attempt_id");let examId=params.get("exam_id");
+const compactMode=params.get("layout")==="compact";
+if(compactMode)document.body.classList.add("compact-print");
 const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const date=v=>v?new Date(v).toLocaleString("ar-EG"):"—";
 const types={single_choice:"اختيار من متعدد",multiple_select:"اختيارات متعددة",true_false:"صح أو خطأ",short_answer:"إجابة قصيرة",essay:"مقالي"};
@@ -51,7 +84,9 @@ let qr=await qquery;if(qr.error)throw qr.error;questions=qr.data||[];
 if(questions.length){let kr=await db.from("online_exam_answer_keys").select("*").in("question_id",questions.map(q=>q.id));if(kr.error)throw kr.error;(kr.data||[]).forEach(k=>keys[k.question_id]=k);}
 const title=esc(exam.title),total=attempt?attempt.total_points:questions.reduce((s,q)=>s+Number(q.points||0),0);
 const meta='<div class="meta"><span>المادة: '+esc(exam.subject)+'</span><span>الفصل: '+esc(exam.class_group)+'</span><span>المدة: '+esc(exam.duration_minutes)+' دقيقة</span><span>النموذج: '+esc(forms[0]&&forms[0].form_code||"كل النماذج")+'</span></div>';
-let heading='<header class="report-head"><h1>منصة د. يوسف نافع</h1><h2>'+title+'</h2>'+meta;
+let heading=compactMode
+  ? '<header class="report-head"><h2>'+title+'</h2></header>'
+  : '<header class="report-head"><h1>منصة د. يوسف نافع</h1><h2>'+title+'</h2>'+meta;
 if(attempt){heading+='<p><b>الطالب:</b> '+esc(student&&student.full_name||"—")+' &nbsp; <b>الهاتف:</b> '+esc(student&&student.phone||"—")+'</p><p><b>بدأ:</b> '+date(attempt.started_at)+' &nbsp; <b>سلّم:</b> '+date(attempt.submitted_at)+' &nbsp; <b>الحالة:</b> '+esc(attempt.status)+'</p><div class="score-box">الدرجة: '+esc(attempt.score)+' / '+esc(attempt.total_points)+'</div><p>'+(attempt.manual_review_count>0||attempt.status==="pending_review"?'الدرجة أولية — توجد إجابات تنتظر التصحيح اليدوي.':'الدرجة المسجلة للمحاولة.')+'</p>';}
 heading+='</header>';
 let body="";
