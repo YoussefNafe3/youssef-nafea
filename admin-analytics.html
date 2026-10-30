@@ -886,6 +886,17 @@ function renderSelectedVideo() {
   const videoClassGroup = getVideoClassGroup(state.selectedVideo) || (document.getElementById("classFilter")?.value || "all");
   const allIds = getAllStudentIds(videoClassGroup === "all" ? null : videoClassGroup);
 
+  // Rank students by their latest recorded listening time for this video (descending).
+  allIds.sort((idA, idB) => {
+    const recordA = latestMap[String(idA)];
+    const recordB = latestMap[String(idB)];
+    const watchedDiff = safeNumber(recordB?.watched_seconds) - safeNumber(recordA?.watched_seconds);
+    if (watchedDiff) return watchedDiff;
+    const percentDiff = sessionPercent(recordB) - sessionPercent(recordA);
+    if (percentDiff) return percentDiff;
+    return String(getStudentDisplayName(idA)).localeCompare(String(getStudentDisplayName(idB)), "ar");
+  });
+
   const rows = allIds.map(id => {
     const record = latestMap[String(id)];
     const name = getStudentDisplayName(id);
@@ -1015,6 +1026,16 @@ window.openReport = function(videoId) {
   const classGroup=getVideoClassGroup(video) || (document.getElementById("classFilter")?.value || "all");
   const students=getReportStudents(classGroup);
   const latest=latestSessionByStudentForVideo(video.id);
+  // Keep the same descending listening-time order in printable/exportable reports.
+  students.sort((studentA,studentB)=>{
+    const recordA=latest[String(studentA.id)];
+    const recordB=latest[String(studentB.id)];
+    const watchedDiff=safeNumber(recordB?.watched_seconds)-safeNumber(recordA?.watched_seconds);
+    if(watchedDiff)return watchedDiff;
+    const percentDiff=sessionPercent(recordB)-sessionPercent(recordA);
+    if(percentDiff)return percentDiff;
+    return String(studentA.full_name||studentA.name||studentA.phone||"").localeCompare(String(studentB.full_name||studentB.name||studentB.phone||""),"ar");
+  });
   const rows=students.map(s=>reportStudentRow(s,latest[String(s.id)],video));
   const never=rows.filter(r=>!r.watched);
   const underHalf=rows.filter(r=>r.watched>0 && r.percent<50);
