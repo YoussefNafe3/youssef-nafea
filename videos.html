@@ -4798,70 +4798,37 @@ function(){
 
 function fillYouTubeQuality(){
 
-  if(
-    !state.yt ||
-    !qualitySelect
-  )
-    return;
+  if(!qualitySelect) return;
 
+  // YouTube owns adaptive quality selection. Its IFrame API no longer
+  // supports forcing or enumerating playback resolutions.
+  qualitySelect.innerHTML = "";
+  const option = document.createElement("option");
+  option.value = "auto";
+  option.textContent = "تلقائية · حسب سرعة الإنترنت";
+  qualitySelect.appendChild(option);
+  qualitySelect.value = "auto";
+  qualitySelect.disabled = true;
+  qualitySelect.classList.remove("hidden");
+  qualitySelect.title = "يختار YouTube الجودة المناسبة تلقائيًا حسب سرعة الإنترنت وظروف التشغيل. قد يبدأ بدقة أقل ثم يرفعها تلقائيًا.";
+}
 
-  let levels = [];
-
-
-  try{
-
-    levels =
-      state.yt
-        .getAvailableQualityLevels?.()
-      || [];
-
-  }catch{}
-
-
-  const labels = {
-    highres:"1080p",
+function updateYouTubeQualityIndicator(level){
+  if(!qualitySelect) return;
+  const names = {
+    highres:"أعلى جودة",
     hd1080:"1080p",
     hd720:"720p",
     large:"480p",
     medium:"360p",
     small:"240p",
-    tiny:"144p",
-    auto:"تلقائية",
-    data_saver:"موفرة للنت · ~144p"
+    tiny:"144p"
   };
-
-  qualitySelect.innerHTML = "";
-
-  const add = (value, label) => {
-    const option = document.createElement("option");
-    option.value = value;
-    option.textContent = label || labels[value] || value;
-    qualitySelect.appendChild(option);
-  };
-
-  add("auto");
-  // YouTube controls adaptive streaming quality; this option provides
-  // honest instructions rather than promising a resolution we cannot force.
-  add("data_saver", "توفير البيانات (يدوي)");
-
-  [...new Set(levels)].forEach(q => add(q));
-
-
-  // Quality availability can be delayed until playback starts.
-  qualitySelect.classList.remove("hidden");
-  qualitySelect.disabled = false;
-  qualitySelect.title = levels.length
-    ? "اختيار جودة الفيديو"
-    : "جودة تلقائية؛ سيظهر الاختيار اليدوي إذا وفّره YouTube";
-  if(!levels.length){
-    // Keep the data-saver guidance available while YouTube's quality
-    // levels are delayed or unavailable for this video.
-    if(![...qualitySelect.options].some(option => option.value === "data_saver")){
-      add("data_saver", "توفير البيانات (يدوي)");
-    }
-    return;
-  }
-  if(!levels.includes(qualitySelect.value)) qualitySelect.value = "auto";
+  const label = names[level] || "";
+  const option = qualitySelect.options[0];
+  if(option) option.textContent = label
+    ? "تلقائية · " + label
+    : "تلقائية · حسب سرعة الإنترنت";
 }
 
 let captionsEnabled = false;
@@ -5050,6 +5017,12 @@ function createYouTubePlayer(
 
             },
 
+
+          onPlaybackQualityChange:
+            e=>{
+              // Reflect YouTube's adaptive choice without overriding it.
+              updateYouTubeQualityIndicator(e?.data);
+            },
 
           onStateChange:
             e=>{
@@ -5415,10 +5388,10 @@ function prepareNativeVideo(
   qualitySelect.innerHTML = "";
   const sourceOption = document.createElement("option");
   sourceOption.value = "source";
-  sourceOption.textContent = "المصدر";
+  sourceOption.textContent = "جودة المصدر";
   qualitySelect.appendChild(sourceOption);
   qualitySelect.disabled = true;
-  qualitySelect.title = "الفيديو المباشر يعمل بجودته الأصلية؛ تغيير الجودة يحتاج نسخًا متعددة من الفيديو.";
+  qualitySelect.title = "هذا الفيديو يعمل بملف واحد وجودته الأصلية. تغيير الجودة تلقائيًا يتطلب توفير نسخ متعددة أو بث HLS/DASH متكيف.";
   resetNativeTracking();
 
   clearNativeVideo();
@@ -5952,40 +5925,8 @@ document
    QUALITY
 ========================================================= */
 
-qualitySelect.addEventListener(
-  "change",
-  ()=>{
-
-    if(!state.yt){
-      toast("اختيار الجودة اليدوي متاح لفيديوهات YouTube فقط؛ الفيديو الحالي يعمل بجودته الأصلية.");
-      return;
-    }
-
-
-    const selectedQuality = qualitySelect.value;
-
-    try {
-      if (selectedQuality === "auto") {
-        state.yt.setPlaybackQuality("default");
-        return;
-      }
-
-      if (selectedQuality === "data_saver") {
-        // YouTube's current IFrame API does not provide a reliable,
-        // supported way to force a specific streaming resolution.
-        // Do not report a quality change that the player cannot guarantee.
-        toast("لتقليل استهلاك الإنترنت فعليًا: اضغط ⚙️ داخل مشغّل YouTube ثم الجودة، واختر أقل دقة متاحة (مثل 144p). لا يمكن للمنصة فرض هذه الدقة تلقائيًا.");
-        return;
-      }
-
-      state.yt.setPlaybackQuality(selectedQuality);
-    } catch (e) {
-      console.warn("[Video quality]", e);
-      toast("تعذر تغيير الجودة حاليًا؛ سيستمر الفيديو بالجودة التلقائية.");
-    }
-
-  }
-);
+// Quality is intentionally adaptive and read-only. The embedded YouTube
+// player selects the best resolution for the student's current connection.
 
 
 /* =========================================================
