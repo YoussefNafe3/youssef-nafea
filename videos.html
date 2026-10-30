@@ -2918,8 +2918,7 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 @media(max-width:480px){#videoCompletionCelebration .celebration-card{padding:27px 18px 22px;border-radius:20px}#videoCompletionCelebration p{font-size:14px}}
 
 
-/* Keep YouTube's own playback controls reachable, especially the Settings > Quality menu. */
-.ytBottomBlocker{pointer-events:none!important}
+/* Restore the original YouTube protection layers on desktop, mobile and fullscreen. */
 \n/* YouTube quality is selected in the embedded player's own Settings menu. */\n.ytBottomBlocker{pointer-events:none!important}\n</style>
 </head>
 
@@ -4873,9 +4872,9 @@ function fillYouTubeQuality(){
   qualitySelect.innerHTML = "";
   qualitySelect.classList.add("hidden");
   qualitySelect.disabled = true;
-  qualitySelect.title = "اختيار الجودة يدويًا متاح من ⚙ داخل مشغل YouTube.";
+  qualitySelect.title = "يختار YouTube جودة التشغيل تلقائيًا؛ لا تتيح واجهة المشغل المضمّن فرض الجودة من أزرار الصفحة.";
   const label = document.getElementById("qualityLabel");
-  if(label) label.textContent = "الجودة: من ⚙ داخل الفيديو";
+  if(label) label.textContent = "الجودة: تلقائي";
 }
 
 function updateYouTubeQualityIndicator(level){
