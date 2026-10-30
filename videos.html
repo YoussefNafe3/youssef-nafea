@@ -2859,6 +2859,48 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
   .learning-help-actions-standalone{width:fit-content!important;max-width:calc(100% - 24px)!important;margin:10px auto 16px!important}
   .learning-help-actions-standalone .learning-help-link{width:auto!important;min-height:40px;padding:8px 17px;font-size:12px;gap:8px}
 }
+
+/* Reliable single scroll region for all video categories and every lesson */
+.sidebar{
+  height:100vh;
+  height:100dvh;
+  min-height:0;
+  overflow:hidden;
+}
+.video-category-list{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(96,165,250,.7) rgba(148,163,184,.08);
+  padding:0 5px 22px 2px;
+  scroll-padding-block:12px 24px;
+}
+.video-category-list::-webkit-scrollbar{width:7px}
+.video-category-list::-webkit-scrollbar-track{background:rgba(148,163,184,.08);border-radius:999px}
+.video-category-list::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#60a5fa,#2563eb);border-radius:999px}
+.video-category-content:not([hidden]){
+  max-height:none;
+  min-height:0;
+  flex:0 0 auto;
+  overflow:visible;
+  overscroll-behavior:initial;
+  touch-action:pan-y;
+  padding:2px 8px 14px 5px;
+  scrollbar-width:none;
+}
+.video-category-content:not([hidden])::-webkit-scrollbar{display:none}
+.video-category{flex:0 0 auto;min-height:0}
+.video-category-content .videoItem{flex:0 0 auto;min-width:0}
+@media(max-width:1000px){
+  .sidebar{height:100vh;height:100dvh;min-height:0;overflow:hidden}
+  .video-category-list{min-height:0;max-height:none}
+}
+
 </style>
 </head>
 
