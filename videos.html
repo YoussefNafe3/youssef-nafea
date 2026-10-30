@@ -2919,7 +2919,7 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 
 
 /* Restore the original YouTube protection layers on desktop, mobile and fullscreen. */
-\n/* YouTube quality is selected in the embedded player's own Settings menu. */\n.ytBottomBlocker{pointer-events:none!important}\n</style>
+\n/* Keep all YouTube protection blockers active, including the bottom control strip. */\n\n</style>
 </head>
 
 <body>
@@ -4867,14 +4867,20 @@ function fillYouTubeQuality(){
 
   if(!qualitySelect) return;
 
-  // YouTube's embedded-player API does not support manual quality selection.
-  // Do not show a fake dropdown: use YouTube's own Settings > Quality menu.
+  // Keep the platform quality control visible and clearly set to Auto.
+  // YouTube's embedded-player API cannot force a resolution from this page.
   qualitySelect.innerHTML = "";
-  qualitySelect.classList.add("hidden");
+  const autoOption = document.createElement("option");
+  autoOption.value = "auto";
+  autoOption.textContent = "تلقائي";
+  autoOption.selected = true;
+  qualitySelect.appendChild(autoOption);
+  qualitySelect.value = "auto";
+  qualitySelect.classList.remove("hidden");
   qualitySelect.disabled = true;
-  qualitySelect.title = "يختار YouTube جودة التشغيل تلقائيًا؛ لا تتيح واجهة المشغل المضمّن فرض الجودة من أزرار الصفحة.";
+  qualitySelect.title = "الجودة تلقائية، ويختار YouTube الدقة المناسبة تلقائيًا.";
   const label = document.getElementById("qualityLabel");
-  if(label) label.textContent = "الجودة: تلقائي";
+  if(label) label.textContent = "الجودة";
 }
 
 function updateYouTubeQualityIndicator(level){
