@@ -2901,6 +2901,22 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
   .video-category-list{min-height:0;max-height:none}
 }
 
+
+/* First-time video completion celebration */
+#videoCompletionCelebration{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;overflow:hidden;background:rgba(8,18,38,.76);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);padding:20px}
+#videoCompletionCelebration.is-visible{display:flex;animation:completionFadeIn .35s ease both}
+#videoCompletionCelebration .celebration-card{position:relative;z-index:2;width:min(520px,94vw);padding:34px 25px 28px;text-align:center;border:1px solid rgba(255,255,255,.7);border-radius:26px;background:linear-gradient(145deg,#fff 0%,#f4f8ff 100%);box-shadow:0 24px 80px rgba(0,0,0,.3);animation:completionPop .65s cubic-bezier(.2,.85,.25,1.2) both}
+#videoCompletionCelebration .celebration-icon{font-size:44px;line-height:1.2;margin-bottom:10px}
+#videoCompletionCelebration h2{margin:0 0 12px;color:#17345c;font-size:clamp(23px,5vw,32px);font-weight:900}
+#videoCompletionCelebration p{margin:0 auto 22px;max-width:390px;color:#41536c;font-size:16px;line-height:1.9;font-weight:700}
+#videoCompletionCelebration button{border:0;border-radius:12px;padding:11px 27px;background:linear-gradient(135deg,#2563eb,#1745a5);color:#fff;font:inherit;font-weight:800;cursor:pointer;box-shadow:0 7px 18px rgba(37,99,235,.25)}
+#videoCompletionCelebration .falling-piece{position:absolute;top:-12vh;z-index:1;pointer-events:none;animation:celebrationFall var(--fall-duration,5s) linear var(--fall-delay,0s) forwards;will-change:transform;filter:drop-shadow(0 3px 3px rgba(0,0,0,.12))}
+@keyframes celebrationFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes completionPop{0%{transform:translateY(25px) scale(.86);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes celebrationFall{0%{transform:translate3d(0,-12vh,0) rotate(0deg);opacity:0}8%{opacity:1}100%{transform:translate3d(var(--fall-drift,40px),115vh,0) rotate(var(--fall-rotate,420deg));opacity:.9}}
+@media(prefers-reduced-motion:reduce){#videoCompletionCelebration *,#videoCompletionCelebration::before{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+@media(max-width:480px){#videoCompletionCelebration .celebration-card{padding:27px 18px 22px;border-radius:20px}#videoCompletionCelebration p{font-size:14px}}
+
 </style>
 </head>
 
@@ -3836,6 +3852,55 @@ function updateUserUI(){
 
 }
 
+
+function completionCelebrationKey(){
+  return "video_completion_celebrated_v1_" +
+    String(user.id || "000") + "_" +
+    String(state.currentVideoId || "");
+}
+
+function showVideoCompletionCelebration(){
+  if(!state.currentVideoId || !state.completedByEnd) return false;
+  const key = completionCelebrationKey();
+  try{
+    if(localStorage.getItem(key) === "shown") return false;
+    // Persist before rendering so refreshes or duplicate ended events cannot replay it.
+    localStorage.setItem(key, "shown");
+  }catch(error){
+    console.warn("[Completion celebration storage]", error);
+    return false;
+  }
+
+  const overlay = document.getElementById("videoCompletionCelebration");
+  if(!overlay) return false;
+  overlay.querySelectorAll(".falling-piece").forEach(node=>node.remove());
+  const pieces = ["🎈","🎈","🎉","🎊","✨","🎁","🎈","⭐","🎊","🎈","🎉","✨","🎈","🎁","🎊","⭐","🎈","🎉","🎈","✨","🎊","🎈","🎁","🎈"];
+  pieces.forEach((symbol,index)=>{
+    const item=document.createElement("span");
+    item.className="falling-piece";
+    item.textContent=symbol;
+    item.setAttribute("aria-hidden","true");
+    item.style.left=(Math.random()*96+2)+"%";
+    item.style.fontSize=(22+Math.random()*25)+"px";
+    item.style.setProperty("--fall-duration",(4.2+Math.random()*3.2)+"s");
+    item.style.setProperty("--fall-delay",(Math.random()*1.8)+"s");
+    item.style.setProperty("--fall-drift",((Math.random()-.5)*180)+"px");
+    item.style.setProperty("--fall-rotate",((Math.random()-.5)*900)+"deg");
+    overlay.appendChild(item);
+  });
+  overlay.classList.add("is-visible");
+  document.body.style.overflow="hidden";
+  const close=()=>{
+    overlay.classList.remove("is-visible");
+    overlay.querySelectorAll(".falling-piece").forEach(node=>node.remove());
+    document.body.style.overflow="";
+  };
+  document.getElementById("closeCompletionCelebration").onclick=close;
+  overlay.onclick=e=>{if(e.target===overlay)close();};
+  const escape=e=>{if(e.key==="Escape"&&overlay.classList.contains("is-visible")){close();document.removeEventListener("keydown",escape);}};
+  document.addEventListener("keydown",escape);
+  return true;
+}
 
 function toast(msg){
 
@@ -5058,6 +5123,7 @@ function createYouTubePlayer(
                 updateProgressUI(d, d);
                 saveSession();
                 if(completed){
+                  showVideoCompletionCelebration();
                   toast("✓ تم إكمال الدرس بنجاح");
                 }
               }
@@ -5838,6 +5904,7 @@ video.addEventListener(
     saveSession();
     persistLocalProgress();
     if(completed){
+      showVideoCompletionCelebration();
       toast("✓ تم إكمال الدرس بنجاح");
     }
   }
@@ -7038,6 +7105,14 @@ window.addEventListener(
 })();
 </script>
 
+<div id="videoCompletionCelebration" role="dialog" aria-modal="true" aria-labelledby="completionCelebrationTitle">
+  <div class="celebration-card">
+    <div class="celebration-icon" aria-hidden="true">🎉🏆🎈</div>
+    <h2 id="completionCelebrationTitle">برافو عليك!</h2>
+    <p>شكرًا لجهودك علشان كملت الفيديو للآخر</p>
+    <button type="button" id="closeCompletionCelebration">استمر في التعلم</button>
+  </div>
+</div>
 <script>
 (function(){
   const modal=document.getElementById('learningHelpModal');
