@@ -176,6 +176,19 @@ button,input,select{
   border-color:rgba(59,130,246,.4)
 }
 
+/* Newly uploaded lessons: highlighted for the student's first visit only */
+.videoItem.is-new{
+  border:1px solid rgba(45,212,191,.9);
+  background:linear-gradient(115deg,rgba(13,148,136,.16),rgba(59,130,246,.075) 58%,rgba(255,255,255,.035));
+  box-shadow:0 0 0 1px rgba(45,212,191,.16),0 7px 22px rgba(13,148,136,.12);
+}
+.videoItem.is-new:hover,
+.videoItem.is-new.active{
+  border-color:#5eead4;
+  background:linear-gradient(115deg,rgba(13,148,136,.23),rgba(59,130,246,.12) 58%,rgba(255,255,255,.045));
+  box-shadow:0 0 0 2px rgba(45,212,191,.16),0 9px 24px rgba(13,148,136,.16);
+}
+
 .videoItemTitle{
   font-size:14px;
   font-weight:700;
@@ -3593,7 +3606,9 @@ const state = {
   orientationLocked:false,
 
   /* مهم لمنع blur من إعادة إظهار الحماية أثناء الضغط */
-  securityButtonLock:false
+  securityButtonLock:false,
+
+  newVideoIds:new Set()
 
 };
 
@@ -5414,6 +5429,20 @@ function prepareNativeVideo(
 
 async function loadVideos(){
 
+  // Save the moment this student opened the video library. Videos uploaded
+  // after the previous visit (but before this one) are highlighted once.
+  const newVideoSeenKey = "video-library-last-seen:" + String(user.id || user.phone || "student");
+  let previousLibraryVisit = 0;
+  try {
+    const storedVisit = Number(localStorage.getItem(newVideoSeenKey) || 0);
+    previousLibraryVisit = Number.isFinite(storedVisit) ? storedVisit : 0;
+    if (!previousLibraryVisit) previousLibraryVisit = Date.now();
+    localStorage.setItem(newVideoSeenKey, String(Date.now()));
+  } catch (storageError) {
+    console.warn("[Videos] Could not persist video-list visit state", storageError);
+  }
+  state.newVideoIds = new Set();
+
   explanationVideoList.innerHTML = '<div class="loadingItem">جاري تحميل الفيديوهات...</div>';
   homeworkVideoList.innerHTML = '<div class="loadingItem">جاري تحميل الفيديوهات...</div>';
 
@@ -5453,6 +5482,14 @@ async function loadVideos(){
         ? data
         : [];
 
+    if (previousLibraryVisit > 0) {
+      state.all.forEach(item => {
+        const uploadedAt = item.created_at ? new Date(item.created_at).getTime() : 0;
+        if (uploadedAt > previousLibraryVisit && uploadedAt <= Date.now()) {
+          state.newVideoIds.add(String(item.id));
+        }
+      });
+    }
 
     render();
 
@@ -5527,12 +5564,13 @@ function render(){
       title.className = "videoItemTitle";
       title.textContent = item.title || "بدون عنوان";
 
-      const uploadedAt = item.created_at ? new Date(item.created_at).getTime() : 0;
-      const age = Date.now() - uploadedAt;
-      if (uploadedAt > 0 && age >= 0 && age <= 7 * 24 * 60 * 60 * 1000) {
+      const isNewForStudent = state.newVideoIds.has(String(item.id));
+      if (isNewForStudent) {
+        el.classList.add("is-new");
         const badge = document.createElement("span");
         badge.className = "videoNewBadge";
-        badge.textContent = "NEW · جديد";
+        badge.textContent = "جديد";
+        badge.setAttribute("aria-label", "فيديو جديد");
         title.appendChild(badge);
       }
 
