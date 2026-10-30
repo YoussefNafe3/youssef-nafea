@@ -2917,6 +2917,9 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 @media(prefers-reduced-motion:reduce){#videoCompletionCelebration *,#videoCompletionCelebration::before{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 @media(max-width:480px){#videoCompletionCelebration .celebration-card{padding:27px 18px 22px;border-radius:20px}#videoCompletionCelebration p{font-size:14px}}
 
+
+/* Keep YouTube's own playback controls reachable, especially the Settings > Quality menu. */
+.ytBottomBlocker{pointer-events:none!important}
 </style>
 </head>
 
@@ -4870,12 +4873,15 @@ function fillYouTubeQuality(){
   qualitySelect.innerHTML = "";
   const option = document.createElement("option");
   option.value = "auto";
-  option.textContent = "تلقائية · حسب سرعة الإنترنت";
+  option.textContent = "تلقائية · يحددها YouTube";
   qualitySelect.appendChild(option);
   qualitySelect.value = "auto";
+  // The IFrame API does not expose reliable manual quality selection.
+  // Keep this indicator read-only; students can choose a fixed resolution
+  // from YouTube's own Settings (gear) menu inside the player.
   qualitySelect.disabled = true;
   qualitySelect.classList.remove("hidden");
-  qualitySelect.title = "يختار YouTube الجودة المناسبة تلقائيًا حسب سرعة الإنترنت وظروف التشغيل. قد يبدأ بدقة أقل ثم يرفعها تلقائيًا.";
+  qualitySelect.title = "يختار YouTube الجودة تلقائيًا. لتغييرها يدويًا افتح ⚙ إعدادات الفيديو داخل مشغل YouTube ثم الجودة.";
 }
 
 function updateYouTubeQualityIndicator(level){
