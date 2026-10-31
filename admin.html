@@ -231,7 +231,7 @@ button:focus-visible,.menu a:focus-visible{outline:3px solid rgba(244,215,126,.8
 .assignment-admin-toggle:hover{background:rgba(96,165,250,.14);border-color:#60a5fa}
 .assignment-admin-toggle:disabled{opacity:.5;cursor:wait}
 @media(max-width:640px){.assignment-admin-row{flex-direction:column;gap:12px;padding:13px}.assignment-admin-toggle{width:100%}.assignment-admin-form{gap:12px}}
-</style>
+body{visibility:hidden}\n</style>
 </head>
 
 <body>
@@ -380,6 +380,38 @@ const SUPABASE_URL = "https://nhdowqzecpwmkunczodl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* Strict server-verified admin gate. Never trust localStorage role alone. */
+async function verifyAdminAccess(){
+  try{
+    const {data:{user:authUser},error:authError}=await client.auth.getUser();
+    if(authError || !authUser?.email){
+      window.location.replace("login.html");
+      return false;
+    }
+    const phone=authUser.email.split("@")[0];
+    const {data:profile,error:profileError}=await client
+      .from("students").select("id,full_name,role,activated")
+      .eq("phone",phone).maybeSingle();
+    if(profileError || !profile || String(profile.role||"").trim().toLowerCase()!=="admin"){
+      await client.auth.signOut();
+      localStorage.removeItem("user");
+      localStorage.removeItem("platform_session_id");
+      window.location.replace("dashboard.html");
+      return false;
+    }
+    const cached=JSON.parse(localStorage.getItem("user")||"{}");
+    localStorage.setItem("user",JSON.stringify({...cached,id:profile.id,name:profile.full_name,full_name:profile.full_name,phone:authUser.email.split("@")[0],role:"admin"}));
+    const name=document.getElementById("adminName");
+    if(name) name.textContent=profile.full_name||"Admin";
+    return true;
+  }catch(error){
+    console.error("Admin authorization check failed:",error);
+    window.location.replace("login.html");
+    return false;
+  }
+}
+
 
 /* ================= LOGOUT ================= */
 async function logout(){
@@ -537,9 +569,13 @@ document.getElementById("viewsCount").innerText = avg.toFixed(1) + "%";
 
 }
 
-loadStudents();
-loadVideos();
-loadAnalytics();
+verifyAdminAccess().then(authorized=>{
+  if(!authorized) return;
+  loadStudents();
+  loadVideos();
+  loadAnalytics();
+  document.body.style.visibility="visible";
+});
 
 </script>
 

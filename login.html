@@ -322,37 +322,9 @@ return crypto.randomUUID();
 }
 
 
-/* =====================================================
-   EXISTING LOCAL USER
-===================================================== */
+/* Do not route from stale localStorage.
+   The authenticated account role is resolved after successful sign-in. */
 
-const oldUser =
-localStorage.getItem("user");
-
-if(oldUser){
-
-try{
-
-const user =
-JSON.parse(oldUser);
-
-if(user.role === "admin"){
-
-window.location.replace("admin.html");
-
-}else{
-
-window.location.replace("dashboard.html");
-
-}
-
-}catch(e){
-
-localStorage.removeItem("user");
-
-}
-
-}
 
 
 /* =====================================================
@@ -591,17 +563,13 @@ student.class_group
    7. REDIRECT
 ===================================================== */
 
-if(student.role === "admin"){
+if(String(student.role || "").trim().toLowerCase() === "admin"){
 
-window.location.replace(
-"admin.html"
-);
+window.location.replace("admin.html");
 
 }else{
 
-window.location.replace(
-"dashboard.html"
-);
+window.location.replace("dashboard.html");
 
 }
 

@@ -765,6 +765,12 @@ JSON.parse(
 localStorage.getItem("user") || "null"
 );
 
+/* Admin accounts must never enter the student dashboard. */
+if(String(user?.role || "").trim().toLowerCase()==="admin"){
+  window.location.replace("admin.html");
+  throw new Error("ADMIN_ACCOUNT_REDIRECTED");
+}
+
 
 if(!user || !sessionId){
 
@@ -777,6 +783,38 @@ throw new Error(
 );
 
 }
+
+/* Resolve the actual authenticated role before rendering student content.
+   Cached localStorage data is only a hint, never the authority. */
+document.body.style.visibility="hidden";
+(async()=>{
+  try{
+    const {data:{user:authUser},error:authError}=await client.auth.getUser();
+    if(authError || !authUser?.email){
+      window.location.replace("login.html");
+      return;
+    }
+    const phone=authUser.email.split("@")[0];
+    const {data:profile,error:profileError}=await client
+      .from("students").select("id,full_name,role,class_group")
+      .eq("phone",phone).maybeSingle();
+    if(profileError || !profile){
+      window.location.replace("login.html");
+      return;
+    }
+    if(String(profile.role||"").trim().toLowerCase()==="admin"){
+      localStorage.setItem("user",JSON.stringify({...user,id:profile.id,name:profile.full_name,full_name:profile.full_name,phone,role:"admin",class_group:profile.class_group}));
+      window.location.replace("admin.html");
+      return;
+    }
+    localStorage.setItem("user",JSON.stringify({...user,id:profile.id,name:profile.full_name,full_name:profile.full_name,phone,role:profile.role,class_group:profile.class_group}));
+    document.body.style.visibility="";
+  }catch(roleError){
+    console.error("Dashboard role verification failed:",roleError);
+    window.location.replace("login.html");
+  }
+})();
+
 
 
 /* =====================================================
