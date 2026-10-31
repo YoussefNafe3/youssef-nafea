@@ -278,6 +278,25 @@ msg.innerText = "كلمة المرور قصيرة";
 return;
 }
 
+/* Block phone reuse while a student account exists or is archived. */
+const { data: existingStudent, error: lookupError } = await client
+  .from("students")
+  .select("id,archived_at,archive_expires_at")
+  .eq("phone", phone)
+  .maybeSingle();
+
+if(lookupError){
+  console.error(lookupError);
+  msg.innerText = "تعذر التحقق من رقم الهاتف الآن. حاول مرة أخرى.";
+  return;
+}
+if(existingStudent){
+  msg.innerText = existingStudent.archived_at
+    ? "هذا الرقم مرتبط بحساب مؤرشف. يمكنك إعادة التسجيل بعد انتهاء مدة الأرشفة أو بعد الحذف النهائي."
+    : "رقمك متسجل بيه حساب بالفعل. توجه إلى تسجيل الدخول.";
+  return;
+}
+
 /* 2 - AUTH */
 const { data, error } = await client.auth.signUp({
 email: phone + "@phone.com",
