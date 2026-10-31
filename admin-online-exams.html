@@ -124,4 +124,6 @@ async function gradeAttempt(ev){ev.preventDefault();let scores={},feedback={};do
 function openImage(u){const img=$("modalImg");img.onerror=()=>{img.alt="تعذر تحميل الصورة. تحقق من رابطها أو أعد رفعها.";};img.onload=()=>{img.alt="صورة السؤال بالحجم الكامل";};img.src=u;$("modal").classList.add("open");}function closeImage(){$("modal").classList.remove("open");$("modalImg").removeAttribute("src");}
 $("examForm").addEventListener("submit",saveExam);$("new").addEventListener("click",()=>{chosen=null;form=null;fill(null);renderExams();emptyWorkspace();$("title").focus();});$("cancelExam").addEventListener("click",()=>{chosen=null;form=null;fill(null);renderExams();emptyWorkspace();});$("refresh").addEventListener("click",()=>load().catch(e=>alert(e.message)));$("refreshAttempts").addEventListener("click",()=>load().catch(e=>alert(e.message)));$("examFilter").addEventListener("change",renderExams);$("logout").addEventListener("click",async()=>{await db.auth.signOut();localStorage.removeItem("user");localStorage.removeItem("platform_session_id");location.replace("login.html");});$("closeModal").addEventListener("click",closeImage);$("modal").addEventListener("click",e=>{if(e.target===$("modal"))closeImage();});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeImage();});auth().then(load).catch(e=>{if(!["NOT_ADMIN","NO_SESSION"].includes(e.message))console.error(e);});
 })();
-</script></body></html>
+</script>
+<script src="admin-notifications.js" defer></script>
+</body></html>

@@ -144,5 +144,7 @@ $('manageSearch').addEventListener('input',renderResources);$('manageClass').add
 (async function init(){try{await requireSession();await loadResources()}catch(e){console.warn(e);showNotice(e.message||'سجّل الدخول بحساب الإدارة أولًا.','error');$('resourceList').replaceChildren();const box=document.createElement('div');box.className='empty';box.textContent='تحتاج إلى جلسة دخول صالحة لإدارة الملفات. استخدم زر تسجيل الدخول في المنصة ثم افتح هذه الصفحة من جديد.';$('resourceList').append(box)}})();
 })();
 </script>
+
+<script src="admin-notifications.js" defer></script>
 </body>
 </html>
