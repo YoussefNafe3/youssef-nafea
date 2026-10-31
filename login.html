@@ -394,6 +394,13 @@ return;
 }
 
 
+/* Archived accounts are blocked before authentication/session creation. */
+if(student.archived_at || student.archive_expires_at){
+  msg.innerText = "هذا الحساب مؤرشف مؤقتًا ولا يمكن تسجيل الدخول خلال فترة الأرشفة.";
+  btn.disabled = false;
+  return;
+}
+
 /* =====================================================
    2. ACTIVATION
 ===================================================== */
