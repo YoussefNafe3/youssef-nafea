@@ -765,6 +765,12 @@ JSON.parse(
 localStorage.getItem("user") || "null"
 );
 
+/* Admin accounts must never enter the student dashboard. */
+if(String(user?.role || "").trim().toLowerCase()==="admin"){
+  window.location.replace("admin.html");
+  throw new Error("ADMIN_ACCOUNT_REDIRECTED");
+}
+
 
 if(!user || !sessionId){
 
