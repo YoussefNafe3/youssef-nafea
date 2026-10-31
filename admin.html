@@ -394,7 +394,7 @@ async function verifyAdminAccess(){
       .from("students").select("id,full_name,role,activated")
       .eq("phone",phone).maybeSingle();
     if(profileError || !profile || String(profile.role||"").trim().toLowerCase()!=="admin"){
-      await client.auth.signOut();
+      await client.auth.signOut({scope:"local"});
       localStorage.removeItem("user");
       localStorage.removeItem("platform_session_id");
       window.location.replace("dashboard.html");
@@ -444,7 +444,7 @@ console.error(e);
 
 try{
 
-await client.auth.signOut();
+await client.auth.signOut({scope:"local"});
 
 }catch(e){
 
