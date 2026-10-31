@@ -562,7 +562,7 @@ alert(
 /* ================= LOAD ================= */
 async function loadStudents(){
 
-const { data } = await client.from("students").select("*");
+const { data } = await client.from("students").select("*").is("archived_at", null).or("role.is.null,role.neq.admin");
 
 document.getElementById("studentsCount").innerText = data?.length || 0;
 
