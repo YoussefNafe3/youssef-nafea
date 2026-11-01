@@ -318,7 +318,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
 </style>
-</head>
+<style id="owner-admin-style">[hidden]{display:none!important}.owner-admin-management{border-color:rgba(216,189,122,.3)}.owner-admin-list{display:grid;gap:13px;margin-top:15px}.owner-admin-card{padding:16px;border:1px solid rgba(166,190,220,.17);border-radius:15px;background:rgba(6,16,29,.5)}.owner-admin-card-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}.owner-admin-card-head strong{color:#f2f6fc}.owner-admin-card-head small{display:block;color:#9eafc5;font-size:11px}.owner-permission-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.owner-permission{display:flex;align-items:center;gap:7px;padding:9px;border:1px solid rgba(166,190,220,.12);border-radius:10px;font-size:11px;color:#dce7f4}.owner-permission input{accent-color:#55c6b1}.owner-admin-save{margin-top:12px;padding:9px 15px;border:1px solid rgba(85,198,177,.35);border-radius:10px;background:rgba(85,198,177,.13);color:#a9eee0;font-weight:800}@media(max-width:760px){.owner-permission-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:420px){.owner-permission-grid{grid-template-columns:1fr}}</style></head>
 
 <body>
 
@@ -334,14 +334,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 <div class="menu">
 
 <a href="admin.html">🏠 الرئيسية</a>
-<a href="#studentManager" class="menu-primary">👥 Basic Control الطلبة</a>
-<a href="admin-videos.html">🎥 الفيديوهات</a>
-<a href="admin-analytics.html">📊 التحليلات</a>
-<a href="admin-files.html">📁 الملفات</a>
-<a href="admin-password-recovery.html">🔐 طلبات استعادة كلمة المرور</a>
+<a href="#studentManager" data-admin-permission="students" class="menu-primary">👥 Basic Control الطلبة</a>
+<a href="admin-videos.html" data-admin-permission="videos">🎥 الفيديوهات</a>
+<a href="admin-analytics.html" data-admin-permission="analytics">📊 التحليلات</a>
+<a href="admin-files.html" data-admin-permission="files">📁 الملفات</a>
+<a href="admin-password-recovery.html" data-admin-permission="password_recovery">🔐 طلبات استعادة كلمة المرور</a>
 <a href="change-password.html">🔑 تغيير كلمة المرور</a>
-<a href="admin-online-exams.html">📝 إدارة الامتحانات الأونلاين</a>
-<a href="admin-results.html">
+<a href="admin-online-exams.html" data-admin-permission="exams">📝 إدارة الامتحانات الأونلاين</a>
+<a href="admin-results.html" data-admin-permission="results">
     🏆 النتائج
 </a>
 </div>
@@ -417,15 +417,16 @@ body{min-width:320px}
 </style><section class="admin-quick-access" aria-label="اختصارات لوحة الإدارة">
 <div class="quick-access-heading"><div><span class="quick-kicker">ADMIN WORKSPACE</span><h3>مركز التحكم السريع</h3><p>كل أدوات الإدارة والمتابعة في مكان واحد.</p></div><span class="quick-access-badge">لوحة الإدارة</span></div>
 <div class="admin-action-grid">
-<a class="admin-action-card action-primary" href="#studentManager"><span class="action-icon">👥</span><span class="action-copy"><strong>Basic Control الطلبة</strong><small>تعديل الأسماء والتفعيل والأرشفة والحذف</small></span><span class="action-arrow">←</span></a>
-<a class="admin-action-card" href="#assignmentsAdminSection"><span class="action-icon">🗂️</span><span class="action-copy"><strong>التكليفات والواجبات</strong><small>إنشاء التكليفات وإدارة ظهورها للطلاب</small></span><span class="action-arrow">←</span></a>
-<a class="admin-action-card" href="admin-analytics.html"><span class="action-icon">📊</span><span class="action-copy"><strong>متابعة الطلاب والتحليلات</strong><small>نشاط الطلاب والمشاهدة والتقدم</small></span><span class="action-arrow">←</span></a>
-<a class="admin-action-card" href="admin-videos.html"><span class="action-icon">🎥</span><span class="action-copy"><strong>إدارة الفيديوهات</strong><small>إضافة الفيديوهات وترتيبها وإدارتها</small></span><span class="action-arrow">←</span></a>
-<a class="admin-action-card" href="admin-files.html"><span class="action-icon">📁</span><span class="action-copy"><strong>مكتبة الملفات</strong><small>رفع الملفات وتنظيمها للطلاب</small></span><span class="action-arrow">←</span></a>
-<a class="admin-action-card" href="admin-online-exams.html"><span class="action-icon">📝</span><span class="action-copy"><strong>الامتحانات الأونلاين</strong><small>إنشاء الامتحانات وإدارة المحاولات</small></span><span class="action-arrow">←</span></a>
-<a class="admin-action-card" href="admin-results.html"><span class="action-icon">🏆</span><span class="action-copy"><strong>النتائج والتسميعات</strong><small>عرض النتائج ومراجعة التسميعات</small></span><span class="action-arrow">←</span></a>
-<a class="admin-action-card" href="admin-password-recovery.html"><span class="action-icon">🔐</span><span class="action-copy"><strong>طلبات استعادة كلمة المرور</strong><small>مراجعة طلبات الطلاب والرد عليها</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card action-primary" href="#studentManager" data-admin-permission="students"><span class="action-icon">👥</span><span class="action-copy"><strong>Basic Control الطلبة</strong><small>تعديل الأسماء والتفعيل والأرشفة والحذف</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="#assignmentsAdminSection" data-admin-permission="assignments"><span class="action-icon">🗂️</span><span class="action-copy"><strong>التكليفات والواجبات</strong><small>إنشاء التكليفات وإدارة ظهورها للطلاب</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="admin-analytics.html" data-admin-permission="analytics"><span class="action-icon">📊</span><span class="action-copy"><strong>متابعة الطلاب والتحليلات</strong><small>نشاط الطلاب والمشاهدة والتقدم</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="admin-videos.html" data-admin-permission="videos"><span class="action-icon">🎥</span><span class="action-copy"><strong>إدارة الفيديوهات</strong><small>إضافة الفيديوهات وترتيبها وإدارتها</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="admin-files.html" data-admin-permission="files"><span class="action-icon">📁</span><span class="action-copy"><strong>مكتبة الملفات</strong><small>رفع الملفات وتنظيمها للطلاب</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="admin-online-exams.html" data-admin-permission="exams"><span class="action-icon">📝</span><span class="action-copy"><strong>الامتحانات الأونلاين</strong><small>إنشاء الامتحانات وإدارة المحاولات</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="admin-results.html" data-admin-permission="results"><span class="action-icon">🏆</span><span class="action-copy"><strong>النتائج والتسميعات</strong><small>عرض النتائج ومراجعة التسميعات</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="admin-password-recovery.html" data-admin-permission="password_recovery"><span class="action-icon">🔐</span><span class="action-copy"><strong>طلبات استعادة كلمة المرور</strong><small>مراجعة طلبات الطلاب والرد عليها</small></span><span class="action-arrow">←</span></a>
 <a class="admin-action-card" href="change-password.html"><span class="action-icon">🔑</span><span class="action-copy"><strong>تغيير كلمة المرور</strong><small>تحديث كلمة مرور حساب الإدارة</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="#ownerAdminManagement" data-owner-only hidden><span class="action-icon">🛡️</span><span class="action-copy"><strong>التحكم في الأدمنز</strong><small>تحديد صلاحيات كل حساب إدارة</small></span><span class="action-arrow">←</span></a>
 </div></section>
 <section class="student-manager" id="studentManager">
   <div class="student-manager-head">
@@ -450,7 +451,7 @@ body{min-width:320px}
   <div class="sm-status" id="smModalStatus" role="status"></div>
  </div>
 </div>
-<div class="section" id="assignmentsAdminSection" style="margin-bottom:20px"><h3>🗂️ إدارة التكليفات</h3><p style="color:#94a3b8;font-size:12px;line-height:1.9;margin-top:6px">أنشئ تسميعًا أو واجبًا أو أي مهمة، وحدد الصف وأيام المجموعة والتاريخ. التكليفات محفوظة على قاعدة البيانات.</p><form id="assignmentAdminForm" class="assignment-admin-form"><label>عنوان التكليف <span style="color:#94a3b8;font-weight:400">(اختياري)</span><input id="assignmentTitleInput" maxlength="180" placeholder="يمكنك تركه فارغًا"></label><label>نوع التكليف<select id="assignmentTypeInput"><option value="recitation">تسميع</option><option value="homework">واجب منزلي</option><option value="homework_recitation">واجب وتسميع</option><option value="worksheet">ورقة عمل</option><option value="other">تكليف آخر</option></select></label><label>الصف المستهدف<select id="assignmentClassInput"><option value="all">كل الصفوف</option><option value="first_science">أولى ثانوي – علوم متكاملة</option><option value="third_biology">تالتة ثانوي – أحياء</option><option value="third_geology">تالتة ثانوي – جيولوجيا</option></select></label><label>تاريخ التكليف<input id="assignmentDateInput" type="date" required></label><div class="wide" style="padding:12px;border:1px solid #334155;border-radius:12px;background:#ffffff05"><strong style="font-size:12px">📅 تحديد المجموعة تلقائيًا من التاريخ</strong><p style="color:#94a3b8;font-size:11px;line-height:1.9;margin:5px 0 0">اختار تاريخ يوم واحد فقط. السبت أو الأحد أو الإثنين = مجموعة الأيام الثلاثة الأولى. الثلاثاء أو الأربعاء أو الخميس = مجموعة الأيام الثلاثة الثانية. الطالب سيشاهد التكليف في تاريخ يومه المختار داخل المجموعة.</p></div><label class="wide">وصف التكليف<textarea id="assignmentDescriptionInput" placeholder="تعليمات إضافية للطالب"></textarea></label><label class="wide">المهام المطلوبة (كل مهمة في سطر منفصل)<textarea id="assignmentItemsInput" placeholder="حفظ التعريفات&#10;حل أسئلة الكتاب&#10;مراجعة الملخص"></textarea></label><div class="wide"><button type="submit" class="assignment-admin-btn" id="saveAssignmentBtn">＋ إنشاء التكليف</button> <span id="assignmentAdminStatus" role="status" style="font-size:12px;color:#94a3b8"></span></div></form><div id="assignmentAdminList" class="assignment-admin-list"></div></div>
+<section class="student-manager owner-admin-management" id="ownerAdminManagement" hidden><div class="student-manager-head"><div><h3>🛡️ التحكم في الأدمنز والصلاحيات</h3><p>تحكم في الأقسام التي يستطيع كل أدمن إدارتها. حساب المالك الأساسي محمي ولا يمكن تعديل صلاحياته من هنا.</p></div><button class="sm-btn" id="ownerAdminsRefresh">↻ تحديث القائمة</button></div><div id="ownerAdminsStatus" class="sm-status" role="status">تحميل حسابات الإدارة...</div><div id="ownerAdminsList" class="owner-admin-list"></div></section><div class="section" id="assignmentsAdminSection" style="margin-bottom:20px"><h3>🗂️ إدارة التكليفات</h3><p style="color:#94a3b8;font-size:12px;line-height:1.9;margin-top:6px">أنشئ تسميعًا أو واجبًا أو أي مهمة، وحدد الصف وأيام المجموعة والتاريخ. التكليفات محفوظة على قاعدة البيانات.</p><form id="assignmentAdminForm" class="assignment-admin-form"><label>عنوان التكليف <span style="color:#94a3b8;font-weight:400">(اختياري)</span><input id="assignmentTitleInput" maxlength="180" placeholder="يمكنك تركه فارغًا"></label><label>نوع التكليف<select id="assignmentTypeInput"><option value="recitation">تسميع</option><option value="homework">واجب منزلي</option><option value="homework_recitation">واجب وتسميع</option><option value="worksheet">ورقة عمل</option><option value="other">تكليف آخر</option></select></label><label>الصف المستهدف<select id="assignmentClassInput"><option value="all">كل الصفوف</option><option value="first_science">أولى ثانوي – علوم متكاملة</option><option value="third_biology">تالتة ثانوي – أحياء</option><option value="third_geology">تالتة ثانوي – جيولوجيا</option></select></label><label>تاريخ التكليف<input id="assignmentDateInput" type="date" required></label><div class="wide" style="padding:12px;border:1px solid #334155;border-radius:12px;background:#ffffff05"><strong style="font-size:12px">📅 تحديد المجموعة تلقائيًا من التاريخ</strong><p style="color:#94a3b8;font-size:11px;line-height:1.9;margin:5px 0 0">اختار تاريخ يوم واحد فقط. السبت أو الأحد أو الإثنين = مجموعة الأيام الثلاثة الأولى. الثلاثاء أو الأربعاء أو الخميس = مجموعة الأيام الثلاثة الثانية. الطالب سيشاهد التكليف في تاريخ يومه المختار داخل المجموعة.</p></div><label class="wide">وصف التكليف<textarea id="assignmentDescriptionInput" placeholder="تعليمات إضافية للطالب"></textarea></label><label class="wide">المهام المطلوبة (كل مهمة في سطر منفصل)<textarea id="assignmentItemsInput" placeholder="حفظ التعريفات&#10;حل أسئلة الكتاب&#10;مراجعة الملخص"></textarea></label><div class="wide"><button type="submit" class="assignment-admin-btn" id="saveAssignmentBtn">＋ إنشاء التكليف</button> <span id="assignmentAdminStatus" role="status" style="font-size:12px;color:#94a3b8"></span></div></form><div id="assignmentAdminList" class="assignment-admin-list"></div></div>
 
 
 </div>
@@ -483,10 +484,16 @@ async function verifyAdminAccess(){
       window.location.replace("dashboard.html");
       return false;
     }
+    const {data:access,error:accessError}=await client.rpc("admin_get_my_access");
+    if(accessError||!access?.success){console.error(accessError||access);alert("تعذر التحقق من صلاحيات حساب الإدارة.");window.location.replace("login.html");return false;}
+    window.adminAccess=access;
     const cached=JSON.parse(localStorage.getItem("user")||"{}");
-    localStorage.setItem("user",JSON.stringify({...cached,id:profile.id,name:profile.full_name,full_name:profile.full_name,phone:authUser.email.split("@")[0],role:"admin"}));
-    const name=document.getElementById("adminName");
-    if(name) name.textContent=profile.full_name||"Admin";
+    localStorage.setItem("user",JSON.stringify({...cached,id:profile.id,name:profile.full_name,full_name:profile.full_name,phone:authUser.email.split("@")[0],role:"admin",is_owner:access.is_owner===true}));
+    const name=document.getElementById("adminName");if(name)name.textContent=(profile.full_name||"Admin")+(access.is_owner===true?" · OWNER":"");
+    const allowed=k=>access.is_owner===true||access.permissions?.[k]===true;
+    document.querySelectorAll("[data-admin-permission]").forEach(el=>el.hidden=!allowed(el.dataset.adminPermission));
+    const sm=document.getElementById("studentManager"),as=document.getElementById("assignmentsAdminSection");if(sm)sm.hidden=!allowed("students");if(as)as.hidden=!allowed("assignments");
+    const op=document.getElementById("ownerAdminManagement"),oc=document.querySelector("[data-owner-only]");if(op)op.hidden=access.is_owner!==true;if(oc)oc.hidden=access.is_owner!==true;
     return true;
   }catch(error){
     console.error("Admin authorization check failed:",error);
@@ -559,7 +566,7 @@ function escapeAdminHtml(value){
 // Compatibility hook: the dashboard no longer displays numeric summary cards.
 async function loadStudents(){ return; }
 
-verifyAdminAccess().then(authorized=>{
+window.adminAccessReady=verifyAdminAccess().then(authorized=>{
   if(!authorized) return;
   loadStudents();
   document.body.style.visibility="visible";
@@ -660,5 +667,5 @@ verifyAdminAccess().then(authorized=>{
 })();
 </script>
 <script src="admin-notifications.js" defer></script>
-</body>
+<script>(function(){const list=document.getElementById('ownerAdminsList'),status=document.getElementById('ownerAdminsStatus'),refresh=document.getElementById('ownerAdminsRefresh');if(!list||!status||!refresh)return;const labels=[['students','إدارة حسابات الطلاب'],['assignments','التكليفات والواجبات'],['analytics','التحليلات ومتابعة المشاهدة'],['videos','إدارة الفيديوهات'],['files','مكتبة الملفات'],['exams','الامتحانات الأونلاين'],['results','النتائج والتسميعات'],['password_recovery','استعادة كلمة المرور']];const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));async function load(){if(window.adminAccess?.is_owner!==true)return;refresh.disabled=true;status.textContent='جاري تحميل الأدمنز...';try{const {data,error}=await client.rpc('owner_list_admins');if(error)throw error;const arr=Array.isArray(data)?data:[];list.innerHTML=arr.length?arr.map(a=>'<article class="owner-admin-card" data-admin-id="'+Number(a.id)+'"><div class="owner-admin-card-head"><div><strong>'+esc(a.full_name||'أدمن')+'</strong><small>📱 '+esc(a.phone||'')+'</small></div><span>ADMIN</span></div><div class="owner-permission-grid">'+labels.map(([k,l])=>'<label class="owner-permission"><input type="checkbox" data-permission="'+k+'" '+(a.permissions?.[k]===true?'checked':'')+'><span>'+l+'</span></label>').join('')+'</div><button class="owner-admin-save" type="button">حفظ الصلاحيات</button></article>').join(''):'<div class="sm-empty">لا توجد حسابات إدارة أخرى.</div>';status.textContent='تم تحميل '+arr.length+' حساب إدارة.';}catch(e){status.textContent='تعذر تحميل الأدمنز: '+(e.message||'خطأ');}finally{refresh.disabled=false;}}list.addEventListener('click',async e=>{const b=e.target.closest('.owner-admin-save');if(!b)return;const c=b.closest('[data-admin-id]'),permissions={};c.querySelectorAll('[data-permission]').forEach(x=>permissions[x.dataset.permission]=x.checked);b.disabled=true;try{const {data,error}=await client.rpc('owner_set_admin_permissions',{p_admin_student_id:Number(c.dataset.adminId),p_permissions:permissions});if(error)throw error;if(!data?.success)throw Error(data?.reason||'فشل الحفظ');status.textContent='تم حفظ الصلاحيات بنجاح.';}catch(e){status.textContent='فشل حفظ الصلاحيات: '+e.message;}finally{b.disabled=false;}});refresh.addEventListener('click',load);window.adminAccessReady?.then(ok=>{if(ok&&window.adminAccess?.is_owner===true)load();});})();</script></body>
 </html>
