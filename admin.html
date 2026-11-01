@@ -693,6 +693,7 @@ verifyAdminAccess().then(authorized=>{
      const result=await invoke(payload);
      $('smModalStatus').textContent=result.message||'تمت العملية بنجاح.';
      await load();
+     if(mode==='rename' && typeof loadStudents==='function') await loadStudents();
      setTimeout(closeModal,650);
    }catch(e){$('smModalStatus').textContent='فشلت العملية: '+e.message;$('smConfirm').disabled=false;busy=false;}
  }
