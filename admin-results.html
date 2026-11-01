@@ -848,7 +848,7 @@ button:focus-visible,a:focus-visible{outline:3px solid rgba(244,215,126,.85);out
 }
 </style>
 
-<style id="admin-module-permission-style">body{visibility:hidden}</style>
+
 </head>
 
 
@@ -1573,81 +1573,34 @@ function percentageClass(value){
 ===================================================== */
 
 async function checkAdmin(){
-
-    const localUser =
-        localStorage.getItem("user");
-
-    const sessionId =
-        localStorage.getItem("platform_session_id");
-
-    if(!localUser || !sessionId){
-
-        window.location.replace("login.html");
-
-        return false;
-
-    }
-
-
     try{
-
-        user =
-            JSON.parse(localUser);
-
-    }catch{
-
-        localStorage.removeItem("user");
-
+        const {data:{user:authUser},error:authError}=await client.auth.getUser();
+        if(authError||!authUser){
+            window.location.replace("login.html");
+            return false;
+        }
+        const {data:access,error:accessError}=await client.rpc("admin_get_my_access");
+        if(accessError||!access?.success){
+            alert("تعذر التحقق من صلاحيات حساب الإدارة. حدّث الصفحة أو سجّل الدخول مرة أخرى.");
+            window.location.replace("login.html");
+            return false;
+        }
+        if(access.is_owner!==true && access.permissions?.results!==true){
+            alert("حسابك لا يمتلك صلاحية النتائج والتسميعات.");
+            window.location.replace("admin.html");
+            return false;
+        }
+        window.adminAccess=access;
+        const cached=JSON.parse(localStorage.getItem("user")||"{}");
+        user={...cached,role:"admin",is_owner:access.is_owner===true};
+        localStorage.setItem("user",JSON.stringify(user));
+        return true;
+    }catch(error){
+        console.error("Results admin authorization failed:",error);
+        alert("حدث خطأ أثناء التحقق من صلاحيات الإدارة.");
         window.location.replace("login.html");
-
         return false;
-
     }
-
-
-    if(
-        !user ||
-        user.role !== "admin"
-    ){
-
-        alert("غير مصرح لك بالدخول إلى لوحة الإدارة.");
-
-        window.location.replace("dashboard.html");
-
-        return false;
-
-    }
-
-
-    /*
-       التأكد من Supabase Auth
-    */
-
-    const {
-        data,
-        error
-    } =
-    await client.auth.getUser();
-
-
-    if(
-        error ||
-        !data ||
-        !data.user
-    ){
-
-        localStorage.removeItem("user");
-        localStorage.removeItem("platform_session_id");
-
-        window.location.replace("login.html");
-
-        return false;
-
-    }
-
-
-    return true;
-
 }
 
 
@@ -2843,22 +2796,6 @@ function setDefaultDates(){
 
 
 <script src="admin-notifications.js" defer></script>
-<script id="admin-module-permission-guard">
-(async function(){
-  document.body.style.visibility="hidden";
-  const deny=(message)=>{document.body.innerHTML='<main style="min-height:100vh;display:grid;place-items:center;padding:24px;background:#080f1c;color:#f2f6fc;font-family:Cairo,sans-serif;text-align:center"><section style="max-width:520px;padding:30px;border:1px solid #33465e;border-radius:20px;background:#122137"><div style="font-size:38px">🔒</div><h2 style="margin:12px 0">غير مصرح بالدخول</h2><p style="color:#aebed1;line-height:1.9">'+message+'</p><a href="admin.html" style="display:inline-block;margin-top:18px;padding:10px 18px;border-radius:10px;background:#1b756c;color:white;text-decoration:none">العودة للوحة الإدارة</a></section></main>';document.body.style.visibility="visible";};
-  try{
-    const authClient=client;
-    const {data:{user},error:authError}=await authClient.auth.getUser();
-    if(authError||!user){location.replace("login.html");return;}
-    const {data:access,error:accessError}=await authClient.rpc("admin_get_my_access");
-    if(accessError||!access?.success){deny("هذه الصفحة متاحة لحسابات الإدارة فقط.");return;}
-    window.adminAccess=access;
-    if(access.is_owner!==true && access.permissions?.results!==true){deny("حسابك الإداري لا يمتلك صلاحية النتائج والتسميعات. اطلب من مالك المنصة تفعيل الصلاحية.");return;}
-    document.body.style.visibility="visible";
-  }catch(error){console.error("Admin permission guard failed:",error);deny("تعذر التحقق من صلاحيات الدخول. حدّث الصفحة أو سجّل الدخول مرة أخرى.");}
-})();
-</script>
 </body>
 
 </html>
