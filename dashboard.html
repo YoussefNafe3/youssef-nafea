@@ -807,8 +807,37 @@ document.body.style.visibility="hidden";
       window.location.replace("admin.html");
       return;
     }
-    localStorage.setItem("user",JSON.stringify({...user,id:profile.id,name:profile.full_name,full_name:profile.full_name,phone,role:profile.role,class_group:profile.class_group}));
+    user.id=profile.id;
+    user.name=profile.full_name || "الطالب";
+    user.full_name=profile.full_name || "الطالب";
+    user.phone=phone;
+    user.role=profile.role;
+    user.class_group=profile.class_group;
+    localStorage.setItem("user",JSON.stringify(user));
+    const nameElement=document.getElementById("userName");
+    if(nameElement) nameElement.textContent="👋 "+user.full_name;
     document.body.style.visibility="";
+
+    // Keep the student's displayed name synchronized with the database.
+    // This also picks up an administrator's rename without requiring logout.
+    window.setInterval(async()=>{
+      try{
+        const {data:latest,error:latestError}=await client
+          .from("students").select("full_name")
+          .eq("id",profile.id).maybeSingle();
+        if(latestError || !latest) return;
+        const latestName=String(latest.full_name||"الطالب");
+        if(latestName!==user.full_name){
+          user.full_name=latestName;
+          user.name=latestName;
+          localStorage.setItem("user",JSON.stringify(user));
+          const header=document.getElementById("userName");
+          if(header) header.textContent="👋 "+latestName;
+        }
+      }catch(syncError){
+        console.warn("Student name synchronization skipped:",syncError);
+      }
+    },30000);
   }catch(roleError){
     console.error("Dashboard role verification failed:",roleError);
     window.location.replace("login.html");
@@ -821,11 +850,8 @@ document.body.style.visibility="hidden";
    USER NAME
 ===================================================== */
 
-document.getElementById(
-"userName"
-).innerHTML =
-"👋 " +
-(user.full_name || user.name || "الطالب");
+document.getElementById("userName").textContent =
+"👋 " + (user.full_name || user.name || "الطالب");
 const SHARED_AVATAR_OPTIONS=[
 {id:"boy-1",label:"آدم",kind:"ولد",gender:"boy",skin:"#f2c39b",hair:"#3b2a25",shirt:"#3977d5",bg:"#dcecff",style:1},
 {id:"boy-2",label:"عمر",kind:"ولد",gender:"boy",skin:"#c8875b",hair:"#241e28",shirt:"#16a085",bg:"#d9f5ed",style:2},
