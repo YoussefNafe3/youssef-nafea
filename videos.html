@@ -818,7 +818,8 @@ html[data-theme="light"] .speedBtn.active{
 }
 
 /* Keep YouTube's own Settings > Quality menu clickable. */
-.ytBottomBlocker{pointer-events:auto!important;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important}
+/* Do not intercept clicks on YouTube native controls; preserve title/capture protection layers. */
+.ytBottomBlocker{pointer-events:none!important;touch-action:pan-y!important;user-select:none!important;-webkit-user-select:none!important}
 
 .watermark{
   position:absolute;
@@ -4901,8 +4902,19 @@ function fillYouTubeQuality(){
 }
 
 function updateYouTubeQualityIndicator(level){
-  // Intentionally do not alter the menu or playback quality.
-  // YouTube independently manages adaptive quality.
+  if(!qualitySelect) return;
+  // Informational only: reflect YouTube's reported adaptive quality without forcing a resolution.
+  const names = {
+    highres:"أعلى جودة", hd2160:"2160p", hd1440:"1440p",
+    hd1080:"1080p", hd720:"720p", large:"480p",
+    medium:"360p", small:"240p", tiny:"144p"
+  };
+  const option = qualitySelect.options[0];
+  if(!option) return;
+  const actual = names[String(level || "").toLowerCase()];
+  option.textContent = actual
+    ? "تلقائية · الجودة الحالية " + actual
+    : "تلقائية · YouTube يحدد الجودة";
 }
 
 let captionsEnabled = false;
