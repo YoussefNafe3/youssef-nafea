@@ -12,11 +12,22 @@
 (function(){"use strict";const db=window.supabase.createClient("https://nhdowqzecpwmkunczodl.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo"),$=id=>document.getElementById(id);let exams=[],forms=[],questions=[],attempts=[],students={},examMap={},formMap={},chosen=null,form=null,review=null;
 const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));const st=s=>({draft:"مسودة",published:"منشور",archived:"مؤرشف",in_progress:"قيد المحاولة",pending_review:"بانتظار التصحيح",graded:"تم التصحيح",flagged:"تم اكتشاف محاولة غش"})[s]||s;const qt=s=>({single_choice:"اختيار واحد",multiple_select:"اختيارات متعددة",true_false:"صح أو خطأ",short_answer:"إجابة قصيرة",essay:"مقالي"})[s]||s;function message(id,t,k){$(id).textContent=t||"";$(id).className="msg"+(k?" "+k:"");}function localDate(v){if(!v)return"";let d=new Date(v);return Number.isNaN(d.getTime())?"":new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);}function iso(v){return v?new Date(v).toISOString():null;}
 async function auth(){
- const {data:{user},error:authError}=await db.auth.getUser();
- if(authError||!user){location.replace("login.html");throw Error("NO_SESSION");}
- const {data:access,error:accessError}=await db.rpc("admin_get_my_access");
+ let {data:{session},error:sessionError}=await db.auth.getSession();
+ if(sessionError) throw sessionError;
+ if(!session?.access_token){
+  const refreshed=await db.auth.refreshSession();
+  session=refreshed.data?.session||null;
+ }
+ if(!session?.access_token){location.replace("login.html");throw Error("NO_SESSION");}
+ let {data:access,error:accessError}=await db.rpc("admin_get_my_access");
+ if(accessError&&(accessError.status===401||accessError.code==="PGRST301")){
+  const refreshed=await db.auth.refreshSession();
+  if(refreshed.data?.session){
+   const retry=await db.rpc("admin_get_my_access");access=retry.data;accessError=retry.error;
+  }
+ }
  if(accessError||!access?.success){
-  document.body.innerHTML='<div style="margin:12vh auto;max-width:520px;padding:30px;text-align:center;background:#10213a;color:white;font-family:Cairo;border-radius:20px"><h1>غير مصرح بالدخول</h1><p>تعذر التحقق من حساب الإدارة.</p><a href="admin.html">العودة للوحة الإدارة</a></div>';
+  document.body.innerHTML='<div style="margin:12vh auto;max-width:520px;padding:30px;text-align:center;background:#10213a;color:white;font-family:Cairo;border-radius:20px"><h1>تعذر التحقق من صلاحيات الإدارة</h1><p>'+String(accessError?.message||"تعذر التحقق من الحساب.")+'</p><a href="admin.html">العودة للوحة الإدارة</a></div>';
   throw Error("NOT_ADMIN");
  }
  if(access.is_owner!==true&&access.permissions?.exams!==true){
