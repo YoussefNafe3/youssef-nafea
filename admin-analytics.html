@@ -554,7 +554,7 @@ button:focus-visible,.video-card:focus-visible{outline:3px solid rgba(244,215,12
 .video-card .report-card-btn{margin-top:10px;width:100%;border:1px solid rgba(244,215,126,.38);background:rgba(244,215,126,.09);color:#f4d77e;border-radius:9px;padding:8px;font:700 12px Cairo,sans-serif;cursor:pointer}.video-card .report-card-btn:hover{background:rgba(244,215,126,.18)}
 @media print{body>*{display:none!important}#reportModal{display:block!important;position:static;padding:0;background:white}.report-dialog{width:100%;height:auto;display:block;overflow:visible;box-shadow:none;border-radius:0}.report-toolbar,.report-note{display:none!important}.report-editor{max-width:none;overflow:visible;padding:0 8mm}.report-editor table{page-break-inside:auto}.report-editor tr{page-break-inside:avoid;page-break-after:auto}.report-editor h2{page-break-after:avoid}}
 </style>
-<style id="admin-module-permission-style">body{visibility:hidden}</style>
+
 </head>
 
 <body>
@@ -1072,23 +1072,7 @@ window.printCurrentReport=function(){window.print();};
 window.downloadCurrentReport=function(){
   const editor=document.getElementById("reportEditor");
   if(!editor.innerHTML.trim()){alert("افتح تقريرًا أولًا.");return;}
-  const doc='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>تقرير تحليلات الفيديو</title><style>body{font-family:Arial,Tahoma,sans-serif;direction:rtl;color:#182235;line-height:1.8;margin:22px}h1{text-align:center;color:#172554;font-size:25px}h2{color:#312e81;border-bottom:2px solid #ddd6fe;padding-bottom:5px;margin-top:24px}table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:12px}th,td{border:1px solid #cbd5e1;padding:7px 8px;text-align:right;vertical-align:top}th{background:#eef2ff;color:#1e1b4b}.report-metrics{display:block;margin:16px 0}.metric{display:inline-block;border:1px solid #dbe2ef;padding:8px 12px;margin:3px;background:#f8fafc}.report-subtitle{text-align:center;color:#64748b}.report-footer{border-top:1px solid #dbe2ef;padding-top:10px;margin-top:25px;color:#64748b;font-size:11px}.report-empty{padding:12px;background:#f8fafc;border:1px dashed #cbd5e1}</style></head><body>'+editor.innerHTML+'<script id="admin-module-permission-guard">
-(async function(){
-  document.body.style.visibility="hidden";
-  const deny=(message)=>{document.body.innerHTML='<main style="min-height:100vh;display:grid;place-items:center;padding:24px;background:#080f1c;color:#f2f6fc;font-family:Cairo,sans-serif;text-align:center"><section style="max-width:520px;padding:30px;border:1px solid #33465e;border-radius:20px;background:#122137"><div style="font-size:38px">🔒</div><h2 style="margin:12px 0">غير مصرح بالدخول</h2><p style="color:#aebed1;line-height:1.9">'+message+'</p><a href="admin.html" style="display:inline-block;margin-top:18px;padding:10px 18px;border-radius:10px;background:#1b756c;color:white;text-decoration:none">العودة للوحة الإدارة</a></section></main>';document.body.style.visibility="visible";};
-  try{
-    const authClient=client;
-    const {data:{user},error:authError}=await authClient.auth.getUser();
-    if(authError||!user){location.replace("login.html");return;}
-    const {data:access,error:accessError}=await authClient.rpc("admin_get_my_access");
-    if(accessError||!access?.success){deny("هذه الصفحة متاحة لحسابات الإدارة فقط.");return;}
-    window.adminAccess=access;
-    if(access.is_owner!==true && access.permissions?.analytics!==true){deny("حسابك الإداري لا يمتلك صلاحية التحليلات ومتابعة المشاهدة. اطلب من مالك المنصة تفعيل الصلاحية.");return;}
-    document.body.style.visibility="visible";
-  }catch(error){console.error("Admin permission guard failed:",error);deny("تعذر التحقق من صلاحيات الدخول. حدّث الصفحة أو سجّل الدخول مرة أخرى.");}
-})();
-</script>
-</body></html>';
+  const doc='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>تقرير تحليلات الفيديو</title><style>body{font-family:Arial,Tahoma,sans-serif;direction:rtl;color:#182235;line-height:1.8;margin:22px}h1{text-align:center;color:#172554;font-size:25px}h2{color:#312e81;border-bottom:2px solid #ddd6fe;padding-bottom:5px;margin-top:24px}table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:12px}th,td{border:1px solid #cbd5e1;padding:7px 8px;text-align:right;vertical-align:top}th{background:#eef2ff;color:#1e1b4b}.report-metrics{display:block;margin:16px 0}.metric{display:inline-block;border:1px solid #dbe2ef;padding:8px 12px;margin:3px;background:#f8fafc}.report-subtitle{text-align:center;color:#64748b}.report-footer{border-top:1px solid #dbe2ef;padding-top:10px;margin-top:25px;color:#64748b;font-size:11px}.report-empty{padding:12px;background:#f8fafc;border:1px dashed #cbd5e1}</style></head><body>'+editor.innerHTML+'</body></html>';
   const blob=new Blob(['\ufeff',doc],{type:"application/msword;charset=utf-8"});
   const url=URL.createObjectURL(blob);const a=document.createElement("a");
   const title=(document.querySelector("#reportEditor h1")?.textContent||"تقرير_تحليلات").replace(/[\\/:*?"<>|]/g,"-").slice(0,80);
