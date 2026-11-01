@@ -561,6 +561,12 @@ alert(
 
 }
 /* ================= LOAD ================= */
+function escapeAdminHtml(value){
+return String(value ?? "-").replace(/[&<>"']/g, ch => ({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;',"'" :"&#39;"
+}[ch]));
+}
+
 async function loadStudents(){
 
 const { data } = await client.from("students").select("*").is("archived_at", null).or("role.is.null,role.neq.admin");
@@ -574,8 +580,8 @@ data?.forEach(s=>{
 
 table.innerHTML += `
 <tr>
-<td>${s.full_name || "-"}</td>
-<td>${s.phone || "-"}</td>
+<td>${escapeAdminHtml(s.full_name || "-")}</td>
+<td>${escapeAdminHtml(s.phone || "-")}</td>
 <td>${s.is_premium ? "⭐" : "-"}</td>
 <td>${s.activated ? "✅" : "❌"}</td>
 </tr>
