@@ -391,7 +391,7 @@ body{min-width:320px}
 </div>
 <section class="student-manager" id="studentManager">
   <div class="student-manager-head">
-    <div><h3>👥 إدارة حسابات الطلاب</h3><p>إدارة الحسابات النشطة والأرشيف. الأرشفة توقف تسجيل الدخول وتحجز رقم الهاتف لمدة 3 أيام، ويمكن الاستعادة خلالها.</p></div>
+    <div><h3>✏️ تعديل الحسابات وإدارة الطلاب</h3><p>مكان موحّد لتعديل أسماء الطلاب، وأرشفة الحسابات لمدة 3 أيام، واستعادتها أو حذفها نهائيًا. التعديلات تظهر للطالب في لوحة حسابه.</p></div>
     <button class="sm-btn" id="smRefresh">↻ تحديث القائمة</button>
   </div>
   <div class="student-manager-controls">
@@ -406,6 +406,7 @@ body{min-width:320px}
  <div class="sm-dialog">
   <h3 id="smModalTitle">إدارة حساب الطالب</h3>
   <p id="smModalText"></p>
+  <div id="smRenameField" style="display:none"><label for="smNewName" style="font-size:12px;color:#cbd5e1">الاسم الجديد للطالب</label><input id="smNewName" maxlength="80" autocomplete="off" placeholder="اكتب الاسم كما سيظهر للطالب"></div>
   <div id="smDeleteConfirm" style="display:none"><label for="smPhoneConfirm" style="font-size:12px;color:#fca5a5">للتأكيد، اكتب رقم هاتف الطالب كما هو:</label><input id="smPhoneConfirm" autocomplete="off" placeholder="رقم الهاتف"></div>
   <div class="sm-dialog-actions" id="smModalActions"></div>
   <div class="sm-status" id="smModalStatus" role="status"></div>
@@ -638,7 +639,7 @@ verifyAdminAccess().then(authorized=>{
  async function load(){
    $('smList').innerHTML='<div class="sm-empty">جاري تحميل الطلاب...</div>';
    try{
-     await verifyAdminAccess();
+     if(!await verifyAdminAccess()) return;
      const result=await invoke({action:'list'});
      students=result.students||[];
      $('smArchivedCount').textContent='('+students.filter(s=>s.archived_at).length+')';
@@ -655,30 +656,41 @@ verifyAdminAccess().then(authorized=>{
      const expiry=s.archive_expires_at?new Date(s.archive_expires_at):null;
      const remaining=expiry?Math.max(0,expiry-Date.now()):0;
      const countdown=expiry? (remaining<=0?'انتهت مدة الأرشفة – بانتظار الحذف التلقائي':('متبقي '+Math.floor(remaining/86400000)+' يوم '+Math.floor((remaining%86400000)/3600000)+' ساعة '+Math.floor((remaining%3600000)/60000)+' دقيقة')):'';
-     return '<article class="sm-row"><div class="sm-meta"><strong>'+esc(s.full_name||'بدون اسم')+'</strong><small>📱 '+esc(s.phone||'—')+' · '+esc(s.class_group||'غير محدد')+'</small><small>'+(s.archived_at?'🗄️ مؤرشف منذ '+esc(new Date(s.archived_at).toLocaleString('ar-EG'))+' · '+esc(countdown):'🟢 حساب نشط · '+(s.activated?'مفعل':'غير مفعل'))+'</small></div><div class="sm-actions">'+(s.archived_at?'<button class="sm-btn restore" data-action="restore" data-id="'+s.id+'">استعادة</button>':'<button class="sm-btn archive" data-action="archive" data-id="'+s.id+'">أرشفة 3 أيام</button>')+'<button class="sm-btn danger" data-action="purge" data-id="'+s.id+'">حذف نهائي</button></div></article>';
+     return '<article class="sm-row"><div class="sm-meta"><strong>'+esc(s.full_name||'بدون اسم')+'</strong><small>📱 '+esc(s.phone||'—')+' · '+esc(s.class_group||'غير محدد')+'</small><small>'+(s.archived_at?'🗄️ مؤرشف منذ '+esc(new Date(s.archived_at).toLocaleString('ar-EG'))+' · '+esc(countdown):'🟢 حساب نشط · '+(s.activated?'مفعل':'غير مفعل'))+'</small></div><div class="sm-actions"><button class="sm-btn" data-action="rename" data-id="'+s.id+'">تعديل الاسم</button>'+(s.archived_at?'<button class="sm-btn restore" data-action="restore" data-id="'+s.id+'">استعادة</button>':'<button class="sm-btn archive" data-action="archive" data-id="'+s.id+'">أرشفة 3 أيام</button>')+'<button class="sm-btn danger" data-action="purge" data-id="'+s.id+'">حذف نهائي</button></div></article>';
    }).join('');
  }
  function closeModal(){$('smModal').classList.remove('open');selected=null;mode=null;busy=false;}
  function openModal(student,action){
-   selected=student;mode=action;$('smModalStatus').textContent='';$('smPhoneConfirm').value='';
+   selected=student;mode=action;$('smModalStatus').textContent='';$('smPhoneConfirm').value='';$('smNewName').value=student.full_name||'';
    $('smDeleteConfirm').style.display=action==='purge'?'block':'none';
-   $('smModalTitle').textContent=action==='archive'?'أرشفة حساب الطالب':action==='restore'?'استعادة حساب الطالب':'حذف الحساب نهائيًا';
-   $('smModalText').textContent=action==='archive'
+   $('smRenameField').style.display=action==='rename'?'block':'none';
+   $('smModalTitle').textContent=action==='rename'?'تعديل اسم الطالب':action==='archive'?'أرشفة حساب الطالب':action==='restore'?'استعادة حساب الطالب':'حذف الحساب نهائيًا';
+   $('smModalText').textContent=action==='rename'
+    ?'سيتم تحديث الاسم الرسمي في قاعدة البيانات، وسيظهر الاسم الجديد للطالب عند تحديث لوحة حسابه، دون تغيير رقم الهاتف أو كلمة المرور أو أي بيانات أخرى.'
+    :action==='archive'
     ?'سيتم إيقاف دخول الطالب فورًا، والاحتفاظ بكل بياناته لمدة 3 أيام. سيظل رقم الهاتف محجوزًا، ويمكنك الاستعادة قبل انتهاء المدة.'
     :action==='restore'?'سيعود الحساب للعمل ويمكن للطالب تسجيل الدخول مجددًا.':'تحذير: سيتم حذف حساب الطالب وبياناته ونتائجه ومحاولات الامتحانات وسجلات المشاهدة والتسميع والملفات والجلسات وحساب Auth. هذا الإجراء لا يمكن التراجع عنه، وسيصبح رقم الهاتف متاحًا بعد نجاح الحذف.';
-   $('smModalActions').innerHTML='<button class="sm-btn" id="smCancel">إلغاء</button><button class="sm-btn '+(action==='purge'?'danger':action==='restore'?'restore':'archive')+'" id="smConfirm">'+(action==='archive'?'تأكيد الأرشفة':action==='restore'?'تأكيد الاستعادة':'حذف نهائي الآن')+'</button>';
+   $('smModalActions').innerHTML='<button class="sm-btn" id="smCancel">إلغاء</button><button class="sm-btn '+(action==='purge'?'danger':action==='restore'?'restore':'archive')+'" id="smConfirm">'+(action==='rename'?'حفظ الاسم الجديد':action==='archive'?'تأكيد الأرشفة':action==='restore'?'تأكيد الاستعادة':'حذف نهائي الآن')+'</button>';
    $('smModal').classList.add('open');
    $('smCancel').onclick=closeModal;
    $('smConfirm').onclick=perform;
  }
  async function perform(){
    if(busy||!selected||!mode)return;
+   if(mode==='rename'){
+     const newName=$('smNewName').value.trim().replace(/\\s+/g,' ');
+     if(newName.length<2||newName.length>80||/[\\u0000-\\u001F\\u007F]/.test(newName)){
+       $('smModalStatus').textContent='اكتب اسمًا صحيحًا من حرفين إلى 80 حرفًا.';return;
+     }
+   }
    if(mode==='purge' && $('smPhoneConfirm').value.trim()!==String(selected.phone||'')){
      $('smModalStatus').textContent='رقم الهاتف غير مطابق. لم يتم حذف أي بيانات.';return;
    }
    busy=true;$('smConfirm').disabled=true;$('smModalStatus').textContent='جاري تنفيذ العملية بأمان...';
    try{
-     const result=await invoke({action:mode,student_id:selected.id});
+     const payload={action:mode,student_id:selected.id};
+     if(mode==='rename') payload.full_name=$('smNewName').value.trim().replace(/\\s+/g,' ');
+     const result=await invoke(payload);
      $('smModalStatus').textContent=result.message||'تمت العملية بنجاح.';
      await load();
      setTimeout(closeModal,650);
