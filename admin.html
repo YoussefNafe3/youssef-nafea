@@ -678,8 +678,8 @@ verifyAdminAccess().then(authorized=>{
  async function perform(){
    if(busy||!selected||!mode)return;
    if(mode==='rename'){
-     const newName=$('smNewName').value.trim().replace(/\\s+/g,' ');
-     if(newName.length<2||newName.length>80||/[\\u0000-\\u001F\\u007F]/.test(newName)){
+     const newName=$('smNewName').value.trim().replace(/\s+/g,' ');
+     if(newName.length<2||newName.length>80||/[\u0000-\u001F\u007F]/.test(newName)){
        $('smModalStatus').textContent='اكتب اسمًا صحيحًا من حرفين إلى 80 حرفًا.';return;
      }
    }
@@ -689,7 +689,7 @@ verifyAdminAccess().then(authorized=>{
    busy=true;$('smConfirm').disabled=true;$('smModalStatus').textContent='جاري تنفيذ العملية بأمان...';
    try{
      const payload={action:mode,student_id:selected.id};
-     if(mode==='rename') payload.full_name=$('smNewName').value.trim().replace(/\\s+/g,' ');
+     if(mode==='rename') payload.full_name=$('smNewName').value.trim().replace(/\s+/g,' ');
      const result=await invoke(payload);
      $('smModalStatus').textContent=result.message||'تمت العملية بنجاح.';
      await load();
