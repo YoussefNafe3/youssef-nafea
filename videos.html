@@ -817,9 +817,8 @@ html[data-theme="light"] .speedBtn.active{
   z-index:20
 }
 
-/* Keep YouTube's own Settings > Quality menu clickable. */
-/* Do not intercept clicks on YouTube native controls; preserve title/capture protection layers. */
-.ytBottomBlocker{pointer-events:none!important;touch-action:pan-y!important;user-select:none!important;-webkit-user-select:none!important}
+/* Block interaction with YouTube's native bottom controls on desktop and touch devices. */
+.ytBottomBlocker{pointer-events:auto!important;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important}
 
 .watermark{
   position:absolute;
