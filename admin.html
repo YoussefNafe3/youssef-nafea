@@ -661,7 +661,7 @@ verifyAdminAccess().then(authorized=>{
      const expiry=s.archive_expires_at?new Date(s.archive_expires_at):null;
      const remaining=expiry?Math.max(0,expiry-Date.now()):0;
      const countdown=expiry? (remaining<=0?'انتهت مدة الأرشفة – بانتظار الحذف التلقائي':('متبقي '+Math.floor(remaining/86400000)+' يوم '+Math.floor((remaining%86400000)/3600000)+' ساعة '+Math.floor((remaining%3600000)/60000)+' دقيقة')):'';
-     return '<article class="sm-row"><div class="sm-meta"><strong>'+esc(s.full_name||'بدون اسم')+'</strong><small>📱 '+esc(s.phone||'—')+' · '+esc(s.class_group||'غير محدد')+'</small><small>'+(s.archived_at?'🗄️ مؤرشف منذ '+esc(new Date(s.archived_at).toLocaleString('ar-EG'))+' · '+esc(countdown):'🟢 حساب نشط · '+(s.activated?'مفعل':'غير مفعل'))+'</small></div><div class="sm-actions"><button class="sm-btn" data-action="rename" data-id="'+s.id+'">تعديل الاسم</button>'+(s.archived_at?'<button class="sm-btn restore" data-action="restore" data-id="'+s.id+'">استعادة</button>':'<button class="sm-btn archive" data-action="archive" data-id="'+s.id+'">أرشفة 3 أيام</button>')+'<button class="sm-btn danger" data-action="purge" data-id="'+s.id+'">حذف نهائي</button></div></article>';
+     return '<article class="sm-row"><div class="sm-meta"><strong>'+esc(s.full_name||'بدون اسم')+'</strong><small>📱 '+esc(s.phone||'—')+' · '+esc(s.class_group||'غير محدد')+'</small><small>'+(s.archived_at?'🗄️ مؤرشف منذ '+esc(new Date(s.archived_at).toLocaleString('ar-EG'))+' · '+esc(countdown):'🟢 حساب نشط · '+(s.activated?'مفعل':'غير مفعل'))+'</small></div><div class="sm-actions"><button class="sm-btn" data-action="rename" data-id="'+s.id+'">تعديل الاسم</button>'+(!s.archived_at?'<button class="sm-btn '+(s.activated?'danger':'restore')+'" data-action="'+(s.activated?'deactivate':'activate')+'" data-id="'+s.id+'">'+(s.activated?'إلغاء التفعيل':'تفعيل الحساب')+'</button>':'')+(s.archived_at?'<button class="sm-btn restore" data-action="restore" data-id="'+s.id+'">استعادة</button>':'<button class="sm-btn archive" data-action="archive" data-id="'+s.id+'">أرشفة 3 أيام</button>')+'<button class="sm-btn danger" data-action="purge" data-id="'+s.id+'">حذف نهائي</button></div></article>';
    }).join('');
  }
  function closeModal(){$('smModal').classList.remove('open');selected=null;mode=null;busy=false;}
@@ -669,13 +669,15 @@ verifyAdminAccess().then(authorized=>{
    selected=student;mode=action;$('smModalStatus').textContent='';$('smPhoneConfirm').value='';$('smNewName').value=student.full_name||'';
    $('smDeleteConfirm').style.display=action==='purge'?'block':'none';
    $('smRenameField').style.display=action==='rename'?'block':'none';
-   $('smModalTitle').textContent=action==='rename'?'تعديل اسم الطالب':action==='archive'?'أرشفة حساب الطالب':action==='restore'?'استعادة حساب الطالب':'حذف الحساب نهائيًا';
+   $('smModalTitle').textContent=action==='rename'?'تعديل اسم الطالب':action==='activate'?'تفعيل حساب الطالب':action==='deactivate'?'إلغاء تفعيل حساب الطالب':action==='archive'?'أرشفة حساب الطالب':action==='restore'?'استعادة حساب الطالب':'حذف الحساب نهائيًا';
    $('smModalText').textContent=action==='rename'
     ?'سيتم تحديث الاسم الرسمي في قاعدة البيانات، وسيظهر الاسم الجديد للطالب عند تحديث لوحة حسابه، دون تغيير رقم الهاتف أو كلمة المرور أو أي بيانات أخرى.'
+    :action==='activate'?'سيتم تفعيل الحساب والسماح للطالب بتسجيل الدخول باستخدام بياناته الحالية.'
+    :action==='deactivate'?'سيتم إيقاف الحساب ومنع تسجيل الدخول وإبطال جلسات الدخول النشطة. يمكن إعادة تفعيله لاحقًا من نفس المكان.'
     :action==='archive'
     ?'سيتم إيقاف دخول الطالب فورًا، والاحتفاظ بكل بياناته لمدة 3 أيام. سيظل رقم الهاتف محجوزًا، ويمكنك الاستعادة قبل انتهاء المدة.'
     :action==='restore'?'سيعود الحساب للعمل ويمكن للطالب تسجيل الدخول مجددًا.':'تحذير: سيتم حذف حساب الطالب وبياناته ونتائجه ومحاولات الامتحانات وسجلات المشاهدة والتسميع والملفات والجلسات وحساب Auth. هذا الإجراء لا يمكن التراجع عنه، وسيصبح رقم الهاتف متاحًا بعد نجاح الحذف.';
-   $('smModalActions').innerHTML='<button class="sm-btn" id="smCancel">إلغاء</button><button class="sm-btn '+(action==='purge'?'danger':action==='restore'?'restore':'archive')+'" id="smConfirm">'+(action==='rename'?'حفظ الاسم الجديد':action==='archive'?'تأكيد الأرشفة':action==='restore'?'تأكيد الاستعادة':'حذف نهائي الآن')+'</button>';
+   $('smModalActions').innerHTML='<button class="sm-btn" id="smCancel">إلغاء</button><button class="sm-btn '+(action==='purge'||action==='deactivate'?'danger':action==='restore'||action==='activate'?'restore':'archive')+'" id="smConfirm">'+(action==='rename'?'حفظ الاسم الجديد':action==='activate'?'تأكيد التفعيل':action==='deactivate'?'تأكيد إلغاء التفعيل':action==='archive'?'تأكيد الأرشفة':action==='restore'?'تأكيد الاستعادة':'حذف نهائي الآن')+'</button>';
    $('smModal').classList.add('open');
    $('smCancel').onclick=closeModal;
    $('smConfirm').onclick=perform;
