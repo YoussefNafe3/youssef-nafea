@@ -231,7 +231,20 @@ button:focus-visible,.menu a:focus-visible{outline:3px solid rgba(244,215,126,.8
 .assignment-admin-toggle:hover{background:rgba(96,165,250,.14);border-color:#60a5fa}
 .assignment-admin-toggle:disabled{opacity:.5;cursor:wait}
 @media(max-width:640px){.assignment-admin-row{flex-direction:column;gap:12px;padding:13px}.assignment-admin-toggle{width:100%}.assignment-admin-form{gap:12px}}
-body{visibility:hidden}\n</style>
+body{visibility:hidden}\n
+.stat-link{display:block;color:inherit;text-decoration:none;cursor:pointer}.stat-link:focus-visible{outline:3px solid rgba(244,215,126,.85);outline-offset:3px}
+.admin-quick-access{margin:4px 0 22px;padding:22px;border:1px solid rgba(174,160,255,.22);border-radius:22px;background:radial-gradient(circle at 100% 0,rgba(118,100,223,.19),transparent 34%),linear-gradient(145deg,rgba(27,32,67,.78),rgba(10,15,36,.82));box-shadow:0 18px 48px rgba(0,0,0,.18)}
+.quick-access-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:17px}.quick-kicker{display:block;color:#d8bd75;font-size:10px;font-weight:800;letter-spacing:2px;margin-bottom:4px}.quick-access-heading h3{font-size:clamp(19px,2.4vw,25px);font-weight:800;color:#fff}.quick-access-heading p{font-size:12px;color:#aeb8d2;margin-top:4px}.quick-access-badge{flex:0 0 auto;padding:7px 12px;border:1px solid rgba(244,215,126,.24);border-radius:999px;background:rgba(244,215,126,.07);color:#f4d77e;font-size:11px;font-weight:800}
+.admin-action-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.admin-action-card{min-width:0;min-height:92px;display:flex;align-items:center;gap:12px;padding:15px 14px;border:1px solid rgba(174,160,255,.15);border-radius:16px;background:linear-gradient(135deg,rgba(255,255,255,.065),rgba(255,255,255,.025));color:#f8f9ff;text-decoration:none;transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease}
+.admin-action-card:hover,.admin-action-card:focus-visible{transform:translateY(-3px);border-color:rgba(190,177,255,.55);background:linear-gradient(135deg,rgba(118,100,223,.2),rgba(255,255,255,.045));box-shadow:0 12px 28px rgba(0,0,0,.2);outline:none}.admin-action-card.action-primary{border-color:rgba(244,215,126,.38);background:linear-gradient(120deg,rgba(118,100,223,.24),rgba(244,215,126,.08))}
+.action-icon{width:43px;height:43px;flex:0 0 43px;display:grid;place-items:center;border-radius:13px;background:rgba(174,160,255,.13);font-size:21px}.action-copy{display:flex;flex-direction:column;gap:4px;min-width:0}.action-copy strong{font-size:13px;font-weight:800;line-height:1.6}.action-copy small{font-size:10px;line-height:1.7;color:#aeb8d2}.action-arrow{margin-right:auto;color:#e7d18c;font-size:18px;flex:0 0 auto}
+.menu a.menu-primary{border-color:rgba(244,215,126,.3);background:linear-gradient(110deg,rgba(118,100,223,.25),rgba(244,215,126,.08));color:#fff}
+.student-manager{margin:0 0 22px;padding:22px;border:1px solid rgba(174,160,255,.23);border-radius:22px;background:radial-gradient(circle at 100% 0,rgba(118,100,223,.15),transparent 38%),linear-gradient(145deg,rgba(27,32,67,.78),rgba(10,15,36,.84));box-shadow:0 18px 48px rgba(0,0,0,.16)}.student-manager-head h3{font-size:clamp(19px,2.3vw,24px);font-weight:800}.student-manager-head p{max-width:700px;line-height:1.9}.sm-row{border-radius:15px;border-color:rgba(174,160,255,.17)}.sm-actions{display:flex;flex-wrap:wrap;gap:7px}
+@media(max-width:1100px){.admin-action-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.admin-quick-access{padding:15px;border-radius:17px}.quick-access-heading{align-items:flex-start}.quick-access-badge{display:none}.admin-action-grid{grid-template-columns:1fr;gap:8px}.admin-action-card{min-height:76px;padding:12px}.student-manager{padding:14px;border-radius:17px}.sm-actions button{min-height:39px}}
+@media(min-width:901px){.main{max-width:calc(100vw - 260px)}}
+
+</style>
 <style>
 .student-manager{margin-top:20px;background:linear-gradient(145deg,rgba(27,32,67,.88),rgba(14,18,42,.88));border:1px solid rgba(174,160,255,.2);border-radius:18px;padding:20px;box-shadow:0 16px 40px rgba(0,0,0,.15)}
 .student-manager-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
@@ -266,14 +279,9 @@ body{visibility:hidden}\n</style>
 </div>
 
 <div class="menu">
-  <td>
-<button
-onclick="forceStudentLogout('${s.id}')"
->
-🔓 فصل الجهاز
-</button>
-</td>
+
 <a href="admin.html">🏠 الرئيسية</a>
+<a href="#studentManager" class="menu-primary">👥 Basic Control الطلبة</a>
 <a href="admin-videos.html">🎥 الفيديوهات</a>
 <a href="admin-analytics.html">📊 التحليلات</a>
 <a href="admin-files.html">📁 الملفات</a>
@@ -297,22 +305,9 @@ onclick="forceStudentLogout('${s.id}')"
 
 <!-- STATS -->
 <div class="stats">
-
-<div class="stat">
-<div class="stat-number" id="studentsCount">0</div>
-<div>الطلاب</div>
-</div>
-
-<div class="stat">
-<div class="stat-number" id="videosCount">0</div>
-<div>الفيديوهات</div>
-</div>
-
-<div class="stat">
-<div class="stat-number" id="viewsCount">0%</div>
-<div>متوسط المشاهدة</div>
-</div>
-
+<a class="stat stat-link" href="#studentManager"><div class="stat-number" id="studentsCount">0</div><div>الطلاب</div></a>
+<a class="stat stat-link" href="admin-videos.html"><div class="stat-number" id="videosCount">0</div><div>الفيديوهات</div></a>
+<a class="stat stat-link" href="admin-analytics.html"><div class="stat-number" id="viewsCount">0%</div><div>متوسط المشاهدة</div></a>
 </div>
 
 <!-- STUDENTS -->
@@ -371,27 +366,22 @@ body{min-width:320px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.menu a{transition:none}}
 
-</style><div class="section" id="assignmentsAdminSection" style="margin-bottom:20px"><h3>🗂️ إدارة التكليفات</h3><p style="color:#94a3b8;font-size:12px;line-height:1.9;margin-top:6px">أنشئ تسميعًا أو واجبًا أو أي مهمة، وحدد الصف وأيام المجموعة والتاريخ. التكليفات محفوظة على قاعدة البيانات.</p><form id="assignmentAdminForm" class="assignment-admin-form"><label>عنوان التكليف <span style="color:#94a3b8;font-weight:400">(اختياري)</span><input id="assignmentTitleInput" maxlength="180" placeholder="يمكنك تركه فارغًا"></label><label>نوع التكليف<select id="assignmentTypeInput"><option value="recitation">تسميع</option><option value="homework">واجب منزلي</option><option value="homework_recitation">واجب وتسميع</option><option value="worksheet">ورقة عمل</option><option value="other">تكليف آخر</option></select></label><label>الصف المستهدف<select id="assignmentClassInput"><option value="all">كل الصفوف</option><option value="first_science">أولى ثانوي – علوم متكاملة</option><option value="third_biology">تالتة ثانوي – أحياء</option><option value="third_geology">تالتة ثانوي – جيولوجيا</option></select></label><label>تاريخ التكليف<input id="assignmentDateInput" type="date" required></label><div class="wide" style="padding:12px;border:1px solid #334155;border-radius:12px;background:#ffffff05"><strong style="font-size:12px">📅 تحديد المجموعة تلقائيًا من التاريخ</strong><p style="color:#94a3b8;font-size:11px;line-height:1.9;margin:5px 0 0">اختار تاريخ يوم واحد فقط. السبت أو الأحد أو الإثنين = مجموعة الأيام الثلاثة الأولى. الثلاثاء أو الأربعاء أو الخميس = مجموعة الأيام الثلاثة الثانية. الطالب سيشاهد التكليف في تاريخ يومه المختار داخل المجموعة.</p></div><label class="wide">وصف التكليف<textarea id="assignmentDescriptionInput" placeholder="تعليمات إضافية للطالب"></textarea></label><label class="wide">المهام المطلوبة (كل مهمة في سطر منفصل)<textarea id="assignmentItemsInput" placeholder="حفظ التعريفات&#10;حل أسئلة الكتاب&#10;مراجعة الملخص"></textarea></label><div class="wide"><button type="submit" class="assignment-admin-btn" id="saveAssignmentBtn">＋ إنشاء التكليف</button> <span id="assignmentAdminStatus" role="status" style="font-size:12px;color:#94a3b8"></span></div></form><div id="assignmentAdminList" class="assignment-admin-list"></div></div>
-<div class="section">
-<h3>الطلاب</h3>
-
-<table>
-<thead>
-<tr>
-<th>الاسم</th>
-<th>الهاتف</th>
-<th>Premium</th>
-<th>الحالة</th>
-</tr>
-</thead>
-
-<tbody id="studentsTable"></tbody>
-</table>
-
-</div>
+</style><section class="admin-quick-access" aria-label="اختصارات لوحة الإدارة">
+<div class="quick-access-heading"><div><span class="quick-kicker">ADMIN WORKSPACE</span><h3>مركز التحكم السريع</h3><p>كل أدوات الإدارة والمتابعة في مكان واحد.</p></div><span class="quick-access-badge">لوحة الإدارة</span></div>
+<div class="admin-action-grid">
+<a class="admin-action-card action-primary" href="#studentManager"><span class="action-icon">👥</span><span class="action-copy"><strong>Basic Control الطلبة</strong><small>تعديل الأسماء والتفعيل والأرشفة والحذف</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="#assignmentsAdminSection"><span class="action-icon">🗂️</span><span class="action-copy"><strong>التكليفات والواجبات</strong><small>إنشاء التكليفات وإدارة ظهورها للطلاب</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="admin-analytics.html"><span class="action-icon">📊</span><span class="action-copy"><strong>متابعة الطلاب والتحليلات</strong><small>نشاط الطلاب والمشاهدة والتقدم</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="admin-videos.html"><span class="action-icon">🎥</span><span class="action-copy"><strong>إدارة الفيديوهات</strong><small>إضافة الفيديوهات وترتيبها وإدارتها</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="admin-files.html"><span class="action-icon">📁</span><span class="action-copy"><strong>مكتبة الملفات</strong><small>رفع الملفات وتنظيمها للطلاب</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="admin-online-exams.html"><span class="action-icon">📝</span><span class="action-copy"><strong>الامتحانات الأونلاين</strong><small>إنشاء الامتحانات وإدارة المحاولات</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="admin-results.html"><span class="action-icon">🏆</span><span class="action-copy"><strong>النتائج والتسميعات</strong><small>عرض النتائج ومراجعة التسميعات</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="admin-password-recovery.html"><span class="action-icon">🔐</span><span class="action-copy"><strong>طلبات استعادة كلمة المرور</strong><small>مراجعة طلبات الطلاب والرد عليها</small></span><span class="action-arrow">←</span></a>
+<a class="admin-action-card" href="change-password.html"><span class="action-icon">🔑</span><span class="action-copy"><strong>تغيير كلمة المرور</strong><small>تحديث كلمة مرور حساب الإدارة</small></span><span class="action-arrow">←</span></a>
+</div></section>
 <section class="student-manager" id="studentManager">
   <div class="student-manager-head">
-    <div><h3>✏️ تعديل الحسابات وإدارة الطلاب</h3><p>مكان موحّد لتعديل أسماء الطلاب، وأرشفة الحسابات لمدة 3 أيام، واستعادتها أو حذفها نهائيًا. التعديلات تظهر للطالب في لوحة حسابه.</p></div>
+    <div><h3>👥 Basic Control الطلبة</h3><p>إدارة مركزية لحسابات الطلاب: تعديل الاسم، والتفعيل وإلغاء التفعيل، والأرشفة لمدة 3 أيام، والاستعادة والحذف النهائي.</p></div>
     <button class="sm-btn" id="smRefresh">↻ تحديث القائمة</button>
   </div>
   <div class="student-manager-controls">
@@ -412,6 +402,9 @@ body{min-width:320px}
   <div class="sm-status" id="smModalStatus" role="status"></div>
  </div>
 </div>
+<div class="section" id="assignmentsAdminSection" style="margin-bottom:20px"><h3>🗂️ إدارة التكليفات</h3><p style="color:#94a3b8;font-size:12px;line-height:1.9;margin-top:6px">أنشئ تسميعًا أو واجبًا أو أي مهمة، وحدد الصف وأيام المجموعة والتاريخ. التكليفات محفوظة على قاعدة البيانات.</p><form id="assignmentAdminForm" class="assignment-admin-form"><label>عنوان التكليف <span style="color:#94a3b8;font-weight:400">(اختياري)</span><input id="assignmentTitleInput" maxlength="180" placeholder="يمكنك تركه فارغًا"></label><label>نوع التكليف<select id="assignmentTypeInput"><option value="recitation">تسميع</option><option value="homework">واجب منزلي</option><option value="homework_recitation">واجب وتسميع</option><option value="worksheet">ورقة عمل</option><option value="other">تكليف آخر</option></select></label><label>الصف المستهدف<select id="assignmentClassInput"><option value="all">كل الصفوف</option><option value="first_science">أولى ثانوي – علوم متكاملة</option><option value="third_biology">تالتة ثانوي – أحياء</option><option value="third_geology">تالتة ثانوي – جيولوجيا</option></select></label><label>تاريخ التكليف<input id="assignmentDateInput" type="date" required></label><div class="wide" style="padding:12px;border:1px solid #334155;border-radius:12px;background:#ffffff05"><strong style="font-size:12px">📅 تحديد المجموعة تلقائيًا من التاريخ</strong><p style="color:#94a3b8;font-size:11px;line-height:1.9;margin:5px 0 0">اختار تاريخ يوم واحد فقط. السبت أو الأحد أو الإثنين = مجموعة الأيام الثلاثة الأولى. الثلاثاء أو الأربعاء أو الخميس = مجموعة الأيام الثلاثة الثانية. الطالب سيشاهد التكليف في تاريخ يومه المختار داخل المجموعة.</p></div><label class="wide">وصف التكليف<textarea id="assignmentDescriptionInput" placeholder="تعليمات إضافية للطالب"></textarea></label><label class="wide">المهام المطلوبة (كل مهمة في سطر منفصل)<textarea id="assignmentItemsInput" placeholder="حفظ التعريفات&#10;حل أسئلة الكتاب&#10;مراجعة الملخص"></textarea></label><div class="wide"><button type="submit" class="assignment-admin-btn" id="saveAssignmentBtn">＋ إنشاء التكليف</button> <span id="assignmentAdminStatus" role="status" style="font-size:12px;color:#94a3b8"></span></div></form><div id="assignmentAdminList" class="assignment-admin-list"></div></div>
+
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -509,57 +502,6 @@ window.location.replace(
 );
 
 }
-async function forceStudentLogout(studentId){
-
-if(
-!confirm(
-"هل تريد إنهاء جلسة هذا الطالب؟"
-)
-){
-return;
-}
-
-
-const {
-data,
-error
-} =
-await client.rpc(
-"admin_end_student_session",
-{
-p_student_id:studentId
-}
-);
-
-
-if(error){
-
-console.error(error);
-
-alert(
-"حدث خطأ أثناء إنهاء الجلسة"
-);
-
-return;
-
-}
-
-
-if(data?.success){
-
-alert(
-"تم إنهاء جلسة الطالب بنجاح"
-);
-
-}else{
-
-alert(
-"تعذر إنهاء الجلسة"
-);
-
-}
-
-}
 /* ================= LOAD ================= */
 function escapeAdminHtml(value){
   const entities = {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"};
@@ -567,27 +509,13 @@ function escapeAdminHtml(value){
 }
 
 async function loadStudents(){
-
-const { data } = await client.from("students").select("*").is("archived_at", null).or("role.is.null,role.neq.admin");
-
-document.getElementById("studentsCount").innerText = data?.length || 0;
-
-const table = document.getElementById("studentsTable");
-table.innerHTML = "";
-
-data?.forEach(s=>{
-
-table.innerHTML += `
-<tr>
-<td>${escapeAdminHtml(s.full_name || "-")}</td>
-<td>${escapeAdminHtml(s.phone || "-")}</td>
-<td>${s.is_premium ? "⭐" : "-"}</td>
-<td>${s.activated ? "✅" : "❌"}</td>
-</tr>
-`;
-
-});
-
+  const {count,error}=await client.from("students")
+    .select("id",{count:"exact",head:true})
+    .is("archived_at",null)
+    .or("role.is.null,role.neq.admin");
+  if(error) console.warn("Student count could not be refreshed:",error);
+  const counter=document.getElementById("studentsCount");
+  if(counter) counter.innerText=count||0;
 }
 
 async function loadVideos(){
