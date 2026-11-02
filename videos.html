@@ -2921,26 +2921,24 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 @media(max-width:480px){#videoCompletionCelebration .celebration-card{padding:27px 18px 22px;border-radius:20px}#videoCompletionCelebration p{font-size:14px}}
 
 
-/* Restore the original YouTube protection layers on desktop, mobile and fullscreen. */
-\n/* Keep all YouTube protection blockers active, including the bottom control strip. */\n\n
-/* Desktop only: leave a small click-through window for YouTube's Settings/Quality gear.
-   The rest of the bottom blocker remains active; touch/mobile layouts are untouched. */
-@media (min-width:769px){
+/* Preserve the protection overlays while exposing ONLY the desktop YouTube
+   Settings/Quality control hit-area. The blocker remains active everywhere else. */
+@media (min-width:769px) and (hover:hover) and (pointer:fine){
   .ytBottomBlocker{
     -webkit-clip-path:polygon(
       0 0,100% 0,100% 100%,
-      calc(100% - 78px) 100%,
-      calc(100% - 78px) calc(100% - 42px),
-      calc(100% - 122px) calc(100% - 42px),
-      calc(100% - 122px) 100%,
+      calc(100% - 42px) 100%,
+      calc(100% - 42px) calc(100% - 56px),
+      calc(100% - 102px) calc(100% - 56px),
+      calc(100% - 102px) 100%,
       0 100%
     )!important;
     clip-path:polygon(
       0 0,100% 0,100% 100%,
-      calc(100% - 78px) 100%,
-      calc(100% - 78px) calc(100% - 42px),
-      calc(100% - 122px) calc(100% - 42px),
-      calc(100% - 122px) 100%,
+      calc(100% - 42px) 100%,
+      calc(100% - 42px) calc(100% - 56px),
+      calc(100% - 102px) calc(100% - 56px),
+      calc(100% - 102px) 100%,
       0 100%
     )!important;
   }
