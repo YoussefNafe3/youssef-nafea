@@ -49,8 +49,15 @@
 (function(){
 'use strict';
 const SUPABASE_URL="https://nhdowqzecpwmkunczodl.supabase.co";
-const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwiaWF0IjoxNzgwNjAwMjU1LCJleHAiOjIwOTYxNzYyNTV9.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
-const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZG93cXplY3B3bWt1bmN6b2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MDAyNTUsImV4cCI6MjA5NjE3NjI1NX0.Tdfx0e610t059HG1QZVtsqO_UIppi8Axd02fU6jqqTo";
+const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{
+ auth:{
+  persistSession:true,
+  autoRefreshToken:true,
+  detectSessionInUrl:true,
+  storageKey:'sb-nhdowqzecpwmkunczodl-auth-token'
+ }
+});
 const $=id=>document.getElementById(id);
 const MAX_FILE_SIZE=100*1024*1024;
 let mode='upload',editingId=null,resources=[];
@@ -70,12 +77,25 @@ $('dropzone').addEventListener('dragover',e=>{e.preventDefault();$('dropzone').c
 $('dropzone').addEventListener('dragleave',()=> $('dropzone').classList.remove('drag'));
 $('dropzone').addEventListener('drop',e=>{e.preventDefault();$('dropzone').classList.remove('drag');const file=e.dataTransfer.files?.[0];if(!file)return;try{const dt=new DataTransfer();dt.items.add(file);$('fileInput').files=dt.files;showSelectedFile(file)}catch{toast('اختيار الملف من الزر أفضل في هذا المتصفح.')}});
 async function requireSession(){
- const {data:{user},error:authError}=await client.auth.getUser();
- if(authError||!user)throw new Error('لا توجد جلسة دخول صالحة. سجّل الدخول بحساب الإدارة ثم أعد المحاولة.');
+ const {data:sessionData,error:sessionError}=await client.auth.getSession();
+ if(sessionError)throw new Error('تعذر قراءة جلسة الدخول: '+sessionError.message);
+ if(!sessionData?.session?.access_token)throw new Error('لا توجد جلسة دخول محفوظة لهذا المتصفح. افتح لوحة الإدارة وسجّل الدخول من جديد ثم افتح صفحة رفع الملفات.');
+ let {data:{user},error:authError}=await client.auth.getUser();
+ if((authError||!user)&&sessionData.session.refresh_token){
+  const {data:refreshData,error:refreshError}=await client.auth.refreshSession();
+  if(!refreshError&&refreshData?.session){
+   const verified=await client.auth.getUser();
+   user=verified.data?.user||null;
+   authError=verified.error||null;
+  }else if(refreshError){
+   throw new Error('انتهت جلسة الدخول وتعذر تجديدها: '+refreshError.message);
+  }
+ }
+ if(authError||!user)throw new Error('تعذر تأكيد هوية جلسة الإدارة من Supabase: '+(authError?.message||'لم يتم العثور على مستخدم موثّق')+'. افتح لوحة الإدارة وسجّل الدخول من جديد.');
  const {data:access,error:accessError}=await client.rpc('admin_get_my_access');
- if(accessError)throw new Error('تعذر التحقق من صلاحيات الإدارة: '+accessError.message);
- if(!access?.success)throw new Error('هذا الحساب غير مسجل كحساب إدارة.');
- if(access.is_owner!==true&&access.permissions?.files!==true)throw new Error('حسابك لا يمتلك صلاحية إدارة مكتبة الملفات.');
+ if(accessError)throw new Error('تم تأكيد تسجيل الدخول، لكن تعذر التحقق من صلاحيات الإدارة: '+accessError.message);
+ if(!access?.success)throw new Error('تم تسجيل الدخول، لكن الحساب غير مسجل كحساب إدارة.');
+ if(access.is_owner!==true&&access.permissions?.files!==true)throw new Error('الحساب مسجل كأدمن لكنه لا يمتلك صلاحية إدارة مكتبة الملفات.');
  window.adminAccess=access;
  return user;
 }
