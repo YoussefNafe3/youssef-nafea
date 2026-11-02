@@ -2921,24 +2921,28 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 @media(max-width:480px){#videoCompletionCelebration .celebration-card{padding:27px 18px 22px;border-radius:20px}#videoCompletionCelebration p{font-size:14px}}
 
 
-/* Preserve the protection overlays while exposing ONLY the desktop YouTube
-   Settings/Quality control hit-area. The blocker remains active everywhere else. */
+/* Desktop only: expose a compact hit-area at the TOP-RIGHT of the bottom
+   overlay for the gear. The lower edge (including the YouTube logo) stays covered. */
 @media (min-width:769px) and (hover:hover) and (pointer:fine){
   .ytBottomBlocker{
     -webkit-clip-path:polygon(
-      0 0,100% 0,100% 100%,
-      calc(100% - 42px) 100%,
-      calc(100% - 42px) calc(100% - 56px),
-      calc(100% - 102px) calc(100% - 56px),
-      calc(100% - 102px) 100%,
+      0 0,
+      calc(100% - 102px) 0,
+      calc(100% - 102px) 56px,
+      calc(100% - 42px) 56px,
+      calc(100% - 42px) 0,
+      100% 0,
+      100% 100%,
       0 100%
     )!important;
     clip-path:polygon(
-      0 0,100% 0,100% 100%,
-      calc(100% - 42px) 100%,
-      calc(100% - 42px) calc(100% - 56px),
-      calc(100% - 102px) calc(100% - 56px),
-      calc(100% - 102px) 100%,
+      0 0,
+      calc(100% - 102px) 0,
+      calc(100% - 102px) 56px,
+      calc(100% - 42px) 56px,
+      calc(100% - 42px) 0,
+      100% 0,
+      100% 100%,
       0 100%
     )!important;
   }
