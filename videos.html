@@ -2922,7 +2922,30 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 
 
 /* Restore the original YouTube protection layers on desktop, mobile and fullscreen. */
-\n/* Keep all YouTube protection blockers active, including the bottom control strip. */\n\n</style>
+\n/* Keep all YouTube protection blockers active, including the bottom control strip. */\n\n
+/* Desktop only: leave a small click-through window for YouTube's Settings/Quality gear.
+   The rest of the bottom blocker remains active; touch/mobile layouts are untouched. */
+@media (min-width:769px){
+  .ytBottomBlocker{
+    -webkit-clip-path:polygon(
+      0 0,100% 0,100% 100%,
+      calc(100% - 78px) 100%,
+      calc(100% - 78px) calc(100% - 42px),
+      calc(100% - 122px) calc(100% - 42px),
+      calc(100% - 122px) 100%,
+      0 100%
+    )!important;
+    clip-path:polygon(
+      0 0,100% 0,100% 100%,
+      calc(100% - 78px) 100%,
+      calc(100% - 78px) calc(100% - 42px),
+      calc(100% - 122px) calc(100% - 42px),
+      calc(100% - 122px) 100%,
+      0 100%
+    )!important;
+  }
+}
+</style>
 </head>
 
 <body>
