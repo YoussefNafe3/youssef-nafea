@@ -80,8 +80,21 @@ function render(){
 }
 async function loadFiles(){
  if(!user){$('filesContainer').replaceChildren();const empty=textNode('div','','empty');empty.append(textNode('div','🔐','empty-icon'),textNode('h3','سجّل الدخول لعرض مكتبتك'),textNode('p','المصادر التعليمية بتظهر حسب المجموعة الدراسية المرتبطة بحسابك.'));const a=textNode('a','تسجيل الدخول','btn btn-primary');a.href='login.html';a.style.marginTop='16px';empty.append(a);$('filesContainer').append(empty);$('resultsCount').textContent='بانتظار تسجيل الدخول';return}
+ /* Refresh the canonical class group from students; localStorage may be stale after an admin changes a student's group. */
+ let classGroup=String(user.class_group||'').trim();
+ if(user.id){
+  const {data:profile,error:profileError}=await client.from('students').select('class_group,role').eq('id',user.id).maybeSingle();
+  if(profileError){
+   console.warn('Could not refresh student class group; using saved profile value:',profileError.message);
+  }else if(profile){
+   classGroup=String(profile.class_group||'').trim();
+   user.class_group=profile.class_group||null;
+   if(profile.role)user.role=profile.role;
+   try{localStorage.setItem('user',JSON.stringify(user))}catch(storageError){console.warn('Could not refresh saved student profile:',storageError)}
+  }
+ }
  let query=client.from('study_files').select('id,title,description,file_url,class_group,created_at,file_path,resource_type,source_type');
- if(user.class_group)query=query.eq('class_group',user.class_group);
+ if(classGroup)query=query.eq('class_group',classGroup);
  const {data,error}=await query.order('created_at',{ascending:false});
  if(error){console.error('Study files load error:',error);$('filesContainer').replaceChildren();const empty=textNode('div','','empty');empty.append(textNode('div','⚠','empty-icon'),textNode('h3','تعذر تحميل المكتبة'),textNode('p','حصلت مشكلة في الاتصال بالمصادر التعليمية. حدّث الصفحة، ولو استمرت المشكلة تواصل مع الدعم.'));const retry=textNode('button','إعادة المحاولة','btn btn-primary');retry.style.marginTop='15px';retry.onclick=loadFiles;empty.append(retry);$('filesContainer').append(empty);$('resultsCount').textContent='تعذر الاتصال';showToast('لم يتم تحميل الملفات؛ راجع الاتصال أو صلاحيات الوصول.');return}
  allFiles=data||[];
