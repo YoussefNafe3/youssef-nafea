@@ -2921,10 +2921,11 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 @media(max-width:480px){#videoCompletionCelebration .celebration-card{padding:27px 18px 22px;border-radius:20px}#videoCompletionCelebration p{font-size:14px}}
 
 
-/* Desktop only: expose a compact hit-area at the TOP-RIGHT of the bottom
-   overlay for the gear. The lower edge (including the YouTube logo) stays covered. */
+/* Desktop only: expose the top-right Settings/Quality gear through BOTH
+   top overlays. The bottom blocker remains fully intact, including YouTube branding. */
 @media (min-width:769px) and (hover:hover) and (pointer:fine){
-  .ytBottomBlocker{
+  .ytBlocker,
+  .ytTitleBlocker{
     -webkit-clip-path:polygon(
       0 0,
       calc(100% - 102px) 0,
