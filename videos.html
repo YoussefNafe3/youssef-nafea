@@ -5020,14 +5020,20 @@ function positionYouTubeGearHint(){
   const compact=window.matchMedia("(max-width: 640px)").matches ||
     window.matchMedia("(pointer: coarse)").matches ||
     stageWidth<=640;
+  const isFullscreen=document.fullscreenElement===playerCard ||
+    document.webkitFullscreenElement===playerCard ||
+    playerCard.matches(":fullscreen") ||
+    playerCard.matches(":-webkit-full-screen");
 
-  /* Gear center calibrated from screenshot coordinates:
-     desktop ≈ 95.4% across / 6% down;
-     mobile ≈ 93.8% across / 15.3% down.
-     Percent coordinates scale with the video stage, browser zoom and DPR. */
+  /* Fine calibration from the latest device feedback:
+     - Mobile: shift the frame a little LEFT of the previous .938 position.
+     - Desktop outside fullscreen: move it UP and LEFT of the previous
+       .954 / .06 position.
+     - Desktop fullscreen retains its previous anchor to avoid disturbing
+       the already accepted fullscreen placement. */
   const size=compact?26:42;
-  const gearX=stageWidth*(compact?.938:.954);
-  const gearY=stageHeight*(compact?.153:.06);
+  const gearX=stageWidth*(compact?.920:(isFullscreen?.954:.946));
+  const gearY=stageHeight*(compact?.153:(isFullscreen?.06:.045));
 
   marker.style.width=size+"px";
   marker.style.height=size+"px";
