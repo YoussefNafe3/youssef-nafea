@@ -2991,7 +2991,7 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 .youtubeSettingsBtn svg{width:19px;height:19px;display:block;flex:none}
 .playerCard{position:relative}
 #youtubeGearHint{
-  position:absolute;left:95.5%;top:4%;right:auto;bottom:auto;width:42px;height:42px;box-sizing:border-box;
+  position:absolute;left:95.4%;top:6%;right:auto;bottom:auto;width:42px;height:42px;box-sizing:border-box;
   border:2px solid #facc15;border-radius:13px;pointer-events:none;z-index:30;
   opacity:0;transform:scale(.92);
   box-shadow:0 0 0 5px rgba(250,204,21,.18),0 0 22px rgba(250,204,21,.65);
@@ -5006,32 +5006,35 @@ function(){
    not pretend to change playback quality. */
 function positionYouTubeGearHint(){
   const marker=$("youtubeGearHint");
-  const iframe=youtubePlayer?.querySelector("iframe");
   const stage=$("stage");
-  if(!marker||!iframe||!stage) return false;
+  if(!marker||!stage||!youtubePlayer?.querySelector("iframe")) return false;
 
-  const frame=iframe.getBoundingClientRect();
-  const stageRect=stage.getBoundingClientRect();
-  if(!frame.width||!frame.height||!stageRect.width||!stageRect.height) return false;
+  /* Anchor to the visible stage box itself, not the YouTube iframe's DOM
+     rectangle. The iframe is cross-origin and its internal player controls
+     can be inset differently by mobile browsers. The supplied screenshots
+     give the stable control-center ratios below. */
+  const stageWidth=stage.clientWidth;
+  const stageHeight=stage.clientHeight;
+  if(!stageWidth||!stageHeight) return false;
 
-  /* Use normalized coordinates from the actual iframe viewport rather than
-     guessed pixel offsets. The screenshots show the gear at about 95.5% / 4%
-     on desktop and 94% / 11% on mobile. This scales with every player size,
-     browser zoom, DPR and orientation. */
-  const compact=window.matchMedia("(max-width: 640px)").matches || frame.width<=640;
+  const compact=window.matchMedia("(max-width: 640px)").matches ||
+    window.matchMedia("(pointer: coarse)").matches ||
+    stageWidth<=640;
+
+  /* Gear center calibrated from screenshot coordinates:
+     desktop ≈ 95.4% across / 6% down;
+     mobile ≈ 93.8% across / 15.3% down.
+     Percent coordinates scale with the video stage, browser zoom and DPR. */
   const size=compact?26:42;
-  const gearX=frame.left+frame.width*(compact?.94:.955);
-  const gearY=frame.top+frame.height*(compact?.11:.04);
-
-  const left=gearX-stageRect.left-size/2;
-  const top=gearY-stageRect.top-size/2;
+  const gearX=stageWidth*(compact?.938:.954);
+  const gearY=stageHeight*(compact?.153:.06);
 
   marker.style.width=size+"px";
   marker.style.height=size+"px";
   marker.style.right="auto";
   marker.style.bottom="auto";
-  marker.style.left=Math.max(0,Math.min(stageRect.width-size,left))+"px";
-  marker.style.top=Math.max(0,Math.min(stageRect.height-size,top))+"px";
+  marker.style.left=Math.max(0,Math.min(stageWidth-size,gearX-size/2))+"px";
+  marker.style.top=Math.max(0,Math.min(stageHeight-size,gearY-size/2))+"px";
   return true;
 }
 function positionYouTubeGearArrow(){
