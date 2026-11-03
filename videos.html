@@ -4975,7 +4975,7 @@ function positionYouTubeGearHint(){
   const compact=frame.width<=640;
   const size=compact?52:48;
   const rightInset=compact?52:56;
-  const centerY=frame.top+(compact?44:28);
+  const centerY=frame.top+(compact?47:28);
   const centerX=frame.right-rightInset;
   marker.style.width=size+"px";
   marker.style.height=size+"px";
@@ -4992,6 +4992,7 @@ function showNativeYouTubeSettings(){
   }
   playerCard.classList.add("youtube-settings-hint");
   youtubeSettingsBtn.classList.add("active");
+  toast("اضغط ترس الإعدادات أعلى يمين الفيديو لاختيار الجودة.");
   const placeHint=()=>{
     if(!positionYouTubeGearHint()) requestAnimationFrame(()=>positionYouTubeGearHint());
   };
