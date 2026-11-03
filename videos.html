@@ -1786,6 +1786,102 @@ html[data-theme="light"] .video-category-icon{
 .progressBar{
   border-radius:inherit;
 }
+
+/* Five-step neon achievement stars, driven by the same persisted watch progress. */
+.video-star-rewards{
+  --star-size:25px;
+  display:flex;
+  direction:ltr;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(9px,2.2vw,16px);
+  width:100%;
+  min-height:43px;
+  margin:8px auto 0;
+  padding:3px 8px 5px;
+  box-sizing:border-box;
+  border-radius:14px;
+  background:linear-gradient(180deg,rgba(13,22,40,.38),rgba(13,22,40,.08));
+  border:1px solid rgba(148,163,184,.10);
+  overflow:visible;
+  isolation:isolate;
+}
+.video-star{
+  --star-fill:0%;
+  --star-ink:#60eaff;
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 var(--star-size);
+  width:var(--star-size);
+  height:var(--star-size);
+  font-family:Arial,sans-serif;
+  font-size:var(--star-size);
+  line-height:1;
+  font-weight:900;
+  color:transparent;
+  background:linear-gradient(90deg,var(--star-ink) 0 var(--star-fill),rgba(148,163,184,.22) var(--star-fill) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 1px rgba(148,163,184,.10));
+  transform:translateZ(0) scale(1);
+  transition:background .45s cubic-bezier(.2,.75,.25,1),filter .45s ease,transform .38s cubic-bezier(.2,.8,.2,1);
+}
+.video-star:nth-child(1){--star-ink:#38e8ff}
+.video-star:nth-child(2){--star-ink:#43f5c5}
+.video-star:nth-child(3){--star-ink:#b8f65b}
+.video-star:nth-child(4){--star-ink:#d58bff}
+.video-star:nth-child(5){--star-ink:#ffd166}
+.video-star.is-active{
+  filter:drop-shadow(0 0 4px color-mix(in srgb,var(--star-ink) 85%,transparent)) drop-shadow(0 0 10px color-mix(in srgb,var(--star-ink) 55%,transparent));
+}
+.video-star.is-earned{
+  transform:translateZ(0) scale(1.12);
+  filter:drop-shadow(0 0 5px var(--star-ink)) drop-shadow(0 0 12px color-mix(in srgb,var(--star-ink) 72%,transparent));
+}
+.video-star.is-popping{animation:videoStarEarn .72s cubic-bezier(.18,.89,.32,1.35)}
+@keyframes videoStarEarn{
+  0%{transform:scale(.88) rotate(-8deg)}
+  42%{transform:scale(1.34) rotate(7deg)}
+  72%{transform:scale(1.08) rotate(-3deg)}
+  100%{transform:scale(1.12) rotate(0)}
+}
+.video-star-rewards.is-intro .video-star{
+  animation:videoStarsIntro 1.75s cubic-bezier(.2,.75,.25,1) both;
+  animation-delay:calc(var(--star-index,0) * 95ms);
+}
+.video-star-rewards.is-perfect .video-star{
+  animation:videoStarsPerfect 1.15s cubic-bezier(.18,.89,.32,1.2) both;
+  animation-delay:calc(var(--star-index,0) * 65ms);
+}
+.video-star-rewards.is-perfect{
+  border-color:rgba(255,209,102,.32);
+  box-shadow:0 0 18px rgba(255,209,102,.13),inset 0 0 14px rgba(255,209,102,.06);
+}
+@keyframes videoStarsIntro{
+  0%{filter:brightness(.65);transform:scale(.86)}
+  45%{filter:brightness(1.9) drop-shadow(0 0 10px var(--star-ink));transform:scale(1.2)}
+  100%{filter:brightness(1);transform:scale(var(--settled-scale,1))}
+}
+@keyframes videoStarsPerfect{
+  0%{filter:brightness(1);transform:scale(1)}
+  35%{filter:brightness(2.5) drop-shadow(0 0 16px var(--star-ink));transform:scale(1.42) rotate(8deg)}
+  65%{filter:brightness(1.7) drop-shadow(0 0 13px var(--star-ink));transform:scale(1.18) rotate(-4deg)}
+  100%{filter:brightness(1.15) drop-shadow(0 0 8px var(--star-ink));transform:scale(1.12)}
+}
+.video-star:nth-child(1){--star-index:0}
+.video-star:nth-child(2){--star-index:1}
+.video-star:nth-child(3){--star-index:2}
+.video-star:nth-child(4){--star-index:3}
+.video-star:nth-child(5){--star-index:4}
+@media(max-width:640px){
+  .video-star-rewards{--star-size:23px;gap:10px;min-height:40px;margin-top:7px}
+}
+@media(prefers-reduced-motion:reduce){
+  .video-star,.video-star-rewards.is-intro .video-star,.video-star-rewards.is-perfect .video-star{animation:none!important;transition:none!important}
+}
 html[data-theme="light"] .speedGroup{
   background:#f5f7fc;
   border-color:rgba(51,65,85,.13);
@@ -3346,6 +3442,14 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
         ></div>
       </div>
 
+      <div class="video-star-rewards" id="videoStarRewards" role="img" aria-label="نجوم إنجاز الدرس: صفر من خمس نجوم" dir="ltr">
+        <span class="video-star" data-star="1" aria-hidden="true">★</span>
+        <span class="video-star" data-star="2" aria-hidden="true">★</span>
+        <span class="video-star" data-star="3" aria-hidden="true">★</span>
+        <span class="video-star" data-star="4" aria-hidden="true">★</span>
+        <span class="video-star" data-star="5" aria-hidden="true">★</span>
+      </div>
+
     </div>
 
   </section>
@@ -4423,6 +4527,46 @@ function markCompletionIfFullyWatched(duration){
 }
 
 
+let starsIntroPlayedForVideo = null;
+let lastEarnedStarCount = 0;
+function updateVideoStarRewards(percent){
+  const row=document.getElementById("videoStarRewards");
+  if(!row) return;
+  const value=Math.max(0,Math.min(100,Number(percent)||0));
+  const stars=[...row.querySelectorAll(".video-star")];
+  const earned=Math.floor((value+0.0001)/20);
+  stars.forEach((star,index)=>{
+    const fill=Math.max(0,Math.min(100,(value-index*20)*5));
+    star.style.setProperty("--star-fill",fill+"%");
+    star.classList.toggle("is-active",fill>0);
+    star.classList.toggle("is-earned",fill>=99.99);
+    if(earned>lastEarnedStarCount && index===earned-1 && fill>=99.99){
+      star.classList.remove("is-popping");
+      void star.offsetWidth;
+      star.classList.add("is-popping");
+      window.setTimeout(()=>star.classList.remove("is-popping"),800);
+    }
+  });
+  row.setAttribute("aria-label","نجوم إنجاز الدرس: "+earned+" من خمس نجوم، التقدم "+Math.round(value)+" بالمئة");
+  if(state.currentVideoId && starsIntroPlayedForVideo!==String(state.currentVideoId)){
+    starsIntroPlayedForVideo=String(state.currentVideoId);
+    row.classList.remove("is-intro");
+    void row.offsetWidth;
+    row.classList.add("is-intro");
+    window.setTimeout(()=>row.classList.remove("is-intro"),2100);
+  }
+  if(value>=99.99){
+    if(!row.classList.contains("is-perfect")){
+      row.classList.remove("is-perfect");
+      void row.offsetWidth;
+      row.classList.add("is-perfect");
+    }
+  }else{
+    row.classList.remove("is-perfect");
+  }
+  lastEarnedStarCount=earned;
+}
+
 function updateProgressUI(
   current,
   duration
@@ -4438,6 +4582,7 @@ function updateProgressUI(
 
     progressBar.style.width =
       "0%";
+    updateVideoStarRewards(0);
 
     return;
 
@@ -4470,6 +4615,7 @@ function updateProgressUI(
 
   percentBox.textContent = percent.toFixed(1) + "%";
   progressBar.style.width = percent + "%";
+  updateVideoStarRewards(percent);
 
 }
 
@@ -4597,6 +4743,16 @@ async function loadSavedSession(
   state.fullCompletionCount = 0;
   state.preservedCompletedProgress = false;
   state.currentAttemptNumber = 1;
+  lastEarnedStarCount = 0;
+  const starRow = document.getElementById("videoStarRewards");
+  if(starRow){
+    starRow.classList.remove("is-perfect","is-intro");
+    starRow.querySelectorAll(".video-star").forEach(star=>{
+      star.style.setProperty("--star-fill","0%");
+      star.classList.remove("is-active","is-earned","is-popping");
+    });
+    starRow.setAttribute("aria-label","نجوم إنجاز الدرس: صفر من خمس نجوم");
+  }
 
 
   const local =
