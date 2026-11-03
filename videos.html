@@ -3001,6 +3001,33 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
   opacity:1;transform:scale(1);animation:ytGearPulse 1s ease-in-out infinite alternate
 }
 @keyframes ytGearPulse{from{box-shadow:0 0 0 3px rgba(250,204,21,.12),0 0 12px rgba(250,204,21,.4)}to{box-shadow:0 0 0 7px rgba(250,204,21,.24),0 0 25px rgba(250,204,21,.85)}}
+
+.youtubeGearArrow{
+  position:absolute;inset:0;width:100%;height:100%;overflow:hidden;
+  z-index:36;pointer-events:none;opacity:0;visibility:hidden;
+  transition:opacity .22s ease,visibility .22s ease
+}
+.playerCard.youtube-settings-hint .youtubeGearArrow{opacity:1;visibility:visible}
+.youtubeGearArrowGlowPath{
+  fill:none;stroke:rgba(250,204,120,.48);stroke-width:10;stroke-linecap:round;
+  stroke-linejoin:round;filter:url(#youtubeGearArrowGlow);opacity:.8
+}
+.youtubeGearArrowPath{
+  fill:none;stroke:#ffe08a;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:10 8;filter:drop-shadow(0 0 4px rgba(255,209,92,.9));
+  animation:youtubeGearArrowFlow .8s linear infinite
+}
+.youtubeGearArrowOrigin{
+  fill:#fff1b8;stroke:#f0b83c;stroke-width:2;
+  filter:drop-shadow(0 0 5px rgba(255,209,92,.9));
+  transform-box:fill-box;transform-origin:center;
+  animation:youtubeGearArrowPulse .9s ease-in-out infinite alternate
+}
+@keyframes youtubeGearArrowFlow{to{stroke-dashoffset:-36}}
+@keyframes youtubeGearArrowPulse{from{opacity:.72;transform:scale(.82)}to{opacity:1;transform:scale(1.22)}}
+@media(prefers-reduced-motion:reduce){
+  .youtubeGearArrowPath,.youtubeGearArrowOrigin{animation:none}
+}
 @media(prefers-reduced-motion:reduce){.playerCard.youtube-settings-hint #youtubeGearHint{animation:none}}
 </style>
 </head>
@@ -3134,6 +3161,20 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
     class="playerCard"
     id="playerCard"
   >
+    <svg id="youtubeGearArrow" class="youtubeGearArrow" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="youtubeGearArrowGlow" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="3.5" result="softGlow"/>
+          <feMerge><feMergeNode in="softGlow"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <marker id="youtubeGearArrowHead" markerWidth="12" markerHeight="12" refX="9.5" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+          <path d="M1 1 L11 6 L1 11 L3.5 6 Z" fill="#ffe29a" stroke="#fff7df" stroke-width=".7"/>
+        </marker>
+      </defs>
+      <path id="youtubeGearArrowGlowPath" class="youtubeGearArrowGlowPath" d=""/>
+      <path id="youtubeGearArrowPath" class="youtubeGearArrowPath" d="" marker-end="url(#youtubeGearArrowHead)"/>
+      <circle id="youtubeGearArrowOrigin" class="youtubeGearArrowOrigin" cx="0" cy="0" r="4"/>
+    </svg>
 
     <div class="playerHeader">
       <div class="playerHeader-topline">
@@ -4994,6 +5035,46 @@ function positionYouTubeGearHint(){
   marker.style.right=Math.max(0,Math.min(stageRect.width-size,right))+"px";
   return true;
 }
+function positionYouTubeGearArrow(){
+  const svg=$("youtubeGearArrow");
+  const path=$("youtubeGearArrowPath");
+  const glow=$("youtubeGearArrowGlowPath");
+  const origin=$("youtubeGearArrowOrigin");
+  const button=youtubeSettingsBtn;
+  const marker=$("youtubeGearHint");
+  if(!svg||!path||!glow||!origin||!button||!marker) return false;
+
+  const cardRect=playerCard.getBoundingClientRect();
+  const buttonRect=button.getBoundingClientRect();
+  const markerRect=marker.getBoundingClientRect();
+  const width=playerCard.clientWidth;
+  const height=playerCard.clientHeight;
+  if(!width||!height||!buttonRect.width||!markerRect.width) return false;
+
+  svg.setAttribute("viewBox","0 0 "+width+" "+height);
+  const startX=buttonRect.left+buttonRect.width*.5-cardRect.left;
+  const startY=buttonRect.top+Math.min(5,buttonRect.height*.12)-cardRect.top;
+  const endX=markerRect.left+markerRect.width*.5-cardRect.left;
+  const endY=markerRect.top+markerRect.height*.5-cardRect.top;
+
+  const dx=endX-startX;
+  const dy=endY-startY;
+  const c1x=startX+dx*.12;
+  const c1y=startY+dy*.40;
+  const c2x=endX-dx*.08;
+  const c2y=endY-dy*.24;
+  const d="M "+startX.toFixed(1)+" "+startY.toFixed(1)+
+    " C "+c1x.toFixed(1)+" "+c1y.toFixed(1)+
+    ", "+c2x.toFixed(1)+" "+c2y.toFixed(1)+
+    ", "+endX.toFixed(1)+" "+endY.toFixed(1);
+
+  path.setAttribute("d",d);
+  glow.setAttribute("d",d);
+  origin.setAttribute("cx",startX.toFixed(1));
+  origin.setAttribute("cy",startY.toFixed(1));
+  return true;
+}
+
 function showNativeYouTubeSettings(){
   if(!youtubeSettingsBtn) return;
   const isYouTube = Boolean(state?.yt);
@@ -5006,9 +5087,13 @@ function showNativeYouTubeSettings(){
   toast("اضغط ترس الإعدادات أعلى يمين الفيديو لاختيار الجودة.");
   const placeHint=()=>{
     if(!positionYouTubeGearHint()) requestAnimationFrame(()=>positionYouTubeGearHint());
+    requestAnimationFrame(positionYouTubeGearArrow);
   };
   placeHint();
-  requestAnimationFrame(placeHint);
+  requestAnimationFrame(()=>{
+    positionYouTubeGearHint();
+    positionYouTubeGearArrow();
+  });
   window.clearTimeout(showNativeYouTubeSettings._timer);
   showNativeYouTubeSettings._timer=window.setTimeout(()=>{
     playerCard.classList.remove("youtube-settings-hint");
@@ -5016,14 +5101,23 @@ function showNativeYouTubeSettings(){
   },5000);
 }
 window.addEventListener("resize",()=>{
-  if(playerCard?.classList.contains("youtube-settings-hint")) positionYouTubeGearHint();
+  if(playerCard?.classList.contains("youtube-settings-hint")){
+    positionYouTubeGearHint();
+    positionYouTubeGearArrow();
+  }
 },{passive:true});
 window.addEventListener("orientationchange",()=>{
-  if(playerCard?.classList.contains("youtube-settings-hint")) setTimeout(positionYouTubeGearHint,120);
+  if(playerCard?.classList.contains("youtube-settings-hint")) setTimeout(()=>{
+    positionYouTubeGearHint();
+    positionYouTubeGearArrow();
+  },120);
 },{passive:true});
 if(window.ResizeObserver){
   const gearHintResizeObserver=new ResizeObserver(()=>{
-    if(playerCard?.classList.contains("youtube-settings-hint")) positionYouTubeGearHint();
+    if(playerCard?.classList.contains("youtube-settings-hint")){
+      positionYouTubeGearHint();
+      positionYouTubeGearArrow();
+    }
   });
   gearHintResizeObserver.observe(playerCard);
   gearHintResizeObserver.observe(youtubePlayer);
