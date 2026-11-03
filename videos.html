@@ -4966,21 +4966,29 @@ function(){
 function positionYouTubeGearHint(){
   const marker=$("youtubeGearHint");
   const iframe=youtubePlayer?.querySelector("iframe");
-  if(!marker||!iframe||!playerCard) return false;
+  const stage=$("stage");
+  if(!marker||!iframe||!stage) return false;
+
+  /* The marker is a child of #stage, so its coordinates MUST be relative
+     to #stage (not #playerCard). Mixing these coordinate spaces shifted
+     the highlight toward the left by the height of the player header. */
   const frame=iframe.getBoundingClientRect();
-  const card=playerCard.getBoundingClientRect();
-  if(!frame.width||!frame.height||!card.width) return false;
-  /* The YouTube gear sits inside the player's top-right control cluster.
-     Measure the real iframe, not the outer card (which also contains headings). */
+  const stageRect=stage.getBoundingClientRect();
+  if(!frame.width||!frame.height||!stageRect.width||!stageRect.height) return false;
+
   const compact=frame.width<=640;
-  const size=compact?52:48;
-  const rightInset=compact?52:56;
+  const size=compact?46:42;
+  const rightInset=compact?48:52;
   const centerY=frame.top+(compact?47:28);
   const centerX=frame.right-rightInset;
+
+  const left=centerX-size/2-stageRect.left;
+  const top=centerY-size/2-stageRect.top;
+
   marker.style.width=size+"px";
   marker.style.height=size+"px";
-  marker.style.left=(centerX-size/2-card.left)+"px";
-  marker.style.top=(centerY-size/2-card.top)+"px";
+  marker.style.left=Math.max(0,Math.min(stageRect.width-size,left))+"px";
+  marker.style.top=Math.max(0,Math.min(stageRect.height-size,top))+"px";
   return true;
 }
 function showNativeYouTubeSettings(){
