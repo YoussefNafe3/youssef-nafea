@@ -2921,9 +2921,58 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 @media(max-width:480px){#videoCompletionCelebration .celebration-card{padding:27px 18px 22px;border-radius:20px}#videoCompletionCelebration p{font-size:14px}}
 
 
-/* Protection baseline: keep the complete title/share/top area covered.
-   The quality-gear pass-through will be positioned only after confirming the
-   actual responsive YouTube control coordinates on-device. */
+/* Only the native YouTube Settings/Quality gear gets a click-through
+   window. Both overlapping top shields use the same notch; every other pixel
+   of the title, share, YouTube branding and navigation remains intercepted. */
+.ytBlocker,
+.ytTitleBlocker{
+  -webkit-clip-path:polygon(
+    0 0,
+    calc(100% - 30px - 48px) 0,
+    calc(100% - 30px - 48px) 62px,
+    calc(100% - 30px) 62px,
+    calc(100% - 30px) 0,
+    100% 0,
+    100% 100%,
+    0 100%
+  )!important;
+  clip-path:polygon(
+    0 0,
+    calc(100% - 30px - 48px) 0,
+    calc(100% - 30px - 48px) 62px,
+    calc(100% - 30px) 62px,
+    calc(100% - 30px) 0,
+    100% 0,
+    100% 100%,
+    0 100%
+  )!important;
+}
+@media(max-width:640px){
+  .ytBlocker,
+  .ytTitleBlocker{
+    -webkit-clip-path:polygon(
+      0 0,
+      calc(100% - 22px - 52px) 0,
+      calc(100% - 22px - 52px) 72px,
+      calc(100% - 22px) 72px,
+      calc(100% - 22px) 0,
+      100% 0,
+      100% 100%,
+      0 100%
+    )!important;
+    clip-path:polygon(
+      0 0,
+      calc(100% - 22px - 52px) 0,
+      calc(100% - 22px - 52px) 72px,
+      calc(100% - 22px) 72px,
+      calc(100% - 22px) 0,
+      100% 0,
+      100% 100%,
+      0 100%
+    )!important;
+  }
+}
+
 /* Second independent lower shield: duplicate the branding/control-bar
    blocker so the YouTube logo and lower navigation remain covered. */
 .ytBottomBlockerSecondary{
