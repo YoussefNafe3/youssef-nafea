@@ -715,7 +715,12 @@ html[data-theme="light"] .speedBtn.active{
   aspect-ratio:16/9;
   min-height:250px;
   overflow:hidden;
-  isolation:isolate
+  isolation:isolate;
+  /* Single source of truth for the native YouTube gear pass-through window. */
+  --yt-gear-notch-right:30px;
+  --yt-gear-notch-width:48px;
+  --yt-gear-notch-height:62px;
+  --yt-gear-marker-size:42px
 }
 
 .stage video,
@@ -2928,48 +2933,31 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 .ytTitleBlocker{
   -webkit-clip-path:polygon(
     0 0,
-    calc(100% - 30px - 48px) 0,
-    calc(100% - 30px - 48px) 62px,
-    calc(100% - 30px) 62px,
-    calc(100% - 30px) 0,
+    calc(100% - var(--yt-gear-notch-right) - var(--yt-gear-notch-width)) 0,
+    calc(100% - var(--yt-gear-notch-right) - var(--yt-gear-notch-width)) var(--yt-gear-notch-height),
+    calc(100% - var(--yt-gear-notch-right)) var(--yt-gear-notch-height),
+    calc(100% - var(--yt-gear-notch-right)) 0,
     100% 0,
     100% 100%,
     0 100%
   )!important;
   clip-path:polygon(
     0 0,
-    calc(100% - 30px - 48px) 0,
-    calc(100% - 30px - 48px) 62px,
-    calc(100% - 30px) 62px,
-    calc(100% - 30px) 0,
+    calc(100% - var(--yt-gear-notch-right) - var(--yt-gear-notch-width)) 0,
+    calc(100% - var(--yt-gear-notch-right) - var(--yt-gear-notch-width)) var(--yt-gear-notch-height),
+    calc(100% - var(--yt-gear-notch-right)) var(--yt-gear-notch-height),
+    calc(100% - var(--yt-gear-notch-right)) 0,
     100% 0,
     100% 100%,
     0 100%
   )!important;
 }
-@media(max-width:640px){
-  .ytBlocker,
-  .ytTitleBlocker{
-    -webkit-clip-path:polygon(
-      0 0,
-      calc(100% - 22px - 52px) 0,
-      calc(100% - 22px - 52px) 72px,
-      calc(100% - 22px) 72px,
-      calc(100% - 22px) 0,
-      100% 0,
-      100% 100%,
-      0 100%
-    )!important;
-    clip-path:polygon(
-      0 0,
-      calc(100% - 22px - 52px) 0,
-      calc(100% - 22px - 52px) 72px,
-      calc(100% - 22px) 72px,
-      calc(100% - 22px) 0,
-      100% 0,
-      100% 100%,
-      0 100%
-    )!important;
+@media(max-width:640px), (pointer:coarse){
+  .stage{
+    --yt-gear-notch-right:22px;
+    --yt-gear-notch-width:52px;
+    --yt-gear-notch-height:72px;
+    --yt-gear-marker-size:36px
   }
 }
 
@@ -2991,7 +2979,7 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 .youtubeSettingsBtn svg{width:19px;height:19px;display:block;flex:none}
 .playerCard{position:relative}
 #youtubeGearHint{
-  position:absolute;left:95.4%;top:6%;right:auto;bottom:auto;width:42px;height:42px;box-sizing:border-box;
+  position:absolute;left:auto;top:0;right:0;bottom:auto;width:42px;height:42px;box-sizing:border-box;
   border:2px solid #facc15;border-radius:13px;pointer-events:none;z-index:30;
   opacity:0;transform:scale(.92);
   box-shadow:0 0 0 5px rgba(250,204,21,.18),0 0 22px rgba(250,204,21,.65);
@@ -5009,38 +4997,34 @@ function positionYouTubeGearHint(){
   const stage=$("stage");
   if(!marker||!stage||!youtubePlayer?.querySelector("iframe")) return false;
 
-  /* Anchor to the visible stage box itself, not the YouTube iframe's DOM
-     rectangle. The iframe is cross-origin and its internal player controls
-     can be inset differently by mobile browsers. The supplied screenshots
-     give the stable control-center ratios below. */
+  /* Exact shared geometry: read the same CSS variables that define the
+     clickable notch in BOTH top protection layers. The marker is therefore
+     centered on the actual pass-through window rather than a guessed
+     YouTube coordinate. RTL, browser zoom, viewport width and DPR cannot
+     make the frame drift away from that window. */
+  const stageStyle=getComputedStyle(stage);
+  const notchRight=parseFloat(stageStyle.getPropertyValue("--yt-gear-notch-right"));
+  const notchWidth=parseFloat(stageStyle.getPropertyValue("--yt-gear-notch-width"));
+  const notchHeight=parseFloat(stageStyle.getPropertyValue("--yt-gear-notch-height"));
+  const markerSize=parseFloat(stageStyle.getPropertyValue("--yt-gear-marker-size"));
   const stageWidth=stage.clientWidth;
   const stageHeight=stage.clientHeight;
-  if(!stageWidth||!stageHeight) return false;
 
-  const compact=window.matchMedia("(max-width: 640px)").matches ||
-    window.matchMedia("(pointer: coarse)").matches ||
-    stageWidth<=640;
-  const isFullscreen=document.fullscreenElement===playerCard ||
-    document.webkitFullscreenElement===playerCard ||
-    playerCard.matches(":fullscreen") ||
-    playerCard.matches(":-webkit-full-screen");
+  if(!stageWidth||!stageHeight||
+     !Number.isFinite(notchRight)||!Number.isFinite(notchWidth)||
+     !Number.isFinite(notchHeight)||!Number.isFinite(markerSize)) return false;
 
-  /* Fine calibration from the latest device feedback:
-     - Mobile: shift the frame a little LEFT of the previous .938 position.
-     - Desktop outside fullscreen: move it UP and LEFT of the previous
-       .954 / .06 position.
-     - Desktop fullscreen retains its previous anchor to avoid disturbing
-       the already accepted fullscreen placement. */
-  const size=compact?26:42;
-  const gearX=stageWidth*(compact?.920:(isFullscreen?.954:.946));
-  const gearY=stageHeight*(compact?.153:(isFullscreen?.06:.045));
+  const centerX=stageWidth-notchRight-notchWidth/2;
+  const centerY=notchHeight/2;
+  const left=centerX-markerSize/2;
+  const top=centerY-markerSize/2;
 
-  marker.style.width=size+"px";
-  marker.style.height=size+"px";
+  marker.style.width=markerSize+"px";
+  marker.style.height=markerSize+"px";
   marker.style.right="auto";
   marker.style.bottom="auto";
-  marker.style.left=Math.max(0,Math.min(stageWidth-size,gearX-size/2))+"px";
-  marker.style.top=Math.max(0,Math.min(stageHeight-size,gearY-size/2))+"px";
+  marker.style.left=Math.max(0,Math.min(stageWidth-markerSize,left))+"px";
+  marker.style.top=Math.max(0,Math.min(stageHeight-markerSize,top))+"px";
   return true;
 }
 function positionYouTubeGearArrow(){
