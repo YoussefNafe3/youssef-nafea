@@ -2990,18 +2990,18 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 .youtubeSettingsBtn{min-width:42px;min-height:36px;padding:6px 10px;gap:7px}
 .youtubeSettingsBtn svg{width:19px;height:19px;display:block;flex:none}
 .playerCard{position:relative}
-.playerCard::after{
-  content:"";position:absolute;top:9px;right:22px;width:48px;height:48px;
-  border:2px solid transparent;border-radius:13px;pointer-events:none;z-index:30;
-  opacity:0;transform:scale(.92);transition:opacity .18s ease,transform .18s ease
+#youtubeGearHint{
+  position:absolute;left:0;top:0;width:48px;height:48px;box-sizing:border-box;
+  border:2px solid #facc15;border-radius:13px;pointer-events:none;z-index:30;
+  opacity:0;transform:scale(.92);
+  box-shadow:0 0 0 5px rgba(250,204,21,.18),0 0 22px rgba(250,204,21,.65);
+  transition:opacity .18s ease,transform .18s ease
 }
-.playerCard.youtube-settings-hint::after{
-  border-color:#facc15;box-shadow:0 0 0 5px rgba(250,204,21,.18),0 0 22px rgba(250,204,21,.65);
+.playerCard.youtube-settings-hint #youtubeGearHint{
   opacity:1;transform:scale(1);animation:ytGearPulse 1s ease-in-out infinite alternate
 }
 @keyframes ytGearPulse{from{box-shadow:0 0 0 3px rgba(250,204,21,.12),0 0 12px rgba(250,204,21,.4)}to{box-shadow:0 0 0 7px rgba(250,204,21,.24),0 0 25px rgba(250,204,21,.85)}}
-@media(max-width:640px){.playerCard::after{top:10px;right:14px;width:52px;height:52px}}
-@media(prefers-reduced-motion:reduce){.playerCard.youtube-settings-hint::after{animation:none}}
+@media(prefers-reduced-motion:reduce){.playerCard.youtube-settings-hint #youtubeGearHint{animation:none}}
 </style>
 </head>
 
@@ -3159,6 +3159,7 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
         id="youtubePlayer"
         class="hidden"
       ></div>
+      <div id="youtubeGearHint" aria-hidden="true"></div>
 
       <div id="fullscreenPinchSurface" class="fullscreenPinchSurface hidden" aria-hidden="true"></div>
 
@@ -4962,6 +4963,26 @@ function(){
 /* YouTube quality is controlled only by its native in-player Settings menu.
    The external control points the learner to the exposed native gear; it does
    not pretend to change playback quality. */
+function positionYouTubeGearHint(){
+  const marker=$("youtubeGearHint");
+  const iframe=youtubePlayer?.querySelector("iframe");
+  if(!marker||!iframe||!playerCard) return false;
+  const frame=iframe.getBoundingClientRect();
+  const card=playerCard.getBoundingClientRect();
+  if(!frame.width||!frame.height||!card.width) return false;
+  /* The YouTube gear sits inside the player's top-right control cluster.
+     Measure the real iframe, not the outer card (which also contains headings). */
+  const compact=frame.width<=640;
+  const size=compact?52:48;
+  const rightInset=compact?52:56;
+  const centerY=frame.top+(compact?44:28);
+  const centerX=frame.right-rightInset;
+  marker.style.width=size+"px";
+  marker.style.height=size+"px";
+  marker.style.left=(centerX-size/2-card.left)+"px";
+  marker.style.top=(centerY-size/2-card.top)+"px";
+  return true;
+}
 function showNativeYouTubeSettings(){
   if(!youtubeSettingsBtn) return;
   const isYouTube = Boolean(state?.yt);
@@ -4971,12 +4992,29 @@ function showNativeYouTubeSettings(){
   }
   playerCard.classList.add("youtube-settings-hint");
   youtubeSettingsBtn.classList.add("active");
-  toast("اضغط ترس الإعدادات أعلى يمين الفيديو لاختيار الجودة من YouTube.");
+  const placeHint=()=>{
+    if(!positionYouTubeGearHint()) requestAnimationFrame(()=>positionYouTubeGearHint());
+  };
+  placeHint();
+  requestAnimationFrame(placeHint);
   window.clearTimeout(showNativeYouTubeSettings._timer);
   showNativeYouTubeSettings._timer=window.setTimeout(()=>{
     playerCard.classList.remove("youtube-settings-hint");
     youtubeSettingsBtn.classList.remove("active");
   },5000);
+}
+window.addEventListener("resize",()=>{
+  if(playerCard?.classList.contains("youtube-settings-hint")) positionYouTubeGearHint();
+},{passive:true});
+window.addEventListener("orientationchange",()=>{
+  if(playerCard?.classList.contains("youtube-settings-hint")) setTimeout(positionYouTubeGearHint,120);
+},{passive:true});
+if(window.ResizeObserver){
+  const gearHintResizeObserver=new ResizeObserver(()=>{
+    if(playerCard?.classList.contains("youtube-settings-hint")) positionYouTubeGearHint();
+  });
+  gearHintResizeObserver.observe(playerCard);
+  gearHintResizeObserver.observe(youtubePlayer);
 }
 if(youtubeSettingsBtn){
   youtubeSettingsBtn.addEventListener("click",showNativeYouTubeSettings);
