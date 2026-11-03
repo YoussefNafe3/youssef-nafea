@@ -2921,32 +2921,22 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 @media(max-width:480px){#videoCompletionCelebration .celebration-card{padding:27px 18px 22px;border-radius:20px}#videoCompletionCelebration p{font-size:14px}}
 
 
-/* Desktop only: expose the top-right Settings/Quality gear through BOTH
-   top overlays. The bottom blocker remains fully intact, including YouTube branding. */
-@media (min-width:769px) and (hover:hover) and (pointer:fine){
-  .ytBlocker,
-  .ytTitleBlocker{
-    -webkit-clip-path:polygon(
-      0 0,
-      calc(100% - 102px) 0,
-      calc(100% - 102px) 56px,
-      calc(100% - 42px) 56px,
-      calc(100% - 42px) 0,
-      100% 0,
-      100% 100%,
-      0 100%
-    )!important;
-    clip-path:polygon(
-      0 0,
-      calc(100% - 102px) 0,
-      calc(100% - 102px) 56px,
-      calc(100% - 42px) 56px,
-      calc(100% - 42px) 0,
-      100% 0,
-      100% 100%,
-      0 100%
-    )!important;
-  }
+/* Protection baseline: keep the complete title/share/top area covered.
+   The quality-gear pass-through will be positioned only after confirming the
+   actual responsive YouTube control coordinates on-device. */
+/* Second independent lower shield: duplicate the branding/control-bar
+   blocker so the YouTube logo and lower navigation remain covered. */
+.ytBottomBlockerSecondary{
+  z-index:22!important;
+  pointer-events:auto!important;
+  touch-action:none!important;
+  user-select:none!important;
+  -webkit-user-select:none!important;
+}
+.playerCard:fullscreen .ytBottomBlockerSecondary,
+.playerCard:-webkit-full-screen .ytBottomBlockerSecondary{
+  display:block!important;
+  z-index:22!important;
 }
 </style>
 </head>
@@ -3121,6 +3111,11 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
       <div
         id="ytBottomBlocker"
         class="ytBottomBlocker hidden"
+      ></div>
+      <div
+        id="ytBottomBlockerSecondary"
+        class="ytBottomBlocker ytBottomBlockerSecondary hidden"
+        aria-hidden="true"
       ></div>
 
       <div
@@ -4785,6 +4780,11 @@ function setYouTubeActive(
   );
 
   $("ytBottomBlocker").classList.toggle(
+    "hidden",
+    !active
+  );
+
+  $("ytBottomBlockerSecondary").classList.toggle(
     "hidden",
     !active
   );
