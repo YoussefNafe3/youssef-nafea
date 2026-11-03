@@ -2987,6 +2987,21 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
   display:block!important;
   z-index:22!important;
 }
+.youtubeSettingsBtn{min-width:42px;min-height:36px;padding:6px 10px;gap:7px}
+.youtubeSettingsBtn svg{width:19px;height:19px;display:block;flex:none}
+.playerCard{position:relative}
+.playerCard::after{
+  content:"";position:absolute;top:9px;right:22px;width:48px;height:48px;
+  border:2px solid transparent;border-radius:13px;pointer-events:none;z-index:30;
+  opacity:0;transform:scale(.92);transition:opacity .18s ease,transform .18s ease
+}
+.playerCard.youtube-settings-hint::after{
+  border-color:#facc15;box-shadow:0 0 0 5px rgba(250,204,21,.18),0 0 22px rgba(250,204,21,.65);
+  opacity:1;transform:scale(1);animation:ytGearPulse 1s ease-in-out infinite alternate
+}
+@keyframes ytGearPulse{from{box-shadow:0 0 0 3px rgba(250,204,21,.12),0 0 12px rgba(250,204,21,.4)}to{box-shadow:0 0 0 7px rgba(250,204,21,.24),0 0 25px rgba(250,204,21,.85)}}
+@media(max-width:640px){.playerCard::after{top:10px;right:14px;width:52px;height:52px}}
+@media(prefers-reduced-motion:reduce){.playerCard.youtube-settings-hint::after{animation:none}}
 </style>
 </head>
 
@@ -3193,15 +3208,19 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
       <div class="controlRow controlRowPrimary" aria-label="أدوات الفيديو">
 
         <div class="utilityGroup">
-          <label id="qualityLabel" class="controlMiniLabel" for="qualitySelect">الجودة</label>
-          <select
-            id="qualitySelect"
-            class="qualitySelect hidden"
-            aria-label="جودة الفيديو"
-            title="جودة الفيديو"
+          <button
+            id="youtubeSettingsBtn"
+            class="playerUtilityBtn youtubeSettingsBtn"
+            type="button"
+            aria-label="إظهار مكان ترس إعدادات YouTube"
+            title="إعدادات الجودة من مشغل YouTube"
           >
-            <option value="auto">تلقائي</option>
-          </select>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <path d="m19.4 13.5 1.1.9-1.6 2.8-1.4-.5a7.8 7.8 0 0 1-1.5.9l-.2 1.5h-3.3l-.3-1.5a7.8 7.8 0 0 1-1.6-.9l-1.4.5-1.6-2.8 1.1-.9a7 7 0 0 1 0-1.8l-1.1-.9 1.6-2.8 1.4.5a7.8 7.8 0 0 1 1.6-.9l.3-1.5h3.3l.2 1.5a7.8 7.8 0 0 1 1.5.9l1.4-.5 1.6 2.8-1.1.9a7 7 0 0 1 0 1.8Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+            <span>الجودة</span>
+          </button>
         </div>
 
         <button
@@ -3483,8 +3502,7 @@ const progressBar =
 const percentBox =
   $("percentBox");
 
-const qualitySelect =
-  $("qualitySelect");
+const youtubeSettingsBtn = $("youtubeSettingsBtn");
 
 const captionsBtn =
   $("captionsBtn");
@@ -4941,54 +4959,27 @@ function(){
 };
 
 
-function fillYouTubeQuality(){
-
-  if(!qualitySelect) return;
-
-  // Cosmetic quality presets only. YouTube remains fully responsible for
-  // adaptive playback quality; no selection below calls YouTube quality APIs.
-  const options = [
-    ["auto", "تلقائية · YouTube يحدد الجودة"],
-    ["highres", "1080p"],
-    ["hd720", "720p"],
-    ["large", "480p"],
-    ["medium", "360p"],
-    ["small", "240p"],
-    ["tiny", "144p"],
-    ["data_saver", "توفير البيانات"]
-  ];
-
-  qualitySelect.innerHTML = "";
-  options.forEach(([value, label]) => {
-    const option = document.createElement("option");
-    option.value = value;
-    option.textContent = label;
-    qualitySelect.appendChild(option);
-  });
-
-  // Keep the familiar menu visible. Its choices are visual only.
-  qualitySelect.value = "auto";
-  qualitySelect.disabled = false;
-  qualitySelect.classList.remove("hidden");
-  qualitySelect.title = "القائمة شكلية فقط؛ جودة فيديو YouTube تظل تلقائية ويحددها YouTube دائمًا.";
-  const label = document.getElementById("qualityLabel");
-  if(label) label.textContent = "الجودة";
+/* YouTube quality is controlled only by its native in-player Settings menu.
+   The external control points the learner to the exposed native gear; it does
+   not pretend to change playback quality. */
+function showNativeYouTubeSettings(){
+  if(!youtubeSettingsBtn) return;
+  const isYouTube = Boolean(state?.yt);
+  if(!isYouTube){
+    toast("إعدادات الجودة متاحة من مشغل YouTube فقط.");
+    return;
+  }
+  playerCard.classList.add("youtube-settings-hint");
+  youtubeSettingsBtn.classList.add("active");
+  toast("اضغط ترس الإعدادات أعلى يمين الفيديو لاختيار الجودة من YouTube.");
+  window.clearTimeout(showNativeYouTubeSettings._timer);
+  showNativeYouTubeSettings._timer=window.setTimeout(()=>{
+    playerCard.classList.remove("youtube-settings-hint");
+    youtubeSettingsBtn.classList.remove("active");
+  },5000);
 }
-
-function updateYouTubeQualityIndicator(level){
-  if(!qualitySelect) return;
-  // Informational only: reflect YouTube's reported adaptive quality without forcing a resolution.
-  const names = {
-    highres:"أعلى جودة", hd2160:"2160p", hd1440:"1440p",
-    hd1080:"1080p", hd720:"720p", large:"480p",
-    medium:"360p", small:"240p", tiny:"144p"
-  };
-  const option = qualitySelect.options[0];
-  if(!option) return;
-  const actual = names[String(level || "").toLowerCase()];
-  option.textContent = actual
-    ? "تلقائية · الجودة الحالية " + actual
-    : "تلقائية · YouTube يحدد الجودة";
+if(youtubeSettingsBtn){
+  youtubeSettingsBtn.addEventListener("click",showNativeYouTubeSettings);
 }
 
 let captionsEnabled = false;
@@ -5073,9 +5064,7 @@ if(captionsBtn){
 function createYouTubePlayer(
   item
 ){
-
-  fillYouTubeQuality();
-  setCaptionsButton(false, true);
+setCaptionsButton(false, true);
   setCaptionsButton(false, true);
 
   const id =
@@ -5140,9 +5129,7 @@ function createYouTubePlayer(
 
           onReady:
             async()=>{
-
-              fillYouTubeQuality();
-              setCaptionsButton(false, true);
+setCaptionsButton(false, true);
 
               await loadSavedSession(
                 item.id
@@ -5177,12 +5164,6 @@ function createYouTubePlayer(
             },
 
 
-          onPlaybackQualityChange:
-            e=>{
-              // Reflect YouTube's adaptive choice without overriding it.
-              updateYouTubeQualityIndicator(e?.data);
-            },
-
           onStateChange:
             e=>{
 
@@ -5192,9 +5173,7 @@ function createYouTubePlayer(
               ){
 
                 startYouTubeProgress();
-                fillYouTubeQuality();
-
-              }
+}
 
 
               if(
@@ -5544,16 +5523,6 @@ function prepareNativeVideo(
 ){
 
   setCaptionsButton(false, true);
-  const qualityLabel = document.getElementById("qualityLabel");
-  if(qualityLabel) qualityLabel.textContent = "الجودة";
-  qualitySelect.classList.remove("hidden");
-  qualitySelect.innerHTML = "";
-  const sourceOption = document.createElement("option");
-  sourceOption.value = "source";
-  sourceOption.textContent = "جودة المصدر";
-  qualitySelect.appendChild(sourceOption);
-  qualitySelect.disabled = true;
-  qualitySelect.title = "هذا الفيديو يعمل بملف واحد وجودته الأصلية. تغيير الجودة تلقائيًا يتطلب توفير نسخ متعددة أو بث HLS/DASH متكيف.";
   resetNativeTracking();
 
   clearNativeVideo();
