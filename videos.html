@@ -5023,36 +5023,41 @@ function(){
 function positionYouTubeGearHint(){
   const marker=$("youtubeGearHint");
   const stage=$("stage");
-  if(!marker||!stage||!youtubePlayer?.querySelector("iframe")) return false;
+  const iframe=youtubePlayer?.querySelector("iframe");
+  if(!marker||!stage||!iframe) return false;
 
-  /* Exact shared geometry: read the same CSS variables that define the
-     clickable notch in BOTH top protection layers. The marker is therefore
-     centered on the actual pass-through window rather than a guessed
-     YouTube coordinate. RTL, browser zoom, viewport width and DPR cannot
-     make the frame drift away from that window. */
-  const stageStyle=getComputedStyle(stage);
-  const notchRight=parseFloat(stageStyle.getPropertyValue("--yt-gear-notch-right"));
-  const notchWidth=parseFloat(stageStyle.getPropertyValue("--yt-gear-notch-width"));
-  const notchHeight=parseFloat(stageStyle.getPropertyValue("--yt-gear-notch-height"));
-  const markerSize=parseFloat(stageStyle.getPropertyValue("--yt-gear-marker-size"));
+  /* The protection cut-out and focus frame share one geometry source.
+     Convert the stage's rendered rectangle back to its local CSS coordinate
+     space. This also handles fullscreen flex reflow, browser zoom, device
+     pixel ratio and any fractional layout scaling without accumulating drift. */
+  const style=getComputedStyle(stage);
+  const right=parseFloat(style.getPropertyValue("--yt-gear-notch-right"));
+  const notchWidth=parseFloat(style.getPropertyValue("--yt-gear-notch-width"));
+  const notchHeight=parseFloat(style.getPropertyValue("--yt-gear-notch-height"));
+  const size=parseFloat(style.getPropertyValue("--yt-gear-marker-size"));
+  const stageRect=stage.getBoundingClientRect();
   const stageWidth=stage.clientWidth;
   const stageHeight=stage.clientHeight;
+  if(!stageWidth||!stageHeight||!stageRect.width||!stageRect.height||
+     ![right,notchWidth,notchHeight,size].every(Number.isFinite)) return false;
 
-  if(!stageWidth||!stageHeight||
-     !Number.isFinite(notchRight)||!Number.isFinite(notchWidth)||
-     !Number.isFinite(notchHeight)||!Number.isFinite(markerSize)) return false;
+  const scaleX=stageRect.width/stageWidth;
+  const scaleY=stageRect.height/stageHeight;
+  if(!scaleX||!scaleY) return false;
 
-  const centerX=stageWidth-notchRight-notchWidth/2;
+  const centerX=stageWidth-right-notchWidth/2;
   const centerY=notchHeight/2;
-  const left=centerX-markerSize/2;
-  const top=centerY-markerSize/2;
+  const left=Math.max(0,Math.min(stageWidth-size,centerX-size/2));
+  const top=Math.max(0,Math.min(stageHeight-size,centerY-size/2));
 
-  marker.style.width=markerSize+"px";
-  marker.style.height=markerSize+"px";
+  marker.style.position="absolute";
+  marker.style.width=size+"px";
+  marker.style.height=size+"px";
   marker.style.right="auto";
   marker.style.bottom="auto";
-  marker.style.left=Math.max(0,Math.min(stageWidth-markerSize,left))+"px";
-  marker.style.top=Math.max(0,Math.min(stageHeight-markerSize,top))+"px";
+  marker.style.left=left+"px";
+  marker.style.top=top+"px";
+  marker.style.transformOrigin="center";
   return true;
 }
 function positionYouTubeGearArrow(){
@@ -5120,27 +5125,31 @@ function showNativeYouTubeSettings(){
     youtubeSettingsBtn.classList.remove("active");
   },5000);
 }
-window.addEventListener("resize",()=>{
-  if(playerCard?.classList.contains("youtube-settings-hint")){
+let gearHintLayoutFrame=0;
+function refreshYouTubeGearHintLayout(){
+  if(!playerCard?.classList.contains("youtube-settings-hint")) return;
+  cancelAnimationFrame(gearHintLayoutFrame);
+  /* Fullscreen and mobile orientation changes can take more than one frame
+     to settle. Measure only after the browser has completed flex re-layout. */
+  gearHintLayoutFrame=requestAnimationFrame(()=>{
     positionYouTubeGearHint();
     positionYouTubeGearArrow();
-  }
-},{passive:true});
-window.addEventListener("orientationchange",()=>{
-  if(playerCard?.classList.contains("youtube-settings-hint")) setTimeout(()=>{
-    positionYouTubeGearHint();
-    positionYouTubeGearArrow();
-  },120);
-},{passive:true});
-if(window.ResizeObserver){
-  const gearHintResizeObserver=new ResizeObserver(()=>{
-    if(playerCard?.classList.contains("youtube-settings-hint")){
+    requestAnimationFrame(()=>{
       positionYouTubeGearHint();
       positionYouTubeGearArrow();
-    }
+    });
   });
+}
+window.addEventListener("resize",refreshYouTubeGearHintLayout,{passive:true});
+window.addEventListener("orientationchange",()=>setTimeout(refreshYouTubeGearHintLayout,160),{passive:true});
+document.addEventListener("fullscreenchange",()=>setTimeout(refreshYouTubeGearHintLayout,80),{passive:true});
+document.addEventListener("webkitfullscreenchange",()=>setTimeout(refreshYouTubeGearHintLayout,80),{passive:true});
+window.visualViewport?.addEventListener("resize",refreshYouTubeGearHintLayout,{passive:true});
+if(window.ResizeObserver){
+  const gearHintResizeObserver=new ResizeObserver(refreshYouTubeGearHintLayout);
   gearHintResizeObserver.observe(playerCard);
-  gearHintResizeObserver.observe(youtubePlayer);
+  gearHintResizeObserver.observe(stage);
+  if(youtubePlayer) gearHintResizeObserver.observe(youtubePlayer);
 }
 if(youtubeSettingsBtn){
   youtubeSettingsBtn.addEventListener("click",showNativeYouTubeSettings);
