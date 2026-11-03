@@ -2983,16 +2983,16 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
    finish and halo so it remains crisp on desktop and compact fullscreen. */
 #youtubeGearHint{
   position:absolute;left:auto;top:0;right:0;bottom:auto;
-  width:42px;height:42px;box-sizing:border-box;
+  width:68px;height:54px;box-sizing:border-box;
   border:2px solid rgba(255,220,112,.98);
-  border-radius:12px;
-  background:rgba(250,204,21,.035);
+  border-radius:14px;
+  background:linear-gradient(135deg,rgba(250,204,21,.075),rgba(250,204,21,.018));
   pointer-events:none;z-index:30;
-  opacity:0;transform:scale(.96);
+  opacity:0;transform:scale(.97);
   box-shadow:
-    0 0 0 2px rgba(250,204,21,.10),
-    0 0 11px rgba(250,204,21,.42),
-    inset 0 0 7px rgba(255,220,112,.12);
+    0 0 0 2px rgba(250,204,21,.12),
+    0 0 13px rgba(250,204,21,.48),
+    inset 0 0 9px rgba(255,220,112,.14);
   transition:opacity .2s ease,transform .2s cubic-bezier(.2,.75,.25,1);
   will-change:opacity,transform,box-shadow
 }
@@ -5047,12 +5047,18 @@ function positionYouTubeGearHint(){
 
   const centerX=stageWidth-right-notchWidth/2;
   const centerY=notchHeight/2;
-  const left=Math.max(0,Math.min(stageWidth-size,centerX-size/2));
-  const top=Math.max(0,Math.min(stageHeight-size,centerY-size/2));
+
+  /* A wider landscape focus frame deliberately covers the full gear hit-zone
+     with generous visual tolerance. Keep its center locked to the protection
+     notch; the arrow endpoint is measured from the frame's real center. */
+  const frameWidth=Math.max(size*1.65,notchWidth+12);
+  const frameHeight=Math.max(size*1.28,notchHeight+10);
+  const left=Math.max(0,Math.min(stageWidth-frameWidth,centerX-frameWidth/2));
+  const top=Math.max(0,Math.min(stageHeight-frameHeight,centerY-frameHeight/2));
 
   marker.style.position="absolute";
-  marker.style.width=size+"px";
-  marker.style.height=size+"px";
+  marker.style.width=frameWidth+"px";
+  marker.style.height=frameHeight+"px";
   marker.style.right="auto";
   marker.style.bottom="auto";
   marker.style.left=left+"px";
