@@ -2991,7 +2991,7 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 .youtubeSettingsBtn svg{width:19px;height:19px;display:block;flex:none}
 .playerCard{position:relative}
 #youtubeGearHint{
-  position:absolute;right:35px;top:7px;left:auto;bottom:auto;width:42px;height:42px;box-sizing:border-box;
+  position:absolute;left:95.5%;top:4%;right:auto;bottom:auto;width:42px;height:42px;box-sizing:border-box;
   border:2px solid #facc15;border-radius:13px;pointer-events:none;z-index:30;
   opacity:0;transform:scale(.92);
   box-shadow:0 0 0 5px rgba(250,204,21,.18),0 0 22px rgba(250,204,21,.65);
@@ -5014,24 +5014,24 @@ function positionYouTubeGearHint(){
   const stageRect=stage.getBoundingClientRect();
   if(!frame.width||!frame.height||!stageRect.width||!stageRect.height) return false;
 
-  /* Calibrated to the supplied desktop + mobile screenshots.
-     Keep the top offset stable; the mobile YouTube UI uses a wider control
-     cluster, so its gear sits closer to the right edge than the previous
-     estimate. Coordinates are converted from viewport space into #stage. */
+  /* Use normalized coordinates from the actual iframe viewport rather than
+     guessed pixel offsets. The screenshots show the gear at about 95.5% / 4%
+     on desktop and 94% / 11% on mobile. This scales with every player size,
+     browser zoom, DPR and orientation. */
   const compact=window.matchMedia("(max-width: 640px)").matches || frame.width<=640;
   const size=compact?26:42;
-  const gearRightInset=compact?8:52;
-  const gearTopInset=compact?25:28;
+  const gearX=frame.left+frame.width*(compact?.94:.955);
+  const gearY=frame.top+frame.height*(compact?.11:.04);
 
-  const top=(frame.top-stageRect.top)+gearTopInset-size/2;
-  const right=(stageRect.right-frame.right)+gearRightInset-size/2;
+  const left=gearX-stageRect.left-size/2;
+  const top=gearY-stageRect.top-size/2;
 
   marker.style.width=size+"px";
   marker.style.height=size+"px";
-  marker.style.left="auto";
+  marker.style.right="auto";
   marker.style.bottom="auto";
+  marker.style.left=Math.max(0,Math.min(stageRect.width-size,left))+"px";
   marker.style.top=Math.max(0,Math.min(stageRect.height-size,top))+"px";
-  marker.style.right=Math.max(0,Math.min(stageRect.width-size,right))+"px";
   return true;
 }
 function positionYouTubeGearArrow(){
