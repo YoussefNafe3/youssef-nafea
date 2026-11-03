@@ -5014,14 +5014,13 @@ function positionYouTubeGearHint(){
   const stageRect=stage.getBoundingClientRect();
   if(!frame.width||!frame.height||!stageRect.width||!stageRect.height) return false;
 
-  /* Measured against the screenshots supplied:
-     desktop gear center ≈ 28 CSS px from the iframe top and 56 px from its right;
-     mobile gear center ≈ 25 CSS px from the iframe top and 23 px from its right.
-     The marker is a child of #stage, so convert viewport coordinates to #stage
-     coordinates and anchor to TOP + RIGHT (the gear is in the upper-right). */
+  /* Calibrated to the supplied desktop + mobile screenshots.
+     Keep the top offset stable; the mobile YouTube UI uses a wider control
+     cluster, so its gear sits closer to the right edge than the previous
+     estimate. Coordinates are converted from viewport space into #stage. */
   const compact=window.matchMedia("(max-width: 640px)").matches || frame.width<=640;
   const size=compact?26:42;
-  const gearRightInset=compact?23:56;
+  const gearRightInset=compact?8:52;
   const gearTopInset=compact?25:28;
 
   const top=(frame.top-stageRect.top)+gearTopInset-size/2;
