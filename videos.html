@@ -2991,7 +2991,7 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
 .youtubeSettingsBtn svg{width:19px;height:19px;display:block;flex:none}
 .playerCard{position:relative}
 #youtubeGearHint{
-  position:absolute;left:0;top:0;width:48px;height:48px;box-sizing:border-box;
+  position:absolute;right:96px;bottom:22px;left:auto;top:auto;width:42px;height:42px;box-sizing:border-box;
   border:2px solid #facc15;border-radius:13px;pointer-events:none;z-index:30;
   opacity:0;transform:scale(.92);
   box-shadow:0 0 0 5px rgba(250,204,21,.18),0 0 22px rgba(250,204,21,.65);
@@ -4969,26 +4969,24 @@ function positionYouTubeGearHint(){
   const stage=$("stage");
   if(!marker||!iframe||!stage) return false;
 
-  /* The marker is a child of #stage, so its coordinates MUST be relative
-     to #stage (not #playerCard). Mixing these coordinate spaces shifted
-     the highlight toward the left by the height of the player header. */
   const frame=iframe.getBoundingClientRect();
   const stageRect=stage.getBoundingClientRect();
   if(!frame.width||!frame.height||!stageRect.width||!stageRect.height) return false;
 
+  /* Anchor from the RIGHT edge explicitly. Do not calculate a left coordinate:
+     the page is RTL, and left-based positioning was the source of the drift.
+     The native settings control is in YouTube's lower-right control cluster. */
   const compact=frame.width<=640;
   const size=compact?46:42;
-  const rightInset=compact?48:52;
-  const centerY=frame.top+(compact?47:28);
-  const centerX=frame.right-rightInset;
-
-  const left=centerX-size/2-stageRect.left;
-  const top=centerY-size/2-stageRect.top;
+  const rightInset=compact?92:96;
+  const bottomInset=compact?20:22;
 
   marker.style.width=size+"px";
   marker.style.height=size+"px";
-  marker.style.left=Math.max(0,Math.min(stageRect.width-size,left))+"px";
-  marker.style.top=Math.max(0,Math.min(stageRect.height-size,top))+"px";
+  marker.style.left="auto";
+  marker.style.top="auto";
+  marker.style.right=Math.max(8,stageRect.right-frame.right+rightInset-size/2)+"px";
+  marker.style.bottom=Math.max(8,stageRect.bottom-frame.bottom+bottomInset-size/2)+"px";
   return true;
 }
 function showNativeYouTubeSettings(){
