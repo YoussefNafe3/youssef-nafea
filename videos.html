@@ -4876,6 +4876,7 @@ async function saveSession(){
   persistLocalProgress();
 
   if (!videoSessionAlive || !state.currentVideoId || !state.currentVideo) return;
+  if (String(state.progressResetBlockedVideoId || '') === String(state.currentVideoId)) return;
 
   let duration = 0;
   let current = 0;
@@ -4919,6 +4920,12 @@ async function saveSession(){
 
     if (error) throw error;
     if (!data || data.success !== true) {
+      if (data?.reason === "progress_was_reset_refresh_required") {
+        state.progressResetBlockedVideoId = String(state.currentVideoId);
+        try { pauseCurrentMedia(); } catch {}
+        toast("تم تصفير تقدم هذا الدرس من الإدارة. حدّث الصفحة قبل استكمال المشاهدة.");
+        return;
+      }
       throw new Error(data?.reason || "VIDEO_SESSION_SAVE_REJECTED");
     }
     state.sessionSaved = true;
