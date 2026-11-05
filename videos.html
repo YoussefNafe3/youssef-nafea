@@ -5882,27 +5882,49 @@ function prepareNativeVideo(
       );
 
 
-      if(
-        state.lastTime > 0
-      ){
-
+      /* Restore a saved position only after the media element has a
+         seekable timeline. A stale/out-of-range position must never leave the
+         player stuck on a black frame: fall back to the beginning safely. */
+      const resumeAt = Math.max(0, Number(state.lastTime) || 0);
+      if(resumeAt > 0 && Number.isFinite(video.duration) && video.duration > 0){
+        const target = Math.min(resumeAt, Math.max(0, video.duration - 0.5));
         try{
-
-          video.currentTime =
-            state.lastTime;
-
-        }catch{}
-
+          if(video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA){
+            await new Promise(resolve=>{
+              const done=()=>{video.removeEventListener("loadeddata",done);video.removeEventListener("error",done);resolve();};
+              video.addEventListener("loadeddata",done,{once:true});
+              video.addEventListener("error",done,{once:true});
+              window.setTimeout(done,5000);
+            });
+          }
+          if(video.seekable && video.seekable.length){
+            video.currentTime=target;
+            await new Promise(resolve=>{
+              const done=()=>{video.removeEventListener("seeked",done);video.removeEventListener("error",done);resolve();};
+              video.addEventListener("seeked",done,{once:true});
+              video.addEventListener("error",done,{once:true});
+              window.setTimeout(done,3500);
+            });
+          }else{
+            video.currentTime=0;
+            state.lastTime=0;
+          }
+        }catch(seekError){
+          console.warn("[Video resume] Seek failed; restarting from zero",seekError);
+          try{video.currentTime=0;}catch{}
+          state.lastTime=0;
+          state.watchedRanges=[];
+          state.completedByEnd=false;
+        }
       }
 
-
       updateProgressUI(
-        video.currentTime,
+        video.currentTime || 0,
         video.duration
       );
 
-      // Save the open event even if playback has not started.
-      await saveSession();
+      // Do not write a watch-progress record just because metadata loaded.
+      // Progress is persisted by actual playback/time updates, not page opening.
 
     },
     {
