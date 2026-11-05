@@ -3141,6 +3141,14 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
   .youtubeGearArrowPath,.youtubeGearArrowOrigin{animation:none}
 }
 @media(prefers-reduced-motion:reduce){.playerCard.youtube-settings-hint #youtubeGearHint{animation:none}}
+
+/* Pre-play YouTube state: intercept the entire top strip, including the
+   future gear location. The measured gear notch is restored on first PLAYING. */
+.stage.yt-preplay .ytBlocker,
+.stage.yt-preplay .ytTitleBlocker{
+  -webkit-clip-path:none!important;
+  clip-path:none!important;
+}
 </style>
 </head>
 
@@ -5052,6 +5060,10 @@ function setYouTubeActive(
   active
 ){
 
+  // Before the first PLAYING event, cover the complete YouTube top strip.
+  // Once playback starts, restore the existing measured gear pass-through notch.
+  document.querySelector(".stage")?.classList.toggle("yt-preplay", !!active);
+
   youtubePlayer.classList.toggle(
     "hidden",
     !active
@@ -5514,6 +5526,8 @@ setCaptionsButton(false, true);
                 YT.PlayerState.PLAYING
               ){
 
+                // Keep the gear accessible only after playback has actually begun.
+                document.querySelector(".stage")?.classList.remove("yt-preplay");
                 startYouTubeProgress();
 }
 
