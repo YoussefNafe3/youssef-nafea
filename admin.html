@@ -575,7 +575,138 @@ window.adminAccessReady=verifyAdminAccess().then(authorized=>{
 </script>
 
 <script>
-(function(){const f=document.getElementById('assignmentAdminForm');if(!f)return;const status=document.getElementById('assignmentAdminStatus'),list=document.getElementById('assignmentAdminList'),btn=document.getElementById('saveAssignmentBtn');let me=null;try{me=JSON.parse(localStorage.getItem('user')||'null')}catch(e){}const dn={saturday:'السبت',sunday:'الأحد',monday:'الإثنين',tuesday:'الثلاثاء',wednesday:'الأربعاء',thursday:'الخميس'},typeNames={recitation:'تسميع',homework:'واجب منزلي',homework_recitation:'واجب وتسميع',worksheet:'ورقة عمل',other:'تكليف'};const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function dateNow(){const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Cairo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day}function groupForDate(date){const day=new Date(date+'T12:00:00').getDay();if([6,0,1].includes(day))return ['saturday','sunday','monday'];if([2,3,4].includes(day))return ['tuesday','wednesday','thursday'];return null}document.getElementById('assignmentDateInput').value=dateNow();async function refresh(){const {data,error}=await client.from('assignments').select('id,title,class_group,group_days,assignment_date,is_active').order('assignment_date',{ascending:false}).limit(60);if(error){list.textContent='تعذر تحميل التكليفات: '+error.message;return}list.innerHTML=(data||[]).map(x=>'<div class="assignment-admin-row"><div class="assignment-admin-row-main"><div class="assignment-admin-badges"><span class="assignment-admin-type">'+esc(typeNames[x.task_type]||'تكليف')+'</span><span class="assignment-admin-date">📅 '+esc(x.assignment_date)+'</span><span class="assignment-admin-status '+(x.is_active?'is-active':'is-hidden')+'">'+(x.is_active?'نشط':'مخفي')+'</span></div>'+(x.title&&x.title.trim()?'<strong class="assignment-admin-title">'+esc(x.title)+'</strong>':'')+(x.description?'<p class="assignment-admin-description">'+esc(x.description)+'</p>':'')+'<small>'+esc(x.class_group==='all'?'كل الصفوف':x.class_group)+' · '+esc((x.group_days||[]).map(y=>dn[y]||y).join('، '))+' · '+(Array.isArray(x.items)?x.items.length:0)+' مهام</small></div><button type="button" class="assignment-admin-toggle" data-id="'+x.id+'" data-active="'+x.is_active+'">'+(x.is_active?'إخفاء التكليف':'إعادة التفعيل')+'</button></div>').join('')||'<small style="color:#94a3b8">لا توجد تكليفات بعد.</small>'}f.addEventListener('submit',async e=>{e.preventDefault();if(me?.role!=='admin'){status.textContent='الحساب الحالي ليس حساب إدارة.';return}const date=document.getElementById('assignmentDateInput').value,groupDays=groupForDate(date);if(!groupDays){status.textContent='الجمعة ليست يومًا ضمن مجموعات الحضور؛ اختار تاريخًا من السبت إلى الخميس.';return}const items=document.getElementById('assignmentItemsInput').value.split(String.fromCharCode(10)).map(x=>x.trim()).filter(Boolean).slice(0,50);if(!items.length){status.textContent='اكتب مهمة واحدة على الأقل في خانة المهام المطلوبة.';return}const payload={title:document.getElementById('assignmentTitleInput').value.trim()||' ',task_type:document.getElementById('assignmentTypeInput').value,class_group:document.getElementById('assignmentClassInput').value,assignment_date:date,group_days:groupDays,description:document.getElementById('assignmentDescriptionInput').value.trim(),items,is_active:true};btn.disabled=true;status.textContent='جاري الحفظ…';const {error}=await client.from('assignments').insert(payload);btn.disabled=false;if(error){status.textContent='فشل الحفظ: '+error.message;return}status.textContent='تم إنشاء التكليف للمجموعة المناسبة ✓';f.reset();document.getElementById('assignmentDateInput').value=dateNow();await refresh()});list.addEventListener('click',async e=>{const b=e.target.closest('button[data-id]');if(!b)return;if(me?.role!=='admin'){status.textContent='الحساب الحالي ليس حساب إدارة.';return}b.disabled=true;const {error}=await client.from('assignments').update({is_active:b.dataset.active!=='true'}).eq('id',b.dataset.id);if(error){status.textContent='تعذر تعديل الحالة: '+error.message;b.disabled=false;return}await refresh()});refresh()})();
+(function(){
+  const form=document.getElementById('assignmentAdminForm');
+  if(!form)return;
+  const status=document.getElementById('assignmentAdminStatus');
+  const list=document.getElementById('assignmentAdminList');
+  const saveButton=document.getElementById('saveAssignmentBtn');
+  const $=id=>document.getElementById(id);
+  const dayNames={saturday:'السبت',sunday:'الأحد',monday:'الإثنين',tuesday:'الثلاثاء',wednesday:'الأربعاء',thursday:'الخميس'};
+  const typeNames={recitation:'تسميع',homework:'واجب منزلي',homework_recitation:'واجب وتسميع',worksheet:'ورقة عمل',other:'تكليف'};
+  const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  function cairoToday(){
+    const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Cairo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
+    return parts.year+'-'+parts.month+'-'+parts.day;
+  }
+  function getGroupDays(date){
+    if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date||''))return null;
+    const day=new Date(date+'T12:00:00').getDay();
+    if([6,0,1].includes(day))return ['saturday','sunday','monday'];
+    if([2,3,4].includes(day))return ['tuesday','wednesday','thursday'];
+    return null;
+  }
+  $('assignmentDateInput').value=cairoToday();
+  async function refresh(){
+    list.textContent='جاري تحديث قائمة التكليفات…';
+    const {data,error}=await client.from('assignments')
+      .select('id,title,description,task_type,class_group,group_days,assignment_date,items,is_active')
+      .order('assignment_date',{ascending:false}).limit(60);
+    if(error){
+      console.error('[Assignments] Admin list load failed:',error);
+      list.textContent='تعذر تحميل التكليفات: '+(error.message||'خطأ غير معروف');
+      return false;
+    }
+    list.innerHTML=(data||[]).map(item=>{
+      const days=Array.isArray(item.group_days)?item.group_days:[];
+      const tasks=Array.isArray(item.items)?item.items:[];
+      return '<div class="assignment-admin-row"><div class="assignment-admin-row-main"><div class="assignment-admin-badges"><span class="assignment-admin-type">'+escapeHtml(typeNames[item.task_type]||'تكليف')+'</span><span class="assignment-admin-date">📅 '+escapeHtml(item.assignment_date)+'</span><span class="assignment-admin-status '+(item.is_active?'is-active':'is-hidden')+'">'+(item.is_active?'نشط':'مخفي')+'</span></div>'+
+        (item.title?'<strong class="assignment-admin-title">'+escapeHtml(item.title)+'</strong>':'')+
+        (item.description?'<p class="assignment-admin-description">'+escapeHtml(item.description)+'</p>':'')+
+        '<small>'+escapeHtml(item.class_group==='all'?'كل الصفوف':item.class_group)+' · '+escapeHtml(days.map(day=>dayNames[day]||day).join('، '))+' · '+tasks.length+' مهام</small></div>'+
+        '<button type="button" class="assignment-admin-toggle" data-id="'+escapeHtml(item.id)+'" data-active="'+String(item.is_active)+'">'+(item.is_active?'إخفاء التكليف':'إعادة التفعيل')+'</button></div>';
+    }).join('')||'<small style="color:#94a3b8">لا توجد تكليفات بعد.</small>';
+    return true;
+  }
+  form.addEventListener('submit',async event=>{
+    event.preventDefault();
+    if(saveButton.disabled)return;
+    try{
+      await window.adminAccessReady;
+      const access=window.adminAccess;
+      if(!access || !(access.is_owner===true || access.permissions?.assignments===true)){
+        status.textContent='حسابك لا يملك صلاحية إدارة التكليفات. حدّث الصفحة وسجّل الدخول مجددًا.';
+        return;
+      }
+      const date=$('assignmentDateInput').value;
+      const groupDays=getGroupDays(date);
+      if(!groupDays){
+        status.textContent='اختار تاريخًا صحيحًا من السبت إلى الخميس؛ الجمعة ليست ضمن مجموعات الحضور.';
+        return;
+      }
+      const rawTitle=$('assignmentTitleInput').value.trim();
+      const title=rawTitle||('تكليف يوم '+date);
+      if(title.length<2||title.length>180){
+        status.textContent='عنوان التكليف يجب أن يكون من 2 إلى 180 حرفًا.';
+        return;
+      }
+      const items=$('assignmentItemsInput').value.split(/\\r?\\n/).map(value=>value.trim()).filter(Boolean).slice(0,50);
+      if(!items.length){
+        status.textContent='اكتب مهمة واحدة على الأقل في خانة المهام المطلوبة.';
+        return;
+      }
+      const taskType=$('assignmentTypeInput').value;
+      if(!Object.prototype.hasOwnProperty.call(typeNames,taskType)){
+        status.textContent='نوع التكليف المحدد غير صالح. اختر نوعًا من القائمة.';
+        return;
+      }
+      const payload={
+        title,
+        task_type:taskType,
+        class_group:$('assignmentClassInput').value,
+        assignment_date:date,
+        group_days:groupDays,
+        description:$('assignmentDescriptionInput').value.trim(),
+        items,
+        is_active:true
+      };
+      saveButton.disabled=true;
+      status.textContent='جاري حفظ التكليف…';
+      const {data,error}=await client.from('assignments').insert(payload).select('id').single();
+      if(error){
+        console.error('[Assignments] Create failed:',{code:error.code,message:error.message,details:error.details,hint:error.hint});
+        status.textContent='تعذر حفظ التكليف: '+(error.message||'خطأ غير معروف')+(error.code?' ('+error.code+')':'');
+        return;
+      }
+      status.textContent='تم إنشاء التكليف بنجاح ✓';
+      form.reset();
+      $('assignmentDateInput').value=cairoToday();
+      await refresh();
+    }catch(error){
+      console.error('[Assignments] Unexpected create error:',error);
+      status.textContent='حدث خطأ غير متوقع أثناء الحفظ. راجع الاتصال ثم حاول مرة أخرى.';
+    }finally{
+      saveButton.disabled=false;
+    }
+  });
+  list.addEventListener('click',async event=>{
+    const button=event.target.closest('button[data-id]');
+    if(!button||button.disabled)return;
+    try{
+      await window.adminAccessReady;
+      const access=window.adminAccess;
+      if(!access || !(access.is_owner===true || access.permissions?.assignments===true)){
+        status.textContent='حسابك لا يملك صلاحية إدارة التكليفات.';
+        return;
+      }
+      button.disabled=true;
+      const {error}=await client.from('assignments')
+        .update({is_active:button.dataset.active!=='true'}).eq('id',button.dataset.id);
+      if(error){
+        console.error('[Assignments] Status update failed:',error);
+        status.textContent='تعذر تعديل حالة التكليف: '+error.message;
+        return;
+      }
+      await refresh();
+    }catch(error){
+      console.error('[Assignments] Status update exception:',error);
+      status.textContent='حدث خطأ أثناء تعديل حالة التكليف.';
+    }finally{
+      button.disabled=false;
+    }
+  });
+  refresh();
+})();
 </script>
 <script>
 (function(){
