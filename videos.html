@@ -3819,7 +3819,7 @@ async function verifyPlatformSession(){
       clearInterval(videoSessionHeartbeat);
 
       try{
-        await client.auth.signOut();
+        await client.auth.signOut({scope:"local"});
       }catch(e){
         console.warn("Auth sign-out after invalid session failed:", e);
       }
@@ -6531,7 +6531,7 @@ if (logoutButton) logoutButton.addEventListener(
 
       try{
 
-        await client.auth.signOut();
+        await client.auth.signOut({scope:"local"});
 
       }catch(e){
 
@@ -7309,7 +7309,7 @@ async function forceLogoutForCapture(reason = "capture") {
     console.warn("Could not release platform session after capture attempt", e);
   }
 
-  try { await client.auth.signOut(); } catch (e) {
+  try { await client.auth.signOut({scope:"local"}); } catch (e) {
     console.warn("Could not sign out auth session after capture attempt", e);
   }
 
