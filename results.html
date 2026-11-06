@@ -2324,6 +2324,22 @@ function answerKeyLabel(q){
   return choice?String(choice.text||choice.label||choice.id):key;
  }).join("، ");
 }
+function answerReleaseDate(value){
+ try{return new Intl.DateTimeFormat("ar-EG",{dateStyle:"full",timeStyle:"short",timeZone:"Africa/Cairo"}).format(new Date(value));}
+ catch(_){return new Date(value).toLocaleString("ar-EG");}
+}
+function showAnswerReleaseNotice(button,data){
+ const card=button?.closest(".result")||button?.parentElement;
+ if(!card)return;
+ let notice=card.querySelector(".answer-release-notice");
+ if(!notice){notice=document.createElement("div");notice.className="answer-release-notice";notice.setAttribute("role","status");notice.style.cssText="padding:14px 16px;margin-top:12px;border:1px solid rgba(212,175,55,.45);border-radius:14px;background:rgba(212,175,55,.08);line-height:1.9";button.insertAdjacentElement("afterend",notice);}
+ const reason=data?.reason;let title="الإجابات النموذجية لم تُتح بعد",message="";
+ if(reason==="window_still_open"&&data.available_at){message="ستظهر الإجابات النموذجية بعد انتهاء فترة إتاحة الامتحان لجميع الطلاب، يوم "+answerReleaseDate(data.available_at)+".";}
+ else if(reason==="no_availability_end"){title="موعد إتاحة الإجابات غير محدد";message="لم يحدد الامتحان تاريخ انتهاء فترة السماح بعد. يرجى التواصل مع الدكتور، ولن تُعرض الإجابات قبل تحديد الموعد وانتهاء الفترة.";}
+ else if(reason==="not_submitted"){title="لم يتم تأكيد تسليم المحاولة";message="لن تتاح الإجابات إلا بعد تأكيد تسليم الامتحان.";}
+ else{title="تعذر التحقق من إتاحة الإجابات";message="تأكد من تسجيل الدخول بالحساب الذي أدى الامتحان، ثم حاول مرة أخرى.";}
+ notice.innerHTML="<strong style=\"display:block;margin-bottom:5px\">"+title+"</strong><span>"+message+"</span>";
+}
 async function openOnlineAnswerKey(attemptId,button){
  if(!attemptId)return;
  const oldText=button?.textContent;
@@ -2332,12 +2348,7 @@ async function openOnlineAnswerKey(attemptId,button){
   const {data,error}=await client.rpc("student_get_online_exam_answer_key",{p_attempt_id:attemptId});
   if(error)throw error;
   if(!data||data.success!==true){
-   const reason=data?.reason;
-   if(reason==="not_available_yet"||reason==="not_submitted"){
-    const available=data?.available_at?new Date(data.available_at).toLocaleString("ar-EG"):"بعد انتهاء وقت الامتحان";
-    alert("يرجى الانتظار حتى ينتهي الوقت المحدد للامتحان.\nسيكون عرض الإجابات متاحًا بعد: "+available);
-   }else if(reason==="attempt_not_found")alert("تعذر العثور على محاولة الامتحان الخاصة بك.");
-   else alert("تعذر عرض الإجابات حاليًا. حدّث الصفحة وحاول مرة أخرى.");
+   showAnswerReleaseNotice(button,data);
    return;
   }
   const questions=Array.isArray(data.questions)?data.questions:[];
