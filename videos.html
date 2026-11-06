@@ -5960,7 +5960,38 @@ function prepareNativeVideo(
    LOAD VIDEOS
 ========================================================= */
 
+async function resolveVideoStudentClass(){
+  const {data:studentId,error:idError}=await client.rpc("current_student_id");
+  if(idError||!studentId)throw new Error("تعذر التحقق من حساب الطالب قبل تحميل الفيديوهات.");
+  const {data:profile,error:profileError}=await client.from("students").select("id,role,class_group").eq("id",studentId).maybeSingle();
+  if(profileError||!profile)throw new Error("تعذر قراءة الصف الدراسي المسجل لهذا الحساب.");
+  if(String(profile.role||"student").toLowerCase()==="admin")return {isAdmin:true,allowed:["all","first_science","first_sat_tue","first_sun_wed","first_mon_thu","third_biology","third_geology","third_secondary"]};
+  const group=String(profile.class_group||"").trim();
+  const first=["first_science","first_sat_tue","first_sun_wed","first_mon_thu"];
+  const third=["third_biology","third_geology","third_secondary"];
+  const allowed=first.includes(group)?first:third.includes(group)?third:group? [group]:[];
+  user.class_group=group;
+  user.id=profile.id;
+  try{const cached=JSON.parse(localStorage.getItem("user")||"{}");localStorage.setItem("user",JSON.stringify({...cached,id:profile.id,class_group:group,role:profile.role}));}catch(e){}
+  return {isAdmin:false,allowed:["all",...allowed]};
+}
 async function loadVideos(){
+
+  // Resolve the class from the authenticated database profile; never trust cached localStorage class data.
+  let videoAccess;
+  try{
+    videoAccess=await resolveVideoStudentClass();
+  }catch(accessError){
+    console.error("[Videos] Student class verification failed:",accessError);
+    explanationVideoList.innerHTML='<div class="emptyItem">تعذر التحقق من الصف الدراسي. سجّل الدخول مجددًا أو تواصل مع الإدارة.</div>';
+    homeworkVideoList.innerHTML='<div class="emptyItem">تعذر التحقق من الصف الدراسي. سجّل الدخول مجددًا أو تواصل مع الإدارة.</div>';
+    return;
+  }
+  if(!videoAccess.allowed.length){
+    explanationVideoList.innerHTML='<div class="emptyItem">لا يوجد صف دراسي محدد لهذا الحساب. تواصل مع الإدارة.</div>';
+    homeworkVideoList.innerHTML='<div class="emptyItem">لا يوجد صف دراسي محدد لهذا الحساب. تواصل مع الإدارة.</div>';
+    return;
+  }
 
   // Save the moment this student opened the video library. Videos uploaded
   // after the previous visit (but before this one) are highlighted once.
@@ -5991,6 +6022,7 @@ async function loadVideos(){
         .select(
           "id,title,url,class_group,is_premium,created_at,sort_order,video_category"
         )
+        .in("class_group", videoAccess.allowed)
         .order(
           "sort_order",
           {
