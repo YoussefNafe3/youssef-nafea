@@ -52,6 +52,31 @@ const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const $=id=>document.getElementById(id);
 const user=(()=>{try{return JSON.parse(localStorage.getItem('user')||'null')}catch{return null}})();
 let allFiles=[];
+let studentSessionTimer=null;
+async function verifyStudentPlatformSession(){
+ const sid=localStorage.getItem('platform_session_id');
+ if(!sid){
+  try{await client.auth.signOut({scope:'local'})}catch(_){}
+  localStorage.removeItem('user');
+  window.location.replace('login.html?sessionEnded=1');
+  return false;
+ }
+ try{
+  const {data,error}=await client.rpc('refresh_student_session',{p_session_id:sid});
+  if(error){console.warn('Files page session verification temporarily unavailable:',error);return true;}
+  if(data?.success===true)return true;
+  try{await client.auth.signOut({scope:'local'})}catch(e){console.warn('Files page local sign-out failed:',e)}
+  localStorage.removeItem('platform_session_id');
+  localStorage.removeItem('user');
+  window.location.replace('login.html?sessionEnded=1');
+  return false;
+ }catch(e){console.warn('Files page session check skipped:',e);return true;}
+}
+function startStudentSessionHeartbeat(){
+ if(studentSessionTimer)return;
+ studentSessionTimer=setInterval(verifyStudentPlatformSession,30000);
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')verifyStudentPlatformSession()});
+}
 $('year').textContent=new Date().getFullYear();
 function showToast(text){$('toast').textContent=text;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),3500)}
 function textNode(tag,text,className){const el=document.createElement(tag);if(className)el.className=className;el.textContent=text||'';return el}
@@ -80,6 +105,8 @@ function render(){
 }
 async function loadFiles(){
  if(!user){$('filesContainer').replaceChildren();const empty=textNode('div','','empty');empty.append(textNode('div','🔐','empty-icon'),textNode('h3','سجّل الدخول لعرض مكتبتك'),textNode('p','المصادر التعليمية بتظهر حسب المجموعة الدراسية المرتبطة بحسابك.'));const a=textNode('a','تسجيل الدخول','btn btn-primary');a.href='login.html';a.style.marginTop='16px';empty.append(a);$('filesContainer').append(empty);$('resultsCount').textContent='بانتظار تسجيل الدخول';return}
+ if(!await verifyStudentPlatformSession())return;
+ startStudentSessionHeartbeat();
  /* Refresh the canonical class group from students; localStorage may be stale after an admin changes a student's group. */
  let classGroup=String(user.class_group||'').trim();
  if(user.id){
