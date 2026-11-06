@@ -107,25 +107,53 @@ function showAnswerReleaseNotice(box,data){
  box.hidden=false;
 }
 async function showSubmittedAnswerKey(attemptId){
- const button=$("showAnswerKeyAfterSubmit"),box=$("postSubmitAnswerKey");if(!attemptId||!box)return;
- button.disabled=true;const label=button.textContent;button.textContent="جاري التحقق...";
+ const button=$("showAnswerKeyAfterSubmit"),box=$("postSubmitAnswerKey");
+ if(!attemptId||!box)return;
+ button.disabled=true;
+ const label=button.textContent;
+ button.textContent="جاري التحقق...";
  try{
-  const {data,error}=await db.rpc("student_get_online_exam_answer_key",{p_attempt_id:attemptId});
-  if(error)throw error;
+  const response=await db.rpc("student_get_online_exam_answer_key",{p_attempt_id:attemptId});
+  if(response.error)throw response.error;
+  const data=response.data;
   if(!data||data.success!==true){
    showAnswerReleaseNotice(box,data);
    box.scrollIntoView({behavior:"smooth",block:"nearest"});
    return;
   }
   const safe=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-  const values=v=>v==null?[]:Array.isArray(v)?v:typeof v==="object"?(v.answer!=null?(Array.isArray(v.answer)?v.answer:[v.answer]):v.id!=null?[v.id]:v.value!=null?[v.value]:Object.values(v)):[v];
-  box.innerHTML='<h3 style="margin:0 0 10px">الإجابات النموذجية</h3>'+((data.questions||[]).map((q,i)=>{
-   const answer=values(q.correct_answer).map(v=>{const c=(q.choices||[]).find(x=>String(x.id)===String(v));return c?(c.text||c.label||c.id):typeof v==="object"?JSON.stringify(v):String(v);}).join("، ")||"لا توجد إجابة نموذجية محفوظة";
-   return '<article class="post-answer-question"><small>السؤال '+(i+1)+' · '+safe(q.points||1)+' درجة</small><h3>'+safe(q.prompt)+'</h3>'+(q.image_url?'<img src="'+safe(q.image_url)+'" alt="'+safe(q.image_alt||"صورة السؤال")+'" style="display:block;max-width:100%;max-height:220px;object-fit:contain;margin:8px auto;background:#fff;border-radius:8px">':"")+'<div class="post-answer-correct"><strong>الإجابة النموذجية:</strong> '+safe(answer)+'</div>'+(q.explanation?'<p class="post-answer-explain"><strong>التفسير:</strong> '+safe(q.explanation)+'</p>':"")+'</article>';
-  })).join("")||'<p>لا توجد أسئلة لعرضها.</p>');
-  box.hidden=false;box.scrollIntoView({behavior:"smooth",block:"start"});
- }catch(e){console.error("Answer key load:",e);box.innerHTML='<div role="alert" style="padding:14px;border-radius:12px;background:rgba(220,70,70,.1);line-height:1.8">تعذر تحميل الإجابات النموذجية حاليًا. حاول مرة أخرى بعد قليل.</div>';box.hidden=false;}
- finally{button.disabled=false;button.textContent=label;}
+  const values=v=>{
+   if(v==null)return [];
+   if(Array.isArray(v))return v;
+   if(typeof v==="object"){
+    if(v.answer!=null)return Array.isArray(v.answer)?v.answer:[v.answer];
+    if(v.id!=null)return [v.id];
+    if(v.value!=null)return [v.value];
+    return Object.values(v);
+   }
+   return [v];
+  };
+  const items=Array.isArray(data.questions)?data.questions:[];
+  const rendered=items.map((q,i)=>{
+   const answer=values(q.correct_answer).map(v=>{
+    const choice=(q.choices||[]).find(x=>String(x.id)===String(v));
+    return choice?(choice.text||choice.label||choice.id):(typeof v==="object"?JSON.stringify(v):String(v));
+   }).join("، ")||"لا توجد إجابة نموذجية محفوظة";
+   const image=q.image_url?'<img src="'+safe(q.image_url)+'" alt="'+safe(q.image_alt||"صورة السؤال")+'" style="display:block;max-width:100%;max-height:220px;object-fit:contain;margin:8px auto;background:#fff;border-radius:8px">':"";
+   const explanation=q.explanation?'<p class="post-answer-explain"><strong>التفسير:</strong> '+safe(q.explanation)+'</p>':"";
+   return '<article class="post-answer-question"><small>السؤال '+(i+1)+' · '+safe(q.points||1)+' درجة</small><h3>'+safe(q.prompt)+'</h3>'+image+'<div class="post-answer-correct"><strong>الإجابة النموذجية:</strong> '+safe(answer)+'</div>'+explanation+'</article>';
+  }).join("");
+  box.innerHTML='<h3 style="margin:0 0 10px">الإجابات النموذجية</h3>'+(rendered||'<p>لا توجد أسئلة لعرضها.</p>');
+  box.hidden=false;
+  box.scrollIntoView({behavior:"smooth",block:"start"});
+ }catch(e){
+  console.error("Answer key load:",e);
+  box.innerHTML='<div role="alert" style="padding:14px;border-radius:12px;background:rgba(220,70,70,.1);line-height:1.8">تعذر تحميل الإجابات النموذجية حاليًا. حاول مرة أخرى بعد قليل.</div>';
+  box.hidden=false;
+ }finally{
+  button.disabled=false;
+  button.textContent=label;
+ }
 }
 function openImage(u){$("modalImg").src=u;$("modal").classList.add("open");}function closeImage(){$("modal").classList.remove("open");$("modalImg").removeAttribute("src");}
 $("prev").onclick=()=>go(current-1);$("next").onclick=()=>current===questions.length-1?go(0):go(current+1);$("submit").onclick=askSubmit;$("confirmYes").onclick=()=>submit(false);$("confirmNo").onclick=()=>$("confirm").classList.remove("open");$("reload").onclick=()=>loadExams();$("theme").onclick=()=>setTheme(theme==="dark"?"light":"dark");$("closeImg").onclick=closeImage;$("modal").onclick=e=>{if(e.target===$("modal"))closeImage();};document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeImage();$("confirm").classList.remove("open");}});installCheatingGuards();
