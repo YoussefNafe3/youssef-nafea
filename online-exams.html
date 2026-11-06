@@ -28,7 +28,35 @@ function watchAdminReopen(attemptId){
   }catch(e){console.warn("Could not verify admin exam reopen yet",e);}
  },5000);
 }
-async function init(){let s=await db.auth.getSession();if(s.error)throw s.error;if(!s.data.session){const refreshed=await db.auth.refreshSession();if(!refreshed.error&&refreshed.data.session)s=await db.auth.getSession();}if(!s.data.session){$("cards").innerHTML='<div class="empty" style="grid-column:1/-1"><strong>انتهت جلسة الدخول أو لم يتم العثور عليها.</strong><br>افتح المنصة وسجّل الدخول من جديد، ثم ارجع إلى الامتحانات.<br><a class="btn primary" style="margin-top:12px" href="login.html">تسجيل الدخول والمتابعة</a></div>';return;}accessToken=s.data.session.access_token;const who=await db.rpc("current_student_id");if(who.error||!who.data)throw Error("تعذر ربط جلسة الدخول بسجل الطالب. سجّل الخروج ثم ادخل مرة أخرى.");const r=await db.from("students").select("id,full_name,class_group,role").eq("id",who.data).maybeSingle();if(r.error||!r.data)throw Error("تعذر التحقق من حساب الطالب. سجّل الخروج ثم ادخل مرة أخرى.");if(r.data.role==="admin"){location.replace("admin-online-exams.html");return;}user=r.data;let t="dark";try{t=localStorage.getItem("student-dashboard-theme")==="light"?"light":"dark"}catch(e){}setTheme(t);let pending=null;try{pending=JSON.parse(localStorage.getItem("online_exam_violation_pending")||"null")}catch(e){}if(pending&&pending.attempt_id){const check=await db.from("online_exam_attempts").select("id,status,cheating_detected,admin_reopened_at").eq("id",pending.attempt_id).maybeSingle();if(!check.error&&(!check.data||check.data.admin_reopened_at)){try{localStorage.removeItem("online_exam_violation_pending")}catch(e){}pending=null;}else if(check.error){$("cards").innerHTML='<div class="empty" style="grid-column:1/-1"><strong>تعذر التحقق من حالة محاولة الامتحان.</strong><br>تأكد من اتصال الإنترنت ثم حدّث الصفحة؛ لن نغيّر حالة القفل قبل التحقق من قاعدة البيانات.</div>';return;}else{attempt={attempt_id:pending.attempt_id,exam_id:pending.exam_id};showCheatingLock(false);await retryPendingCheating();watchAdminReopen(pending.attempt_id);return;}}await loadExams();}
+let platformSessionHeartbeat=null;
+async function verifyPlatformSession(){
+ const sid=localStorage.getItem("platform_session_id");
+ if(!sid){
+  try{await db.auth.signOut({scope:"local"});}catch(_){}
+  localStorage.removeItem("user");
+  location.replace("login.html?sessionEnded=1");
+  return false;
+ }
+ try{
+  const {data,error}=await db.rpc("refresh_student_session",{p_session_id:sid});
+  if(error){console.warn("Student session verification temporarily unavailable:",error);return true;}
+  if(data?.success===true)return true;
+  try{await db.auth.signOut({scope:"local"});}catch(e){console.warn("Local sign-out failed:",e);}
+  localStorage.removeItem("platform_session_id");
+  localStorage.removeItem("user");
+  location.replace("login.html?sessionEnded=1");
+  return false;
+ }catch(e){console.warn("Student session check skipped:",e);return true;}
+}
+function startPlatformSessionHeartbeat(){
+ if(platformSessionHeartbeat)return;
+ platformSessionHeartbeat=setInterval(()=>verifyPlatformSession(),30000);
+ document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verifyPlatformSession();});
+}
+async function init(){let s=await db.auth.getSession();if(s.error)throw s.error;if(!s.data.session){const refreshed=await db.auth.refreshSession();if(!refreshed.error&&refreshed.data.session)s=await db.auth.getSession();}if(!s.data.session){$("cards").innerHTML='<div class="empty" style="grid-column:1/-1"><strong>انتهت جلسة الدخول أو لم يتم العثور عليها.</strong><br>افتح المنصة وسجّل الدخول من جديد، ثم ارجع إلى الامتحانات.<br><a class="btn primary" style="margin-top:12px" href="login.html">تسجيل الدخول والمتابعة</a></div>';return;}accessToken=s.data.session.access_token;const who=await db.rpc("current_student_id");if(who.error||!who.data)throw Error("تعذر ربط جلسة الدخول بسجل الطالب. سجّل الخروج ثم ادخل مرة أخرى.");const r=await db.from("students").select("id,full_name,class_group,role").eq("id",who.data).maybeSingle();if(r.error||!r.data)throw Error("تعذر التحقق من حساب الطالب. سجّل الخروج ثم ادخل مرة أخرى.");if(r.data.role==="admin"){location.replace("admin-online-exams.html");return;}
+if(!await verifyPlatformSession())return;
+startPlatformSessionHeartbeat();
+user=r.data;let t="dark";try{t=localStorage.getItem("student-dashboard-theme")==="light"?"light":"dark"}catch(e){}setTheme(t);let pending=null;try{pending=JSON.parse(localStorage.getItem("online_exam_violation_pending")||"null")}catch(e){}if(pending&&pending.attempt_id){const check=await db.from("online_exam_attempts").select("id,status,cheating_detected,admin_reopened_at").eq("id",pending.attempt_id).maybeSingle();if(!check.error&&(!check.data||check.data.admin_reopened_at)){try{localStorage.removeItem("online_exam_violation_pending")}catch(e){}pending=null;}else if(check.error){$("cards").innerHTML='<div class="empty" style="grid-column:1/-1"><strong>تعذر التحقق من حالة محاولة الامتحان.</strong><br>تأكد من اتصال الإنترنت ثم حدّث الصفحة؛ لن نغيّر حالة القفل قبل التحقق من قاعدة البيانات.</div>';return;}else{attempt={attempt_id:pending.attempt_id,exam_id:pending.exam_id};showCheatingLock(false);await retryPendingCheating();watchAdminReopen(pending.attempt_id);return;}}await loadExams();}
 async function loadExams(){
  const host=$("cards");
  host.innerHTML='<div class="empty" role="status">جاري تحميل الامتحانات...</div>';
