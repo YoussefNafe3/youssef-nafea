@@ -84,6 +84,28 @@ function installCheatingGuards(){
 function updateTimer(){if(!deadline||!attempt)return;const left=Math.max(0,deadline-Date.now()),sec=Math.ceil(left/1000);$("timer").textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");$("timerBox").classList.toggle("urgent",left<=300000);if(left<=0&&!expired&&!submitting){expired=true;clearInterval(timerId);$("confirm").classList.remove("open");submit(true);}}
 function askSubmit(){if(expired){submit(true);return;}const n=questions.filter(q=>q.is_required&&!isAnswered(q)).length;$("confirmText").textContent=n?"هناك "+n+" سؤال مطلوب لم تتم الإجابة عنه. هل تريد التسليم؟":"تمت الإجابة عن "+questions.filter(isAnswered).length+" من "+questions.length+" سؤال. هل تريد التسليم الآن؟";$("confirm").classList.add("open");}
 async function submit(auto){if(submitting||!attempt)return;submitting=true;clearInterval(timerId);$("submit").disabled=true;$("confirmYes").disabled=true;$("confirm").classList.remove("open");setSave(auto?"انتهى الوقت، جارٍ التسليم...":"جارٍ حفظ الإجابات وتسليم الامتحان...");try{const savesOk=await flush();if(!savesOk&&!auto)throw Error("تعذر حفظ آخر إجاباتك؛ تحقق من الإنترنت وحاول التسليم مرة أخرى.");const r=await db.rpc("submit_online_exam_attempt",{p_attempt_id:attempt.attempt_id});if(r.error)throw r.error;if(!r.data||!r.data.success)throw Error(r.data&&r.data.reason||"تعذر التسليم");$("exam").classList.remove("active");document.body.classList.remove("exam-mode");$("result").hidden=false;const pending=r.data.status==="pending_review";$("resultTitle").textContent=auto?"انتهى الوقت وتم تسليم الامتحان":"تم تسليم الامتحان بنجاح";$("resultText").textContent=pending?"تم حفظ إجاباتك. سيُراجع الدكتور الأسئلة الكتابية قبل اعتماد النتيجة النهائية.":"تم حفظ الإجابات وتصحيح الأسئلة الموضوعية."; $("score").innerHTML='<span class="score-fraction"><span class="score-numerator">'+esc(r.data.score)+'</span><span class="score-divider"></span><span class="score-denominator">'+esc(r.data.total_points)+'</span></span><small class="score-caption">'+(pending?"الدرجة الأولية — بانتظار التصحيح اليدوي":"الدرجة الأولية من الدرجة الكلية")+'</small>';$("resultStatus").textContent=pending?"بانتظار التصحيح النهائي":"تم التصحيح الآلي";$("showAnswerKeyAfterSubmit").dataset.attemptId=attempt.attempt_id;$("showAnswerKeyAfterSubmit").onclick=()=>showSubmittedAnswerKey(attempt.attempt_id);await loadExams();window.scrollTo(0,0);}catch(e){submitting=false;$("submit").disabled=false;$("confirmYes").disabled=false;setSave("لم يتم تأكيد التسليم. حاول مرة أخرى.","bad");alert("تعذر تسليم الامتحان: "+e.message+"\nحاول مرة أخرى؛ إجاباتك المحفوظة مرتبطة بالمحاولة.");if(Date.now()>=deadline){expired=true;setTimeout(()=>submit(true),1200);}}}
+function answerReleaseDate(value){
+ try{return new Intl.DateTimeFormat("ar-EG",{dateStyle:"full",timeStyle:"short",timeZone:"Africa/Cairo"}).format(new Date(value));}
+ catch(_){return new Date(value).toLocaleString("ar-EG");}
+}
+function showAnswerReleaseNotice(box,data){
+ const reason=data?.reason;
+ let title="الإجابات النموذجية لم تُتح بعد",message="";
+ if(reason==="window_still_open"&&data.available_at){
+  message="ستظهر الإجابات النموذجية بعد انتهاء فترة إتاحة الامتحان لجميع الطلاب، يوم "+answerReleaseDate(data.available_at)+".";
+ }else if(reason==="no_availability_end"){
+  title="موعد إتاحة الإجابات غير محدد";
+  message="لم يحدد الامتحان تاريخ انتهاء فترة السماح بعد. يرجى التواصل مع الدكتور، ولن تُعرض الإجابات قبل تحديد الموعد وانتهاء الفترة.";
+ }else if(reason==="not_submitted"){
+  title="لم يتم تأكيد تسليم المحاولة";
+  message="لن تتاح الإجابات إلا بعد تأكيد تسليم الامتحان.";
+ }else{
+  title="تعذر التحقق من إتاحة الإجابات";
+  message="تأكد من تسجيل الدخول بالحساب الذي أدى الامتحان، ثم حاول مرة أخرى.";
+ }
+ box.innerHTML='<div role="status" style="padding:16px;border:1px solid rgba(212,175,55,.45);border-radius:14px;background:rgba(212,175,55,.08);margin-top:14px;text-align:right"><strong style="display:block;margin-bottom:7px">'+title+'</strong><p style="margin:0;line-height:1.9">'+message+'</p></div>';
+ box.hidden=false;
+}
 async function showSubmittedAnswerKey(attemptId){
  const button=$("showAnswerKeyAfterSubmit"),box=$("postSubmitAnswerKey");if(!attemptId||!box)return;
  button.disabled=true;const label=button.textContent;button.textContent="جاري التحقق...";
@@ -91,10 +113,8 @@ async function showSubmittedAnswerKey(attemptId){
   const {data,error}=await db.rpc("student_get_online_exam_answer_key",{p_attempt_id:attemptId});
   if(error)throw error;
   if(!data||data.success!==true){
-   if(data?.reason==="not_available_yet"||data?.reason==="not_submitted"){
-    const when=data.available_at?new Date(data.available_at).toLocaleString("ar-EG"):"بعد انتهاء الوقت";
-    alert("يرجى الانتظار حتى ينتهي الوقت المحدد للامتحان.\nسيكون عرض الإجابات متاحًا بعد: "+when);
-   }else alert("تعذر عرض الإجابات. تأكد من أنك تستخدم حسابك الذي أدى الامتحان.");
+   showAnswerReleaseNotice(box,data);
+   box.scrollIntoView({behavior:"smooth",block:"nearest"});
    return;
   }
   const safe=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
@@ -104,7 +124,7 @@ async function showSubmittedAnswerKey(attemptId){
    return '<article class="post-answer-question"><small>السؤال '+(i+1)+' · '+safe(q.points||1)+' درجة</small><h3>'+safe(q.prompt)+'</h3>'+(q.image_url?'<img src="'+safe(q.image_url)+'" alt="'+safe(q.image_alt||"صورة السؤال")+'" style="display:block;max-width:100%;max-height:220px;object-fit:contain;margin:8px auto;background:#fff;border-radius:8px">':"")+'<div class="post-answer-correct"><strong>الإجابة النموذجية:</strong> '+safe(answer)+'</div>'+(q.explanation?'<p class="post-answer-explain"><strong>التفسير:</strong> '+safe(q.explanation)+'</p>':"")+'</article>';
   })).join("")||'<p>لا توجد أسئلة لعرضها.</p>');
   box.hidden=false;box.scrollIntoView({behavior:"smooth",block:"start"});
- }catch(e){console.error("Answer key load:",e);alert("تعذر تحميل الإجابات النموذجية: "+(e.message||"خطأ غير متوقع"));}
+ }catch(e){console.error("Answer key load:",e);box.innerHTML='<div role="alert" style="padding:14px;border-radius:12px;background:rgba(220,70,70,.1);line-height:1.8">تعذر تحميل الإجابات النموذجية حاليًا. حاول مرة أخرى بعد قليل.</div>';box.hidden=false;}
  finally{button.disabled=false;button.textContent=label;}
 }
 function openImage(u){$("modalImg").src=u;$("modal").classList.add("open");}function closeImage(){$("modal").classList.remove("open");$("modalImg").removeAttribute("src");}
