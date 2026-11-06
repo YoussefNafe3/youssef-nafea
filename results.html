@@ -1852,6 +1852,26 @@ throw new Error(
 const studentId =
 user.id;
 
+const studentSessionHeartbeat=(()=> {
+ let timer=null;
+ async function check(){
+  if(String(user?.role||"").trim().toLowerCase()==="admin")return true;
+  const sid=localStorage.getItem("platform_session_id");
+  if(!sid){try{await client.auth.signOut({scope:"local"});}catch(_){}localStorage.removeItem("user");window.location.replace("login.html?sessionEnded=1");return false;}
+  try{
+   const {data,error}=await client.rpc("refresh_student_session",{p_session_id:sid});
+   if(error){console.warn("Results session check temporarily unavailable:",error);return true;}
+   if(data?.success===true)return true;
+   try{await client.auth.signOut({scope:"local"});}catch(e){console.warn("Results local sign-out failed:",e);}
+   localStorage.removeItem("platform_session_id");localStorage.removeItem("user");
+   window.location.replace("login.html?sessionEnded=1");return false;
+  }catch(e){console.warn("Results session check skipped:",e);return true;}
+ }
+ function start(){if(String(user?.role||"").trim().toLowerCase()==="admin"||timer)return;timer=setInterval(check,30000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")check();});}
+ return {check,start};
+})();
+
+
 
 document.getElementById(
 "welcomeName"
@@ -3261,6 +3281,8 @@ char =>
 
 async function init(){
 
+if(!await studentSessionHeartbeat.check())return;
+studentSessionHeartbeat.start();
 await loadStudentAvatar();
 
 await Promise.all([
