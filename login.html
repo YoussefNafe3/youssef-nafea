@@ -474,7 +474,7 @@ if(sessionError){
 
 console.error(sessionError);
 
-await client.auth.signOut();
+await client.auth.signOut({scope:"local"});
 
 msg.innerText =
 "تعذر إنشاء جلسة الدخول، حاول مرة أخرى";
@@ -495,16 +495,17 @@ if(
 !sessionResult.success
 ){
 
-await client.auth.signOut();
+await client.auth.signOut({scope:"local"});
 
 
 if(
-sessionResult?.reason ===
-"already_active"
+sessionResult?.reason === "already_active" ||
+sessionResult?.reason === "device_limit_reached"
 ){
 
+const limit=Number(sessionResult?.device_limit||1);
 msg.innerHTML =
-"🔒 <br>هذا الحساب مستخدم حاليًا على جهاز آخر.<br>يرجى تسجيل الخروج من الجهاز السابق أولًا.";
+"🔒 <br>وصل الحساب إلى الحد المسموح به من الأجهزة ("+limit+").<br>يرجى تسجيل الخروج من الجهاز السابق أو التواصل مع الإدارة لفتح جهاز إضافي مؤقتًا.";
 
 }else{
 
