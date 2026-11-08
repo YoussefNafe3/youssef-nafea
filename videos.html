@@ -3149,6 +3149,92 @@ html[data-theme="light"] .playerControls .controlRowPrimary .fullscreenBtn{
   -webkit-clip-path:none!important;
   clip-path:none!important;
 }
+
+
+/* Fullscreen: keep every playback control grouped on the right and achievement stars on the left. */
+.playerCard:fullscreen .playerControls,
+.playerCard:-webkit-full-screen .playerControls{
+  display:flex!important;
+  flex-direction:row!important;
+  direction:rtl!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:clamp(8px,1.5vw,20px)!important;
+  width:100%!important;
+  min-height:58px!important;
+  padding:8px clamp(10px,2vw,24px)!important;
+  box-sizing:border-box!important;
+}
+.playerCard:fullscreen .playerControls .controlRowPrimary,
+.playerCard:-webkit-full-screen .playerControls .controlRowPrimary{
+  order:1!important;
+  display:flex!important;
+  flex:0 1 auto!important;
+  width:auto!important;
+  max-width:calc(100% - 150px)!important;
+  min-width:0!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:clamp(3px,.65vw,9px)!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+}
+.playerCard:fullscreen .video-star-rewards,
+.playerCard:-webkit-full-screen .video-star-rewards{
+  order:2!important;
+  display:flex!important;
+  flex:0 0 auto!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;
+  min-width:0!important;
+  min-height:38px!important;
+  margin:0!important;
+  padding:3px clamp(7px,1.2vw,14px)!important;
+  gap:clamp(5px,.9vw,12px)!important;
+  --star-size:clamp(18px,2vw,25px);
+  border-radius:12px!important;
+  background:linear-gradient(135deg,rgba(13,22,40,.78),rgba(30,41,59,.55))!important;
+  border:1px solid rgba(148,163,184,.2)!important;
+  box-shadow:0 5px 18px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+@media(max-width:640px){
+  .playerCard:fullscreen .playerControls,
+  .playerCard:-webkit-full-screen .playerControls{
+    gap:5px!important;
+    min-height:48px!important;
+    padding:5px 6px!important;
+  }
+  .playerCard:fullscreen .playerControls .controlRowPrimary,
+  .playerCard:-webkit-full-screen .playerControls .controlRowPrimary{
+    max-width:calc(100% - 112px)!important;
+    gap:2px!important;
+  }
+  .playerCard:fullscreen .video-star-rewards,
+  .playerCard:-webkit-full-screen .video-star-rewards{
+    min-height:32px!important;
+    padding:2px 5px!important;
+    gap:3px!important;
+    --star-size:clamp(15px,2.8vw,19px);
+    border-radius:9px!important;
+  }
+}
+@media(max-width:380px){
+  .playerCard:fullscreen .playerControls .controlRowPrimary,
+  .playerCard:-webkit-full-screen .playerControls .controlRowPrimary{
+    max-width:calc(100% - 98px)!important;
+    gap:1px!important;
+  }
+  .playerCard:fullscreen .video-star-rewards,
+  .playerCard:-webkit-full-screen .video-star-rewards{
+    padding:2px 3px!important;
+    gap:2px!important;
+    --star-size:14px;
+  }
+}
+
 </style>
 </head>
 
