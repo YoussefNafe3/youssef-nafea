@@ -318,7 +318,91 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
 </style>
-<style id="owner-admin-style">[hidden]{display:none!important}.owner-admin-management{border-color:rgba(216,189,122,.3)}.owner-admin-list{display:grid;gap:13px;margin-top:15px}.owner-admin-card{padding:16px;border:1px solid rgba(166,190,220,.17);border-radius:15px;background:rgba(6,16,29,.5)}.owner-admin-card-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}.owner-admin-card-head strong{color:#f2f6fc}.owner-admin-card-head small{display:block;color:#9eafc5;font-size:11px}.owner-permission-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.owner-permission{display:flex;align-items:center;gap:7px;padding:9px;border:1px solid rgba(166,190,220,.12);border-radius:10px;font-size:11px;color:#dce7f4}.owner-permission input{accent-color:#55c6b1}.owner-admin-save{margin-top:12px;padding:9px 15px;border:1px solid rgba(85,198,177,.35);border-radius:10px;background:rgba(85,198,177,.13);color:#a9eee0;font-weight:800}@media(max-width:760px){.owner-permission-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:420px){.owner-permission-grid{grid-template-columns:1fr}}</style></head>
+<style id="owner-admin-style">[hidden]{display:none!important}.owner-admin-management{border-color:rgba(216,189,122,.3)}.owner-admin-list{display:grid;gap:13px;margin-top:15px}.owner-admin-card{padding:16px;border:1px solid rgba(166,190,220,.17);border-radius:15px;background:rgba(6,16,29,.5)}.owner-admin-card-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}.owner-admin-card-head strong{color:#f2f6fc}.owner-admin-card-head small{display:block;color:#9eafc5;font-size:11px}.owner-permission-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.owner-permission{display:flex;align-items:center;gap:7px;padding:9px;border:1px solid rgba(166,190,220,.12);border-radius:10px;font-size:11px;color:#dce7f4}.owner-permission input{accent-color:#55c6b1}.owner-admin-save{margin-top:12px;padding:9px 15px;border:1px solid rgba(85,198,177,.35);border-radius:10px;background:rgba(85,198,177,.13);color:#a9eee0;font-weight:800}@media(max-width:760px){.owner-permission-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:420px){.owner-permission-grid{grid-template-columns:1fr}}</style>
+<style id="student-manager-mobile-actions-polish">
+/* Mobile-only visual refinement for the student account action buttons. */
+@media (max-width:650px){
+  #studentManager .sm-row{
+    gap:11px!important;
+    padding:12px!important;
+  }
+  #studentManager .sm-meta{
+    width:100%;
+    gap:5px!important;
+  }
+  #studentManager .sm-actions{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    align-items:stretch!important;
+    gap:7px!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  #studentManager .sm-actions .sm-btn{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:39px!important;
+    height:auto!important;
+    margin:0!important;
+    padding:7px 6px!important;
+    border-radius:10px!important;
+    font-family:'Cairo',sans-serif!important;
+    font-size:10.5px!important;
+    font-weight:800!important;
+    line-height:1.45!important;
+    letter-spacing:0!important;
+    text-align:center!important;
+    white-space:normal!important;
+    overflow-wrap:break-word!important;
+    word-break:normal!important;
+    flex:initial!important;
+    box-sizing:border-box!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 3px 9px rgba(0,0,0,.12)!important;
+    transition:background .18s ease,border-color .18s ease,transform .18s ease!important;
+  }
+  #studentManager .sm-actions .sm-btn:not(.danger):not(.archive):not(.restore){
+    background:linear-gradient(145deg,rgba(48,75,91,.72),rgba(25,43,61,.92))!important;
+    color:#dcecf4!important;
+    border-color:rgba(116,166,184,.28)!important;
+  }
+  #studentManager .sm-actions .sm-btn.archive{
+    background:linear-gradient(145deg,rgba(112,83,28,.48),rgba(67,51,23,.78))!important;
+    color:#f7dda0!important;
+    border-color:rgba(218,177,89,.34)!important;
+  }
+  #studentManager .sm-actions .sm-btn.restore{
+    background:linear-gradient(145deg,rgba(20,105,83,.42),rgba(14,64,57,.82))!important;
+    color:#a9f0d9!important;
+    border-color:rgba(76,190,157,.34)!important;
+  }
+  #studentManager .sm-actions .sm-btn.danger{
+    background:linear-gradient(145deg,rgba(126,43,62,.48),rgba(72,25,43,.84))!important;
+    color:#ffc4ce!important;
+    border-color:rgba(224,103,127,.34)!important;
+  }
+  #studentManager .sm-actions .sm-btn:active:not(:disabled){
+    transform:scale(.985)!important;
+  }
+  #studentManager .sm-actions .sm-btn:disabled{
+    opacity:.42!important;
+    cursor:not-allowed!important;
+    box-shadow:none!important;
+  }
+}
+@media(max-width:360px){
+  #studentManager .sm-actions{gap:6px!important}
+  #studentManager .sm-actions .sm-btn{
+    min-height:37px!important;
+    padding:6px 4px!important;
+    font-size:9.8px!important;
+  }
+}
+</style>
+
+</head>
 
 <body>
 
