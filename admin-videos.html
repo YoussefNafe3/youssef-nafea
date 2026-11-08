@@ -1226,7 +1226,19 @@
         }
         .order-status.success{color:#86efac;background:rgba(34,197,94,.08)}
         .order-status.error{color:#fca5a5;background:rgba(239,68,68,.08)}
-        .video-order-list{display:flex;flex-direction:column;gap:9px}
+        .video-order-list{display:flex;flex-direction:column;gap:18px}
+        .video-grade-panel{border:1px solid rgba(148,163,184,.18);border-radius:18px;padding:16px;background:linear-gradient(145deg,rgba(15,31,52,.78),rgba(8,19,34,.72))}
+        .video-grade-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+        .video-grade-title{font-size:17px;font-weight:900;color:#f8fafc}
+        .video-grade-subtitle{font-size:11px;color:#94a3b8;margin-top:3px}
+        .video-grade-count{flex:0 0 auto;padding:5px 10px;border-radius:999px;background:rgba(59,130,246,.13);color:#bfdbfe;font-size:11px;font-weight:800}
+        .video-order-categories{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+        .video-order-category{min-width:0;padding:12px;border:1px solid rgba(148,163,184,.13);border-radius:14px;background:rgba(2,10,22,.28)}
+        .video-order-category-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+        .video-order-category-title{font-size:13px;font-weight:900;color:#e2e8f0}
+        .video-order-category-count{font-size:10px;color:#94a3b8}
+        .video-order-category .video-order-list{gap:8px}
+        .video-order-empty{padding:13px 10px;text-align:center;border:1px dashed rgba(148,163,184,.2);border-radius:11px;color:#8293a9;font-size:12px}
         .video-order-row{
             display:grid;
             grid-template-columns:38px minmax(0,1fr) auto;
@@ -1255,7 +1267,8 @@
 .video-category-admin-select{max-width:100%;min-width:145px;padding:7px 9px;border-radius:10px;border:1px solid rgba(96,165,250,.25);background:#0d1a2d;color:#f8fafc;font-size:12px;font-weight:700;outline:none}
 .video-category-admin-select:focus{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(59,130,246,.12)}
 .field-hint{display:block;margin-top:7px;color:var(--muted);font-size:12px;line-height:1.7}
-@media(max-width:600px){.video-category-admin-label{align-items:flex-start;flex-direction:column}.video-category-admin-select{width:100%;min-width:0}.video-order-row{grid-template-columns:34px minmax(0,1fr) auto;gap:8px}}
+@media(max-width:760px){.video-order-categories{grid-template-columns:1fr}.video-grade-panel{padding:12px}}
+@media(max-width:600px){.video-category-admin-label{align-items:flex-start;flex-direction:column}.video-category-admin-select{width:100%;min-width:0}.video-order-row{grid-template-columns:34px minmax(0,1fr) auto;gap:8px}.video-order-category{padding:9px}}
 .video-title-edit{display:flex;align-items:center;gap:7px;margin-top:9px;min-width:0}
 .video-title-edit input{width:100%;min-width:0;padding:9px 11px;border-radius:10px;border:1px solid rgba(148,163,184,.22);background:rgba(8,17,32,.82);color:#f8fafc;font-size:13px;font-weight:650;outline:none;transition:border-color .2s,box-shadow .2s}
 .video-title-edit input:focus{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(59,130,246,.13)}
@@ -3499,6 +3512,36 @@ function isRecentlyUploaded(value) {
     return Number.isFinite(time) && age >= 0 && age <= 7 * 24 * 60 * 60 * 1000;
 }
 
+function videoOrderRowMarkup(video, index, listLength, groupNames) {
+    const fresh = isRecentlyUploaded(video.created_at);
+    const category = video.video_category || "explanation";
+    return `
+        <div class="video-order-row">
+            <div class="video-order-number">${index + 1}</div>
+            <div>
+                <div class="video-order-title">${escapeOrderText(video.title || "بدون عنوان")}${fresh ? '<span class="video-order-new">NEW · جديد</span>' : ""}</div>
+                <div class="video-order-meta">${escapeOrderText(groupNames[video.class_group] || video.class_group || "درس تعليمي")}</div>
+                <form class="video-title-edit" data-title-form data-video-id="${escapeOrderText(video.id)}">
+                    <input type="text" name="video_title" maxlength="180" required value="${escapeOrderText(video.title || "")}" aria-label="اسم الفيديو: ${escapeOrderText(video.title || "الفيديو")}" placeholder="اكتب اسم الفيديو" />
+                    <button type="submit" class="video-title-save">حفظ الاسم</button>
+                </form>
+                <small class="video-title-edit-status" data-title-status-for="${escapeOrderText(video.id)}" aria-live="polite"></small>
+                <label class="video-category-admin-label">
+                    <span>القائمة</span>
+                    <select class="video-category-admin-select" data-category-video-id="${escapeOrderText(video.id)}" aria-label="تصنيف ${escapeOrderText(video.title || "الفيديو")}">
+                        <option value="explanation" ${category === "explanation" ? "selected" : ""}>فيديوهات الشرح</option>
+                        <option value="homework" ${category === "homework" ? "selected" : ""}>حل الواجب</option>
+                    </select>
+                </label>
+            </div>
+            <div class="video-order-actions">
+                <button type="button" class="video-order-btn" data-video-id="${escapeOrderText(video.id)}" data-direction="-1" aria-label="نقل الفيديو لأعلى" title="نقل لأعلى" ${index === 0 ? "disabled" : ""}>↑</button>
+                <button type="button" class="video-order-btn" data-video-id="${escapeOrderText(video.id)}" data-direction="1" aria-label="نقل الفيديو لأسفل" title="نقل لأسفل" ${index === listLength - 1 ? "disabled" : ""}>↓</button>
+            </div>
+        </div>
+    `;
+}
+
 async function loadVideoOrder() {
     setOrderStatus("جاري تحميل ترتيب الفيديوهات...");
     orderList.innerHTML = "";
@@ -3506,7 +3549,8 @@ async function loadVideoOrder() {
         .from("videos")
         .select("id,title,class_group,created_at,sort_order,video_category")
         .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: false, nullsFirst: false });
+        .order("created_at", { ascending: false, nullsFirst: false })
+        .order("id", { ascending: true });
 
     if (error) {
         console.error("[Video order]", error);
@@ -3521,41 +3565,66 @@ async function loadVideoOrder() {
         return;
     }
 
-    orderList.innerHTML = videos.map((video, index) => {
-        const fresh = isRecentlyUploaded(video.created_at);
-        const groupNames = {
-            first_science: "أولى ثانوي · علوم متكاملة",
-            third_biology: "تالتة ثانوي · أحياء",
-            third_geology: "تالتة ثانوي · جيولوجيا"
-        };
+    const groupNames = {
+        first_science: "أولى ثانوي · علوم متكاملة",
+        first_sat_tue: "أولى ثانوي",
+        first_sun_wed: "أولى ثانوي",
+        first_mon_thu: "أولى ثانوي",
+        third_biology: "تالتة ثانوي · أحياء",
+        third_geology: "تالتة ثانوي · جيولوجيا",
+        third_secondary: "تالتة ثانوي"
+    };
+
+    const gradeGroups = [
+        { key: "first", title: "أولى ثانوي", subtitle: "العلوم المتكاملة · جميع مجموعات الصف الأول", groups: ["first_science", "first_sat_tue", "first_sun_wed", "first_mon_thu"] },
+        { key: "third", title: "تالتة ثانوي", subtitle: "الأحياء والجيولوجيا · جميع مجموعات الصف الثالث", groups: ["third_biology", "third_geology", "third_secondary"] }
+    ];
+    const categories = [
+        { key: "explanation", title: "📘 فيديوهات الشرح" },
+        { key: "homework", title: "✍️ فيديوهات الواجب" }
+    ];
+    const normalizeCategory = video => video.video_category === "homework" ? "homework" : "explanation";
+
+    const gradeHtml = gradeGroups.map(grade => {
+        const gradeVideos = videos.filter(video => grade.groups.includes(video.class_group));
+        const categoryHtml = categories.map(category => {
+            const categoryVideos = gradeVideos.filter(video => normalizeCategory(video) === category.key);
+            return `
+                <section class="video-order-category" aria-label="${category.title} - ${grade.title}">
+                    <div class="video-order-category-head">
+                        <h4 class="video-order-category-title">${category.title}</h4>
+                        <span class="video-order-category-count">${categoryVideos.length} فيديو</span>
+                    </div>
+                    <div class="video-order-list">
+                        ${categoryVideos.length ? categoryVideos.map((video, index) => videoOrderRowMarkup(video, index, categoryVideos.length, groupNames)).join("") : '<div class="video-order-empty">لا توجد فيديوهات في هذا القسم.</div>'}
+                    </div>
+                </section>
+            `;
+        }).join("");
         return `
-            <div class="video-order-row">
-                <div class="video-order-number">${index + 1}</div>
-                <div>
-                    <div class="video-order-title">${escapeOrderText(video.title || "بدون عنوان")}${fresh ? '<span class="video-order-new">NEW · جديد</span>' : ""}</div>
-                    <div class="video-order-meta">${escapeOrderText(groupNames[video.class_group] || video.class_group || "درس تعليمي")}</div>
-                    <form class="video-title-edit" data-title-form data-video-id="${escapeOrderText(video.id)}">
-                        <input type="text" name="video_title" maxlength="180" required value="${escapeOrderText(video.title || "")}" aria-label="اسم الفيديو: ${escapeOrderText(video.title || "الفيديو")}" placeholder="اكتب اسم الفيديو" />
-                        <button type="submit" class="video-title-save">حفظ الاسم</button>
-                    </form>
-                    <small class="video-title-edit-status" data-title-status-for="${escapeOrderText(video.id)}" aria-live="polite"></small>
-                    <label class="video-category-admin-label">
-                        <span>القائمة</span>
-                        <select class="video-category-admin-select" data-category-video-id="${escapeOrderText(video.id)}" aria-label="تصنيف ${escapeOrderText(video.title || "الفيديو")}">
-                            <option value="explanation" ${(video.video_category || "explanation") === "explanation" ? "selected" : ""}>فيديوهات الشرح</option>
-                            <option value="homework" ${video.video_category === "homework" ? "selected" : ""}>حل الواجب</option>
-                        </select>
-                    </label>
+            <section class="video-grade-panel" aria-labelledby="video-grade-${grade.key}">
+                <div class="video-grade-head">
+                    <div><h3 class="video-grade-title" id="video-grade-${grade.key}">${grade.title}</h3><p class="video-grade-subtitle">${grade.subtitle}</p></div>
+                    <span class="video-grade-count">${gradeVideos.length} فيديو إجمالي</span>
                 </div>
-                <div class="video-order-actions">
-                    <button type="button" class="video-order-btn" data-video-id="${escapeOrderText(video.id)}" data-direction="-1" aria-label="نقل الفيديو لأعلى" title="نقل لأعلى" ${index === 0 ? "disabled" : ""}>↑</button>
-                    <button type="button" class="video-order-btn" data-video-id="${escapeOrderText(video.id)}" data-direction="1" aria-label="نقل الفيديو لأسفل" title="نقل لأسفل" ${index === videos.length - 1 ? "disabled" : ""}>↓</button>
-                </div>
-            </div>
+                <div class="video-order-categories">${categoryHtml}</div>
+            </section>
         `;
     }).join("");
 
-    setOrderStatus("تم تحميل " + videos.length + " فيديو. الترتيب محفوظ للطلاب تلقائيًا.", "success");
+    const unassignedVideos = videos.filter(video => !gradeGroups.some(grade => grade.groups.includes(video.class_group)));
+    const unassignedHtml = unassignedVideos.length ? `
+        <section class="video-grade-panel" aria-labelledby="video-grade-other">
+            <div class="video-grade-head"><div><h3 class="video-grade-title" id="video-grade-other">مجموعات أخرى / غير مصنفة</h3><p class="video-grade-subtitle">فيديوهات لم تُربط بأولى أو تالتة ثانوي؛ عُرضت منفصلة حتى لا تختلط بترتيب الصفوف.</p></div><span class="video-grade-count">${unassignedVideos.length} فيديو</span></div>
+            ${categories.map(category => {
+                const list = unassignedVideos.filter(video => normalizeCategory(video) === category.key);
+                return `<section class="video-order-category" style="margin-top:10px"><div class="video-order-category-head"><h4 class="video-order-category-title">${category.title}</h4><span class="video-order-category-count">${list.length} فيديو</span></div><div class="video-order-list">${list.length ? list.map((video, index) => videoOrderRowMarkup(video, index, list.length, groupNames)).join("") : '<div class="video-order-empty">لا توجد فيديوهات في هذا القسم.</div>'}</div></section>`;
+            }).join("")}
+        </section>
+    ` : "";
+
+    orderList.innerHTML = gradeHtml + unassignedHtml;
+    setOrderStatus("تم تحميل " + videos.length + " فيديو، وفصل ترتيب كل صف وكل قائمة بشكل مستقل. الترتيب محفوظ للطلاب تلقائيًا.", "success");
 }
 
 async function moveVideoOrder(videoId, direction, button) {
