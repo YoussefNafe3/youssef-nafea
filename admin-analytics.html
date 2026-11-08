@@ -761,29 +761,22 @@ function formatDate(value) {
   return d.toLocaleString("ar-EG", { hour12: true });
 }
 
+function isActiveStudentId(studentId) {
+  return state.students.some(s => String(s.id) === String(studentId) && s.activated === true);
+}
+
 function getStudentDisplayName(studentId) {
-  const student = state.students.find(s => String(s.id) === String(studentId));
+  const student = state.students.find(s => String(s.id) === String(studentId) && s.activated === true);
   if (!student) return `طالب #${studentId}`;
   return student.full_name || student.name || student.phone || `طالب #${studentId}`;
 }
 
 function getAllStudentIds(classGroup = null) {
-  const ids = new Set();
-
-  state.students.forEach(s => {
-    if (s?.id === undefined || s?.id === null) return;
-    // When analyzing a class-specific video, never mix students from another class.
-    if (classGroup && s.class_group !== classGroup) return;
-    ids.add(String(s.id));
-  });
-
-  state.sessions.forEach(s => {
-    if (s?.student_id === undefined || s?.student_id === null) return;
-    if (classGroup && s.class_group !== classGroup) return;
-    ids.add(String(s.student_id));
-  });
-
-  return [...ids];
+  // Analytics are restricted to currently activated student accounts.
+  return state.students
+    .filter(s => s?.id !== undefined && s?.id !== null && s.activated === true)
+    .filter(s => !classGroup || s.class_group === classGroup)
+    .map(s => String(s.id));
 }
 
 function getVideoClassGroup(video) {
@@ -805,7 +798,10 @@ function sessionPercent(session) {
 }
 
 function latestSessionByStudentForVideo(videoId) {
-  const relevant = state.sessions.filter(s => String(s.video_id) === String(videoId));
+  // Ignore historical sessions belonging to deactivated or missing student accounts.
+  const relevant = state.sessions.filter(s =>
+    String(s.video_id) === String(videoId) && isActiveStudentId(s.student_id)
+  );
   const map = {};
   relevant.forEach(s => {
     const sid = String(s.student_id);
@@ -962,13 +958,14 @@ function renderSelectedVideo() {
 }
 
 function renderGlobalStats() {
-  const avgGlobal = state.sessions.length
-    ? state.sessions.reduce((sum, s) => sum + sessionPercent(s), 0) / state.sessions.length
+  const activeSessions = state.sessions.filter(s => isActiveStudentId(s.student_id));
+  const avgGlobal = activeSessions.length
+    ? activeSessions.reduce((sum, s) => sum + sessionPercent(s), 0) / activeSessions.length
     : 0;
 
   document.getElementById("totalStudents").innerText = getAllStudentIds().length;
   document.getElementById("totalVideos").innerText = getVisibleVideos().length;
-  document.getElementById("totalSessions").innerText = state.sessions.length;
+  document.getElementById("totalSessions").innerText = activeSessions.length;
   document.getElementById("globalAvg").innerText = `${avgGlobal.toFixed(1)}%`;
 }
 
@@ -1015,8 +1012,10 @@ async function loadSessions() {
 }
 
 async function loadStudents() {
-  const { data } = await client.from("students").select("*");
-  state.students = data || [];
+  const { data, error } = await client.from("students").select("*");
+  if (error) throw error;
+  // Keep the complete account record only for activated students in analytics.
+  state.students = (data || []).filter(student => student.activated === true);
 }
 
 
@@ -1033,6 +1032,7 @@ function formatReportDate(value) {
 }
 function getReportStudents(classGroup) {
   return state.students.filter(s => {
+    if (s.activated !== true) return false;
     if (classGroup === "all") return true;
     if (classGroup === "third_biology") return s.class_group === "third_biology";
     if (classGroup === "third_geology") return s.class_group === "third_geology";
