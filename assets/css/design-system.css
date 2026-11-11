@@ -1,0 +1,39 @@
+/* Youssef Nafea — Shared Design System
+   Foundation-only layer: preserves each page's existing layout, theme, components and behavior. */
+:root{
+  --yn-font-ar:"Cairo","IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --yn-font-en:"Inter","Segoe UI",Arial,sans-serif;
+  --yn-gold:#d9b765;
+  --yn-gold-bright:#f0d48b;
+  --yn-violet:#7666d8;
+  --yn-violet-deep:#5143a7;
+  --yn-radius-sm:10px;
+  --yn-radius-md:16px;
+  --yn-radius-lg:22px;
+  --yn-ease:cubic-bezier(.2,.75,.25,1);
+  --yn-focus:0 0 0 3px rgba(217,183,101,.28);
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+html{scroll-behavior:smooth;scroll-padding-top:5rem}
+body{font-family:var(--yn-font-ar);text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit}
+button,[role="button"],a{-webkit-tap-highlight-color:transparent}
+:where(button,input,select,textarea,a,[tabindex]):focus-visible{
+  outline:2px solid var(--yn-gold-bright,#f0d48b);
+  outline-offset:3px;
+}
+::selection{background:rgba(217,183,101,.28);color:inherit}
+img,svg,video,canvas{max-width:100%}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  :where(button,a,[role="button"]){transition-property:color,background-color,border-color,box-shadow,transform;transition-duration:.2s;transition-timing-function:var(--yn-ease)}
+}
+@media (max-width:640px){
+  html{scroll-padding-top:4rem}
+  body{overflow-wrap:break-word}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
