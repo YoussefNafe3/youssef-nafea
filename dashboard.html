@@ -653,6 +653,49 @@ html[data-theme="light"] .assignment-status{background:#f2efff;color:#65599c}
 @media(max-width:560px){.student-progress-achievements{width:calc(100% - 20px);margin:15px auto 20px}.progress-achievements-grid{gap:10px}.hero-heartbeat{left:-24px;width:130px;opacity:.13}.assignment-hub{padding:14px}.assignment-group-box{padding:12px}.assignment-card{padding:14px}.assignment-card-top{flex-wrap:wrap;align-items:flex-start}.assignment-card h3{font-size:16px}}
 @media(prefers-reduced-motion:reduce){.hero-heart-organ{animation:none!important}.overview-task-progress span{transition:none!important}}
 
+/* Final hero and student-summary layout refinements */
+.hero{min-height:0!important;height:auto!important;padding:clamp(19px,2.6vw,30px) clamp(20px,4.5vw,52px)!important;overflow:hidden}
+.hero-brand-animation{display:none!important}
+.hero h1,.hero p{position:relative;z-index:2;max-width:calc(100% - clamp(115px,34%,320px));margin-inline-start:auto;text-align:right}
+.hero h1{margin-bottom:7px!important}
+.hero p{margin-top:0!important}
+.hero-heartbeat{left:clamp(10px,2.5%,30px);top:50%;bottom:auto;width:min(34%,320px);height:128px;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;opacity:.82;filter:drop-shadow(0 0 15px rgba(227,73,91,.22))}
+.hero-heartbeat svg{width:100%;height:100%;overflow:visible;preserveAspectRatio:xMidYMid meet}
+.hero-heart-organ{transform-box:fill-box;transform-origin:50% 55%;animation:heroCardiacBeat 1.18s ease-in-out infinite}
+.heart-vessels{transform-box:fill-box;transform-origin:50% 55%;animation:heroCardiacBeat 1.18s ease-in-out infinite}
+.vessel{stroke-linecap:round;stroke-linejoin:round}
+.blood-stream{stroke-width:4.3;stroke-dasharray:4 13;animation:heartBloodFlow 1.05s linear infinite}
+.blood-stream-red{stroke:#ffb2a0}
+.blood-stream-blue{stroke:#9de5ff;animation-duration:1.25s}
+.blood-stream-branch{animation-delay:-.48s}
+.coronary-flow{stroke-dasharray:3 7;animation:heartCoronaryFlow 1.4s linear infinite}
+@keyframes heartBloodFlow{to{stroke-dashoffset:-34}}
+@keyframes heartCoronaryFlow{to{stroke-dashoffset:28}}
+@keyframes heroCardiacBeat{0%,100%{transform:scale(1)}9%{transform:scale(1.035,.97)}17%{transform:scale(.975,1.035)}25%{transform:scale(1.018,.988)}34%{transform:scale(1)}}
+html[data-theme="light"] .hero-heartbeat{opacity:.9;filter:drop-shadow(0 0 14px rgba(190,48,70,.2))}
+.student-overview .overview-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;max-width:850px;margin:0 auto;gap:12px}
+.student-overview .overview-card{padding:16px 19px;border-radius:17px}
+.student-overview .overview-card-heading{margin-bottom:10px}
+.student-overview .overview-last-video,.student-overview .overview-next-item{min-height:0;padding:11px 13px}
+.student-overview #overviewNextItem{align-items:flex-start}
+.overview-task-copy{gap:5px}
+.overview-task-done-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}
+.overview-task-chip,.overview-task-more{justify-content:flex-start;min-width:0;white-space:normal;overflow-wrap:anywhere;border-radius:9px;padding:5px 8px;font-size:10px}
+.overview-task-more{grid-column:1/-1}
+@media(max-width:650px){
+ .hero{padding:18px 15px!important}
+ .hero-heartbeat{left:3px;width:112px;height:112px;opacity:.72}
+ .hero h1,.hero p{max-width:calc(100% - 100px)}
+ .hero h1{font-size:clamp(20px,5vw,26px)}
+ .hero p{font-size:11px!important;line-height:1.8!important}
+ .student-overview{width:calc(100% - 20px)}
+ .student-overview .overview-card{padding:14px}
+ .overview-task-done-list{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+ .hero-heart-organ,.heart-vessels,.blood-stream,.coronary-flow{animation:none!important}
+}
+
 </style>
 </head>
 
@@ -714,51 +757,41 @@ html[data-theme="light"] .assignment-status{background:#f2efff;color:#65599c}
 
 
 <div class="hero">
-<div class="hero-heartbeat" aria-hidden="true"><svg viewBox="0 0 240 280" role="presentation"><defs><linearGradient id="heroHeartFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a99aff"/><stop offset=".48" stop-color="#7567bd"/><stop offset="1" stop-color="#395b88"/></linearGradient><linearGradient id="heroHeartVessel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d49a"/><stop offset="1" stop-color="#b88b70"/></linearGradient></defs><g class="hero-heart-organ"><path d="M119 69 C103 43 105 21 119 13 C132 6 149 14 151 33 C161 15 184 14 193 29 C204 47 186 69 170 82" fill="none" stroke="url(#heroHeartVessel)" stroke-width="13" stroke-linecap="round"/><path d="M91 83 C76 57 60 54 49 65 C37 77 45 96 61 110" fill="none" stroke="#8d9bd2" stroke-width="12" stroke-linecap="round"/><path d="M83 91 C61 76 39 91 42 116 C45 138 67 153 80 172" fill="none" stroke="#6687b5" stroke-width="11" stroke-linecap="round"/><path d="M151 72 C139 57 119 58 108 72 C94 89 94 110 82 129 C66 153 76 189 99 218 C111 233 121 245 128 255 C138 235 163 214 177 188 C197 152 192 113 176 88 C169 77 160 72 151 72Z" fill="url(#heroHeartFill)" stroke="#b8adf1" stroke-width="3"/><path d="M143 79 C130 99 134 117 144 135 C155 155 149 177 136 193" fill="none" stroke="#d6c9ff" stroke-opacity=".65" stroke-width="4" stroke-linecap="round"/><path d="M103 101 C92 119 96 143 110 157" fill="none" stroke="#9bb9df" stroke-opacity=".7" stroke-width="4" stroke-linecap="round"/><path d="M169 97 C181 119 180 145 165 166" fill="none" stroke="#f0d3a0" stroke-opacity=".65" stroke-width="3" stroke-linecap="round"/><path d="M120 61 C112 43 117 28 127 22 M151 38 C154 24 164 20 173 24" fill="none" stroke="#f0d3a0" stroke-width="5" stroke-linecap="round"/></g></svg></div>
+<div class="hero-heartbeat" aria-hidden="true">
+<svg viewBox="0 0 320 180" role="presentation">
+ <defs>
+  <linearGradient id="heartMuscle" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8b83"/><stop offset=".42" stop-color="#d83d51"/><stop offset="1" stop-color="#751e43"/></linearGradient>
+  <linearGradient id="heartMuscleShade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb0a2"/><stop offset="1" stop-color="#a52349"/></linearGradient>
+  <linearGradient id="arteryRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb0a0"/><stop offset="1" stop-color="#d9364c"/></linearGradient>
+  <linearGradient id="veinBlue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bdcff"/><stop offset="1" stop-color="#2875c5"/></linearGradient>
+  <filter id="heartGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ </defs>
+ <g class="heart-vessels">
+  <path class="vessel vessel-blue" d="M145 82 C130 63 125 45 128 24 L128 8 M128 34 C112 25 101 18 95 7 M128 46 C145 34 154 20 157 7" fill="none" stroke="url(#veinBlue)" stroke-width="12" stroke-linecap="round"/>
+  <path class="vessel vessel-red" d="M168 83 C183 61 189 42 184 24 C180 9 164 5 153 14 C145 21 145 35 151 45 M184 27 C201 16 215 17 225 28" fill="none" stroke="url(#arteryRed)" stroke-width="13" stroke-linecap="round"/>
+  <path class="vessel vessel-red" d="M173 65 C181 51 194 44 208 44" fill="none" stroke="#f17b76" stroke-width="7" stroke-linecap="round"/>
+  <path class="vessel vessel-blue" d="M133 62 C118 48 106 43 92 45" fill="none" stroke="#4d9bd7" stroke-width="8" stroke-linecap="round"/>
+  <path d="M137 75 C111 56 87 71 83 94 C78 120 105 148 145 168 C151 171 157 174 162 176 C170 166 184 155 198 140 C220 116 230 89 215 70 C200 52 179 59 164 77 C155 67 146 68 137 75Z" fill="url(#heartMuscle)" stroke="#ff9c9b" stroke-width="2.3"/>
+  <path d="M151 82 C130 75 112 91 116 111 C119 128 136 143 154 154 C160 139 161 119 157 102 C155 93 153 87 151 82Z" fill="url(#heartMuscleShade)" opacity=".8"/>
+  <path d="M164 83 C180 72 201 78 205 96 C209 114 193 135 174 151 C168 138 164 120 164 104 C164 95 164 88 164 83Z" fill="#a9274d" opacity=".8"/>
+  <path d="M155 85 C150 103 154 124 165 145 M177 87 C188 100 187 117 176 132" fill="none" stroke="#ffc0b4" stroke-opacity=".62" stroke-width="3" stroke-linecap="round"/>
+  <path d="M138 87 C126 95 126 108 136 117 M192 85 C202 95 199 106 191 115" fill="none" stroke="#ffaaa1" stroke-opacity=".55" stroke-width="2.5" stroke-linecap="round"/>
+  <path class="coronary-flow" d="M137 82 C122 93 120 105 132 117 C141 125 148 129 153 140 M184 79 C194 90 191 101 181 109 C174 115 171 123 170 134" fill="none" stroke="#ffd0bd" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M149 76 C143 60 145 49 153 42 M164 75 C173 61 177 50 173 39" fill="none" stroke="#ffd0b1" stroke-width="4" stroke-linecap="round"/>
+ </g>
+ <g class="heart-blood-flow" fill="none" stroke-linecap="round" filter="url(#heartGlow)">
+  <path class="blood-stream blood-stream-red" d="M184 24 C180 9 164 5 153 14 C145 21 145 35 151 45"/>
+  <path class="blood-stream blood-stream-red blood-stream-branch" d="M173 65 C181 51 194 44 208 44"/>
+  <path class="blood-stream blood-stream-blue" d="M128 8 L128 34 C112 25 101 18 95 7"/>
+  <path class="blood-stream blood-stream-blue blood-stream-branch" d="M145 82 C130 63 125 45 128 24"/>
+ </g>
+ <path d="M111 91 C101 99 103 115 116 128" fill="none" stroke="#ffd4c6" stroke-opacity=".48" stroke-width="2" stroke-linecap="round"/>
+</svg>
+</div>
 
 <h1>
 منصة د. يوسف نافع
 </h1>
-<div class="hero-brand-animation" aria-hidden="true"><div class="calligraphy-logo" aria-hidden="true">
-  <span class="calligraphy-name">دكتور يوسف نافع</span>
-  <svg class="calligraphy-orbits" viewBox="0 0 420 150" aria-hidden="true">
-    <defs>
-      <linearGradient id="orbitGradient" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#70e1ff" stop-opacity=".15"/>
-        <stop offset="48%" stop-color="#83bfff" stop-opacity=".85"/>
-        <stop offset="100%" stop-color="#f5d58a" stop-opacity=".5"/>
-      </linearGradient>
-      <filter id="electronGlow" x="-250%" y="-250%" width="600%" height="600%">
-        <feGaussianBlur stdDeviation="3.2" result="blur"/>
-        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>
-      <linearGradient id="sproutGradient" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#b5f5c8"/><stop offset="100%" stop-color="#38c994"/>
-      </linearGradient>
-    </defs>
-    <g class="orbit-system">
-      <ellipse cx="104" cy="76" rx="82" ry="27" transform="rotate(-20 104 76)" fill="none" stroke="url(#orbitGradient)" stroke-width="1.15" stroke-dasharray="3 5"/>
-      <ellipse cx="104" cy="76" rx="78" ry="23" transform="rotate(27 104 76)" fill="none" stroke="#8bdcff" stroke-opacity=".48" stroke-width="1.05"/>
-      <circle class="electron electron-one" r="3.5" fill="#a8edff" filter="url(#electronGlow)">
-        <animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto" path="M 22,76 A 82,27 -20 1 1 186,76 A 82,27 -20 1 1 22,76"/>
-      </circle>
-      <circle class="electron electron-two" r="2.8" fill="#ffe6a1" filter="url(#electronGlow)">
-        <animateMotion dur="3.1s" begin="-1.4s" repeatCount="indefinite" rotate="auto" path="M 26,76 A 78,23 27 1 0 182,76 A 78,23 27 1 0 26,76"/>
-      </circle>
-      <circle class="electron electron-three" r="2.2" fill="#b9a8ff" filter="url(#electronGlow)">
-        <animateMotion dur="5.3s" begin="-2s" repeatCount="indefinite" rotate="auto" path="M 22,76 A 82,27 -20 1 0 186,76 A 82,27 -20 1 0 22,76"/>
-      </circle>
-    </g>
-    <g class="sprout" transform="translate(105 17)">
-      <path d="M0 26 C1 17 2 10 7 3" fill="none" stroke="#67d6a0" stroke-width="2.4" stroke-linecap="round"/>
-      <path d="M5 12 C-8 12 -13 4 -12 -3 C-2 -3 5 1 5 12Z" fill="url(#sproutGradient)" stroke="#8ae8b2" stroke-width=".7"/>
-      <path d="M7 5 C8 -5 18 -10 27 -8 C27 2 18 8 7 5Z" fill="url(#sproutGradient)" stroke="#8ae8b2" stroke-width=".7"/>
-      <path d="M-9 0 -1 7 M23 -5 10 3" stroke="#e0ffe9" stroke-opacity=".8" stroke-width="1" stroke-linecap="round"/>
-    </g>
-  </svg>
-</div></div>
-
-
 <p>
 كل خطوة بتقربك من هدفك. صبرك على التعب وتحملك المشقة له اجر ونتيجة
 </p>
@@ -921,7 +954,7 @@ async function loadStudentDashboardOverview(){
  function dueDate(a){const days=Array.isArray(a.group_days)?a.group_days.map(x=>String(x).trim().toLowerCase()):[],matches=selected.filter(x=>days.includes(x)),raw=String(a.assignment_date||"").slice(0,10);if(!matches.length||!/^\d{4}-\d{2}-\d{2}$/.test(raw))return null;const [y,m,d]=raw.split("-").map(Number),base=new Date(Date.UTC(y,m-1,d));if(Number.isNaN(base.getTime())||base.toISOString().slice(0,10)!==raw)return null;return matches.map(day=>{const date=new Date(base);date.setUTCDate(date.getUTCDate()+((dow[day]-date.getUTCDay()+7)%7));return date.toISOString().slice(0,10);}).sort()[0]||null;}
  assignments.forEach(a=>{const cls=String(a.class_group||"all").trim().toLowerCase();if(cls!=="all"&&cls!==group.toLowerCase())return;const date=dueDate(a);if(!date||date<today)return;const items=Array.isArray(a.items)?a.items:[],done=doneMap.get(String(a.id))||new Set(),pct=items.length?Math.round(items.filter((_,i)=>done.has(String(i))).length/items.length*100):0;candidates.push({kind:"assignment",time:new Date(date+"T00:00:00+02:00").getTime(),title:a.title||({recitation:"تسميع",homework:"واجب",homework_recitation:"واجب وتسميع",worksheet:"ورقة عمل"}[a.task_type]||"تكليف"),detail:done.size>0?"أنجزت "+done.size+" من "+items.length+" مهام":"لم تبدأ المهام بعد",items:items.map((item,index)=>({label:typeof item==="string"?item:(item.text||item.title||"مهمة"),done:done.has(String(index))})),completedCount:done.size,totalCount:items.length,href:"#assignmentList",button:"عرض التكليف"});});
  candidates.sort((a,b)=>a.time-b.time);const next=candidates[0];
- if(next){const partial=next.items.filter(item=>item.done),taskLines=next.items.slice(0,4).map(item=>'<span class="overview-task-chip '+(item.done?'is-done':'is-pending')+'">'+(item.done?'✓ ':'○ ')+overviewEscape(item.label)+'</span>').join(''),remaining=next.items.length>4?'<span class="overview-task-more">+'+(next.items.length-4)+' مهام أخرى</span>':"";el("overviewNextItem").innerHTML='<span class="overview-placeholder-icon overview-task-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4.5h8a2 2 0 0 1 2 2v13H6v-13a2 2 0 0 1 2-2Z"/><path d="M9 4.5V3h6v1.5M9 10h6M9 14h6M9 17.5h3"/></svg></span><div class="overview-task-copy"><strong>'+overviewEscape(next.title)+'</strong><small>'+overviewEscape(next.detail)+'</small>'+(partial.length?'<div class="overview-task-done-list">'+taskLines+remaining+'</div>':'')+(next.totalCount>0&&partial.length?'<div class="overview-task-progress" role="progressbar" aria-valuenow="'+Math.round(partial.length/next.totalCount*100)+'" aria-valuemin="0" aria-valuemax="100"><span style="width:'+Math.round(partial.length/next.totalCount*100)+'%"></span></div>':'')+'</div>';const a=el("overviewNextButton");a.href="#assignmentList";a.textContent="عرض التكليف ←";a.hidden=false;}
+ if(next){const partial=next.items.filter(item=>item.done),taskLines=next.items.slice(0,6).map(item=>'<span class="overview-task-chip '+(item.done?'is-done':'is-pending')+'">'+(item.done?'✓ ':'○ ')+overviewEscape(item.label)+'</span>').join(''),remaining=next.items.length>6?'<span class="overview-task-more">+'+(next.items.length-6)+' مهام أخرى</span>':"";el("overviewNextItem").innerHTML='<span class="overview-placeholder-icon overview-task-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4.5h8a2 2 0 0 1 2 2v13H6v-13a2 2 0 0 1 2-2Z"/><path d="M9 4.5V3h6v1.5M9 10h6M9 14h6M9 17.5h3"/></svg></span><div class="overview-task-copy"><strong>'+overviewEscape(next.title)+'</strong><small>'+overviewEscape(next.detail)+'</small>'+'<div class="overview-task-done-list" aria-label="المهام المطلوبة">'+taskLines+remaining+'</div>'+(next.totalCount>0&&partial.length?'<div class="overview-task-progress" role="progressbar" aria-valuenow="'+Math.round(partial.length/next.totalCount*100)+'" aria-valuemin="0" aria-valuemax="100"><span style="width:'+Math.round(partial.length/next.totalCount*100)+'%"></span></div>':'')+'</div>';const a=el("overviewNextButton");a.href="#assignmentList";a.textContent="عرض التكليف ←";a.hidden=false;}
  else{el("overviewNextItem").innerHTML='<span class="overview-placeholder-icon">📚</span><div><strong>'+(selected.length?"لا يوجد تكليف للحصة القادمة حتى الآن":"اختار يومي مجموعتك لعرض التكليف المطلوب")+'</strong><small>'+(selected.length?"تابع قسم التكليفات أسفل الصفحة للاطلاع على المهام المتاحة.":"حدد يومي حضورك من قسم التكليفات بالأسفل، وسيظهر التكليف هنا.")+'</small></div>';const a=el("overviewNextButton");a.href="#assignmentList";a.textContent="عرض التكليفات ←";a.hidden=false;}
 }
 
