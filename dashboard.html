@@ -696,6 +696,37 @@ html[data-theme="light"] .hero-heartbeat{opacity:.9;filter:drop-shadow(0 0 14px 
  .hero-heart-organ,.heart-vessels,.blood-stream,.coronary-flow{animation:none!important}
 }
 
+/* Fine alignment, more prominent heart, and compact summary cards */
+.hero{display:flex!important;flex-direction:column!important;align-items:stretch!important}
+.hero h1,.hero p{display:block!important;width:calc(100% - clamp(140px,40%,360px))!important;max-width:none!important;margin-left:0!important;margin-right:0!important;margin-inline-start:auto!important;text-align:right!important;align-self:flex-end!important}
+.hero h1{direction:rtl!important;text-align:right!important}
+.hero-heartbeat{width:min(41%,365px)!important;height:150px!important;left:clamp(8px,2%,28px)!important;opacity:.94!important}
+.hero-heartbeat svg{width:100%!important;height:100%!important}
+.heart-blood-cells{filter:url(#heartGlow)}
+.blood-cell{opacity:.96}
+.red-cell{filter:drop-shadow(0 0 2px rgba(255,112,100,.55))}
+.blue-cell{filter:drop-shadow(0 0 2px rgba(87,190,255,.55))}
+.student-overview .overview-grid{max-width:770px!important;gap:10px!important}
+.student-overview .overview-card{padding:13px 16px!important;border-radius:15px!important}
+.student-overview .overview-card-heading{margin-bottom:8px!important}
+.student-overview .overview-card-heading h3{font-size:14px!important;line-height:1.5!important}
+.student-overview .overview-card-heading p{font-size:10px!important;line-height:1.55!important}
+.student-overview .overview-last-video,.student-overview .overview-next-item{padding:9px 11px!important;gap:9px!important}
+.student-overview .overview-last-video strong,.student-overview .overview-next-item strong{font-size:12px!important}
+.student-overview .overview-last-video small,.student-overview .overview-next-item small{font-size:10px!important;line-height:1.65!important}
+.student-overview .overview-primary-link{padding:8px 12px!important;font-size:10px!important}
+.overview-task-done-list{gap:5px!important;margin-top:5px!important}
+.overview-task-chip,.overview-task-more{padding:4px 7px!important;font-size:9px!important}
+@media(max-width:650px){
+ .hero-heartbeat{width:128px!important;height:122px!important;left:0!important;opacity:.86!important}
+ .hero h1,.hero p{width:calc(100% - 112px)!important}
+ .student-overview .overview-grid{max-width:100%!important}
+ .student-overview .overview-card{padding:12px 13px!important}
+ .student-overview .overview-card-heading h3{font-size:13px!important}
+ .student-overview .overview-last-video,.student-overview .overview-next-item{padding:8px 9px!important}
+}
+@media(prefers-reduced-motion:reduce){.blood-cell{display:none!important}}
+
 </style>
 </head>
 
@@ -779,11 +810,13 @@ html[data-theme="light"] .hero-heartbeat{opacity:.9;filter:drop-shadow(0 0 14px 
   <path class="coronary-flow" d="M137 82 C122 93 120 105 132 117 C141 125 148 129 153 140 M184 79 C194 90 191 101 181 109 C174 115 171 123 170 134" fill="none" stroke="#ffd0bd" stroke-width="3.2" stroke-linecap="round"/>
   <path d="M149 76 C143 60 145 49 153 42 M164 75 C173 61 177 50 173 39" fill="none" stroke="#ffd0b1" stroke-width="4" stroke-linecap="round"/>
  </g>
- <g class="heart-blood-flow" fill="none" stroke-linecap="round" filter="url(#heartGlow)">
-  <path class="blood-stream blood-stream-red" d="M184 24 C180 9 164 5 153 14 C145 21 145 35 151 45"/>
-  <path class="blood-stream blood-stream-red blood-stream-branch" d="M173 65 C181 51 194 44 208 44"/>
-  <path class="blood-stream blood-stream-blue" d="M128 8 L128 34 C112 25 101 18 95 7"/>
-  <path class="blood-stream blood-stream-blue blood-stream-branch" d="M145 82 C130 63 125 45 128 24"/>
+ <g class="heart-blood-cells">
+  <g class="blood-cell red-cell"><ellipse rx="4.2" ry="2.6" fill="#ffb2a0"/><ellipse rx="2.1" ry="1.15" fill="#fff0df" opacity=".85"/><animateMotion dur="2.3s" repeatCount="indefinite" path="M184 24 C180 9 164 5 153 14 C145 21 145 35 151 45"/></g>
+  <g class="blood-cell red-cell"><ellipse rx="3.5" ry="2.2" fill="#ff927f"/><ellipse rx="1.6" ry=".9" fill="#ffe0d1"/><animateMotion dur="2.3s" begin="-1.15s" repeatCount="indefinite" path="M184 24 C180 9 164 5 153 14 C145 21 145 35 151 45"/></g>
+  <g class="blood-cell red-cell"><ellipse rx="3.8" ry="2.4" fill="#ffad9a"/><ellipse rx="1.7" ry="1" fill="#fff0df"/><animateMotion dur="2.8s" repeatCount="indefinite" path="M173 65 C181 51 194 44 208 44"/></g>
+  <g class="blood-cell blue-cell"><ellipse rx="4" ry="2.5" fill="#9de5ff"/><ellipse rx="1.8" ry="1" fill="#e8fbff"/><animateMotion dur="2.5s" repeatCount="indefinite" path="M128 8 L128 34 C112 25 101 18 95 7"/></g>
+  <g class="blood-cell blue-cell"><ellipse rx="3.5" ry="2.2" fill="#78caff"/><ellipse rx="1.5" ry=".9" fill="#e8fbff"/><animateMotion dur="2.5s" begin="-1.25s" repeatCount="indefinite" path="M128 8 L128 34 C112 25 101 18 95 7"/></g>
+  <g class="blood-cell blue-cell"><ellipse rx="3.8" ry="2.4" fill="#9de5ff"/><ellipse rx="1.6" ry="1" fill="#f4fdff"/><animateMotion dur="2.7s" repeatCount="indefinite" path="M145 82 C130 63 125 45 128 24"/></g>
  </g>
  <path d="M111 91 C101 99 103 115 116 128" fill="none" stroke="#ffd4c6" stroke-opacity=".48" stroke-width="2" stroke-linecap="round"/>
 </svg>
