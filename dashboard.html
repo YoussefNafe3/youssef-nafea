@@ -1047,6 +1047,185 @@ html[data-theme="light"] .student-overview .overview-title-next{color:#087e70!im
  .hero p{font-size:9px!important}
 }
 
+
+/* Balanced visual refinement for heartbeat and student quick cards */
+.hero{
+  grid-template-columns:176px minmax(270px,410px)!important;
+}
+.hero-heartbeat{
+  width:176px!important;height:132px!important;max-width:176px!important;
+}
+.hero-heartbeat svg{
+  width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+}
+@media(max-width:700px){
+ .hero{grid-template-columns:120px minmax(0,1fr)!important}
+ .hero-heartbeat{width:120px!important;height:100px!important;max-width:120px!important}
+}
+@media(max-width:390px){
+ .hero{grid-template-columns:94px minmax(0,1fr)!important}
+ .hero-heartbeat{width:94px!important;height:86px!important;max-width:94px!important}
+}
+
+/* Student quick cards: refined accent colors, consistent rhythm and compact sizing */
+.student-overview{
+  width:min(1020px,calc(100% - 36px))!important;
+  margin:8px auto 18px!important;
+  direction:rtl!important;
+}
+.student-overview .overview-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  width:100%!important;max-width:none!important;
+  gap:13px!important;align-items:stretch!important;
+}
+.student-overview .overview-resume-card,
+.student-overview .overview-next-card{
+  --summary-accent:#79baff;
+  position:relative!important;isolation:isolate!important;
+  min-width:0!important;min-height:146px!important;
+  box-sizing:border-box!important;
+  padding:15px 17px!important;
+  border:1px solid rgba(121,186,255,.22)!important;
+  border-right:3px solid var(--summary-accent)!important;
+  border-radius:17px!important;
+  background:linear-gradient(135deg,rgba(73,142,213,.085),transparent 62%),var(--card)!important;
+  box-shadow:0 9px 24px rgba(0,0,0,.075)!important;
+  display:flex!important;flex-direction:column!important;
+  transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease!important;
+}
+.student-overview .overview-next-card{
+  --summary-accent:#62cdb9;
+  border-color:rgba(98,205,185,.22)!important;
+  border-right-color:var(--summary-accent)!important;
+  background:linear-gradient(135deg,rgba(67,186,164,.085),transparent 62%),var(--card)!important;
+}
+.student-overview .overview-resume-card:hover,
+.student-overview .overview-next-card:hover{
+  transform:translateY(-2px)!important;
+  box-shadow:0 13px 28px rgba(0,0,0,.11)!important;
+  border-color:color-mix(in srgb,var(--summary-accent) 42%,transparent)!important;
+}
+.student-overview .overview-card-heading{
+  display:flex!important;align-items:center!important;
+  gap:10px!important;margin:0 0 10px!important;
+}
+.student-overview .overview-icon{
+  display:grid!important;place-items:center!important;
+  flex:0 0 37px!important;width:37px!important;height:37px!important;
+  border-radius:11px!important;
+  border:1px solid color-mix(in srgb,var(--summary-accent) 30%,transparent)!important;
+  background:color-mix(in srgb,var(--summary-accent) 13%,transparent)!important;
+  color:var(--summary-accent)!important;
+  font-size:17px!important;
+}
+.student-overview .overview-title-resume,
+.student-overview .overview-title-next{
+  margin:0!important;font-size:14px!important;font-weight:900!important;
+  line-height:1.5!important;letter-spacing:-.15px!important;
+}
+.student-overview .overview-title-resume{color:#79baff!important}
+.student-overview .overview-title-next{color:#62cdb9!important}
+.student-overview .overview-card-heading p{
+  margin:2px 0 0!important;color:var(--muted)!important;
+  font-size:10px!important;line-height:1.5!important;
+}
+.student-overview .overview-last-video,
+.student-overview .overview-next-item{
+  display:flex!important;align-items:center!important;
+  gap:10px!important;min-height:58px!important;
+  padding:9px 11px!important;margin:0!important;
+  border:1px solid rgba(148,163,184,.15)!important;
+  border-radius:12px!important;
+  background:rgba(148,163,184,.055)!important;
+  box-sizing:border-box!important;
+}
+.student-overview .overview-placeholder-icon{
+  flex:0 0 34px!important;width:34px!important;height:34px!important;
+  border-radius:10px!important;font-size:16px!important;
+  background:color-mix(in srgb,var(--summary-accent) 13%,transparent)!important;
+  color:var(--summary-accent)!important;
+}
+.student-overview .overview-last-video>div,
+.student-overview .overview-next-item>div{
+  display:flex!important;flex-direction:column!important;
+  gap:3px!important;min-width:0!important;flex:1 1 auto!important;
+}
+.student-overview .overview-last-video strong,
+.student-overview .overview-next-item strong{
+  color:var(--text)!important;font-size:11px!important;
+  font-weight:850!important;line-height:1.55!important;
+  overflow-wrap:anywhere!important;
+}
+.student-overview .overview-last-video small,
+.student-overview .overview-next-item small{
+  color:var(--muted)!important;font-size:9px!important;line-height:1.5!important;
+}
+.student-overview .overview-task-copy{gap:4px!important}
+.student-overview .overview-task-done-list{gap:5px!important;margin-top:5px!important}
+.student-overview .overview-task-chip,
+.student-overview .overview-task-more{
+  padding:4px 7px!important;font-size:9px!important;
+  border-radius:8px!important;line-height:1.45!important;
+}
+.student-overview .overview-primary-link,
+.student-overview .overview-secondary-link{
+  display:inline-flex!important;align-items:center!important;
+  justify-content:center!important;align-self:flex-start!important;
+  width:fit-content!important;max-width:100%!important;
+  min-width:136px!important;gap:10px!important;
+  margin:9px 0 0!important;padding:7px 11px!important;
+  border-radius:10px!important;font-size:10px!important;
+  line-height:1.45!important;text-decoration:none!important;
+}
+.student-overview .overview-primary-link{
+  color:#fff!important;
+  background:linear-gradient(110deg,#438ed7,#5a70c9)!important;
+  box-shadow:0 5px 13px rgba(65,125,205,.2)!important;
+}
+.student-overview .overview-secondary-link{
+  color:#56cdb8!important;
+  background:rgba(69,190,168,.085)!important;
+  border:1px solid rgba(69,190,168,.24)!important;
+}
+.student-overview .overview-primary-link[hidden],
+.student-overview .overview-secondary-link[hidden]{display:none!important}
+html[data-theme="light"] .student-overview .overview-resume-card{
+  border-color:rgba(61,125,190,.18)!important;
+  background:linear-gradient(135deg,rgba(89,158,222,.07),transparent 65%),#fff!important;
+  box-shadow:0 8px 23px rgba(42,76,116,.06)!important;
+}
+html[data-theme="light"] .student-overview .overview-next-card{
+  border-color:rgba(35,155,137,.18)!important;
+  background:linear-gradient(135deg,rgba(52,181,159,.07),transparent 65%),#fff!important;
+  box-shadow:0 8px 23px rgba(42,76,116,.06)!important;
+}
+html[data-theme="light"] .student-overview .overview-title-resume{color:#3479b9!important}
+html[data-theme="light"] .student-overview .overview-title-next{color:#168879!important}
+html[data-theme="light"] .student-overview .overview-last-video,
+html[data-theme="light"] .student-overview .overview-next-item{
+  background:rgba(238,244,250,.72)!important;border-color:#e4ebf3!important;
+}
+@media(max-width:760px){
+ .student-overview{width:calc(100% - 24px)!important;margin:6px auto 15px!important}
+ .student-overview .overview-grid{grid-template-columns:1fr!important;gap:10px!important}
+ .student-overview .overview-resume-card,
+ .student-overview .overview-next-card{min-height:0!important;padding:13px 14px!important}
+}
+@media(max-width:560px){
+ .student-overview{width:calc(100% - 20px)!important}
+ .student-overview .overview-card-heading{margin-bottom:8px!important}
+ .student-overview .overview-icon{width:34px!important;height:34px!important;flex-basis:34px!important}
+ .student-overview .overview-last-video,
+ .student-overview .overview-next-item{min-height:52px!important;padding:8px 9px!important}
+ .student-overview .overview-primary-link,
+ .student-overview .overview-secondary-link{min-width:124px!important;margin-top:8px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .student-overview .overview-resume-card,
+ .student-overview .overview-next-card{transition:none!important}
+}
+
 </style>
 </head>
 
@@ -1109,7 +1288,7 @@ html[data-theme="light"] .student-overview .overview-title-next{color:#087e70!im
 
 <div class="hero">
 <div class="hero-heartbeat" aria-hidden="true">
-<svg viewBox="0 0 320 180" role="presentation">
+<svg viewBox="65 0 185 180" role="presentation">
  <defs>
   <linearGradient id="heartMuscle" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8b83"/><stop offset=".42" stop-color="#d83d51"/><stop offset="1" stop-color="#751e43"/></linearGradient>
   <linearGradient id="heartMuscleShade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb0a2"/><stop offset="1" stop-color="#a52349"/></linearGradient>
@@ -1159,8 +1338,8 @@ html[data-theme="light"] .student-overview .overview-title-next{color:#087e70!im
 <section class="student-overview" id="studentOverview" aria-label="ملخص رحلتك الدراسية">
 <div class="overview-grid">
 
-<article class="overview-card"><div class="overview-card-heading"><span class="overview-icon">▶</span><div><h3 class="overview-title-resume">استكمل من حيث توقفت</h3><p>آخر فيديو شاهدته</p></div></div><div id="overviewLastVideo" class="overview-last-video"><span class="overview-placeholder-icon">◷</span><div><strong>جاري تحميل سجل المشاهدة...</strong><small>لحظات ونجهز لك آخر درس.</small></div></div><a id="overviewResumeButton" class="overview-primary-link" href="videos.html" hidden>استكمل المشاهدة <span>←</span></a></article>
-<article class="overview-card"><div class="overview-card-heading"><span class="overview-icon">▣</span><div><h3 class="overview-title-next">المطلوب منك الحصة الجاية</h3></div></div><div id="overviewNextItem" class="overview-next-item"><span class="overview-placeholder-icon">📅</span><div><strong>جاري البحث عن أقرب موعد...</strong><small>سنرتب مواعيدك هنا تلقائيًا.</small></div></div><a id="overviewNextButton" class="overview-secondary-link" href="#assignmentList">عرض التكليفات <span>←</span></a></article>
+<article class="overview-card overview-resume-card"><div class="overview-card-heading"><span class="overview-icon">▶</span><div><h3 class="overview-title-resume">استكمل من حيث توقفت</h3><p>آخر فيديو شاهدته</p></div></div><div id="overviewLastVideo" class="overview-last-video"><span class="overview-placeholder-icon">◷</span><div><strong>جاري تحميل سجل المشاهدة...</strong><small>لحظات ونجهز لك آخر درس.</small></div></div><a id="overviewResumeButton" class="overview-primary-link" href="videos.html" hidden>استكمل المشاهدة <span>←</span></a></article>
+<article class="overview-card overview-next-card"><div class="overview-card-heading"><span class="overview-icon">▣</span><div><h3 class="overview-title-next">المطلوب منك الحصة الجاية</h3></div></div><div id="overviewNextItem" class="overview-next-item"><span class="overview-placeholder-icon">📅</span><div><strong>جاري البحث عن أقرب موعد...</strong><small>سنرتب مواعيدك هنا تلقائيًا.</small></div></div><a id="overviewNextButton" class="overview-secondary-link" href="#assignmentList">عرض التكليفات <span>←</span></a></article>
 
 </div></section>
 <div class="cards">
