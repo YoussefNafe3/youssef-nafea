@@ -673,17 +673,10 @@ window.adminAccessReady=verifyAdminAccess().then(authorized=>{
     return parts.year+'-'+parts.month+'-'+parts.day;
   }
   function getGroupDays(date){
-    // Validate YYYY-MM-DD without a regular expression, then calculate
-    // the weekday in UTC to avoid timezone-dependent date shifts.
-    if(typeof date!=='string' || date.length!==10 || date[4]!=='-' || date[7]!=='-')return null;
-    const parts=date.split('-');
-    if(parts.length!==3 || parts.some((part,index)=>part.length!==[4,2,2][index] || ![...part].every(ch=>ch>='0' && ch<='9')))return null;
-    const [year,month,dayOfMonth]=parts.map(Number);
-    const calendarDate=new Date(Date.UTC(year,month-1,dayOfMonth));
-    if(calendarDate.getUTCFullYear()!==year || calendarDate.getUTCMonth()!==month-1 || calendarDate.getUTCDate()!==dayOfMonth)return null;
-    const day=calendarDate.getUTCDay();
-    if(day===6 || day===0 || day===1)return ['saturday','sunday','monday'];
-    if(day===2 || day===3 || day===4)return ['tuesday','wednesday','thursday'];
+    if(!/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(date||''))return null;
+    const day=new Date(date+'T12:00:00').getDay();
+    if([6,0,1].includes(day))return ['saturday','sunday','monday'];
+    if([2,3,4].includes(day))return ['tuesday','wednesday','thursday'];
     return null;
   }
   $('assignmentDateInput').value=cairoToday();
