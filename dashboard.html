@@ -2585,24 +2585,30 @@ html[data-theme="light"] .student-overview #overviewNextButton{
 .student-overview #overviewResumeButton:hover{transform:translateY(-1px)!important;filter:brightness(1.08)!important;box-shadow:0 8px 18px rgba(91,87,190,.24)!important}
 .student-overview #overviewResumeButton[hidden]{display:none!important}
 </style><style id="next-task-typography-refinement">
-/* Match the compact typography of the resume card; task labels stay clean and icon-free. */
-.student-overview #overviewNextItem .overview-task-copy{gap:4px!important}
+/* Compact assignment copy; no decorative icon beside task names. */
+.student-overview #overviewNextItem .overview-task-icon{display:none!important}
+.student-overview #overviewNextItem .overview-task-copy{gap:3px!important;min-width:0!important}
 .student-overview #overviewNextItem .overview-item-link{
- display:block!important;font-size:9.5px!important;font-weight:800!important;
- line-height:1.6!important;letter-spacing:0!important;margin:0!important;
+ display:block!important;font-size:9px!important;font-weight:800!important;
+ line-height:1.5!important;letter-spacing:0!important;margin:0!important;
 }
 .student-overview #overviewNextItem .overview-task-copy>small{
- display:block!important;font-size:9px!important;font-weight:500!important;
- line-height:1.55!important;opacity:.78!important;margin:1px 0 0!important;
+ display:block!important;font-size:8.5px!important;font-weight:500!important;
+ line-height:1.45!important;opacity:.78!important;margin:1px 0 0!important;
 }
 .student-overview #overviewNextItem .overview-task-done-list{
  gap:4px!important;margin-top:2px!important;
 }
 .student-overview #overviewNextItem .overview-task-chip,
 .student-overview #overviewNextItem .overview-task-more{
- font-size:8.5px!important;font-weight:750!important;line-height:1.45!important;
- padding:3px 7px!important;gap:0!important;
+ display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;
+ font-size:8px!important;font-weight:700!important;line-height:1.4!important;
+ padding:2px 6px!important;gap:0!important;border-radius:7px!important;
 }
-.student-overview #overviewNextItem .overview-task-progress{margin-top:3px!important}
+.student-overview #overviewNextItem .overview-task-chip::before,
+.student-overview #overviewNextItem .overview-task-chip::after,
+.student-overview #overviewNextItem .overview-task-more::before,
+.student-overview #overviewNextItem .overview-task-more::after{content:none!important;display:none!important}
+.student-overview #overviewNextItem .overview-task-progress{margin-top:2px!important}
 </style></body>
 </html>
