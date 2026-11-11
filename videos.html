@@ -7892,30 +7892,30 @@ window.addEventListener(
 </script>
 
 <style id="quote-word-animation-refinement">
+/* Animate the existing quote only: preserve its original font size, line-height and layout. */
 .pageTitle.quote-title{
  color:#f6e8c2!important;
- background:linear-gradient(100deg,#fff4cf 0%,#f4d78e 38%,#e9bd62 68%,#fff0c2 100%);
- -webkit-background-clip:text!important;background-clip:text!important;
- -webkit-text-fill-color:transparent!important;
- text-shadow:0 0 16px rgba(244,205,119,.13)!important;
- filter:drop-shadow(0 2px 9px rgba(224,177,82,.12));
+ -webkit-text-fill-color:#f6e8c2!important;
+ background:none!important;
+ -webkit-background-clip:border-box!important;
+ background-clip:border-box!important;
+ text-shadow:0 2px 13px rgba(224,177,82,.18),0 0 20px rgba(244,205,119,.10)!important;
+ filter:none!important;
 }
 .quote-title .quote-word{
  display:inline-block;
- white-space:pre;
  opacity:0;
- transform:translateX(22px);
- animation:quoteWordEnter .72s cubic-bezier(.2,.75,.25,1) forwards;
- animation-delay:calc(var(--word-index)*.105s);
- will-change:transform,opacity;
+ transform:translateX(12px);
+ animation:quoteWordEnter .52s cubic-bezier(.22,.68,.2,1) forwards;
+ animation-delay:calc(var(--word-index)*.075s);
+ will-change:opacity,transform;
 }
 @keyframes quoteWordEnter{
- 0%{opacity:0;transform:translateX(22px);filter:blur(3px)}
- 70%{opacity:1;filter:blur(0);text-shadow:0 0 12px rgba(246,211,137,.24)}
- 100%{opacity:1;transform:translateX(0);filter:blur(0)}
+ from{opacity:0;transform:translateX(12px)}
+ to{opacity:1;transform:translateX(0)}
 }
 @media(prefers-reduced-motion:reduce){
- .quote-title .quote-word{opacity:1;transform:none;animation:none;filter:none}
+ .quote-title .quote-word{opacity:1;transform:none;animation:none;will-change:auto}
 }
 </style>
 
