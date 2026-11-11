@@ -673,8 +673,16 @@ window.adminAccessReady=verifyAdminAccess().then(authorized=>{
     return parts.year+'-'+parts.month+'-'+parts.day;
   }
   function getGroupDays(date){
-    if(!/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(date||''))return null;
-    const day=new Date(date+'T12:00:00').getDay();
+    // Date inputs return YYYY-MM-DD. Parse the components explicitly so
+    // escaped-regex differences cannot reject valid dates.
+    if(typeof date!=='string')return null;
+    const parts=date.split('-');
+    if(parts.length!==3 || parts[0].length!==4 || parts[1].length!==2 || parts[2].length!==2)return null;
+    const year=Number(parts[0]), month=Number(parts[1]), dayOfMonth=Number(parts[2]);
+    if(!Number.isInteger(year)||!Number.isInteger(month)||!Number.isInteger(dayOfMonth))return null;
+    const parsed=new Date(Date.UTC(year,month-1,dayOfMonth));
+    if(parsed.getUTCFullYear()!==year || parsed.getUTCMonth()!==month-1 || parsed.getUTCDate()!==dayOfMonth)return null;
+    const day=parsed.getUTCDay();
     if([6,0,1].includes(day))return ['saturday','sunday','monday'];
     if([2,3,4].includes(day))return ['tuesday','wednesday','thursday'];
     return null;
