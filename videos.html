@@ -7892,31 +7892,24 @@ window.addEventListener(
 </script>
 
 <style id="quote-word-animation-refinement">
-/* Animate the existing quote only: preserve its original font size, line-height and layout. */
+/* Keep the original Diwani typeface; fit the full quote on one line without changing its container. */
 .pageTitle.quote-title{
- color:#f6e8c2!important;
- -webkit-text-fill-color:#f6e8c2!important;
- background:none!important;
- -webkit-background-clip:border-box!important;
- background-clip:border-box!important;
- text-shadow:0 2px 13px rgba(224,177,82,.18),0 0 20px rgba(244,205,119,.10)!important;
- filter:none!important;
+ font-family:"diwanltr",serif!important;
+ font-size:clamp(18px,2.45vw,31px)!important;
+ font-weight:400!important;line-height:1.8!important;letter-spacing:0!important;
+ white-space:nowrap!important;text-wrap:nowrap!important;overflow-wrap:normal!important;
+ color:#f6e8c2!important;-webkit-text-fill-color:#f6e8c2!important;
+ background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;
+ text-shadow:0 2px 13px rgba(224,177,82,.18),0 0 20px rgba(244,205,119,.10)!important;filter:none!important;
 }
 .quote-title .quote-word{
- display:inline-block;
- opacity:0;
- transform:translateX(12px);
- animation:quoteWordEnter .52s cubic-bezier(.22,.68,.2,1) forwards;
- animation-delay:calc(var(--word-index)*.075s);
- will-change:opacity,transform;
+ display:inline-block;white-space:pre;opacity:0;transform:translateX(12px);
+ animation:quoteWordEnter .72s cubic-bezier(.22,.68,.2,1) forwards;
+ animation-delay:calc(var(--word-index)*.115s);will-change:opacity,transform;
 }
-@keyframes quoteWordEnter{
- from{opacity:0;transform:translateX(12px)}
- to{opacity:1;transform:translateX(0)}
-}
-@media(prefers-reduced-motion:reduce){
- .quote-title .quote-word{opacity:1;transform:none;animation:none;will-change:auto}
-}
+@keyframes quoteWordEnter{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+@media(max-width:560px){.pageTitle.quote-title{font-size:clamp(15px,3.65vw,20px)!important}}
+@media(prefers-reduced-motion:reduce){.quote-title .quote-word{opacity:1;transform:none;animation:none;will-change:auto}}
 </style>
 
 </body>
