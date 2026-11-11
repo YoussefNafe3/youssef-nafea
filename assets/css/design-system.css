@@ -40,21 +40,21 @@ img,svg,video,canvas{max-width:100%}
 
 
 /* ===== Phase 1: public experience + authentication surfaces ===== */
-:where(body:not(:has(.top-bar))) .container{
+:where(body:has(.dna-mark)) .container{
   width:min(100%,440px);
   padding:clamp(24px,5vw,38px);
   border-radius:26px;
   box-shadow:0 28px 80px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.07);
 }
-:where(body:not(:has(.top-bar))) .container h2{
+:where(body:has(.dna-mark)) .container h2{
   margin:8px 0 26px;
   color:#f7f5ff;
   font-size:clamp(23px,5vw,29px);
   line-height:1.5;
   letter-spacing:-.35px;
 }
-:where(body:not(:has(.top-bar))) .container input,
-:where(body:not(:has(.top-bar))) .container select{
+:where(body:has(.dna-mark)) .container input,
+:where(body:has(.dna-mark)) .container select{
   display:block;
   width:100%;
   min-height:54px;
@@ -69,19 +69,19 @@ img,svg,video,canvas{max-width:100%}
   text-align:right;
   transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
 }
-:where(body:not(:has(.top-bar))) .container select{color-scheme:dark;cursor:pointer}
-:where(body:not(:has(.top-bar))) .container select option{background:#171a35;color:#f7f5ff}
-:where(body:not(:has(.top-bar))) .container input::placeholder{color:#aeb4cf;opacity:1}
-:where(body:not(:has(.top-bar))) .container input:focus,
-:where(body:not(:has(.top-bar))) .container select:focus{
+:where(body:has(.dna-mark)) .container select{color-scheme:dark;cursor:pointer}
+:where(body:has(.dna-mark)) .container select option{background:#171a35;color:#f7f5ff}
+:where(body:has(.dna-mark)) .container input::placeholder{color:#aeb4cf;opacity:1}
+:where(body:has(.dna-mark)) .container input:focus,
+:where(body:has(.dna-mark)) .container select:focus{
   border-color:#a99aff;
   background:rgba(10,13,37,.92);
   box-shadow:0 0 0 4px rgba(130,112,237,.16);
   outline:0;
 }
-:where(body:not(:has(.top-bar))) .container .password-box{position:relative}
-:where(body:not(:has(.top-bar))) .container .password-box input{padding-left:54px}
-:where(body:not(:has(.top-bar))) .container .eye{
+:where(body:has(.dna-mark)) .container .password-box{position:relative}
+:where(body:has(.dna-mark)) .container .password-box input{padding-left:54px}
+:where(body:has(.dna-mark)) .container .eye{
   z-index:2;
   display:grid;
   place-items:center;
@@ -92,7 +92,7 @@ img,svg,video,canvas{max-width:100%}
   background:rgba(130,112,237,.12);
   font-size:17px;
 }
-:where(body:not(:has(.top-bar))) .container button:not(.eye){
+:where(body:has(.dna-mark)) .container button:not(.eye){
   min-height:54px;
   margin-top:5px;
   border:1px solid rgba(240,212,139,.24);
@@ -104,9 +104,9 @@ img,svg,video,canvas{max-width:100%}
   letter-spacing:.1px;
   box-shadow:0 12px 28px rgba(81,64,170,.28),inset 0 1px 0 rgba(255,255,255,.16);
 }
-:where(body:not(:has(.top-bar))) .container button:not(.eye):hover{filter:brightness(1.08);transform:translateY(-1px)}
-:where(body:not(:has(.top-bar))) .container button:not(.eye):active{transform:translateY(0)}
-:where(body:not(:has(.top-bar))) .container #msg{
+:where(body:has(.dna-mark)) .container button:not(.eye):hover{filter:brightness(1.08);transform:translateY(-1px)}
+:where(body:has(.dna-mark)) .container button:not(.eye):active{transform:translateY(0)}
+:where(body:has(.dna-mark)) .container #msg{
   min-height:24px;
   margin-top:14px;
   color:#f2dca6;
@@ -114,8 +114,8 @@ img,svg,video,canvas{max-width:100%}
   line-height:1.8;
   overflow-wrap:anywhere;
 }
-:where(body:not(:has(.top-bar))) .container .signup-link,
-:where(body:not(:has(.top-bar))) .container .login-link{
+:where(body:has(.dna-mark)) .container .signup-link,
+:where(body:has(.dna-mark)) .container .login-link{
   margin-top:22px;
   padding-top:18px;
   border-top:1px solid rgba(190,181,235,.14);
@@ -123,9 +123,9 @@ img,svg,video,canvas{max-width:100%}
   font-size:13px;
   line-height:1.9;
 }
-:where(body:not(:has(.top-bar))) .container .signup-link a,
-:where(body:not(:has(.top-bar))) .container .login-link a{color:#f0d48b;text-underline-offset:4px}
-:where(body:not(:has(.top-bar))) .home-btn{
+:where(body:has(.dna-mark)) .container .signup-link a,
+:where(body:has(.dna-mark)) .container .login-link a{color:#f0d48b;text-underline-offset:4px}
+:where(body:has(.dna-mark)) .home-btn{
   position:fixed;
   top:max(16px,env(safe-area-inset-top));
   right:max(16px,env(safe-area-inset-right));
@@ -141,19 +141,19 @@ img,svg,video,canvas{max-width:100%}
   border-color:rgba(190,181,235,.2);
   box-shadow:0 8px 24px rgba(0,0,0,.18);
 }
-:where(body:not(:has(.top-bar))) .logo{margin-bottom:18px}
-:where(body:not(:has(.top-bar))) .dna-mark{width:64px;height:64px}
+:where(body:has(.dna-mark)) .logo{margin-bottom:18px}
+:where(body:has(.dna-mark)) .dna-mark{width:64px;height:64px}
 #signupSuccessNotice{line-height:1.9}
 @media(max-width:520px){
-  :where(body:not(:has(.top-bar))){align-items:flex-start;padding:82px 14px max(22px,env(safe-area-inset-bottom))}
-  :where(body:not(:has(.top-bar))) .container{margin:auto 0;padding:25px 19px 23px;border-radius:22px}
-  :where(body:not(:has(.top-bar))) .home-btn{top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));min-height:39px;padding:8px 11px}
+  :where(body:has(.dna-mark)){align-items:flex-start;padding:82px 14px max(22px,env(safe-area-inset-bottom))}
+  :where(body:has(.dna-mark)) .container{margin:auto 0;padding:25px 19px 23px;border-radius:22px}
+  :where(body:has(.dna-mark)) .home-btn{top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));min-height:39px;padding:8px 11px}
 }
 @media(max-height:650px) and (min-width:521px){
-  :where(body:not(:has(.top-bar))){align-items:flex-start;padding-top:76px;padding-bottom:24px}
+  :where(body:has(.dna-mark)){align-items:flex-start;padding-top:76px;padding-bottom:24px}
 }
 @media(min-width:521px){
-  :where(body:not(:has(.top-bar))) .container{margin-inline:auto}
+  :where(body:has(.dna-mark)) .container{margin-inline:auto}
 }
 /* Homepage: consistent navigation, hero rhythm and accessible touch targets */
 .top-bar{
