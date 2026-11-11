@@ -1671,7 +1671,7 @@ async function loadStudentDashboardOverview(){
  function dueDate(a){const days=Array.isArray(a.group_days)?a.group_days.map(x=>String(x).trim().toLowerCase()):[],matches=selected.filter(x=>days.includes(x)),raw=String(a.assignment_date||"").slice(0,10);if(!matches.length||!/^\d{4}-\d{2}-\d{2}$/.test(raw))return null;const [y,m,d]=raw.split("-").map(Number),base=new Date(Date.UTC(y,m-1,d));if(Number.isNaN(base.getTime())||base.toISOString().slice(0,10)!==raw)return null;return matches.map(day=>{const date=new Date(base);date.setUTCDate(date.getUTCDate()+((dow[day]-date.getUTCDay()+7)%7));return date.toISOString().slice(0,10);}).sort()[0]||null;}
  assignments.forEach(a=>{const cls=String(a.class_group||"all").trim().toLowerCase();if(cls!=="all"&&cls!==group.toLowerCase())return;const date=dueDate(a);if(!date||date<today)return;const items=Array.isArray(a.items)?a.items:[],done=doneMap.get(String(a.id))||new Set(),pct=items.length?Math.round(items.filter((_,i)=>done.has(String(i))).length/items.length*100):0;candidates.push({kind:"assignment",id:a.id,time:new Date(date+"T00:00:00+02:00").getTime(),title:a.title||({recitation:"تسميع",homework:"واجب",homework_recitation:"واجب وتسميع",worksheet:"ورقة عمل"}[a.task_type]||"تكليف"),detail:done.size>0?"أنجزت "+done.size+" من "+items.length+" مهام":"لم تبدأ المهام بعد",items:items.map((item,index)=>({label:typeof item==="string"?item:(item.text||item.title||"مهمة"),done:done.has(String(index))})),completedCount:done.size,totalCount:items.length,href:"#assignmentList",button:"عرض التكليف"});});
  candidates.sort((a,b)=>a.time-b.time);const next=candidates[0];
- if(next){const partial=next.items.filter(item=>item.done),taskLines=next.items.slice(0,6).map(item=>'<span class="overview-task-chip '+(item.done?'is-done':'is-pending')+'">'+(item.done?'✓ ':'○ ')+overviewEscape(item.label)+'</span>').join(''),remaining=next.items.length>6?'<span class="overview-task-more">+'+(next.items.length-6)+' مهام أخرى</span>':"";el("overviewNextItem").innerHTML='<div class="overview-task-copy"><a class="overview-item-link" href="#assignment-card-'+encodeURIComponent(String(next.id))+'">'+overviewEscape(next.title)+'</a><small>'+overviewEscape(next.detail)+'</small>'+'<div class="overview-task-done-list" aria-label="المهام المطلوبة">'+taskLines+remaining+'</div>'+(next.totalCount>0&&partial.length?'<div class="overview-task-progress" role="progressbar" aria-valuenow="'+Math.round(partial.length/next.totalCount*100)+'" aria-valuemin="0" aria-valuemax="100"><span style="width:'+Math.round(partial.length/next.totalCount*100)+'%"></span></div>':'')+'</div>';const a=el("overviewNextButton");a.href="#assignmentList";a.innerHTML='عرض التكليف <span aria-hidden="true">←</span>';a.hidden=false;}
+ if(next){const partial=next.items.filter(item=>item.done),taskLines=next.items.slice(0,6).map(item=>'<span class="overview-task-chip '+(item.done?'is-done':'is-pending')+'">'+overviewEscape(item.label)+'</span>').join(''),remaining=next.items.length>6?'<span class="overview-task-more">+'+(next.items.length-6)+' مهام أخرى</span>':"";el("overviewNextItem").innerHTML='<div class="overview-task-copy"><a class="overview-item-link" href="#assignment-card-'+encodeURIComponent(String(next.id))+'">'+overviewEscape(next.title)+'</a><small>'+overviewEscape(next.detail)+'</small>'+'<div class="overview-task-done-list" aria-label="المهام المطلوبة">'+taskLines+remaining+'</div>'+(next.totalCount>0&&partial.length?'<div class="overview-task-progress" role="progressbar" aria-valuenow="'+Math.round(partial.length/next.totalCount*100)+'" aria-valuemin="0" aria-valuemax="100"><span style="width:'+Math.round(partial.length/next.totalCount*100)+'%"></span></div>':'')+'</div>';const a=el("overviewNextButton");a.href="#assignmentList";a.innerHTML='عرض التكليف <span aria-hidden="true">←</span>';a.hidden=false;}
  else{el("overviewNextItem").innerHTML='<span class="overview-placeholder-icon">📚</span><div><strong>'+(selected.length?"لا يوجد تكليف للحصة القادمة حتى الآن":"اختار يومي مجموعتك لعرض التكليف المطلوب")+'</strong><small>'+(selected.length?"تابع قسم التكليفات أسفل الصفحة للاطلاع على المهام المتاحة.":"حدد يومي حضورك من قسم التكليفات بالأسفل، وسيظهر التكليف هنا.")+'</small></div>';const a=el("overviewNextButton");a.href="#assignmentList";a.innerHTML='عرض التكليفات <span aria-hidden="true">←</span>';a.hidden=false;}
 }
 
@@ -2584,5 +2584,25 @@ html[data-theme="light"] .student-overview #overviewNextButton{
 }
 .student-overview #overviewResumeButton:hover{transform:translateY(-1px)!important;filter:brightness(1.08)!important;box-shadow:0 8px 18px rgba(91,87,190,.24)!important}
 .student-overview #overviewResumeButton[hidden]{display:none!important}
+</style><style id="next-task-typography-refinement">
+/* Match the compact typography of the resume card; task labels stay clean and icon-free. */
+.student-overview #overviewNextItem .overview-task-copy{gap:4px!important}
+.student-overview #overviewNextItem .overview-item-link{
+ display:block!important;font-size:9.5px!important;font-weight:800!important;
+ line-height:1.6!important;letter-spacing:0!important;margin:0!important;
+}
+.student-overview #overviewNextItem .overview-task-copy>small{
+ display:block!important;font-size:9px!important;font-weight:500!important;
+ line-height:1.55!important;opacity:.78!important;margin:1px 0 0!important;
+}
+.student-overview #overviewNextItem .overview-task-done-list{
+ gap:4px!important;margin-top:2px!important;
+}
+.student-overview #overviewNextItem .overview-task-chip,
+.student-overview #overviewNextItem .overview-task-more{
+ font-size:8.5px!important;font-weight:750!important;line-height:1.45!important;
+ padding:3px 7px!important;gap:0!important;
+}
+.student-overview #overviewNextItem .overview-task-progress{margin-top:3px!important}
 </style></body>
 </html>
