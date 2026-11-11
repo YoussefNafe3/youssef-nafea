@@ -1671,8 +1671,8 @@ async function loadStudentDashboardOverview(){
  function dueDate(a){const days=Array.isArray(a.group_days)?a.group_days.map(x=>String(x).trim().toLowerCase()):[],matches=selected.filter(x=>days.includes(x)),raw=String(a.assignment_date||"").slice(0,10);if(!matches.length||!/^\d{4}-\d{2}-\d{2}$/.test(raw))return null;const [y,m,d]=raw.split("-").map(Number),base=new Date(Date.UTC(y,m-1,d));if(Number.isNaN(base.getTime())||base.toISOString().slice(0,10)!==raw)return null;return matches.map(day=>{const date=new Date(base);date.setUTCDate(date.getUTCDate()+((dow[day]-date.getUTCDay()+7)%7));return date.toISOString().slice(0,10);}).sort()[0]||null;}
  assignments.forEach(a=>{const cls=String(a.class_group||"all").trim().toLowerCase();if(cls!=="all"&&cls!==group.toLowerCase())return;const date=dueDate(a);if(!date||date<today)return;const items=Array.isArray(a.items)?a.items:[],done=doneMap.get(String(a.id))||new Set(),pct=items.length?Math.round(items.filter((_,i)=>done.has(String(i))).length/items.length*100):0;candidates.push({kind:"assignment",id:a.id,time:new Date(date+"T00:00:00+02:00").getTime(),title:a.title||({recitation:"تسميع",homework:"واجب",homework_recitation:"واجب وتسميع",worksheet:"ورقة عمل"}[a.task_type]||"تكليف"),detail:done.size>0?"أنجزت "+done.size+" من "+items.length+" مهام":"لم تبدأ المهام بعد",items:items.map((item,index)=>({label:typeof item==="string"?item:(item.text||item.title||"مهمة"),done:done.has(String(index))})),completedCount:done.size,totalCount:items.length,href:"#assignmentList",button:"عرض التكليف"});});
  candidates.sort((a,b)=>a.time-b.time);const next=candidates[0];
- if(next){const partial=next.items.filter(item=>item.done),taskLines=next.items.slice(0,6).map(item=>'<span class="overview-task-chip '+(item.done?'is-done':'is-pending')+'">'+(item.done?'✓ ':'○ ')+overviewEscape(item.label)+'</span>').join(''),remaining=next.items.length>6?'<span class="overview-task-more">+'+(next.items.length-6)+' مهام أخرى</span>':"";el("overviewNextItem").innerHTML='<div class="overview-task-copy"><a class="overview-item-link" href="#assignment-card-'+encodeURIComponent(String(next.id))+'">'+overviewEscape(next.title)+'</a><small>'+overviewEscape(next.detail)+'</small>'+'<div class="overview-task-done-list" aria-label="المهام المطلوبة">'+taskLines+remaining+'</div>'+(next.totalCount>0&&partial.length?'<div class="overview-task-progress" role="progressbar" aria-valuenow="'+Math.round(partial.length/next.totalCount*100)+'" aria-valuemin="0" aria-valuemax="100"><span style="width:'+Math.round(partial.length/next.totalCount*100)+'%"></span></div>':'')+'</div>';const a=el("overviewNextButton");a.href="#assignmentList";a.textContent="عرض التكليف ←";a.hidden=false;}
- else{el("overviewNextItem").innerHTML='<span class="overview-placeholder-icon">📚</span><div><strong>'+(selected.length?"لا يوجد تكليف للحصة القادمة حتى الآن":"اختار يومي مجموعتك لعرض التكليف المطلوب")+'</strong><small>'+(selected.length?"تابع قسم التكليفات أسفل الصفحة للاطلاع على المهام المتاحة.":"حدد يومي حضورك من قسم التكليفات بالأسفل، وسيظهر التكليف هنا.")+'</small></div>';const a=el("overviewNextButton");a.href="#assignmentList";a.textContent="عرض التكليفات ←";a.hidden=false;}
+ if(next){const partial=next.items.filter(item=>item.done),taskLines=next.items.slice(0,6).map(item=>'<span class="overview-task-chip '+(item.done?'is-done':'is-pending')+'">'+(item.done?'✓ ':'○ ')+overviewEscape(item.label)+'</span>').join(''),remaining=next.items.length>6?'<span class="overview-task-more">+'+(next.items.length-6)+' مهام أخرى</span>':"";el("overviewNextItem").innerHTML='<div class="overview-task-copy"><a class="overview-item-link" href="#assignment-card-'+encodeURIComponent(String(next.id))+'">'+overviewEscape(next.title)+'</a><small>'+overviewEscape(next.detail)+'</small>'+'<div class="overview-task-done-list" aria-label="المهام المطلوبة">'+taskLines+remaining+'</div>'+(next.totalCount>0&&partial.length?'<div class="overview-task-progress" role="progressbar" aria-valuenow="'+Math.round(partial.length/next.totalCount*100)+'" aria-valuemin="0" aria-valuemax="100"><span style="width:'+Math.round(partial.length/next.totalCount*100)+'%"></span></div>':'')+'</div>';const a=el("overviewNextButton");a.href="#assignmentList";a.innerHTML='عرض التكليف <span aria-hidden="true">←</span>';a.hidden=false;}
+ else{el("overviewNextItem").innerHTML='<span class="overview-placeholder-icon">📚</span><div><strong>'+(selected.length?"لا يوجد تكليف للحصة القادمة حتى الآن":"اختار يومي مجموعتك لعرض التكليف المطلوب")+'</strong><small>'+(selected.length?"تابع قسم التكليفات أسفل الصفحة للاطلاع على المهام المتاحة.":"حدد يومي حضورك من قسم التكليفات بالأسفل، وسيظهر التكليف هنا.")+'</small></div>';const a=el("overviewNextButton");a.href="#assignmentList";a.innerHTML='عرض التكليفات <span aria-hidden="true">←</span>';a.hidden=false;}
 }
 
 /* Resolve the actual authenticated role before rendering student content.
@@ -2538,6 +2538,35 @@ The heartbeat keeps the session alive.
 }
 .student-overview #overviewNextButton:hover{transform:translateY(-1px)!important;filter:brightness(1.08)!important}
 .student-overview #overviewNextButton[hidden]{display:none!important}
+</style>
+<style id="next-assignment-button-match">
+/* Match the resume CTA's button geometry and arrow treatment; retain a distinct teal identity. */
+.student-overview #overviewNextButton{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:8px!important;width:100%!important;box-sizing:border-box!important;
+ margin-top:8px!important;padding:7px 11px!important;min-height:32px!important;
+ border:1px solid rgba(45,212,191,.3)!important;border-radius:10px!important;
+ color:#eafffb!important;
+ background:linear-gradient(110deg,#0f9f91,#087f83)!important;
+ box-shadow:0 6px 15px rgba(13,148,136,.18)!important;
+ text-decoration:none!important;font-size:10px!important;font-weight:900!important;line-height:1.5!important;
+ transition:transform .2s ease,filter .2s ease,box-shadow .2s ease!important;
+}
+.student-overview #overviewNextButton>span{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:19px!important;height:19px!important;flex:0 0 19px!important;
+ border-radius:6px!important;background:rgba(255,255,255,.16)!important;
+ color:inherit!important;font-size:14px!important;line-height:1!important;
+}
+.student-overview #overviewNextButton:hover{
+ transform:translateY(-1px)!important;filter:brightness(1.08)!important;
+ box-shadow:0 8px 18px rgba(13,148,136,.24)!important;
+}
+.student-overview #overviewNextButton[hidden]{display:none!important}
+html[data-theme="light"] .student-overview #overviewNextButton{
+ color:#fff!important;background:linear-gradient(110deg,#0f9f91,#087f83)!important;
+ border-color:rgba(13,148,136,.28)!important;
+}
 </style>
 </body>
 </html>
