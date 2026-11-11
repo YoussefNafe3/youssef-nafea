@@ -1338,6 +1338,54 @@ html[data-theme="light"] .student-overview .overview-next-item{
   .student-progress-achievements,.assignment-hub{max-width:1160px!important}
 }
 
+
+/* Desktop hero spans the same content canvas as the dashboard, not a half-width corner card */
+@media(min-width:1024px){
+  .hero{
+    display:grid!important;
+    grid-template-columns:minmax(250px,34%) minmax(0,1fr)!important;
+    grid-template-rows:auto auto!important;
+    direction:ltr!important;
+    align-items:center!important;
+    justify-content:stretch!important;
+    column-gap:clamp(22px,3vw,42px)!important;
+    row-gap:5px!important;
+    width:min(1240px,100%)!important;
+    max-width:1240px!important;
+    min-height:0!important;height:auto!important;
+    margin:8px auto 20px!important;
+    padding:18px clamp(26px,3vw,42px)!important;
+    box-sizing:border-box!important;
+    border-radius:22px!important;
+  }
+  .hero-heartbeat{
+    grid-column:1!important;grid-row:1 / span 2!important;
+    width:100%!important;height:148px!important;
+    max-width:270px!important;justify-self:center!important;
+    overflow:hidden!important;
+  }
+  .hero-heartbeat svg{
+    width:100%!important;height:100%!important;
+    max-width:100%!important;max-height:100%!important;
+  }
+  .hero h1,.hero p{
+    grid-column:2!important;
+    width:100%!important;max-width:none!important;
+    justify-self:stretch!important;
+    text-align:right!important;direction:rtl!important;
+  }
+  .hero h1{grid-row:1!important;font-size:clamp(27px,2.2vw,32px)!important}
+  .hero p{grid-row:2!important;font-size:clamp(12px,1vw,14px)!important}
+}
+@media(min-width:1024px) and (max-width:1199px){
+  .hero{
+    width:100%!important;max-width:100%!important;
+    grid-template-columns:minmax(220px,32%) minmax(0,1fr)!important;
+    padding-inline:24px!important;
+  }
+  .hero-heartbeat{height:136px!important;max-width:245px!important}
+}
+
 </style>
 </head>
 
