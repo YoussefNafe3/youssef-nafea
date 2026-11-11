@@ -7774,6 +7774,22 @@ window.addEventListener(
 
   await loadVideos();
 
+  // Resume links from the student dashboard point to a specific video.
+  try{
+    const requestedVideoId=new URLSearchParams(window.location.search).get("video");
+    if(requestedVideoId){
+      const requestedVideo=state.all.find(item=>String(item.id)===String(requestedVideoId));
+      if(requestedVideo){
+        await selectVideo(requestedVideo);
+        const cleanUrl=new URL(window.location.href);
+        cleanUrl.searchParams.delete("video");
+        history.replaceState({}, "", cleanUrl.pathname+cleanUrl.search+cleanUrl.hash);
+      }
+    }
+  }catch(resumeError){
+    console.warn("[Videos] Resume request could not be completed:",resumeError);
+  }
+
   getCurrentUser();
 
   updateFullscreenButton();
