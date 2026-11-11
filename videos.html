@@ -789,6 +789,78 @@ html[data-theme="light"] .speedBtn.active{
  .playerCard:fullscreen .zoomBtn,.playerCard:-webkit-full-screen .zoomBtn{font-size:10px;padding:3px 5px}
 }
 
+
+/* Fullscreen toolbar: achievement stars stay neatly on the left, controls on the right. */
+.playerCard:fullscreen .playerControls,
+.playerCard:-webkit-full-screen .playerControls{
+  position:relative;
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:flex-end;
+  gap:12px;
+  min-height:58px;
+  padding:8px 14px 8px 174px;
+  box-sizing:border-box;
+}
+.playerCard:fullscreen .controlRow,
+.playerCard:-webkit-full-screen .controlRow{
+  flex:1 1 auto;
+  min-width:0;
+  justify-content:flex-end;
+  align-items:center;
+  gap:6px;
+}
+.playerCard:fullscreen .video-star-rewards,
+.playerCard:-webkit-full-screen .video-star-rewards{
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  width:auto;
+  min-height:38px;
+  margin:0;
+  padding:3px 8px;
+  border-radius:12px;
+  background:rgba(13,22,40,.72);
+  border:1px solid rgba(96,234,255,.18);
+  box-shadow:0 4px 18px rgba(0,0,0,.18);
+}
+.playerCard:fullscreen .video-star-rewards .video-star,
+.playerCard:-webkit-full-screen .video-star-rewards .video-star{
+  font-size:var(--star-size,20px);
+}
+@media(max-width:640px){
+  .playerCard:fullscreen .playerControls,
+  .playerCard:-webkit-full-screen .playerControls{
+    min-height:52px;
+    gap:5px;
+    padding:6px 7px 6px 126px;
+  }
+  .playerCard:fullscreen .video-star-rewards,
+  .playerCard:-webkit-full-screen .video-star-rewards{
+    left:7px;
+    min-height:32px;
+    gap:2px;
+    padding:2px 4px;
+    border-radius:9px;
+  }
+  .playerCard:fullscreen .video-star-rewards,
+  .playerCard:-webkit-full-screen .video-star-rewards{--star-size:17px}
+  .playerCard:fullscreen .controlRow,
+  .playerCard:-webkit-full-screen .controlRow{gap:3px}
+}
+@media(max-width:380px){
+  .playerCard:fullscreen .playerControls,
+  .playerCard:-webkit-full-screen .playerControls{padding-left:112px}
+  .playerCard:fullscreen .video-star-rewards,
+  .playerCard:-webkit-full-screen .video-star-rewards{--star-size:15px;gap:1px}
+}
+
 .ytBlocker,
 .ytTitleBlocker,
 .ytBottomBlocker{
