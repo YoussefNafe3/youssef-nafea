@@ -1387,40 +1387,30 @@ html[data-theme="light"] .student-overview .overview-next-item{
 }
 
 
-/* Direct, accessible links from student dashboard quick summaries */
+/* Clickable titles only: preserve the original cards' appearance and dimensions */
 .overview-item-link{
-  display:inline-block!important;max-width:100%!important;
-  color:inherit!important;font:inherit!important;font-weight:900!important;
-  line-height:1.65!important;text-decoration:none!important;
-  text-decoration-thickness:1px!important;text-underline-offset:4px!important;
-  cursor:pointer!important;transition:color .18s ease,text-decoration-color .18s ease!important;
+  display:inline!important;
+  color:inherit!important;
+  font:inherit!important;
+  font-weight:inherit!important;
+  line-height:inherit!important;
+  text-decoration:none!important;
+  background:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+  margin:0!important;
+  cursor:pointer!important;
 }
-.overview-resume-card .overview-item-link{
-  color:#91c7ff!important;text-decoration:underline!important;
-  text-decoration-color:rgba(145,199,255,.3)!important;
-}
-.overview-next-card .overview-item-link{
-  color:#79dfcf!important;text-decoration:underline!important;
-  text-decoration-color:rgba(121,223,207,.3)!important;
-}
-.overview-item-link:hover,.overview-item-link:focus-visible{
-  color:#f3d58b!important;text-decoration-color:currentColor!important;
-  outline:none!important;
-}
+.overview-item-link:hover,
+.overview-item-link:focus,
 .overview-item-link:focus-visible{
-  border-radius:4px!important;box-shadow:0 0 0 3px rgba(121,186,255,.2)!important;
+  color:inherit!important;
+  text-decoration:none!important;
+  outline:none!important;
+  box-shadow:none!important;
 }
 .assignment-card[id]{scroll-margin-top:28px}
-.assignment-card[id]:target{
-  border-color:rgba(121,186,255,.72)!important;
-  box-shadow:0 0 0 3px rgba(121,186,255,.14),0 14px 32px rgba(0,0,0,.15)!important;
-  animation:assignmentTargetPulse 1.15s ease-out 1;
-}
-@keyframes assignmentTargetPulse{
-  0%{transform:translateY(5px);filter:brightness(1.25)}
-  100%{transform:translateY(0);filter:brightness(1)}
-}
-
 </style>
 </head>
 
