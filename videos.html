@@ -7893,41 +7893,49 @@ window.addEventListener(
 </script>
 
 <style id="quote-word-animation-refinement">
-/* Refined Naskh typography; preserve the current one-line size and layout. */
+/* Stable quote rendering: visible by default; animation is explicitly restarted on page show. */
 .pageTitle.quote-title{
  font-family:"Noto Naskh Arabic",serif!important;
  font-size:clamp(18px,2.45vw,31px)!important;
- font-weight:600!important;
- line-height:1.8!important;
- letter-spacing:0!important;
- white-space:nowrap!important;
- text-wrap:nowrap!important;
- overflow-wrap:normal!important;
- color:#f6e8c2!important;
- -webkit-text-fill-color:#f6e8c2!important;
- background:none!important;
- -webkit-background-clip:border-box!important;
- background-clip:border-box!important;
+ font-weight:600!important;line-height:1.8!important;letter-spacing:0!important;
+ white-space:nowrap!important;text-wrap:nowrap!important;overflow-wrap:normal!important;
+ color:#f6e8c2!important;-webkit-text-fill-color:#f6e8c2!important;
+ background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;
  text-shadow:0 2px 13px rgba(224,177,82,.18),0 0 20px rgba(244,205,119,.10)!important;
  filter:none!important;
 }
 .quote-title .quote-word{
- display:inline-block;white-space:pre;opacity:0;transform:translateX(12px);
- animation:quoteWordEnter .95s cubic-bezier(.22,.68,.2,1) forwards;
+ display:inline-block;white-space:pre;opacity:1;transform:none;filter:none;
+ animation:none;will-change:auto;
+}
+.quote-title.quote-animate .quote-word{
+ opacity:0;transform:translateX(10px);
+ animation:quoteWordEnter .95s cubic-bezier(.22,.68,.2,1) both;
  animation-delay:calc(var(--word-index)*.15s);
  will-change:opacity,transform;
 }
-@keyframes quoteWordEnter{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes quoteWordEnter{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
 @media(max-width:560px){.pageTitle.quote-title{font-size:clamp(15px,3.65vw,20px)!important}}
-.video-star-rewards::before{
- content:"إنجاز الفيديو"!important;
- font-family:Cairo,sans-serif!important;
- font-size:10px!important;
- font-weight:800!important;
- letter-spacing:0!important;
-}
-@media(prefers-reduced-motion:reduce){.quote-title .quote-word{opacity:1;transform:none;animation:none;will-change:auto}}
+.video-star-rewards::before{content:"إنجاز الفيديو"!important;font-family:Cairo,sans-serif!important;font-size:10px!important;font-weight:800!important;letter-spacing:0!important}
+@media(prefers-reduced-motion:reduce){.quote-title.quote-animate .quote-word{opacity:1;transform:none;animation:none;will-change:auto}}
 </style>
 
+<script id="quote-animation-lifecycle">
+(function(){
+ const quote=document.querySelector(".pageTitle.quote-title");
+ if(!quote)return;
+ function replayQuote(){
+   quote.classList.remove("quote-animate");
+   void quote.offsetWidth;
+   requestAnimationFrame(()=>quote.classList.add("quote-animate"));
+ }
+ if(document.readyState==="loading"){
+   document.addEventListener("DOMContentLoaded",replayQuote,{once:true});
+ }else{
+   replayQuote();
+ }
+ window.addEventListener("pageshow",replayQuote);
+})();
+</script>
 </body>
 </html>
