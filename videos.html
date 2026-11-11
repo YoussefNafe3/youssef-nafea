@@ -4614,8 +4614,11 @@ function markCompletionIfFullyWatched(duration){
   const watched = ranges.reduce((sum, range) => sum + range[1] - range[0], 0);
   const furthestWatched = ranges.reduce((end, range) => Math.max(end, range[1]), 0);
 
-  // Small tolerance accounts only for the final media-timer tick, never a seek.
-  const completed = watched >= duration - 0.75 && furthestWatched >= duration - 0.75;
+  // Completion is evaluated only by the media "ended" handlers below.
+  // Accept genuine watch coverage from 99.5%, but still require the final
+  // playback-end event and contiguous reach near the actual end (not a seek).
+  const completionThreshold = duration * 0.995;
+  const completed = watched >= completionThreshold && furthestWatched >= completionThreshold;
   state.completedByEnd = completed;
   return completed;
 }
