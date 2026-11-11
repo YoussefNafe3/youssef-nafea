@@ -553,85 +553,9 @@ button:focus-visible,.video-card:focus-visible{outline:3px solid rgba(244,215,12
 .report-editor{margin:0 auto;width:100%;max-width:900px;overflow:auto;padding:28px;background:white;color:#182235;line-height:1.8;flex:1;outline:none;direction:rtl}.report-editor:focus{box-shadow:inset 0 0 0 2px #c7d2fe}.report-editor h1{font-size:25px;color:#172554;text-align:center;margin:0 0 5px}.report-editor h2{font-size:18px;color:#312e81;margin:24px 0 8px;border-bottom:2px solid #ddd6fe;padding-bottom:5px}.report-editor .report-subtitle{text-align:center;color:#64748b;margin-bottom:22px}.report-editor .report-metrics{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.report-editor .metric{border:1px solid #dbe2ef;border-radius:9px;padding:9px 13px;min-width:120px;background:#f8fafc}.report-editor table{width:100%;min-width:0;border-collapse:collapse;margin:10px 0 18px;background:white;color:#172033;font-size:12px}.report-editor th,.report-editor td{border:1px solid #cbd5e1;padding:7px 8px;text-align:right;vertical-align:top}.report-editor th{background:#eef2ff;color:#1e1b4b;position:static}.report-editor .report-empty{padding:12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:8px;color:#64748b}.report-editor .report-footer{border-top:1px solid #dbe2ef;padding-top:10px;margin-top:25px;color:#64748b;font-size:11px}
 .video-card .report-card-btn{margin-top:10px;width:100%;border:1px solid rgba(244,215,126,.38);background:rgba(244,215,126,.09);color:#f4d77e;border-radius:9px;padding:8px;font:700 12px Cairo,sans-serif;cursor:pointer}.video-card .report-card-btn:hover{background:rgba(244,215,126,.18)}
 @media print{body>*{display:none!important}#reportModal{display:block!important;position:static;padding:0;background:white}.report-dialog{width:100%;height:auto;display:block;overflow:visible;box-shadow:none;border-radius:0}.report-toolbar,.report-note{display:none!important}.report-editor{max-width:none;overflow:visible;padding:0 8mm}.report-editor table{page-break-inside:auto}.report-editor tr{page-break-inside:avoid;page-break-after:auto}.report-editor h2{page-break-after:avoid}}
-
-
-/* Status-matched neon outline across the complete student analytics row. */
-#studentsTableBody tr:has(.badge.good) td{
-  background:linear-gradient(90deg,rgba(34,197,94,.075),rgba(34,197,94,.035))!important;
-  border-top:1px solid rgba(74,222,128,.62)!important;
-  border-bottom:1px solid rgba(74,222,128,.62)!important;
-}
-#studentsTableBody tr:has(.badge.good) td:first-child{
-  border-right:1px solid rgba(74,222,128,.72)!important;
-  border-radius:0 10px 10px 0;
-}
-#studentsTableBody tr:has(.badge.good) td:last-child{
-  border-left:1px solid rgba(74,222,128,.72)!important;
-  border-radius:10px 0 0 10px;
-}
-#studentsTableBody tr:has(.badge.good){
-  filter:drop-shadow(0 0 4px rgba(34,197,94,.24));
-}
-
-#studentsTableBody tr:has(.badge.mid) td{
-  background:linear-gradient(90deg,rgba(245,158,11,.075),rgba(245,158,11,.035))!important;
-  border-top:1px solid rgba(251,191,36,.62)!important;
-  border-bottom:1px solid rgba(251,191,36,.62)!important;
-}
-#studentsTableBody tr:has(.badge.mid) td:first-child{
-  border-right:1px solid rgba(251,191,36,.72)!important;
-  border-radius:0 10px 10px 0;
-}
-#studentsTableBody tr:has(.badge.mid) td:last-child{
-  border-left:1px solid rgba(251,191,36,.72)!important;
-  border-radius:10px 0 0 10px;
-}
-#studentsTableBody tr:has(.badge.mid){
-  filter:drop-shadow(0 0 4px rgba(245,158,11,.23));
-}
-
-#studentsTableBody tr:has(.badge.bad) td{
-  background:linear-gradient(90deg,rgba(239,68,68,.075),rgba(239,68,68,.035))!important;
-  border-top:1px solid rgba(248,113,113,.58)!important;
-  border-bottom:1px solid rgba(248,113,113,.58)!important;
-}
-#studentsTableBody tr:has(.badge.bad) td:first-child{
-  border-right:1px solid rgba(248,113,113,.68)!important;
-  border-radius:0 10px 10px 0;
-}
-#studentsTableBody tr:has(.badge.bad) td:last-child{
-  border-left:1px solid rgba(248,113,113,.68)!important;
-  border-radius:10px 0 0 10px;
-}
-#studentsTableBody tr:has(.badge.bad){
-  filter:drop-shadow(0 0 4px rgba(239,68,68,.20));
-}
-
-#studentsTableBody tr:has(.badge.empty) td{
-  background:linear-gradient(90deg,rgba(148,163,184,.065),rgba(148,163,184,.025))!important;
-  border-top:1px solid rgba(148,163,184,.42)!important;
-  border-bottom:1px solid rgba(148,163,184,.42)!important;
-}
-#studentsTableBody tr:has(.badge.empty) td:first-child{
-  border-right:1px solid rgba(148,163,184,.52)!important;
-  border-radius:0 10px 10px 0;
-}
-#studentsTableBody tr:has(.badge.empty) td:last-child{
-  border-left:1px solid rgba(148,163,184,.52)!important;
-  border-radius:10px 0 0 10px;
-}
-#studentsTableBody tr:has(.badge.empty){
-  filter:drop-shadow(0 0 3px rgba(148,163,184,.16));
-}
-#studentsTableBody tr:has(.badge) td{
-  transition:background .2s ease,border-color .2s ease;
-}
-#studentsTableBody tr:has(.badge):hover td{
-  background-color:rgba(255,255,255,.035)!important;
-}
-
 </style>
 <style id="analytics-auth-pending">body{visibility:hidden}</style>
+
 </head>
 
 <body>
@@ -837,22 +761,29 @@ function formatDate(value) {
   return d.toLocaleString("ar-EG", { hour12: true });
 }
 
-function isActiveStudentId(studentId) {
-  return state.students.some(s => String(s.id) === String(studentId) && s.activated === true);
-}
-
 function getStudentDisplayName(studentId) {
-  const student = state.students.find(s => String(s.id) === String(studentId) && s.activated === true);
+  const student = state.students.find(s => String(s.id) === String(studentId));
   if (!student) return `طالب #${studentId}`;
   return student.full_name || student.name || student.phone || `طالب #${studentId}`;
 }
 
 function getAllStudentIds(classGroup = null) {
-  // Analytics are restricted to currently activated student accounts.
-  return state.students
-    .filter(s => s?.id !== undefined && s?.id !== null && s.activated === true)
-    .filter(s => !classGroup || s.class_group === classGroup)
-    .map(s => String(s.id));
+  const ids = new Set();
+
+  state.students.forEach(s => {
+    if (s?.id === undefined || s?.id === null) return;
+    // When analyzing a class-specific video, never mix students from another class.
+    if (classGroup && s.class_group !== classGroup) return;
+    ids.add(String(s.id));
+  });
+
+  state.sessions.forEach(s => {
+    if (s?.student_id === undefined || s?.student_id === null) return;
+    if (classGroup && s.class_group !== classGroup) return;
+    ids.add(String(s.student_id));
+  });
+
+  return [...ids];
 }
 
 function getVideoClassGroup(video) {
@@ -874,10 +805,7 @@ function sessionPercent(session) {
 }
 
 function latestSessionByStudentForVideo(videoId) {
-  // Ignore historical sessions belonging to deactivated or missing student accounts.
-  const relevant = state.sessions.filter(s =>
-    String(s.video_id) === String(videoId) && isActiveStudentId(s.student_id)
-  );
+  const relevant = state.sessions.filter(s => String(s.video_id) === String(videoId));
   const map = {};
   relevant.forEach(s => {
     const sid = String(s.student_id);
@@ -1034,14 +962,13 @@ function renderSelectedVideo() {
 }
 
 function renderGlobalStats() {
-  const activeSessions = state.sessions.filter(s => isActiveStudentId(s.student_id));
-  const avgGlobal = activeSessions.length
-    ? activeSessions.reduce((sum, s) => sum + sessionPercent(s), 0) / activeSessions.length
+  const avgGlobal = state.sessions.length
+    ? state.sessions.reduce((sum, s) => sum + sessionPercent(s), 0) / state.sessions.length
     : 0;
 
   document.getElementById("totalStudents").innerText = getAllStudentIds().length;
   document.getElementById("totalVideos").innerText = getVisibleVideos().length;
-  document.getElementById("totalSessions").innerText = activeSessions.length;
+  document.getElementById("totalSessions").innerText = state.sessions.length;
   document.getElementById("globalAvg").innerText = `${avgGlobal.toFixed(1)}%`;
 }
 
@@ -1088,10 +1015,8 @@ async function loadSessions() {
 }
 
 async function loadStudents() {
-  const { data, error } = await client.from("students").select("*");
-  if (error) throw error;
-  // Keep the complete account record only for activated students in analytics.
-  state.students = (data || []).filter(student => student.activated === true);
+  const { data } = await client.from("students").select("*");
+  state.students = data || [];
 }
 
 
@@ -1108,7 +1033,6 @@ function formatReportDate(value) {
 }
 function getReportStudents(classGroup) {
   return state.students.filter(s => {
-    if (s.activated !== true) return false;
     if (classGroup === "all") return true;
     if (classGroup === "third_biology") return s.class_group === "third_biology";
     if (classGroup === "third_geology") return s.class_group === "third_geology";
