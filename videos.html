@@ -3407,8 +3407,8 @@ html[data-theme="light"] .video-star-rewards::before{background:#f5f3ff;color:#6
   </div>
 
   <div class="quote-heading">
-    <div class="pageTitle quote-title" lang="ar">
-      إنَّ المرءَ لن ينالَ ما يحبُّ حتى يصبرَ على كثيرٍ ممَّا يكرهُ
+    <div class="pageTitle quote-title" lang="ar" aria-label="إنَّ المرءَ لن ينالَ ما يحبُّ حتى يصبرَ على كثيرٍ ممَّا يكرهُ">
+      <span class="quote-word" style="--word-index:0">إنَّ</span> <span class="quote-word" style="--word-index:1">المرءَ</span> <span class="quote-word" style="--word-index:2">لن</span> <span class="quote-word" style="--word-index:3">ينالَ</span> <span class="quote-word" style="--word-index:4">ما</span> <span class="quote-word" style="--word-index:5">يحبُّ</span> <span class="quote-word" style="--word-index:6">حتى</span> <span class="quote-word" style="--word-index:7">يصبرَ</span> <span class="quote-word" style="--word-index:8">على</span> <span class="quote-word" style="--word-index:9">كثيرٍ</span> <span class="quote-word" style="--word-index:10">ممَّا</span> <span class="quote-word" style="--word-index:11">يكرهُ</span>
     </div>
   </div>
 
@@ -7890,5 +7890,34 @@ window.addEventListener(
   });
 })();
 </script>
+
+<style id="quote-word-animation-refinement">
+.pageTitle.quote-title{
+ color:#f6e8c2!important;
+ background:linear-gradient(100deg,#fff4cf 0%,#f4d78e 38%,#e9bd62 68%,#fff0c2 100%);
+ -webkit-background-clip:text!important;background-clip:text!important;
+ -webkit-text-fill-color:transparent!important;
+ text-shadow:0 0 16px rgba(244,205,119,.13)!important;
+ filter:drop-shadow(0 2px 9px rgba(224,177,82,.12));
+}
+.quote-title .quote-word{
+ display:inline-block;
+ white-space:pre;
+ opacity:0;
+ transform:translateX(22px);
+ animation:quoteWordEnter .72s cubic-bezier(.2,.75,.25,1) forwards;
+ animation-delay:calc(var(--word-index)*.105s);
+ will-change:transform,opacity;
+}
+@keyframes quoteWordEnter{
+ 0%{opacity:0;transform:translateX(22px);filter:blur(3px)}
+ 70%{opacity:1;filter:blur(0);text-shadow:0 0 12px rgba(246,211,137,.24)}
+ 100%{opacity:1;transform:translateX(0);filter:blur(0)}
+}
+@media(prefers-reduced-motion:reduce){
+ .quote-title .quote-word{opacity:1;transform:none;animation:none;filter:none}
+}
+</style>
+
 </body>
 </html>
