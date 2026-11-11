@@ -7894,24 +7894,24 @@ window.addEventListener(
 </script>
 
 <style id="quote-word-animation-refinement">
-/* Explicitly load the selected Arabic display face while preserving the existing quote geometry. */
-.pageTitle.quote-title{
- font-family:"Katibeh","Noto Naskh Arabic",serif!important;
+/* Keep the existing one-line dimensions; explicitly prioritize the selected Arabic display face. */
+.pageTitle.quote-title, .quote-heading .pageTitle.quote-title{
+ font-family:"Katibeh",serif!important;
  font-size:clamp(18px,2.45vw,31px)!important;
  font-weight:400!important;line-height:1.8!important;letter-spacing:0!important;
- white-space:nowrap!important;text-wrap:nowrap!important;overflow-wrap:normal!important;
+ white-space:nowrap!important;overflow-wrap:normal!important;
  color:#f3d58f!important;-webkit-text-fill-color:#f3d58f!important;
  background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;
- text-shadow:0 2px 12px rgba(224,177,82,.17),0 0 18px rgba(244,205,119,.09)!important;filter:none!important;
+ text-shadow:0 2px 12px rgba(224,177,82,.17),0 0 18px rgba(244,205,119,.09)!important;
 }
-html[data-theme="light"] .pageTitle.quote-title{
+html[data-theme="light"] .pageTitle.quote-title,html[data-theme="light"] .quote-heading .pageTitle.quote-title{
  color:#76501b!important;-webkit-text-fill-color:#76501b!important;
  text-shadow:0 1px 5px rgba(113,78,28,.10)!important;
 }
 .quote-title .quote-word{display:inline-block;white-space:pre;opacity:1;transform:none;filter:none;animation:none;will-change:auto}
 .quote-title.quote-animate .quote-word{opacity:0;transform:translateX(10px);animation:quoteWordEnter .95s cubic-bezier(.22,.68,.2,1) both;animation-delay:calc(var(--word-index)*.15s);will-change:opacity,transform}
 @keyframes quoteWordEnter{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
-@media(max-width:560px){.pageTitle.quote-title{font-size:clamp(15px,3.65vw,20px)!important}}
+@media(max-width:560px){.pageTitle.quote-title,.quote-heading .pageTitle.quote-title{font-size:clamp(15px,3.65vw,20px)!important}}
 .video-star-rewards::before{content:"إنجاز الفيديو"!important;font-family:Cairo,sans-serif!important;font-size:10px!important;font-weight:800!important;letter-spacing:0!important}
 @media(prefers-reduced-motion:reduce){.quote-title.quote-animate .quote-word{opacity:1;transform:none;animation:none;will-change:auto}}
 </style>
