@@ -6,6 +6,7 @@
 <title>الفيديوهات | د. يوسف نافع</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://www.fontstatic.com/f=diwanltr" />
 
 <style>
@@ -7892,23 +7893,39 @@ window.addEventListener(
 </script>
 
 <style id="quote-word-animation-refinement">
-/* Keep the original Diwani typeface; fit the full quote on one line without changing its container. */
+/* Refined Naskh typography; preserve the current one-line size and layout. */
 .pageTitle.quote-title{
- font-family:"diwanltr",serif!important;
+ font-family:"Noto Naskh Arabic",serif!important;
  font-size:clamp(18px,2.45vw,31px)!important;
- font-weight:400!important;line-height:1.8!important;letter-spacing:0!important;
- white-space:nowrap!important;text-wrap:nowrap!important;overflow-wrap:normal!important;
- color:#f6e8c2!important;-webkit-text-fill-color:#f6e8c2!important;
- background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;
- text-shadow:0 2px 13px rgba(224,177,82,.18),0 0 20px rgba(244,205,119,.10)!important;filter:none!important;
+ font-weight:600!important;
+ line-height:1.8!important;
+ letter-spacing:0!important;
+ white-space:nowrap!important;
+ text-wrap:nowrap!important;
+ overflow-wrap:normal!important;
+ color:#f6e8c2!important;
+ -webkit-text-fill-color:#f6e8c2!important;
+ background:none!important;
+ -webkit-background-clip:border-box!important;
+ background-clip:border-box!important;
+ text-shadow:0 2px 13px rgba(224,177,82,.18),0 0 20px rgba(244,205,119,.10)!important;
+ filter:none!important;
 }
 .quote-title .quote-word{
  display:inline-block;white-space:pre;opacity:0;transform:translateX(12px);
- animation:quoteWordEnter .72s cubic-bezier(.22,.68,.2,1) forwards;
- animation-delay:calc(var(--word-index)*.115s);will-change:opacity,transform;
+ animation:quoteWordEnter .95s cubic-bezier(.22,.68,.2,1) forwards;
+ animation-delay:calc(var(--word-index)*.15s);
+ will-change:opacity,transform;
 }
 @keyframes quoteWordEnter{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
 @media(max-width:560px){.pageTitle.quote-title{font-size:clamp(15px,3.65vw,20px)!important}}
+.video-star-rewards::before{
+ content:"إنجاز الفيديو"!important;
+ font-family:Cairo,sans-serif!important;
+ font-size:10px!important;
+ font-weight:800!important;
+ letter-spacing:0!important;
+}
 @media(prefers-reduced-motion:reduce){.quote-title .quote-word{opacity:1;transform:none;animation:none;will-change:auto}}
 </style>
 
