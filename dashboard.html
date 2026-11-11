@@ -837,6 +837,78 @@ html[data-theme="light"] .hero-heartbeat{opacity:.9;filter:drop-shadow(0 0 14px 
  .student-overview .overview-last-video strong{font-size:10px!important}
 }
 
+
+/* Verified hero composition: compact, right-anchored, larger heart */
+.hero{
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:250px minmax(0,440px)!important;
+  grid-template-rows:auto auto!important;
+  align-items:center!important;
+  column-gap:18px!important;row-gap:3px!important;
+  width:fit-content!important;max-width:calc(100% - 36px)!important;
+  min-width:0!important;min-height:0!important;height:auto!important;
+  margin:16px 18px 18px auto!important;
+  padding:19px 24px!important;
+  text-align:right!important;
+}
+.hero-heartbeat{
+  position:relative!important;grid-column:1!important;grid-row:1 / span 2!important;
+  justify-self:center!important;align-self:center!important;
+  left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+  transform:none!important;
+  width:250px!important;height:180px!important;max-width:100%!important;
+  opacity:1!important;overflow:visible!important;
+}
+.hero-heartbeat svg{
+  display:block!important;width:138%!important;height:138%!important;
+  max-width:none!important;overflow:visible!important;
+  transform:translate(-1%,-1%)!important;
+}
+.hero h1{
+  grid-column:2!important;grid-row:1!important;
+  display:block!important;width:100%!important;max-width:440px!important;
+  margin:0!important;padding:0!important;
+  text-align:right!important;direction:rtl!important;justify-self:stretch!important;
+  font-size:clamp(23px,2.2vw,30px)!important;line-height:1.45!important;
+}
+.hero p{
+  grid-column:2!important;grid-row:2!important;
+  display:block!important;width:100%!important;max-width:440px!important;
+  margin:0!important;padding:0!important;
+  text-align:right!important;direction:rtl!important;justify-self:stretch!important;
+  font-size:clamp(11px,1.02vw,13px)!important;line-height:1.85!important;
+}
+.student-overview .overview-title-resume{
+  color:#a995ff!important;
+  text-shadow:0 0 16px rgba(169,149,255,.18);
+}
+.student-overview .overview-title-next{
+  color:#62d9c0!important;
+  text-shadow:0 0 16px rgba(98,217,192,.16);
+}
+html[data-theme="light"] .student-overview .overview-title-resume{color:#6750c8!important;text-shadow:none}
+html[data-theme="light"] .student-overview .overview-title-next{color:#087e70!important;text-shadow:none}
+@media(max-width:760px){
+ .hero{
+  grid-template-columns:clamp(112px,29vw,170px) minmax(0,1fr)!important;
+  column-gap:8px!important;
+  width:calc(100% - 24px)!important;max-width:none!important;
+  margin:12px 12px 14px auto!important;padding:16px 13px!important;
+ }
+ .hero-heartbeat{width:100%!important;height:138px!important}
+ .hero-heartbeat svg{width:145%!important;height:145%!important;transform:translate(-4%,-1%)!important}
+ .hero h1{font-size:clamp(18px,4.3vw,25px)!important}
+ .hero p{font-size:clamp(9px,2.2vw,11px)!important;line-height:1.75!important}
+}
+@media(max-width:420px){
+ .hero{grid-template-columns:98px minmax(0,1fr)!important;column-gap:5px!important;padding:14px 10px!important}
+ .hero-heartbeat{height:116px!important}
+ .hero-heartbeat svg{width:155%!important;height:155%!important;transform:translate(-8%,-2%)!important}
+ .hero h1{font-size:17px!important}
+ .hero p{font-size:9px!important}
+}
+
 </style>
 </head>
 
@@ -949,8 +1021,8 @@ html[data-theme="light"] .hero-heartbeat{opacity:.9;filter:drop-shadow(0 0 14px 
 <section class="student-overview" id="studentOverview" aria-label="ملخص رحلتك الدراسية">
 <div class="overview-grid">
 
-<article class="overview-card"><div class="overview-card-heading"><span class="overview-icon">▶</span><div><h3>استكمل من حيث توقفت</h3><p>آخر فيديو شاهدته</p></div></div><div id="overviewLastVideo" class="overview-last-video"><span class="overview-placeholder-icon">◷</span><div><strong>جاري تحميل سجل المشاهدة...</strong><small>لحظات ونجهز لك آخر درس.</small></div></div><a id="overviewResumeButton" class="overview-primary-link" href="videos.html" hidden>استكمل المشاهدة <span>←</span></a></article>
-<article class="overview-card"><div class="overview-card-heading"><span class="overview-icon">▣</span><div><h3>المطلوب منك الحصة الجاية</h3></div></div><div id="overviewNextItem" class="overview-next-item"><span class="overview-placeholder-icon">📅</span><div><strong>جاري البحث عن أقرب موعد...</strong><small>سنرتب مواعيدك هنا تلقائيًا.</small></div></div><a id="overviewNextButton" class="overview-secondary-link" href="#assignmentList">عرض التكليفات <span>←</span></a></article>
+<article class="overview-card"><div class="overview-card-heading"><span class="overview-icon">▶</span><div><h3 class="overview-title-resume">استكمل من حيث توقفت</h3><p>آخر فيديو شاهدته</p></div></div><div id="overviewLastVideo" class="overview-last-video"><span class="overview-placeholder-icon">◷</span><div><strong>جاري تحميل سجل المشاهدة...</strong><small>لحظات ونجهز لك آخر درس.</small></div></div><a id="overviewResumeButton" class="overview-primary-link" href="videos.html" hidden>استكمل المشاهدة <span>←</span></a></article>
+<article class="overview-card"><div class="overview-card-heading"><span class="overview-icon">▣</span><div><h3 class="overview-title-next">المطلوب منك الحصة الجاية</h3></div></div><div id="overviewNextItem" class="overview-next-item"><span class="overview-placeholder-icon">📅</span><div><strong>جاري البحث عن أقرب موعد...</strong><small>سنرتب مواعيدك هنا تلقائيًا.</small></div></div><a id="overviewNextButton" class="overview-secondary-link" href="#assignmentList">عرض التكليفات <span>←</span></a></article>
 
 </div></section>
 <div class="cards">
