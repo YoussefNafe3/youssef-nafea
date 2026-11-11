@@ -673,8 +673,15 @@ window.adminAccessReady=verifyAdminAccess().then(authorized=>{
     return parts.year+'-'+parts.month+'-'+parts.day;
   }
   function getGroupDays(date){
-    if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date||''))return null;
-    const day=new Date(date+'T12:00:00').getDay();
+    // A date input returns YYYY-MM-DD. Parse it as a calendar date (UTC)
+    // so the weekday cannot shift because of the browser's local timezone.
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(date||''))return null;
+    const [year,month,dayOfMonth]=date.split('-').map(Number);
+    const calendarDate=new Date(Date.UTC(year,month-1,dayOfMonth));
+    if(calendarDate.getUTCFullYear()!==year ||
+       calendarDate.getUTCMonth()!==month-1 ||
+       calendarDate.getUTCDate()!==dayOfMonth)return null;
+    const day=calendarDate.getUTCDay();
     if([6,0,1].includes(day))return ['saturday','sunday','monday'];
     if([2,3,4].includes(day))return ['tuesday','wednesday','thursday'];
     return null;
