@@ -7,6 +7,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Katibeh&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://www.fontstatic.com/f=diwanltr" />
 
 <style>
@@ -7893,16 +7894,29 @@ window.addEventListener(
 </script>
 
 <style id="quote-word-animation-refinement">
-/* Stable quote rendering: visible by default; animation is explicitly restarted on page show. */
+/* Katibeh is a refined display face with Thuluth-inspired qualities.
+   Preserve the established one-line scale, width and word animation. */
 .pageTitle.quote-title{
- font-family:"Noto Naskh Arabic",serif!important;
+ font-family:"Katibeh",serif!important;
  font-size:clamp(18px,2.45vw,31px)!important;
- font-weight:600!important;line-height:1.8!important;letter-spacing:0!important;
- white-space:nowrap!important;text-wrap:nowrap!important;overflow-wrap:normal!important;
- color:#f6e8c2!important;-webkit-text-fill-color:#f6e8c2!important;
- background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;
- text-shadow:0 2px 13px rgba(224,177,82,.18),0 0 20px rgba(244,205,119,.10)!important;
+ font-weight:400!important;
+ line-height:1.8!important;
+ letter-spacing:0!important;
+ white-space:nowrap!important;
+ text-wrap:nowrap!important;
+ overflow-wrap:normal!important;
+ color:#f3d58f!important;
+ -webkit-text-fill-color:#f3d58f!important;
+ background:none!important;
+ -webkit-background-clip:border-box!important;
+ background-clip:border-box!important;
+ text-shadow:0 2px 12px rgba(224,177,82,.17),0 0 18px rgba(244,205,119,.09)!important;
  filter:none!important;
+}
+html[data-theme="light"] .pageTitle.quote-title{
+ color:#76501b!important;
+ -webkit-text-fill-color:#76501b!important;
+ text-shadow:0 1px 5px rgba(113,78,28,.10)!important;
 }
 .quote-title .quote-word{
  display:inline-block;white-space:pre;opacity:1;transform:none;filter:none;
