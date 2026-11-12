@@ -29,11 +29,11 @@
  }
  function currentTime(){
   try{
-   if(window.state?.currentVideo?.is_youtube&&window.state.yt&&typeof window.state.yt.getCurrentTime==='function')
-    return Math.max(0,Math.floor(window.state.yt.getCurrentTime()||0));
+   if(typeof state!=='undefined'&&state.currentVideo?.is_youtube&&state.yt&&typeof state.yt.getCurrentTime==='function')
+    return Math.max(0,Math.floor(state.yt.getCurrentTime()||0));
    const media=$('videoPlayer');
    if(media&&Number.isFinite(media.currentTime))return Math.max(0,Math.floor(media.currentTime));
-   return Math.max(0,Math.floor(window.state?.lastTime||0));
+   return Math.max(0,Math.floor(typeof state!=='undefined'?state.lastTime||0:0));
   }catch(error){return Math.max(0,Math.floor(window.state?.lastTime||0));}
  }
  function setStatus(message,isError,surface){
@@ -158,8 +158,8 @@
  function seek(seconds){
   const target=Math.max(0,Number(seconds)||0);
   try{
-   if(window.state?.currentVideo?.is_youtube&&window.state.yt){
-    window.state.yt.seekTo(target,true);window.state.yt.playVideo();return;
+   if(typeof state!=='undefined'&&state.currentVideo?.is_youtube&&state.yt){
+    state.yt.seekTo(target,true);state.yt.playVideo();return;
    }
    const media=$('videoPlayer');
    if(media){media.currentTime=target;const promise=media.play();if(promise?.catch)promise.catch(()=>{});return;}
@@ -184,7 +184,7 @@
   if(mainClock)mainClock.textContent=value;
   if(fsClock)fsClock.textContent=value;
  }
- if(window.state?.currentVideoId)load(window.state.currentVideoId);
+ if(typeof state!=='undefined'&&state.currentVideoId)load(state.currentVideoId);
  else{setStatus('اختر فيديو من القائمة لتبدأ تدوين الملاحظات.');setBusy(false);}
  clockTimer=setInterval(updateClock,1000);updateClock();
  window.addEventListener('pagehide',()=>{if(clockTimer)clearInterval(clockTimer);});
