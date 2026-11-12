@@ -47,7 +47,7 @@
  async function load(videoId){
   activeVideoId=String(videoId||'');notes=[];render();setStatus('جاري تحميل ملاحظات الدرس…');setBusy(true);
   if(!activeVideoId){setStatus('اختر فيديو لعرض ملاحظاته.');setBusy(false);return;}
-  if(!window.client){setStatus('تعذر الاتصال بخدمة حفظ الملاحظات.',true);setBusy(false);return;}
+  if(typeof client==='undefined'){setStatus('تعذر الاتصال بخدمة حفظ الملاحظات.',true);setBusy(false);return;}
   loading=true;
   try{
    const {data,error}=await client.from('student_video_notes').select('id,video_id,note_type,content,timestamp_seconds,created_at,updated_at').eq('video_id',activeVideoId).order('timestamp_seconds',{ascending:true}).order('created_at',{ascending:true});
