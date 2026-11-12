@@ -16,11 +16,62 @@
  const mainClock=$('videoNotesClock');
  const fsClock=$('videoNotesFullscreenClock');
  const fsToggle=$('videoNotesFab');
+ const playerStage=$('stage');
  const fsPopover=$('videoNotesFullscreenPopover');
  const fsClose=$('videoNotesFullscreenClose');
  const labels={note:'ملاحظة',question:'سؤال',bookmark:'علامة مرجعية'};
  const icons={note:'✎',question:'؟',bookmark:'★'};
  let activeVideoId=null, notes=[], saving=false, loadSequence=0, clockTimer=null;
+
+
+ // First-use guide: shown once per signed-in student, never on later visits.
+ const onboardingKey=(()=>{
+  let identity='student';
+  try{
+   const user=JSON.parse(localStorage.getItem('user')||'null');
+   identity=String(user?.id||user?.student_id||user?.phone||user?.auth_user_id||'student');
+  }catch(e){}
+  return 'video-notes-onboarding-v1:'+identity;
+ })();
+ let onboardingNode=null;
+ function dismissOnboarding(){
+  if(!onboardingNode)return;
+  onboardingNode.classList.remove('is-visible');
+  onboardingNode.setAttribute('aria-hidden','true');
+  try{localStorage.setItem(onboardingKey,'seen');}catch(e){}
+ }
+ function positionOnboarding(){
+  if(!onboardingNode||!fsToggle||!playerStage)return;
+  const icon=fsToggle.getBoundingClientRect(),box=playerStage.getBoundingClientRect();
+  const width=Math.min(245,Math.max(190,box.width-24));
+  onboardingNode.style.width=width+'px';
+  const height=onboardingNode.offsetHeight||58;
+  let left=icon.left-box.left+icon.width/2-width/2;
+  let top=icon.top-box.top-height-12;
+  if(top<8)top=icon.bottom-box.top+12;
+  left=Math.max(8,Math.min(left,box.width-width-8));
+  top=Math.max(8,Math.min(top,box.height-height-8));
+  onboardingNode.style.left=left+'px';
+  onboardingNode.style.top=top+'px';
+ }
+ function showOnboarding(){
+  if(!fsToggle||!playerStage)return;
+  try{if(localStorage.getItem(onboardingKey)==='seen')return;}catch(e){}
+  if(!onboardingNode){
+   onboardingNode=document.createElement('div');
+   onboardingNode.className='video-notes-onboarding';
+   onboardingNode.setAttribute('role','status');
+   onboardingNode.setAttribute('aria-hidden','true');
+   onboardingNode.innerHTML='<span class="video-notes-onboarding-dot" aria-hidden="true"></span><span>يمكنك إضافة ملاحظة أثناء مشاهدة الفيديو من هنا</span><button type="button" aria-label="إغلاق التلميح">×</button>';
+   playerStage.appendChild(onboardingNode);
+   onboardingNode.querySelector('button').addEventListener('click',dismissOnboarding);
+  }
+  onboardingNode.setAttribute('aria-hidden','false');
+  positionOnboarding();
+  requestAnimationFrame(()=>onboardingNode?.classList.add('is-visible'));
+  try{localStorage.setItem(onboardingKey,'seen');}catch(e){}
+  window.setTimeout(()=>onboardingNode?.classList.remove('is-visible'),9000);
+ }
 
  function formatTime(value){
   const n=Math.max(0,Math.floor(Number(value)||0));
@@ -112,6 +163,7 @@
  async function load(videoId){
   const sequence=++loadSequence;
   activeVideoId=String(videoId||'');
+  if(activeVideoId)window.setTimeout(showOnboarding,450);
   notes=[];render();setStatus('جاري تحميل ملاحظات الفيديو…');setBusy(false);
   if(!activeVideoId){setStatus('اختر فيديو لعرض ملاحظاته.');setBusy(false);return;}
   try{
@@ -190,7 +242,7 @@
  document.querySelectorAll('[data-note-action]').forEach(button=>{
   button.addEventListener('click',()=>add(button.dataset.noteAction,button.dataset.noteSurface||'main'));
  });
- fsToggle?.addEventListener('click',()=>fsPopover.hidden?openFullscreenNotes():closeFullscreenNotes());
+ fsToggle?.addEventListener('click',()=>{dismissOnboarding();fsPopover.hidden?openFullscreenNotes():closeFullscreenNotes();});
  fsClose?.addEventListener('click',closeFullscreenNotes);
  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&fsPopover&&!fsPopover.hidden)closeFullscreenNotes();});
  document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)closeFullscreenNotes();});
@@ -243,6 +295,7 @@
   }
   restore();
   fsToggle.addEventListener('pointerdown',event=>{
+   dismissOnboarding();
    if(event.button!==undefined&&event.button!==0)return;
    const p=currentPosition();dragging=true;moved=false;pointerId=event.pointerId;
    startX=event.clientX;startY=event.clientY;startLeft=p.left;startTop=p.top;
@@ -266,8 +319,8 @@
   fsToggle.addEventListener('click',event=>{
    if(suppressClick){event.preventDefault();event.stopImmediatePropagation();}
   },true);
-  window.addEventListener('resize',()=>{const p=currentPosition();setPosition(p.left,p.top,false);positionNotesPopover();},{passive:true});
-  window.visualViewport?.addEventListener('resize',()=>{const p=currentPosition();setPosition(p.left,p.top,false);positionNotesPopover();},{passive:true});
+  window.addEventListener('resize',()=>{const p=currentPosition();setPosition(p.left,p.top,false);positionNotesPopover();positionOnboarding();},{passive:true});
+  window.visualViewport?.addEventListener('resize',()=>{const p=currentPosition();setPosition(p.left,p.top,false);positionNotesPopover();positionOnboarding();},{passive:true});
  })();
 
  clockTimer=setInterval(updateClock,1000);updateClock();
