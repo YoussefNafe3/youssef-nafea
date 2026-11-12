@@ -18,11 +18,9 @@
 
  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  document.documentElement.classList.add('ui-motion-enabled');
- if(reduced){window.showPlatformToast=window.showPlatformToast||function(){};return;}
  var selectors='.overview-card,.overview-resume-card,.overview-next-card,.card,.feature-card,.subject-card,.admin-card,.admin-action-card,.main-card,.summary-card,.table-card,.video-card,.report-card,.latest-result-card,.honors-card,.assignment-card,.panel,.ai-panel,.qpanel,.notification,.student-notification-item';
  function enhance(root){
   if(!root||root.nodeType!==1)return;
-  optimizeImages(root);
   var nodes=[];
   if(root.matches&&root.matches(selectors))nodes.push(root);
   if(root.querySelectorAll)root.querySelectorAll(selectors).forEach(function(n){nodes.push(n);});
@@ -43,6 +41,20 @@
    else if(el.classList.contains('ui-loading-state')){el.classList.remove('ui-loading-state');el.removeAttribute('aria-busy');}
   });
  }
+
+ function initImageOptimization(){
+  function run(){optimizeImages(document);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
+  if('MutationObserver' in window){
+   var imageObserver=new MutationObserver(function(records){
+    records.forEach(function(record){record.addedNodes.forEach(function(node){if(node.nodeType===1)optimizeImages(node);});});
+   });
+   var observe=function(){if(document.documentElement)imageObserver.observe(document.documentElement,{subtree:true,childList:true});};
+   if(document.documentElement)observe();else document.addEventListener('DOMContentLoaded',observe,{once:true});
+  }
+ }
+ initImageOptimization();
+ if(reduced){window.showPlatformToast=window.showPlatformToast||function(){};return;}
  var observer=('IntersectionObserver' in window)?new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target);}});},{threshold:.06,rootMargin:'0px 0px -24px 0px'}):null;
  function init(){
   enhance(document.body);
