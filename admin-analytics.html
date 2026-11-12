@@ -1064,7 +1064,13 @@ async function loadSessions() {
 async function loadStudents() {
   const { data, error } = await client.from("students").select("*");
   if (error) throw error;
-  state.students = (data || []).filter(student => student.activated === true);
+  // Analytics must contain student accounts only. Admin identities are stored in students.role.
+  // Exclude admin/owner roles before any table, aggregate, chart or export is calculated.
+  state.students = (data || []).filter(student => {
+    if (student.activated !== true) return false;
+    const role = String(student.role || "").trim().toLowerCase();
+    return role !== "admin" && role !== "owner" && role !== "administrator";
+  });
 }
 
 
