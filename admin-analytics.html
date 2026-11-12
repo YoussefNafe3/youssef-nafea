@@ -1167,10 +1167,11 @@ async function init() {
   }
 
   handleClassFilterChange();
+  renderAdvancedAnalytics();
 }
 
 function getAnalyticsPeriodDays(){const v=document.getElementById("analyticsPeriod")?.value||"30";return v==="all"?null:Math.max(1,Number(v)||30);}
-function getPeriodSessions(){const days=getAnalyticsPeriodDays();if(!days)return state.sessions.slice();const cutoff=Date.now()-days*86400000;return state.sessions.filter(s=>{const raw=s.updated_at||s.last_opened_at||s.created_at||s.first_opened_at;const t=raw?new Date(raw).getTime():0;return t>=cutoff;});}
+function getPeriodSessions(){const days=getAnalyticsPeriodDays();const cutoff=days?Date.now()-days*86400000:0;const visibleIds=new Set(getVisibleVideos().map(v=>String(v.id)));return state.sessions.filter(s=>{if(!visibleIds.has(String(s.video_id)))return false;if(!days)return true;const raw=s.updated_at||s.last_opened_at||s.created_at||s.first_opened_at;const t=raw?new Date(raw).getTime():0;return t>=cutoff;});}
 function renderBarChart(targetId,items,formatter){const host=document.getElementById(targetId);if(!host)return;if(!items.length){host.innerHTML='<div class="analytics-empty">لا توجد بيانات كافية خلال الفترة المحددة.</div>';return;}const max=Math.max(1,...items.map(x=>Number(x.value)||0));host.innerHTML=items.map(item=>'<div class="analytics-bar-row"><div class="analytics-bar-label" title="'+escapeReportHtml(item.label)+'">'+escapeReportHtml(item.label)+'</div><div class="analytics-bar-track"><div class="analytics-bar-fill" style="--bar-width:'+Math.max(2,(Number(item.value)||0)/max*100)+'%"></div></div><div class="analytics-bar-value">'+formatter(item.value)+'</div></div>').join("");}
 function renderAdvancedAnalytics(){
  const sessions=getPeriodSessions().filter(s=>isActiveStudentId(s.student_id));const latestByPair={};
@@ -1198,6 +1199,7 @@ setInterval(async () => {
   renderGlobalStats();
   renderVideoCards();
   renderSelectedVideo();
+  renderAdvancedAnalytics();
 }, 20000);
 </script>
 
