@@ -1419,6 +1419,7 @@ animation:fadeUp .5s ease both;
 
 .online-answer-action{display:flex;justify-content:flex-start;margin-top:13px;padding-top:12px;border-top:1px solid var(--border)}.online-answer-btn{border:0;border-radius:11px;padding:10px 16px;background:linear-gradient(120deg,#2563eb,#6255dc);color:#fff;font:800 12px Cairo,sans-serif;cursor:pointer}.online-answer-btn:disabled{opacity:.55;cursor:wait}.answer-key-modal[hidden]{display:none!important}.answer-key-modal{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:14px;background:rgba(2,8,23,.78);backdrop-filter:blur(7px)}.answer-key-dialog{width:min(900px,100%);max-height:92vh;overflow:auto;padding:22px;border:1px solid var(--border);border-radius:20px;background:var(--card);color:var(--text);box-shadow:0 24px 80px #0006}.answer-key-top{display:flex;justify-content:flex-end;position:sticky;top:-22px;padding:0 0 10px;background:var(--card);z-index:2}.answer-key-close{border:1px solid var(--border);border-radius:10px;padding:7px 12px;background:var(--card2);color:var(--text);cursor:pointer}.answer-key-heading{text-align:center;margin-bottom:18px}.answer-key-heading h2{font-size:22px;font-weight:900}.answer-key-heading p{font-size:12px;color:var(--muted);margin-top:5px}.answer-key-question{padding:15px 0;border-bottom:1px solid var(--border)}.answer-key-number{font-size:11px;color:var(--primary);font-weight:900}.answer-key-question h3{font-size:14px;line-height:2;margin:5px 0 10px;white-space:pre-wrap}.answer-key-choices{display:grid;gap:6px;margin:8px 0}.answer-key-choice{padding:8px 11px;border:1px solid var(--border);border-radius:9px;font-size:12px}.answer-key-correct{padding:10px 12px;border-radius:10px;background:rgba(18,183,106,.1);color:var(--success);font-size:13px;line-height:1.9}.answer-key-explanation{font-size:12px;line-height:1.9;color:var(--muted);margin-top:8px}.answer-key-image{display:block;max-width:100%;max-height:260px;object-fit:contain;margin:10px auto;border-radius:10px;background:#fff}.answer-key-open{overflow:hidden}@media(max-width:600px){.answer-key-dialog{padding:14px;border-radius:15px}.online-answer-btn{width:100%}}
 </style>
+<link rel="stylesheet" href="./ui-polish.css?v=1">
 </head>
 
 
@@ -3356,6 +3357,7 @@ renderNotifications();
 </script>
 
 <div id="onlineAnswerKeyModal" class="answer-key-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="الإجابات النموذجية"><section class="answer-key-dialog"><div class="answer-key-top"><button type="button" id="closeOnlineAnswerKey" class="answer-key-close">إغلاق ✕</button></div><div id="onlineAnswerKeyContent"></div></section></div>
+<script src="./ui-polish.js?v=1" defer></script>
 </body>
 
 </html>
