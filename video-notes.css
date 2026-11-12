@@ -200,3 +200,42 @@ body.player-css-fullscreen{overflow:hidden!important;overscroll-behavior:none!im
 @media(max-width:380px){
  .playerCard:fullscreen .playerControls,.playerCard:-webkit-full-screen .playerControls,.playerCard.is-css-fullscreen .playerControls{min-height:40px!important}
 }
+
+
+/* Refined Messenger-like floating note bubble + one-time student onboarding. */
+.video-note-fab{
+ width:42px!important;height:42px!important;border-radius:50%!important;
+ border:1px solid rgba(255,255,255,.28)!important;
+ background:linear-gradient(145deg,#2878f0,#1554c0)!important;
+ box-shadow:0 7px 22px rgba(13,76,170,.38),0 2px 7px rgba(0,0,0,.24)!important;
+ cursor:grab!important;touch-action:none!important;
+ animation:videoNoteBubbleFloat 3.2s ease-in-out infinite;
+ transition:box-shadow .2s ease,filter .2s ease,transform .2s ease;
+}
+.video-note-fab:hover{filter:brightness(1.08);box-shadow:0 9px 26px rgba(13,76,170,.46),0 2px 8px rgba(0,0,0,.25)!important}
+.video-note-fab:active{cursor:grabbing!important;animation:none;transform:scale(.96)}
+.video-note-fab svg{width:20px!important;height:20px!important}
+.video-note-fab[aria-expanded="true"]{animation:none;box-shadow:0 0 0 4px rgba(96,165,250,.2),0 7px 22px rgba(13,76,170,.38)!important}
+.video-notes-onboarding{
+ position:absolute;z-index:79;display:flex;align-items:center;gap:9px;
+ box-sizing:border-box;padding:10px 11px;border:1px solid rgba(255,255,255,.18);
+ border-radius:13px;background:rgba(12,22,40,.97);color:#fff;
+ box-shadow:0 10px 28px rgba(0,0,0,.34);direction:rtl;
+ font:700 11px/1.7 Cairo,sans-serif;text-align:right;
+ opacity:0;visibility:hidden;transform:translateY(7px) scale(.97);
+ pointer-events:none;transition:opacity .22s ease,transform .22s ease,visibility .22s;
+}
+.video-notes-onboarding.is-visible{opacity:1;visibility:visible;transform:translateY(0) scale(1);pointer-events:auto}
+.video-notes-onboarding::after{
+ content:"";position:absolute;bottom:-7px;right:var(--note-tip-right,50%);
+ width:12px;height:12px;background:rgba(12,22,40,.97);
+ border-right:1px solid rgba(255,255,255,.18);border-bottom:1px solid rgba(255,255,255,.18);
+ transform:rotate(45deg);
+}
+.video-notes-onboarding-dot{flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:#60a5fa;box-shadow:0 0 0 4px rgba(96,165,250,.16)}
+.video-notes-onboarding button{
+ flex:0 0 22px;width:22px;height:22px;padding:0;border:0;border-radius:7px;
+ background:rgba(255,255,255,.1);color:#fff;font-size:16px;line-height:1;cursor:pointer;
+}
+@keyframes videoNoteBubbleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media(prefers-reduced-motion:reduce){.video-note-fab{animation:none!important;transition:none!important}.video-notes-onboarding{transition:none!important}}
