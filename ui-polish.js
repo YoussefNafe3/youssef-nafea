@@ -1,12 +1,28 @@
 /* Accessible micro-interactions. No application data or navigation logic is changed. */
 (function(){
  'use strict';
+ // Lightweight image loading optimization. Never delays visible/priority images.
+ function optimizeImages(root){
+  if(!root)return;
+  var imgs=[];
+  if(root.tagName==='IMG')imgs.push(root);
+  if(root.querySelectorAll)root.querySelectorAll('img').forEach(function(img){imgs.push(img);});
+  imgs.forEach(function(img){
+   if(!img.hasAttribute('decoding'))img.decoding='async';
+   if(img.loading==='eager'||img.getAttribute('fetchpriority')==='high')return;
+   try{
+    if(img.getBoundingClientRect().top>Math.max(window.innerHeight*1.15,700)&&!img.hasAttribute('loading'))img.loading='lazy';
+   }catch(e){}
+  });
+ }
+
  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  document.documentElement.classList.add('ui-motion-enabled');
  if(reduced){window.showPlatformToast=window.showPlatformToast||function(){};return;}
  var selectors='.overview-card,.overview-resume-card,.overview-next-card,.card,.feature-card,.subject-card,.admin-card,.admin-action-card,.main-card,.summary-card,.table-card,.video-card,.report-card,.latest-result-card,.honors-card,.assignment-card,.panel,.ai-panel,.qpanel,.notification,.student-notification-item';
  function enhance(root){
   if(!root||root.nodeType!==1)return;
+  optimizeImages(root);
   var nodes=[];
   if(root.matches&&root.matches(selectors))nodes.push(root);
   if(root.querySelectorAll)root.querySelectorAll(selectors).forEach(function(n){nodes.push(n);});
