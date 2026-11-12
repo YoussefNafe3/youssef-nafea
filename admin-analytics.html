@@ -589,6 +589,11 @@ button:focus-visible,.video-card:focus-visible{outline:3px solid rgba(244,215,12
 #studentsTableBody tr:has(.badge){transition:filter .2s ease}
 @media(hover:hover){#studentsTableBody tr:has(.badge):hover td{background-color:rgba(255,255,255,.045)!important}}
 
+
+/* Advanced analytics workspace */
+.analytics-insights{display:grid;gap:16px;margin:0 0 18px}.analytics-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;border:1px solid var(--line);border-radius:17px;background:rgba(17,24,39,.72)}.analytics-toolbar strong{font-size:14px;color:#f8fafc}.analytics-toolbar-controls,.analytics-table-tools{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.analytics-control,.student-search{min-height:40px;padding:9px 12px;border:1px solid rgba(174,160,255,.24);border-radius:11px;background:#151a38;color:#f8fafc;font:600 12px Cairo,sans-serif;outline:none}.analytics-control:focus,.student-search:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,215,126,.12)}.analytics-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.analytics-kpi{position:relative;overflow:hidden;padding:15px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018))}.analytics-kpi:after{content:"";position:absolute;inset:auto -24px -38px auto;width:100px;height:100px;border-radius:50%;background:var(--kpi-glow,rgba(130,112,237,.13));filter:blur(5px)}.analytics-kpi-label{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:7px}.analytics-kpi-value{font-size:clamp(22px,2.4vw,30px);font-weight:900;line-height:1.2;margin-top:7px;color:#fff}.analytics-kpi-delta{font-size:10px;color:var(--muted);margin-top:5px}.analytics-kpi-delta.up{color:#86efac}.analytics-kpi-delta.down{color:#fca5a5}.analytics-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.analytics-panel{min-width:0;padding:16px;border:1px solid var(--line);border-radius:17px;background:rgba(17,24,39,.7)}.analytics-panel h3{font-size:14px;margin-bottom:4px;color:#f8fafc}.analytics-panel .panel-caption{font-size:11px;color:var(--muted);margin-bottom:14px}.analytics-bars{display:grid;gap:12px}.analytics-bar-row{display:grid;grid-template-columns:minmax(85px,1.1fr) minmax(70px,2fr) 42px;align-items:center;gap:9px}.analytics-bar-label{font-size:11px;color:#dbe3f4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.analytics-bar-track{height:9px;border-radius:20px;background:rgba(148,163,184,.13);overflow:hidden}.analytics-bar-fill{height:100%;width:var(--bar-width,0%);border-radius:inherit;background:linear-gradient(90deg,#8270ed,#f4d77e);transition:width .55s ease}.analytics-bar-value{text-align:left;font-size:11px;font-weight:800;color:#f4d77e}.analytics-empty{padding:17px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:12px;text-align:center}.student-search{width:min(250px,100%)}#studentsTableBody tr{transition:background .18s ease}#studentsTableBody tr:nth-child(even) td{background:rgba(255,255,255,.018)}#studentsTableBody tr:hover td{background:rgba(130,112,237,.075)}#studentsTableBody tr[data-status="good"] td:first-child:before{content:"";display:inline-block;width:6px;height:6px;margin-left:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 9px #4ade8070}#studentsTableBody tr[data-status="mid"] td:first-child:before{content:"";display:inline-block;width:6px;height:6px;margin-left:8px;border-radius:50%;background:#fbbf24}#studentsTableBody tr[data-status="bad"] td:first-child:before{content:"";display:inline-block;width:6px;height:6px;margin-left:8px;border-radius:50%;background:#f87171}
+@media(max-width:800px){.analytics-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.analytics-panels{grid-template-columns:1fr}}@media(max-width:480px){.analytics-toolbar{align-items:stretch}.analytics-toolbar-controls{width:100%}.analytics-control{flex:1;min-width:0}.analytics-kpis{gap:8px}.analytics-kpi{padding:12px}.analytics-panel{padding:13px}.analytics-bar-row{grid-template-columns:minmax(70px,1fr) minmax(55px,1.5fr) 38px;gap:6px}.student-search{width:100%}}@media(prefers-reduced-motion:reduce){.analytics-bar-fill,#studentsTableBody tr{transition:none!important}}
+
 </style>
 <style id="analytics-auth-pending">body{visibility:hidden}</style>
 
@@ -689,13 +694,25 @@ button:focus-visible,.video-card:focus-visible{outline:3px solid rgba(244,215,12
       </div>
     </div>
 
+
+    <section class="analytics-insights" aria-label="ملخص وتحليلات الأداء">
+      <div class="analytics-toolbar"><strong>نظرة عامة على الأداء</strong><div class="analytics-toolbar-controls"><label class="mini-muted" for="analyticsPeriod">الفترة</label><select id="analyticsPeriod" class="analytics-control" aria-label="الفترة الزمنية للتحليلات" onchange="renderAdvancedAnalytics()"><option value="7">آخر 7 أيام</option><option value="30" selected>آخر 30 يومًا</option><option value="all">كل الوقت</option></select></div></div>
+      <div class="analytics-kpis" id="analyticsKpis" aria-live="polite"></div>
+      <div class="analytics-panels">
+        <section class="analytics-panel"><h3>الفيديوهات الأكثر مشاهدة</h3><p class="panel-caption">حسب عدد الطلبة الذين شاهدوا كل فيديو خلال الفترة المحددة</p><div class="analytics-bars" id="topVideosChart"></div></section>
+        <section class="analytics-panel"><h3>متوسط إكمال الفيديوهات</h3><p class="panel-caption">متوسط نسبة المشاهدة لكل فيديو خلال الفترة المحددة</p><div class="analytics-bars" id="completionChart"></div></section>
+        <section class="analytics-panel"><h3>الطلبة الأكثر التزامًا</h3><p class="panel-caption">ترتيب حسب وقت المشاهدة المسجل ونسبة الإكمال</p><div class="analytics-bars" id="topStudentsChart"></div></section>
+        <section class="analytics-panel"><h3>طلبة يحتاجون إلى متابعة</h3><p class="panel-caption">طلبة نشطون لديهم مشاهدة منخفضة أو لم يبدأوا المشاهدة في الفترة</p><div class="analytics-bars" id="followUpChart"></div></section>
+      </div>
+    </section>
+
     <div class="table-card">
       <div class="table-head">
         <div>
           <h3>تفاصيل الطلبة</h3>
           <div class="small" id="tableHint">كل طالب، وسمع قد إيه من الفيديو، وهل أكمل أم لا</div>
         </div>
-        <div class="mini-muted" id="tableCount">0 صف</div>
+        <div class="analytics-table-tools"><input id="studentTableSearch" class="student-search" type="search" placeholder="ابحث باسم الطالب..." aria-label="البحث باسم الطالب" oninput="applyStudentTableFilters()"><select id="studentStatusFilter" class="analytics-control" aria-label="تصفية حالة الطالب" onchange="applyStudentTableFilters()"><option value="all">كل الحالات</option><option value="good">مكتمل</option><option value="mid">جاري</option><option value="bad">ضعيف</option><option value="empty">لم يشاهد</option></select><div class="mini-muted" id="tableCount">0 صف</div></div>
       </div>
 
       <div class="table-wrap">
@@ -958,7 +975,7 @@ function renderSelectedVideo() {
 
     if (!record) {
       return `
-        <tr>
+        <tr data-status="empty">
           <td>${name}</td>
           <td>${toText(state.selectedVideo.title)}</td>
           <td>0s</td>
@@ -974,7 +991,7 @@ function renderSelectedVideo() {
     const percent = sessionPercent(record);
 
     return `
-      <tr>
+      <tr data-status="${percent >= 95 ? 'good' : percent >= 40 ? 'mid' : 'bad'}">
         <td>${name}</td>
         <td>${toText(state.selectedVideo.title)}</td>
         <td>${formatTime(record.watched_seconds)}</td>
@@ -988,6 +1005,7 @@ function renderSelectedVideo() {
   });
 
   document.getElementById("studentsTableBody").innerHTML = rows.join("");
+  applyStudentTableFilters();
 }
 
 function renderGlobalStats() {
@@ -1150,6 +1168,28 @@ async function init() {
 
   handleClassFilterChange();
 }
+
+function getAnalyticsPeriodDays(){const v=document.getElementById("analyticsPeriod")?.value||"30";return v==="all"?null:Math.max(1,Number(v)||30);}
+function getPeriodSessions(){const days=getAnalyticsPeriodDays();if(!days)return state.sessions.slice();const cutoff=Date.now()-days*86400000;return state.sessions.filter(s=>{const raw=s.updated_at||s.last_opened_at||s.created_at||s.first_opened_at;const t=raw?new Date(raw).getTime():0;return t>=cutoff;});}
+function renderBarChart(targetId,items,formatter){const host=document.getElementById(targetId);if(!host)return;if(!items.length){host.innerHTML='<div class="analytics-empty">لا توجد بيانات كافية خلال الفترة المحددة.</div>';return;}const max=Math.max(1,...items.map(x=>Number(x.value)||0));host.innerHTML=items.map(item=>'<div class="analytics-bar-row"><div class="analytics-bar-label" title="'+escapeReportHtml(item.label)+'">'+escapeReportHtml(item.label)+'</div><div class="analytics-bar-track"><div class="analytics-bar-fill" style="--bar-width:'+Math.max(2,(Number(item.value)||0)/max*100)+'%"></div></div><div class="analytics-bar-value">'+formatter(item.value)+'</div></div>').join("");}
+function renderAdvancedAnalytics(){
+ const sessions=getPeriodSessions().filter(s=>isActiveStudentId(s.student_id));const latestByPair={};
+ sessions.forEach(s=>{const key=String(s.student_id)+"|"+String(s.video_id);const t=new Date(s.updated_at||s.last_opened_at||s.created_at||0).getTime();const prev=latestByPair[key];if(!prev||t>prev.t)latestByPair[key]={row:s,t};});
+ const pairs=Object.values(latestByPair).map(x=>x.row);const watchedStudents=new Set(pairs.map(s=>String(s.student_id))).size;const avg=pairs.length?pairs.reduce((sum,s)=>sum+sessionPercent(s),0)/pairs.length:0;const totalWatch=pairs.reduce((sum,s)=>sum+Math.max(0,safeNumber(s.watched_seconds)),0);
+ const days=getAnalyticsPeriodDays();let prevAvg=null,studentDelta=null;
+ if(days){const start=Date.now()-days*2*86400000,end=Date.now()-days*86400000;const prev=state.sessions.filter(s=>isActiveStudentId(s.student_id)&&(()=>{const t=new Date(s.updated_at||s.last_opened_at||s.created_at||0).getTime();return t>=start&&t<end;})());const map={};prev.forEach(s=>{const k=String(s.student_id)+"|"+String(s.video_id),t=new Date(s.updated_at||s.last_opened_at||s.created_at||0).getTime();if(!map[k]||t>map[k].t)map[k]={row:s,t};});const rows=Object.values(map).map(x=>x.row);prevAvg=rows.length?rows.reduce((sum,s)=>sum+sessionPercent(s),0)/rows.length:null;studentDelta=watchedStudents-new Set(rows.map(s=>String(s.student_id))).size;}
+ const delta=prevAvg===null?null:avg-prevAvg;const kpis=[{label:"الطلبة الذين شاهدوا",value:watchedStudents,icon:"◉",note:studentDelta===null?"عدد الطلبة خلال الفترة":"مقارنة بالفترة السابقة: "+(studentDelta>=0?"+":"")+studentDelta,color:"rgba(130,112,237,.17)"},{label:"متوسط الإكمال",value:avg.toFixed(1)+"%",icon:"◌",note:delta===null?"متوسط الفترة الحالية":"مقارنة بالفترة السابقة: "+(delta>=0?"+":"")+delta.toFixed(1)+" نقطة",delta:delta,color:"rgba(244,215,126,.14)"},{label:"وقت المشاهدة",value:formatTime(totalWatch),icon:"◷",note:"مجموع أحدث سجل لكل طالب وفيديو",color:"rgba(34,197,94,.13)"},{label:"سجلات المشاهدة",value:pairs.length,icon:"▤",note:"سجلات الطلبة النشطين فقط",color:"rgba(96,165,250,.14)"}];
+ const host=document.getElementById("analyticsKpis");if(host)host.innerHTML=kpis.map(k=>'<div class="analytics-kpi" style="--kpi-glow:'+k.color+'"><div class="analytics-kpi-label"><span aria-hidden="true">'+k.icon+'</span>'+k.label+'</div><div class="analytics-kpi-value">'+k.value+'</div><div class="analytics-kpi-delta '+(k.delta===undefined||k.delta===null?"":k.delta>=0?"up":"down")+'">'+k.note+'</div></div>').join("");
+ const byVideo={};pairs.forEach(s=>{const id=String(s.video_id);if(!byVideo[id])byVideo[id]={count:0,sum:0,n:0};byVideo[id].count++;byVideo[id].sum+=sessionPercent(s);byVideo[id].n++;});
+ const videos=Object.keys(byVideo).map(id=>({id,label:state.videos.find(v=>String(v.id)===id)?.title||"فيديو",value:byVideo[id].count,avg:byVideo[id].sum/byVideo[id].n})).sort((a,b)=>b.value-a.value);
+ renderBarChart("topVideosChart",videos.slice(0,6),v=>String(v));renderBarChart("completionChart",videos.slice().sort((a,b)=>b.avg-a.avg).slice(0,6).map(v=>({label:v.label,value:v.avg})),v=>Math.round(v)+"%");
+ const byStudent={};pairs.forEach(s=>{const id=String(s.student_id);if(!byStudent[id])byStudent[id]={watch:0,sum:0,n:0};byStudent[id].watch+=Math.max(0,safeNumber(s.watched_seconds));byStudent[id].sum+=sessionPercent(s);byStudent[id].n++;});
+ const students=state.students.map(st=>{const d=byStudent[String(st.id)]||{watch:0,sum:0,n:0};return{id:st.id,label:st.full_name||st.name||st.phone||("طالب #"+st.id),watch:d.watch,avg:d.n?d.sum/d.n:0,n:d.n};});
+ renderBarChart("topStudentsChart",students.filter(s=>s.n>0).sort((a,b)=>b.watch-a.watch||b.avg-a.avg).slice(0,6).map(s=>({label:s.label,value:s.watch})),v=>formatTime(v));
+ renderBarChart("followUpChart",students.filter(s=>!s.n||s.avg<40).sort((a,b)=>a.avg-b.avg||a.watch-b.watch).slice(0,6).map(s=>({label:s.label,value:s.avg})),v=>v===0?"بدون":Math.round(v)+"%");
+}
+window.renderAdvancedAnalytics=renderAdvancedAnalytics;
+window.applyStudentTableFilters=function(){const body=document.getElementById("studentsTableBody");if(!body)return;const q=(document.getElementById("studentTableSearch")?.value||"").trim().toLocaleLowerCase("ar");const status=document.getElementById("studentStatusFilter")?.value||"all";let shown=0,total=0;body.querySelectorAll("tr").forEach(row=>{total++;const name=(row.cells[0]?.textContent||"").toLocaleLowerCase("ar");const st=row.dataset.status||"all";const visible=(!q||name.includes(q))&&(status==="all"||st===status);row.hidden=!visible;if(visible)shown++;});const count=document.getElementById("tableCount");if(count)count.textContent=shown+" من "+total+" طالب";};
 
 init();
 
