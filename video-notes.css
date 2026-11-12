@@ -120,3 +120,83 @@ body.focus-mode-active .video-notes-panel{max-width:1240px;margin-inline:auto}
  .playerCard:fullscreen .video-notes-fs-popover:not([hidden]),.playerCard:-webkit-full-screen .video-notes-fs-popover:not([hidden]){top:48px;right:8px;width:min(320px,calc(100vw - 16px))}
 }
 @media(prefers-reduced-motion:reduce){.video-notes-fs-toggle{transition:none}}
+
+/* === Final Smart Video Notes UI === */
+.video-notes-panel{margin:8px 0 2px!important;padding:9px 11px!important;border-radius:11px!important;box-shadow:0 3px 12px rgba(0,0,0,.035)!important}
+.video-notes-head{margin-bottom:7px!important;gap:7px!important}
+.video-notes-title{font-size:12px!important;gap:6px!important}
+.video-notes-title-icon{width:24px!important;height:24px!important;font-size:12px!important;border-radius:7px!important}
+.video-notes-subtitle{font-size:9px!important;margin-top:0!important}
+.video-notes-current{padding:3px 7px!important;font-size:9px!important;gap:5px!important}
+.video-notes-current span{font-size:8px!important}
+.video-notes-compose{grid-template-columns:minmax(0,1fr) auto!important;gap:6px!important}
+.video-notes-input{min-height:42px!important;max-height:68px!important;padding:6px 8px!important;font-size:10px!important;line-height:1.6!important;border-radius:8px!important}
+.video-notes-actions{min-width:102px!important;gap:4px!important}
+.video-notes-btn{min-height:25px!important;padding:4px 6px!important;font-size:9px!important;border-radius:7px!important}
+.video-notes-list-head{margin:7px 0 4px!important}
+.video-notes-list-head strong{font-size:10px!important}
+.video-notes-count{font-size:8px!important}
+.video-notes-list{gap:4px!important}
+.video-note-item{padding:6px 7px!important;gap:6px!important;border-radius:8px!important}
+.video-note-type{width:22px!important;height:22px!important;font-size:10px!important}
+.video-note-time{font-size:9px!important}
+.video-note-label{font-size:8px!important}
+.video-note-content{font-size:10px!important;line-height:1.45!important}
+.video-note-tool{width:22px!important;height:22px!important}
+.video-notes-empty{padding:7px!important;font-size:9px!important}
+.video-notes-status{min-height:12px!important;margin:3px 0 0!important;font-size:8px!important}
+
+/* One simple, draggable note icon lives inside the video stage. */
+.video-note-fab{display:none;position:absolute;z-index:75;right:13px;bottom:13px;width:36px;height:36px;padding:0;place-items:center;border:1px solid rgba(255,255,255,.24);border-radius:11px;background:rgba(12,20,35,.78);color:#fff;box-shadow:0 5px 18px rgba(0,0,0,.28);backdrop-filter:blur(10px);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+body.focus-video-selected .video-note-fab{display:grid}
+.video-note-fab:active{cursor:grabbing}
+.video-note-fab svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.video-note-fab[aria-expanded="true"]{background:#2563eb;border-color:#93c5fd}
+.video-notes-fs-popover{display:none;position:absolute;z-index:80;max-width:calc(100% - 20px);max-height:min(48%,300px);overflow:auto;box-sizing:border-box;padding:10px;border:1px solid rgba(255,255,255,.17);border-radius:12px;background:rgba(10,18,32,.97);color:#fff;box-shadow:0 12px 34px rgba(0,0,0,.42);backdrop-filter:blur(14px);direction:rtl}
+.video-notes-fs-popover:not([hidden]){display:block}
+.video-notes-fs-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.video-notes-fs-head strong{font:800 11px Cairo,sans-serif}
+.video-notes-fs-head button{width:23px;height:23px;border:0;border-radius:7px;background:rgba(255,255,255,.1);color:#fff;font-size:17px;cursor:pointer}
+.video-notes-fs-time{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:#aab7cb;font:500 9px Cairo,sans-serif}
+.video-notes-fs-time strong{color:#93c5fd;font:800 10px Cairo,sans-serif;direction:ltr}
+#videoNotesFullscreenInput{display:block;width:100%;min-height:55px;max-height:100px;resize:vertical;box-sizing:border-box;padding:7px 8px;border:1px solid rgba(255,255,255,.16);border-radius:8px;outline:none;background:rgba(255,255,255,.07);color:#fff;font:500 10px/1.6 Cairo,sans-serif}
+.video-notes-fs-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:6px}
+.video-notes-fs-actions button{min-height:28px;padding:4px 3px;border:1px solid rgba(255,255,255,.14);border-radius:7px;background:rgba(255,255,255,.08);color:#fff;font:700 9px Cairo,sans-serif;cursor:pointer}
+.video-notes-fs-actions button:first-child{background:#1d4ed8;border-color:#3b82f6}
+.video-notes-fs-actions button:last-child{color:#f6d37b}
+.video-notes-fs-actions button:disabled{opacity:.5;cursor:not-allowed}
+#videoNotesFullscreenStatus{min-height:13px;margin-top:4px;color:#aab7cb;font:500 8px Cairo,sans-serif}
+#videoNotesFullscreenStatus.is-error{color:#f87171}
+
+/* Mobile and desktop native fullscreen: keep the media area usable and controls compact. */
+.playerCard:fullscreen .playerHeader,.playerCard:-webkit-full-screen .playerHeader{display:none!important;flex:0 0 0!important}
+.playerCard:fullscreen .stage,.playerCard:-webkit-full-screen .stage{flex:1 1 0!important;min-height:0!important;height:auto!important;width:100%!important;max-height:none!important;aspect-ratio:auto!important}
+.playerCard:fullscreen .playerControls,.playerCard:-webkit-full-screen .playerControls{flex:0 0 auto!important;min-height:46px!important;padding:5px 7px!important;overflow:visible!important}
+.playerCard:fullscreen .controlRow,.playerCard:-webkit-full-screen .controlRow{flex-wrap:nowrap!important;min-width:0!important;gap:4px!important}
+.playerCard:fullscreen .video-star-rewards,.playerCard:-webkit-full-screen .video-star-rewards{min-height:30px!important}
+.playerCard.is-css-fullscreen{position:fixed!important;inset:0!important;z-index:99990!important;width:100vw!important;height:100dvh!important;min-height:0!important;max-width:100vw!important;max-height:100dvh!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;background:#000!important}
+body.player-css-fullscreen{overflow:hidden!important;overscroll-behavior:none!important;touch-action:manipulation!important}
+.playerCard.is-css-fullscreen .playerHeader{display:none!important;flex:0 0 0!important}
+.playerCard.is-css-fullscreen .stage{position:relative!important;flex:1 1 0!important;min-height:0!important;height:auto!important;width:100%!important;max-height:none!important;aspect-ratio:auto!important;overflow:hidden!important}
+.playerCard.is-css-fullscreen .playerControls{position:relative!important;flex:0 0 auto!important;min-height:46px!important;padding:5px 7px!important;overflow:visible!important}
+.playerCard.is-css-fullscreen .controlRow{flex-wrap:nowrap!important;min-width:0!important;gap:4px!important}
+.playerCard.is-css-fullscreen .progressInfo,.playerCard.is-css-fullscreen .progress{display:none!important}
+@media(max-width:640px){
+ .video-notes-panel{padding:8px 9px!important;margin-top:7px!important}
+ .video-notes-head{align-items:center!important;margin-bottom:6px!important}
+ .video-notes-compose{grid-template-columns:minmax(0,1fr) auto!important}
+ .video-notes-actions{display:flex!important;flex-direction:column!important;min-width:94px!important}
+ .video-notes-btn{min-height:24px!important;font-size:8px!important;padding:3px 4px!important}
+ .video-notes-input{min-height:40px!important;max-height:62px!important}
+ .video-note-tools{flex-direction:row!important}
+ .video-note-item{padding:5px 6px!important}
+ .video-note-content{font-size:9px!important}
+ .video-note-fab{width:34px;height:34px;border-radius:10px}
+ .video-notes-fs-popover{max-height:45%;padding:8px}
+ .playerCard:fullscreen .playerControls,.playerCard:-webkit-full-screen .playerControls,.playerCard.is-css-fullscreen .playerControls{min-height:43px!important;padding:4px 5px!important}
+ .playerCard:fullscreen .video-star-rewards,.playerCard:-webkit-full-screen .video-star-rewards{min-height:28px!important}
+ .playerCard:fullscreen .controlRow,.playerCard:-webkit-full-screen .controlRow,.playerCard.is-css-fullscreen .controlRow{gap:2px!important}
+}
+@media(max-width:380px){
+ .playerCard:fullscreen .playerControls,.playerCard:-webkit-full-screen .playerControls,.playerCard.is-css-fullscreen .playerControls{min-height:40px!important}
+}
