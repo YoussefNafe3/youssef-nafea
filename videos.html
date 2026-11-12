@@ -3297,6 +3297,8 @@ html[data-theme="light"] .videoItem.is-completed .videoItemProgressValue{color:#
 html[data-theme="light"] .video-star-rewards{background:linear-gradient(135deg,#f5f3ff,#eef2ff);border-color:rgba(124,95,190,.18);box-shadow:0 5px 15px rgba(67,56,120,.07)}
 html[data-theme="light"] .video-star-rewards::before{background:#f5f3ff;color:#667085}
 
+
+@import url("./video-notes.css?v=1");
 </style>
 <link rel="stylesheet" href="./ui-polish.css?v=1">
 <link rel="stylesheet" href="./focus-mode.css?v=1">
@@ -3609,6 +3611,27 @@ html[data-theme="light"] .video-star-rewards::before{background:#f5f3ff;color:#6
       </div>
 
     </div>
+
+    <section class="video-notes-panel" id="videoNotesPanel" aria-label="ملاحظات وعلامات مرجعية للفيديو">
+      <div class="video-notes-head">
+        <div>
+          <div class="video-notes-title"><span class="video-notes-title-icon" aria-hidden="true">✎</span><span>ملاحظات المحاضرة</span></div>
+          <div class="video-notes-subtitle">سجّل أفكارك وأسئلتك، وارجع لأي لحظة بضغطة واحدة.</div>
+        </div>
+        <div class="video-notes-current"><span>التوقيت الحالي</span><strong id="videoNotesClock">00:00:00</strong></div>
+      </div>
+      <div class="video-notes-compose">
+        <textarea id="videoNotesInput" class="video-notes-input" maxlength="3000" placeholder="اكتب ملاحظة أو سؤالاً عن الجزء الذي تشاهده…" aria-label="اكتب ملاحظة أو سؤالاً"></textarea>
+        <div class="video-notes-actions">
+          <button type="button" class="video-notes-btn primary" data-note-action="note">✎ حفظ ملاحظة</button>
+          <button type="button" class="video-notes-btn" data-note-action="question">؟ تسجيل سؤال</button>
+          <button type="button" class="video-notes-btn bookmark" data-note-action="bookmark">★ حفظ اللحظة</button>
+        </div>
+      </div>
+      <div class="video-notes-status" id="videoNotesStatus" role="status" aria-live="polite"></div>
+      <div class="video-notes-list-head"><strong>ملاحظاتي في هذا الدرس</strong><span class="video-notes-count" id="videoNotesCount">0 عنصر</span></div>
+      <div class="video-notes-list" id="videoNotesList"><div class="video-notes-empty">اختر فيديو لعرض ملاحظاتك.</div></div>
+    </section>
 
   </section>
 
@@ -5940,6 +5963,8 @@ async function selectVideo(
         )
     };
 
+  window.dispatchEvent(new CustomEvent("platform:video-selected",{detail:{videoId:item.id}}));
+
   // Capture opening time from the device clock once per video opening.
   state.videoOpenedAt = getDeviceLocalTimestamp();
 
@@ -7948,5 +7973,6 @@ html[data-theme="light"] .pageTitle.quote-title,html[data-theme="light"] .quote-
 </script>
 <script src="./ui-polish.js?v=1" defer></script>
 <script src="./focus-mode.js?v=1" defer></script>
+<script src="./video-notes.js?v=1" defer></script>
 </body>
 </html>
