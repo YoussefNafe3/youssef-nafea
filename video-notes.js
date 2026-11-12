@@ -15,7 +15,7 @@
  const fsStatus=$('videoNotesFullscreenStatus');
  const mainClock=$('videoNotesClock');
  const fsClock=$('videoNotesFullscreenClock');
- const fsToggle=$('videoNotesFullscreenToggle');
+ const fsToggle=$('videoNotesFab');
  const fsPopover=$('videoNotesFullscreenPopover');
  const fsClose=$('videoNotesFullscreenClose');
  const labels={note:'ملاحظة',question:'سؤال',bookmark:'علامة مرجعية'};
@@ -45,7 +45,7 @@
  function setBusy(value){
   saving=value;
   document.querySelectorAll('[data-note-action]').forEach(button=>{
-   button.disabled=value||!activeVideoId;
+   button.disabled=Boolean(value);
   });
  }
  function syncInputs(source){
@@ -78,10 +78,30 @@
    tools.append(del);row.append(icon,main,tools);list.append(row);
   });
  }
+
+ function positionNotesPopover(){
+  if(!fsPopover||fsPopover.hidden||!fsToggle)return;
+  const rect=fsToggle.getBoundingClientRect();
+  const stage=fsToggle.closest('.stage');
+  if(!stage)return;
+  const bounds=stage.getBoundingClientRect();
+  const width=Math.min(320,Math.max(220,bounds.width-20));
+  fsPopover.style.width=width+'px';
+  const height=fsPopover.offsetHeight||210;
+  let left=rect.left-bounds.left+rect.width-width;
+  let top=rect.bottom-bounds.top+8;
+  left=Math.max(10,Math.min(left,bounds.width-width-10));
+  if(top+height>bounds.height-8)top=rect.top-bounds.top-height-8;
+  top=Math.max(8,Math.min(top,bounds.height-height-8));
+  fsPopover.style.left=left+'px';
+  fsPopover.style.top=top+'px';
+  fsPopover.style.right='auto';
+ }
  function openFullscreenNotes(){
   if(!fsPopover||!fsToggle)return;
   fsPopover.hidden=false;fsToggle.setAttribute('aria-expanded','true');
   fsToggle.classList.add('is-open');
+  positionNotesPopover();
   setTimeout(()=>fsInput?.focus(),40);
  }
  function closeFullscreenNotes(){
@@ -92,7 +112,7 @@
  async function load(videoId){
   const sequence=++loadSequence;
   activeVideoId=String(videoId||'');
-  notes=[];render();setStatus('جاري تحميل ملاحظات الدرس…');setBusy(true);
+  notes=[];render();setStatus('جاري تحميل ملاحظات الفيديو…');setBusy(false);
   if(!activeVideoId){setStatus('اختر فيديو لعرض ملاحظاته.');setBusy(false);return;}
   try{
    const {data,error}=await client.from('student_video_notes')
@@ -116,7 +136,8 @@
  async function add(type,surface){
   const source=surface==='fullscreen'?fsInput:mainInput;
   const content=(source?.value||'').trim();
-  if(saving||!activeVideoId)return;
+  if(saving)return;
+  if(!activeVideoId){setStatus('اختر فيديو أولاً لحفظ الملاحظة.',true,surface);return;}
   if(type!=='bookmark'&&!content){
    source?.focus();setStatus(type==='question'?'اكتب سؤالك أولاً.':'اكتب الملاحظة أولاً.',true,surface);return;
   }
@@ -186,6 +207,69 @@
  }
  if(typeof state!=='undefined'&&state.currentVideoId)load(state.currentVideoId);
  else{setStatus('اختر فيديو من القائمة لتبدأ تدوين الملاحظات.');setBusy(false);}
+
+ // Draggable floating note icon. Position is saved per browser/device.
+ (function enableDraggableNotesIcon(){
+  if(!fsToggle)return;
+  const stage=fsToggle.closest('.stage');
+  if(!stage)return;
+  const key='video-notes-fab-position-v2';
+  let dragging=false,moved=false,startX=0,startY=0,startLeft=0,startTop=0,pointerId=null;
+  let suppressClick=false;
+  const clamp=(v,min,max)=>Math.max(min,Math.min(v,max));
+  function currentPosition(){
+   const button=fsToggle.getBoundingClientRect(),box=stage.getBoundingClientRect();
+   return {left:button.left-box.left,top:button.top-box.top};
+  }
+  function setPosition(left,top,persist){
+   const maxLeft=Math.max(0,stage.clientWidth-fsToggle.offsetWidth);
+   const maxTop=Math.max(0,stage.clientHeight-fsToggle.offsetHeight);
+   left=clamp(left,4,maxLeft-4);top=clamp(top,4,maxTop-4);
+   fsToggle.style.left=left+'px';fsToggle.style.top=top+'px';
+   fsToggle.style.right='auto';fsToggle.style.bottom='auto';
+   if(persist){
+    try{localStorage.setItem(key,JSON.stringify({x:maxLeft?left/maxLeft:1,y:maxTop?top/maxTop:1}));}catch(e){}
+   }
+  }
+  function restore(){
+   try{
+    const saved=JSON.parse(localStorage.getItem(key)||'null');
+    if(saved&&Number.isFinite(saved.x)&&Number.isFinite(saved.y)){
+     const maxLeft=Math.max(0,stage.clientWidth-fsToggle.offsetWidth);
+     const maxTop=Math.max(0,stage.clientHeight-fsToggle.offsetHeight);
+     setPosition(saved.x*maxLeft,saved.y*maxTop,false);
+    }
+   }catch(e){}
+  }
+  restore();
+  fsToggle.addEventListener('pointerdown',event=>{
+   if(event.button!==undefined&&event.button!==0)return;
+   const p=currentPosition();dragging=true;moved=false;pointerId=event.pointerId;
+   startX=event.clientX;startY=event.clientY;startLeft=p.left;startTop=p.top;
+   try{fsToggle.setPointerCapture(pointerId);}catch(e){}
+  });
+  fsToggle.addEventListener('pointermove',event=>{
+   if(!dragging||event.pointerId!==pointerId)return;
+   const dx=event.clientX-startX,dy=event.clientY-startY;
+   if(!moved&&Math.hypot(dx,dy)<5)return;
+   moved=true;event.preventDefault();
+   setPosition(startLeft+dx,startTop+dy,false);
+  });
+  function finish(event){
+   if(!dragging||event.pointerId!==pointerId)return;
+   dragging=false;
+   if(moved){setPosition(...Object.values(currentPosition()),true);suppressClick=true;setTimeout(()=>suppressClick=false,180);}
+   pointerId=null;
+  }
+  fsToggle.addEventListener('pointerup',finish);
+  fsToggle.addEventListener('pointercancel',finish);
+  fsToggle.addEventListener('click',event=>{
+   if(suppressClick){event.preventDefault();event.stopImmediatePropagation();}
+  },true);
+  window.addEventListener('resize',()=>{const p=currentPosition();setPosition(p.left,p.top,false);positionNotesPopover();},{passive:true});
+  window.visualViewport?.addEventListener('resize',()=>{const p=currentPosition();setPosition(p.left,p.top,false);positionNotesPopover();},{passive:true});
+ })();
+
  clockTimer=setInterval(updateClock,1000);updateClock();
  window.addEventListener('pagehide',()=>{if(clockTimer)clearInterval(clockTimer);});
 })();
