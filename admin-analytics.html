@@ -592,6 +592,7 @@ button:focus-visible,.video-card:focus-visible{outline:3px solid rgba(244,215,12
 </style>
 <style id="analytics-auth-pending">body{visibility:hidden}</style>
 
+<link rel="stylesheet" href="./ui-polish.css?v=1">
 </head>
 
 <body>
@@ -1128,7 +1129,8 @@ window.printCurrentReport=function(){window.print();};
 window.downloadCurrentReport=function(){
   const editor=document.getElementById("reportEditor");
   if(!editor.innerHTML.trim()){alert("افتح تقريرًا أولًا.");return;}
-  const doc='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>تقرير تحليلات الفيديو</title><style>body{font-family:Arial,Tahoma,sans-serif;direction:rtl;color:#182235;line-height:1.8;margin:22px}h1{text-align:center;color:#172554;font-size:25px}h2{color:#312e81;border-bottom:2px solid #ddd6fe;padding-bottom:5px;margin-top:24px}table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:12px}th,td{border:1px solid #cbd5e1;padding:7px 8px;text-align:right;vertical-align:top}th{background:#eef2ff;color:#1e1b4b}.report-metrics{display:block;margin:16px 0}.metric{display:inline-block;border:1px solid #dbe2ef;padding:8px 12px;margin:3px;background:#f8fafc}.report-subtitle{text-align:center;color:#64748b}.report-footer{border-top:1px solid #dbe2ef;padding-top:10px;margin-top:25px;color:#64748b;font-size:11px}.report-empty{padding:12px;background:#f8fafc;border:1px dashed #cbd5e1}</style></head><body>'+editor.innerHTML+'</body></html>';
+  const doc='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>تقرير تحليلات الفيديو</title><style>body{font-family:Arial,Tahoma,sans-serif;direction:rtl;color:#182235;line-height:1.8;margin:22px}h1{text-align:center;color:#172554;font-size:25px}h2{color:#312e81;border-bottom:2px solid #ddd6fe;padding-bottom:5px;margin-top:24px}table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:12px}th,td{border:1px solid #cbd5e1;padding:7px 8px;text-align:right;vertical-align:top}th{background:#eef2ff;color:#1e1b4b}.report-metrics{display:block;margin:16px 0}.metric{display:inline-block;border:1px solid #dbe2ef;padding:8px 12px;margin:3px;background:#f8fafc}.report-subtitle{text-align:center;color:#64748b}.report-footer{border-top:1px solid #dbe2ef;padding-top:10px;margin-top:25px;color:#64748b;font-size:11px}.report-empty{padding:12px;background:#f8fafc;border:1px dashed #cbd5e1}</style></head><body>'+editor.innerHTML+'<script src="./ui-polish.js?v=1" defer></script>
+</body></html>';
   const blob=new Blob(['\ufeff',doc],{type:"application/msword;charset=utf-8"});
   const url=URL.createObjectURL(blob);const a=document.createElement("a");
   const title=(document.querySelector("#reportEditor h1")?.textContent||"تقرير_تحليلات").replace(/[\\/:*?"<>|]/g,"-").slice(0,80);
