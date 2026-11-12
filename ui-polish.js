@@ -31,22 +31,7 @@
    node.style.setProperty('--ui-reveal-delay',Math.min(Math.max(siblings.length-1,0),5)*55+'ms');
    if(observer)observer.observe(node);else node.classList.add('is-visible');
   });
-  var loadingNodes=[];
-  if(root.matches&&root.matches('body *'))loadingNodes.push(root);
-  if(root.querySelectorAll)root.querySelectorAll('*').forEach(function(n){loadingNodes.push(n);});
-  loadingNodes.forEach(function(el){
-   // Keep login/authentication feedback readable; it is not a skeleton placeholder.
-   if(el.matches('#msg,#signupSuccessNotice,[role="alert"],[data-auth-message]')||
-      el.closest('#msg,#signupSuccessNotice,.auth-message,[data-auth-message]')){
-    el.classList.remove('ui-loading-state');
-    el.removeAttribute('aria-busy');
-    return;
-   }
-   if(el.children.length>0||el.closest('.ui-platform-toast'))return;
-   var t=(el.textContent||'').trim();
-   if(t.length<=100&&/^(جاري|جارٍ|جارى|loading\\b|please wait\\b)/i.test(t)){el.classList.add('ui-loading-state');el.setAttribute('aria-busy','true');}
-   else if(el.classList.contains('ui-loading-state')){el.classList.remove('ui-loading-state');el.removeAttribute('aria-busy');}
-  });
+  // Skeleton loading effect removed platform-wide; keep all status text readable.
  }
 
  function initImageOptimization(){
