@@ -5927,6 +5927,9 @@ async function selectVideo(
   state.currentVideoId =
     item.id;
 
+  // Show Focus Mode only after a valid video has been selected.
+  document.body.classList.add("focus-video-selected");
+
 
   state.currentVideo =
     {
