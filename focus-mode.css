@@ -1,0 +1,41 @@
+/* Focus Mode — scoped to the student video experience */
+body.focus-mode-active .sidebar{display:none!important}
+body.focus-mode-active .app{min-height:100vh}
+body.focus-mode-active .main{width:100%;max-width:1500px;margin-inline:auto;padding:clamp(12px,2.2vw,30px)}
+body.focus-mode-active .quote-heading,
+body.focus-mode-active .learning-encouragement{display:none!important}
+body.focus-mode-active .topActions{display:none!important}
+body.focus-mode-active .topbar{margin-bottom:8px}
+body.focus-mode-active .player-toolbar{justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+body.focus-mode-active .playerCard{max-width:1240px;margin-inline:auto;box-shadow:0 22px 65px rgba(0,0,0,.22)}
+body.focus-mode-active .playerHeader{padding:13px 18px}
+body.focus-mode-active #videoTitle{font-size:clamp(16px,2vw,21px)}
+body.focus-mode-active .focus-mode-toggle{border-color:rgba(52,211,153,.4);background:linear-gradient(135deg,#0f766e,#115e59);color:#fff}
+.focus-mode-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 15px;border-radius:13px;border:1px solid rgba(96,165,250,.32);background:linear-gradient(135deg,#1d4ed8,#1e40af);color:#fff;font:800 12px Cairo,sans-serif;cursor:pointer;box-shadow:0 8px 22px rgba(37,99,235,.18);transition:transform .2s,filter .2s,box-shadow .2s;white-space:nowrap}
+.focus-mode-toggle:hover{transform:translateY(-1px);filter:brightness(1.08);box-shadow:0 11px 26px rgba(37,99,235,.24)}
+.focus-mode-toggle:focus-visible,.focus-timer button:focus-visible{outline:3px solid #93c5fd;outline-offset:3px}
+.focus-mode-toggle .focus-mode-icon{font-size:16px;line-height:1}
+.focus-timer{display:none;align-items:center;gap:10px;flex-wrap:wrap;padding:7px 10px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:0 8px 24px rgba(0,0,0,.12);color:var(--text)}
+body.focus-mode-active .focus-timer{display:flex}
+.focus-timer-display{display:flex;align-items:center;gap:8px;min-width:100px}
+.focus-timer-display strong{font-variant-numeric:tabular-nums;direction:ltr;font-size:17px;letter-spacing:.5px}
+.focus-timer-display small{font-size:10px;color:var(--muted)}
+.focus-timer-actions{display:flex;align-items:center;gap:6px}
+.focus-timer button{border:1px solid var(--line);border-radius:9px;padding:6px 10px;background:var(--panel2);color:var(--text);font:700 11px Cairo,sans-serif;cursor:pointer}
+.focus-timer button.primary{background:#2563eb;color:white;border-color:#2563eb}
+.focus-timer button.finish{color:#ef4444}
+.focus-session-status{font-size:10px;color:var(--muted);min-width:66px}
+.focus-mode-hint{font-size:11px;color:var(--muted);margin-inline-start:auto}
+body.focus-mode-active .stage{border-radius:0}
+@media(max-width:640px){
+ body.focus-mode-active .main{padding:10px}
+ body.focus-mode-active .player-toolbar{align-items:stretch}
+ .focus-mode-toggle{min-height:40px;padding-inline:11px;flex:0 0 auto}
+ .focus-timer{width:100%;justify-content:space-between;gap:7px;padding:7px 8px}
+ .focus-timer-display{min-width:84px}
+ .focus-timer-display strong{font-size:16px}
+ .focus-timer-actions{gap:4px}
+ .focus-timer button{padding:6px 8px;font-size:10px}
+ .focus-mode-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){.focus-mode-toggle{transition:none}}
