@@ -34,7 +34,7 @@
    const media=$('videoPlayer');
    if(media&&Number.isFinite(media.currentTime))return Math.max(0,Math.floor(media.currentTime));
    return Math.max(0,Math.floor(typeof state!=='undefined'?state.lastTime||0:0));
-  }catch(error){return Math.max(0,Math.floor(window.state?.lastTime||0));}
+  }catch(error){return Math.max(0,Math.floor(typeof state!=='undefined'?state.lastTime||0:0));}
  }
  function setStatus(message,isError,surface){
   const target=surface==='fullscreen'?fsStatus:mainStatus;
