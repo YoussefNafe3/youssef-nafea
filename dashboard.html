@@ -276,6 +276,7 @@ html[data-theme="light"] .hero-tags span{color:#425a78;background:rgba(255,255,2
 .card p{font-size:12px;line-height:1.9;color:var(--muted);margin:0}
 .card-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:18px;color:var(--card-accent);font-size:11px;font-weight:900}
 .card-arrow{display:grid;place-items:center;width:27px;height:27px;border:1px solid color-mix(in srgb,var(--card-accent) 25%,transparent);border-radius:9px;background:color-mix(in srgb,var(--card-accent) 8%,transparent);font-size:17px}
+.card-new-dot{position:absolute;top:15px;left:15px;z-index:5;width:11px;height:11px;border-radius:50%;background:#ff334f;border:2px solid var(--card);box-shadow:0 0 0 3px #ff334f24,0 0 13px #ff334f88;animation:cardNewPulse 1.9s ease-in-out infinite;pointer-events:none}.card-new-dot::after{content:"";position:absolute;inset:-5px;border:1px solid #ff334f88;border-radius:50%;animation:cardNewRing 1.9s ease-out infinite}@keyframes cardNewPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 3px #ff334f24,0 0 13px #ff334f88}50%{transform:scale(1.13);box-shadow:0 0 0 5px #ff334f18,0 0 17px #ff334faa}}@keyframes cardNewRing{0%{transform:scale(.65);opacity:.9}100%{transform:scale(1.7);opacity:0}}@media(prefers-reduced-motion:reduce){.card-new-dot,.card-new-dot::after{animation:none}}
 .footer{max-width:1240px;margin:30px auto 4px;color:var(--muted);font-size:11px}
 #sessionStatus{color:var(--muted)}
 html[data-theme="light"] .card{color:var(--text);background:var(--card)}
@@ -1524,7 +1525,7 @@ html[data-theme="light"] .student-overview .overview-next-item{
 <section class="student-overview" id="studentOverview" aria-label="ملخص رحلتك الدراسية">
 <div class="overview-grid">
 
-<article id="overviewResumeCard" class="overview-card overview-resume-card" hidden><div class="overview-card-heading"><span class="overview-icon">▶</span><div><h3 class="overview-title-resume">استكمل من حيث توقفت</h3><p>آخر فيديو شاهدته</p></div></div><div id="overviewLastVideo" class="overview-last-video"><span class="overview-placeholder-icon">◷</span><div><strong>جاري تحميل سجل المشاهدة...</strong><small>لحظات ونجهز لك آخر درس.</small></div></div><a id="overviewResumeButton" class="overview-primary-link" href="videos.html" hidden>استكمل المشاهدة <span>←</span></a></article>
+<article id="overviewResumeCard" class="overview-card overview-resume-card" hidden><div class="overview-card-heading"><span class="overview-icon">▶</span><div><h3 class="overview-title-resume">استكمل من حيث توقفت</h3><p>آخر فيديو شاهدته</p></div></div><div id="overviewLastVideo" class="overview-last-video"><span class="overview-placeholder-icon">◷</span><div><strong>جاري تحميل سجل المشاهدة...</strong><small>لحظات ونجهز لك آخر درس.</small></div></div><a id="overviewResumeButton" class="overview-primary-link" href="videos.html" hidden data-dashboard-card="videos">استكمل المشاهدة <span>←</span></a></article>
 <article class="overview-card overview-next-card"><div class="overview-card-heading"><span class="overview-icon">▣</span><div><h3 class="overview-title-next">المطلوب منك الحصة الجاية</h3></div></div><div id="overviewNextItem" class="overview-next-item"><span class="overview-placeholder-icon">📅</span><div><strong>جاري البحث عن أقرب موعد...</strong><small>سنرتب مواعيدك هنا تلقائيًا.</small></div></div><a id="overviewNextButton" class="overview-secondary-link" href="#assignmentList">عرض التكليفات <span>←</span></a></article>
 
 </div></section>
@@ -1537,35 +1538,35 @@ html[data-theme="light"] .student-overview .overview-next-item{
 <div class="card-bottom"><span>استكشف الفيديوهات</span><span class="card-arrow">←</span></div>
 </a>
 
-<a class="card card-results" href="results.html">
+<a class="card card-results" href="results.html" data-dashboard-card="results">
 <div class="icon" aria-hidden="true">▤</div>
 <h3>نتائج الامتحانات</h3>
 <p>راجع درجاتك ونتائج التسميعات وتعرّف على مستوى تقدّمك.</p>
 <div class="card-bottom"><span>عرض النتائج</span><span class="card-arrow">←</span></div>
 </a>
 
-<a class="card card-files" href="files.html">
+<a class="card card-files" href="files.html" data-dashboard-card="files">
 <div class="icon" aria-hidden="true">▣</div>
 <h3>الملفات التعليمية</h3>
 <p>وصل بسهولة إلى المذكرات وملفات PDF والمواد المساعدة للمذاكرة.</p>
 <div class="card-bottom"><span>تصفّح الملفات</span><span class="card-arrow">←</span></div>
 </a>
 
-<a class="card card-account" href="change-password.html">
+<a class="card card-account" href="change-password.html" data-dashboard-card="account">
 <div class="icon" aria-hidden="true">🔐</div>
 <h3>أمان الحساب</h3>
 <p>غيّر كلمة المرور الحالية وأنشئ كلمة مرور جديدة بأمان من داخل حسابك.</p>
 <div class="card-bottom"><span>إدارة كلمة المرور</span><span class="card-arrow">←</span></div>
 </a>
 
-<a class="card card-practice" href="practice.html" style="--card-accent:#66d9c2">
+<a class="card card-practice" href="practice.html" style="--card-accent:#66d9c2" data-dashboard-card="practice">
 <div class="icon" aria-hidden="true">✦</div>
 <h3>تدرّب وأتقن</h3>
 <p>تدريبات على الحصص والمنهج، وأسئلة مهارات وتحديات سرعة — طوّر فهمك ومهارتك في الحل.</p>
 <div class="card-bottom"><span>ابدأ رحلة الممارسة</span><span class="card-arrow">←</span></div>
 </a>
 
-<a class="card card-exams" href="online-exams.html">
+<a class="card card-exams" href="online-exams.html" data-dashboard-card="exams">
 <div class="icon" aria-hidden="true">✓</div>
 <h3>الامتحانات الأونلاين</h3>
 <p>استعدّ لاختباراتك وتابع الامتحانات المتاحة لك عبر المنصة.</p>
@@ -2620,5 +2621,59 @@ html[data-theme="light"] .student-overview #overviewNextButton{
 .student-overview #overviewNextItem .overview-task-more::after{content:none!important;display:none!important}
 .student-overview #overviewNextItem .overview-task-progress{margin-top:2px!important}
 </style><script src="./ui-polish.js?v=1" defer></script>
+
+<script>
+/* Per-student, per-card "new content" markers. No schema or RLS changes. */
+(()=>{
+ const prefix="dashboard-card-seen:v1:";
+ const latestMarkers=new Map();
+ const keys=["videos","results","files","account","practice","exams"];
+ const storageKey=k=>prefix+String(user?.id||user?.phone||"student")+":"+k;
+ const readMarker=k=>{try{const v=JSON.parse(localStorage.getItem(storageKey(k))||"null");return v&&Number.isFinite(Number(v.timestamp))?{timestamp:Number(v.timestamp),id:String(v.id||"")}:null}catch(e){return null}};
+ const writeMarker=(k,v)=>{try{localStorage.setItem(storageKey(k),JSON.stringify(v))}catch(e){}};
+ const markerFor=rows=>(rows||[]).reduce((best,row)=>{const stamp=Date.parse(row.updated_at||row.created_at||"")||0,id=String(row.id||"");return !best||stamp>best.timestamp||(stamp===best.timestamp&&id>best.id)?{timestamp:stamp,id}:best},null);
+ const newer=(a,b)=>!!a&&(!b||a.timestamp>b.timestamp||(a.timestamp===b.timestamp&&a.id>b.id));
+ function paint(k,isNew){const card=document.querySelector('[data-dashboard-card="'+k+'"]');if(!card)return;let dot=card.querySelector(".card-new-dot");if(isNew&&!dot){dot=document.createElement("span");dot.className="card-new-dot";dot.setAttribute("role","status");dot.setAttribute("aria-label","يوجد محتوى جديد");dot.title="محتوى جديد";card.appendChild(dot)}else if(!isNew&&dot)dot.remove();}
+ async function refresh(){
+  if(!user?.id)return;
+  const allowed=overviewGroups(String(user.class_group||"").trim());
+  const jobs=[
+   ["videos",client.from("videos").select("id,created_at").in("class_group",allowed)],
+   ["exams",client.from("online_exams").select("id,created_at,updated_at").eq("status","published")],
+   ["practice",client.from("practice_sets").select("id,created_at,updated_at").eq("is_published",true).eq("is_active",true).in("class_group",allowed)],
+   ["files",client.from("study_files").select("id,created_at").in("class_group",allowed)],
+   ["results",Promise.all([
+     client.from("exam_results").select("id,created_at").eq("student_id",user.id),
+     client.from("recitation_results").select("id,created_at").eq("student_id",user.id)
+   ])]
+  ];
+  await Promise.all(jobs.map(async([k,request])=>{
+   try{
+    let rows=[];
+    if(k==="results"){const pair=await request;if(pair.some(x=>x.error))throw pair.find(x=>x.error).error;rows=pair.flatMap(x=>x.data||[]);}
+    else{const result=await request;if(result.error)throw result.error;rows=result.data||[];}
+    const latest=markerFor(rows);
+    if(!latest)return;
+    latestMarkers.set(k,latest);
+    let seen=readMarker(k);
+    if(!seen){writeMarker(k,latest);seen=latest;}
+    paint(k,newer(latest,seen));
+   }catch(error){console.warn("[Dashboard new-content]",k,error);}
+  }));
+ }
+ function markSeen(k){
+  const current=latestMarkers.get(k)||{timestamp:Date.now(),id:""};
+  const previous=readMarker(k);
+  writeMarker(k,newer(current,previous)?current:(previous||current));
+  paint(k,false);
+ }
+ document.querySelectorAll("[data-dashboard-card]").forEach(card=>{
+  card.addEventListener("click",()=>markSeen(card.dataset.dashboardCard),{capture:true});
+ });
+ let attempts=0;
+ const ready=setInterval(()=>{attempts++;if(typeof user!=="undefined"&&user?.id){clearInterval(ready);refresh();window.setInterval(refresh,60000);window.addEventListener("focus",refresh,{passive:true});}else if(attempts>80)clearInterval(ready);},250);
+})();
+</script>
+
 </body>
 </html>
