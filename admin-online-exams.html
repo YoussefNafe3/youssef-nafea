@@ -160,11 +160,11 @@ async function cleanupPrepare(){
   const [keys,answers,events,students]=await Promise.all([
    qids.length?cleanupRows("online_exam_answer_keys","*","question_id",qids):[],aids.length?cleanupRows("online_exam_attempt_answers","*","attempt_id",aids):[],
    aids.length?cleanupRows("exam_integrity_events","*","attempt_id",aids):[],
-   aids.length?cleanupRows("students","id,full_name,phone,class_group","id",[...new Set(attempts.map(a=>a.student_id))]):[]
+   aids.length?cleanupRows("students","id,full_name,class_group","id",[...new Set(attempts.map(a=>a.student_id))]):[]
   ]);
   cleanupProgress(25);cleanupSetStatus("تم جمع بيانات الامتحانات. جاري تجهيز الصور...");
   const paths=[];
-  for(const exam of exams){for(let offset=0;;offset+=1000){const listed=await db.storage.from("online-exam-images").list(exam.id,{limit:1000,offset});if(listed.error)throw listed.error;const files=listed.data||[];files.filter(f=>f.name&&!f.id).forEach(f=>paths.push(exam.id+"/"+f.name));if(files.length<1000)break;}}
+  for(const exam of exams){for(let offset=0;;offset+=1000){const listed=await db.storage.from("online-exam-images").list(exam.id,{limit:1000,offset});if(listed.error)throw listed.error;const files=listed.data||[];files.filter(f=>f.name&&f.id).forEach(f=>paths.push(exam.id+"/"+f.name));if(files.length<1000)break;}}
   const imageData={};let done=0;
   for(let i=0;i<paths.length;i+=4){await Promise.all(paths.slice(i,i+4).map(async path=>{const d=await db.storage.from("online-exam-images").download(path);if(d.error)throw Error("تعذر تنزيل الصورة "+path+": "+d.error.message);imageData[path]=await cleanupDataUrl(d.data);done++;}));cleanupProgress(25+(paths.length?35*done/paths.length:35));}
   const backup={archive_type:"Dr Youssef Nafea - Expired Online Exams",created_at:new Date().toISOString(),criteria:"published or archived; available_until <= backup time",exams,forms,question_groups:groups,questions,answer_keys:keys,attempts,attempt_answers:answers,integrity_events:events,form_rotation:rotation,students,image_files:imageData};
