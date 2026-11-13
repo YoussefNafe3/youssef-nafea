@@ -7956,5 +7956,6 @@ html[data-theme="light"] .pageTitle.quote-title,html[data-theme="light"] .quote-
 <script src="./ui-polish.js?v=1" defer></script>
 <script src="./focus-mode.js?v=1" defer></script>
 <script src="./video-notes.js?v=2" defer></script>
+<script>(function(){try{var u=JSON.parse(localStorage.getItem("user")||"null");if(!u)return;var k="dashboard-card-seen:v1:"+String(u.id||u.phone||"student")+":videos";var old=JSON.parse(localStorage.getItem(k)||"null");var now=Date.now();if(!old||Number(old.timestamp)<now)localStorage.setItem(k,JSON.stringify({timestamp:now,id:""}));}catch(e){}})();</script>
 </body>
 </html>
