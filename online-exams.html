@@ -324,7 +324,7 @@ async function retryPendingCheating(){
  catch(e){console.error("Pending exam violation is still waiting for connection",e);}
 }
 function queueIntegrityEvent(type,extra={}){
- if(!integritySettings.event_monitoring&&!integritySettings.answer_timing)return;
+ if(!integritySettings.event_monitoring&&!integritySettings.answer_timing&&!integritySettings.devtools_detection)return;
  if(!attempt||!attempt.attempt_id||expired||submitting)return;
  const payload={attempt_id:attempt.attempt_id,student_id:user.id,event_type:type,question_id:extra.question_id||null,duration_ms:Number.isFinite(extra.duration_ms)?Math.max(0,Math.round(extra.duration_ms)):null,metadata:extra.metadata||{}};
  integrityEventQueue=integrityEventQueue.then(async()=>{const result=await db.from("exam_integrity_events").insert(payload);if(result.error)throw result.error;}).catch(err=>console.warn("Integrity event could not be saved:",err));
@@ -333,7 +333,7 @@ function trackAnswerChange(q){
  if(!integritySettings.answer_timing)return;
  const count=(questionAnswerChanges.get(q.id)||0)+1;questionAnswerChanges.set(q.id,count);
  const shown=questionShownAt.get(q.id)||Date.now(),elapsed=Date.now()-shown;
- queueIntegrityEvent("answer_change",{question_id:q.id,duration_ms:elapsed,metadata:{question_index:current+1,change_count:count,question_type:q.question_type,prompt_length:String(q.prompt||"").length,has_image:!!q.image_url,answer_length:typeof answers[q.id]==="string"?answers[q.id].length:null}});
+ const complexity=String(q.prompt||"").length,threshold=Math.min(18000,Math.max(2500,1500+complexity*35+(q.image_url?3000:0)+(["essay","short_answer"].includes(q.question_type)?2000:0)));const fastHint=!!integritySettings.fast_answer_detection&&count===1&&elapsed<threshold;queueIntegrityEvent("answer_change",{question_id:q.id,duration_ms:elapsed,metadata:{question_index:current+1,change_count:count,question_type:q.question_type,prompt_length:complexity,has_image:!!q.image_url,answer_length:typeof answers[q.id]==="string"?answers[q.id].length:null,fast_answer_hint:fastHint,review_threshold_ms:integritySettings.fast_answer_detection?threshold:null}});
 }
 function installCheatingGuards(){
  document.addEventListener("visibilitychange",()=>{if(!attempt||expired||submitting)return;if(document.hidden){lastFocusLostAt=Date.now();queueIntegrityEvent("tab_hidden");}else queueIntegrityEvent("window_focus",{duration_ms:lastFocusLostAt?Date.now()-lastFocusLostAt:null});});
