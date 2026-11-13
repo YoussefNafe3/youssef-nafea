@@ -336,12 +336,12 @@ function trackAnswerChange(q){
  const complexity=String(q.prompt||"").length,threshold=Math.min(18000,Math.max(2500,1500+complexity*35+(q.image_url?3000:0)+(["essay","short_answer"].includes(q.question_type)?2000:0)));const fastHint=!!integritySettings.fast_answer_detection&&count===1&&elapsed<threshold;queueIntegrityEvent("answer_change",{question_id:q.id,duration_ms:elapsed,metadata:{question_index:current+1,change_count:count,question_type:q.question_type,prompt_length:complexity,has_image:!!q.image_url,answer_length:typeof answers[q.id]==="string"?answers[q.id].length:null,fast_answer_hint:fastHint,review_threshold_ms:integritySettings.fast_answer_detection?threshold:null}});
 }
 function installCheatingGuards(){
- document.addEventListener("visibilitychange",()=>{if(!attempt||expired||submitting)return;if(document.hidden){lastFocusLostAt=Date.now();queueIntegrityEvent("tab_hidden");}else queueIntegrityEvent("window_focus",{duration_ms:lastFocusLostAt?Date.now()-lastFocusLostAt:null});});
- window.addEventListener("blur",()=>{if(!attempt||expired||submitting)return;lastFocusLostAt=Date.now();queueIntegrityEvent("window_blur");});
- window.addEventListener("focus",()=>{if(!attempt||expired||submitting)return;queueIntegrityEvent("window_focus",{duration_ms:lastFocusLostAt?Date.now()-lastFocusLostAt:null});lastFocusLostAt=0;});
- window.addEventListener("pagehide",()=>{if(attempt&&!expired&&!submitting)queueIntegrityEvent("page_exit");});
- window.addEventListener("beforeunload",()=>{if(attempt&&!expired&&!submitting)queueIntegrityEvent("reload_attempt");});
- document.addEventListener("fullscreenchange",()=>{if(attempt&&!expired&&!submitting)queueIntegrityEvent("fullscreen_change",{metadata:{fullscreen:!!document.fullscreenElement}});});
+ document.addEventListener("visibilitychange",()=>{if(!integritySettings.event_monitoring||!attempt||expired||submitting)return;if(document.hidden){lastFocusLostAt=Date.now();queueIntegrityEvent("tab_hidden");}else queueIntegrityEvent("window_focus",{duration_ms:lastFocusLostAt?Date.now()-lastFocusLostAt:null});});
+ window.addEventListener("blur",()=>{if(!integritySettings.event_monitoring||!attempt||expired||submitting)return;lastFocusLostAt=Date.now();queueIntegrityEvent("window_blur");});
+ window.addEventListener("focus",()=>{if(!integritySettings.event_monitoring||!attempt||expired||submitting)return;queueIntegrityEvent("window_focus",{duration_ms:lastFocusLostAt?Date.now()-lastFocusLostAt:null});lastFocusLostAt=0;});
+ window.addEventListener("pagehide",()=>{if(integritySettings.event_monitoring&&attempt&&!expired&&!submitting)queueIntegrityEvent("page_exit");});
+ window.addEventListener("beforeunload",()=>{if(integritySettings.event_monitoring&&attempt&&!expired&&!submitting)queueIntegrityEvent("reload_attempt");});
+ document.addEventListener("fullscreenchange",()=>{if(integritySettings.event_monitoring&&attempt&&!expired&&!submitting)queueIntegrityEvent("fullscreen_change",{metadata:{fullscreen:!!document.fullscreenElement}});});
  if(integritySettings.devtools_detection){
   let last=0;setInterval(()=>{if(!attempt||expired||submitting)return;const gap=Math.abs(window.outerWidth-window.innerWidth)>160||Math.abs(window.outerHeight-window.innerHeight)>160;if(gap&&Date.now()-last>15000){last=Date.now();queueIntegrityEvent("devtools_hint",{metadata:{heuristic:true}});}},5000);
  }
