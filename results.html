@@ -3358,6 +3358,7 @@ renderNotifications();
 
 <div id="onlineAnswerKeyModal" class="answer-key-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="الإجابات النموذجية"><section class="answer-key-dialog"><div class="answer-key-top"><button type="button" id="closeOnlineAnswerKey" class="answer-key-close">إغلاق ✕</button></div><div id="onlineAnswerKeyContent"></div></section></div>
 <script src="./ui-polish.js?v=1" defer></script>
+<script>(function(){try{var u=JSON.parse(localStorage.getItem("user")||"null");if(!u)return;var k="dashboard-card-seen:v1:"+String(u.id||u.phone||"student")+":results";var old=JSON.parse(localStorage.getItem(k)||"null");var now=Date.now();if(!old||Number(old.timestamp)<now)localStorage.setItem(k,JSON.stringify({timestamp:now,id:""}));}catch(e){}})();</script>
 </body>
 
 </html>
