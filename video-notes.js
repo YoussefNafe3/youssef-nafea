@@ -105,14 +105,19 @@
  }
  function render(){
   count.textContent=notes.length+' ملاحظة';
+  const fsCount=$('videoNotesFullscreenCount');
+  const fsList=$('videoNotesFullscreenList');
+  if(fsCount)fsCount.textContent=notes.length+' عنصر';
   list.replaceChildren();
   if(!notes.length){
    const empty=document.createElement('div');empty.className='video-notes-empty';
    empty.textContent='لا توجد ملاحظات لهذا الدرس حتى الآن.';
-   list.appendChild(empty);return;
+   list.appendChild(empty);
+   if(fsList)fsList.innerHTML='<div class="video-notes-empty">لا توجد ملاحظات لهذا الدرس حتى الآن.</div>';
+   return;
   }
   notes.forEach(note=>{
-   const row=document.createElement('article');row.className='video-note-item';row.dataset.type=note.note_type;
+   const row=document.createElement('article');row.className='video-note-item';row.dataset.type=note.note_type;row.dataset.noteId=String(note.id);
    const icon=document.createElement('span');icon.className='video-note-type';icon.textContent=icons[note.note_type]||'✎';
    const main=document.createElement('div');main.className='video-note-main';
    const meta=document.createElement('div');meta.className='video-note-meta';
@@ -128,6 +133,7 @@
    del.addEventListener('click',()=>removeNote(note.id,del));
    tools.append(del);row.append(icon,main,tools);list.append(row);
   });
+  if(fsList){fsList.innerHTML='';const mirror=list.cloneNode(true);fsList.replaceChildren(...Array.from(mirror.children));}
  }
 
  function positionNotesPopover(){
@@ -244,6 +250,12 @@
  });
  fsToggle?.addEventListener('click',()=>{dismissOnboarding();fsPopover.hidden?openFullscreenNotes():closeFullscreenNotes();});
  fsClose?.addEventListener('click',closeFullscreenNotes);
+ $('videoNotesFullscreenList')?.addEventListener('click',event=>{
+  const row=event.target.closest('.video-note-item');if(!row)return;
+  const note=notes.find(item=>String(item.id)===String(row.dataset.noteId));if(!note)return;
+  if(event.target.closest('.video-note-time')){seek(note.timestamp_seconds);return;}
+  if(event.target.closest('.video-note-tool'))removeNote(note.id,event.target.closest('.video-note-tool'));
+ });
  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&fsPopover&&!fsPopover.hidden)closeFullscreenNotes();});
  document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)closeFullscreenNotes();});
  document.addEventListener('webkitfullscreenchange',()=>{if(!document.webkitFullscreenElement)closeFullscreenNotes();});
