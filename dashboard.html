@@ -1526,7 +1526,7 @@ html[data-theme="light"] .student-overview .overview-next-item{
 <div class="overview-grid">
 
 <article id="overviewResumeCard" class="overview-card overview-resume-card" hidden><div class="overview-card-heading"><span class="overview-icon">▶</span><div><h3 class="overview-title-resume">استكمل من حيث توقفت</h3><p>آخر فيديو شاهدته</p></div></div><div id="overviewLastVideo" class="overview-last-video"><span class="overview-placeholder-icon">◷</span><div><strong>جاري تحميل سجل المشاهدة...</strong><small>لحظات ونجهز لك آخر درس.</small></div></div><a id="overviewResumeButton" class="overview-primary-link" href="videos.html" hidden data-dashboard-card="videos">استكمل المشاهدة <span>←</span></a></article>
-<article class="overview-card overview-next-card"><div class="overview-card-heading"><span class="overview-icon">▣</span><div><h3 class="overview-title-next">المطلوب منك الحصة الجاية</h3></div></div><div id="overviewNextItem" class="overview-next-item"><span class="overview-placeholder-icon">📅</span><div><strong>جاري البحث عن أقرب موعد...</strong><small>سنرتب مواعيدك هنا تلقائيًا.</small></div></div><a id="overviewNextButton" class="overview-secondary-link" href="#assignmentList">عرض التكليفات <span>←</span></a></article>
+<article class="overview-card overview-next-card" data-dashboard-card="assignments"><div class="overview-card-heading"><span class="overview-icon">▣</span><div><h3 class="overview-title-next">المطلوب منك الحصة الجاية</h3></div></div><div id="overviewNextItem" class="overview-next-item"><span class="overview-placeholder-icon">📅</span><div><strong>جاري البحث عن أقرب موعد...</strong><small>سنرتب مواعيدك هنا تلقائيًا.</small></div></div><a id="overviewNextButton" class="overview-secondary-link" href="#assignmentList">عرض التكليفات <span>←</span></a></article>
 
 </div></section>
 <div class="cards">
@@ -2627,7 +2627,7 @@ html[data-theme="light"] .student-overview #overviewNextButton{
 (()=>{
  const prefix="dashboard-card-seen:v1:";
  const latestMarkers=new Map();
- const keys=["videos","results","files","account","practice","exams"];
+ const keys=["videos","results","files","account","practice","exams","assignments"];
  const storageKey=k=>prefix+String(user?.id||user?.phone||"student")+":"+k;
  const readMarker=k=>{try{const v=JSON.parse(localStorage.getItem(storageKey(k))||"null");return v&&Number.isFinite(Number(v.timestamp))?{timestamp:Number(v.timestamp),id:String(v.id||"")}:null}catch(e){return null}};
  const writeMarker=(k,v)=>{try{localStorage.setItem(storageKey(k),JSON.stringify(v))}catch(e){}};
@@ -2642,6 +2642,7 @@ html[data-theme="light"] .student-overview #overviewNextButton{
    ["exams",client.from("online_exams").select("id,created_at,updated_at").eq("status","published")],
    ["practice",client.from("practice_sets").select("id,created_at,updated_at").eq("is_published",true).eq("is_active",true).in("class_group",allowed)],
    ["files",client.from("study_files").select("id,created_at").in("class_group",allowed)],
+   ["assignments",client.from("assignments").select("id,created_at").eq("is_active",true).in("class_group",allowed)],
    ["results",Promise.all([
      client.from("exam_results").select("id,created_at").eq("student_id",user.id),
      client.from("recitation_results").select("id,created_at").eq("student_id",user.id)
