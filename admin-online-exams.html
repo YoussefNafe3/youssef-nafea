@@ -147,15 +147,16 @@ const cleanupDataUrl=b=>new Promise((ok,no)=>{const f=new FileReader();f.onload=
 async function cleanupPrepare(){
  if(cleanupBusy)return;cleanupBusy=true;$("prepareCleanup").disabled=true;$("confirmCleanup").hidden=true;$("cleanupCodeArea").hidden=true;cleanupProgress(3);cleanupSetStatus("جاري فحص الامتحانات المنتهية...");
  try{
-  const ex=await db.from("online_exams").select("*").in("status",["published","archived"]).not("available_until","is",null).lte("available_until",new Date().toISOString()).order("available_until");
-  if(ex.error)throw ex.error;const exams=ex.data||[];
+  const ex=await db.from("online_exams").select("*").not("available_until","is",null).lte("available_until",new Date().toISOString()).order("available_until");
+  if(ex.error)throw ex.error;let exams=ex.data||[];
   if(!exams.length){cleanupSetStatus("لا توجد امتحانات منشورة أو مؤرشفة انتهى موعدها. لم يتم حذف أي شيء.","ok");$("cleanupExamCount").textContent="0";$("cleanupQuestionCount").textContent="0";$("cleanupImageCount").textContent="0";return;}
   const ids=exams.map(x=>x.id);cleanupProgress(10);
-  const [forms,groups,questions,attempts,rotation]=await Promise.all([
+  let [forms,groups,questions,attempts,rotation]=await Promise.all([
    cleanupRows("online_exam_forms","*","exam_id",ids),cleanupRows("online_exam_question_groups","*","exam_id",ids),
    cleanupRows("online_exam_questions","*","exam_id",ids),cleanupRows("online_exam_attempts","*","exam_id",ids),
    cleanupRows("online_exam_form_rotation","*","exam_id",ids)
   ]);
+  const protectedIds=new Set(forms.filter(f=>f.is_question_bank===true).map(f=>f.exam_id));const protectedCount=exams.filter(e=>protectedIds.has(e.id)).length;exams=exams.filter(e=>!protectedIds.has(e.id));if(!exams.length){cleanupSetStatus("لا توجد امتحانات منتهية قابلة للتنظيف. تم استثناء "+protectedCount+" امتحانًا يحتوي على بنك أسئلة حتى لا نفقده.","ok");return;}const safeIds=new Set(exams.map(e=>e.id));forms=forms.filter(f=>safeIds.has(f.exam_id));groups=groups.filter(g=>safeIds.has(g.exam_id));questions=questions.filter(q=>safeIds.has(q.exam_id));attempts=attempts.filter(a=>safeIds.has(a.exam_id));rotation=rotation.filter(x=>safeIds.has(x.exam_id));
   const qids=questions.map(q=>q.id),aids=attempts.map(a=>a.id);
   const [keys,answers,events,students]=await Promise.all([
    qids.length?cleanupRows("online_exam_answer_keys","*","question_id",qids):[],aids.length?cleanupRows("online_exam_attempt_answers","*","attempt_id",aids):[],
@@ -184,8 +185,8 @@ async function cleanupPrepare(){
   const raw=JSON.stringify(backup).replace(/</g,"\\u003c");
   const html='<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>أرشيف الامتحانات المنتهية</title><style>body{font-family:Arial,sans-serif;max-width:1100px;margin:25px auto;padding:20px;line-height:1.8;color:#182334}h1,h2{color:#17345a}.exam{border:2px solid #c6a45a;border-radius:15px;padding:18px;margin:25px 0}.q{border:1px solid #d6dce5;border-radius:12px;padding:13px;margin:13px 0}.q img,.group img{display:block;max-width:100%;max-height:420px;object-fit:contain;margin:10px auto}.answer,.group{background:#f2f6fb;padding:12px;border-radius:9px;margin-top:10px}table{width:100%;border-collapse:collapse;font-size:12px}td,th{border:1px solid #ccd4df;padding:7px;text-align:right}</style><h1>الأرشيف الاحتياطي للامتحانات المنتهية</h1><p>تاريخ النسخة: '+esc(backup.created_at)+' · الامتحانات: '+exams.length+' · الأسئلة: '+questions.length+' · الصور: '+paths.length+'</p>'+sections+'<details><summary>بيانات النسخة الكاملة للاستعادة البرمجية</summary><pre id="raw"></pre></details><script type="application/json" id="archive-data">'+raw+'</scr'+'ipt><script>document.getElementById("raw").textContent=document.getElementById("archive-data").textContent;</scr'+'ipt></html>';
   const blob=new Blob([html],{type:"text/html;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="Dr-Youssef-Nafea-Expired-Exams-"+new Date().toISOString().slice(0,10)+".html";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
-  cleanupSnapshot={ids,counts:{exams:exams.length,questions:questions.length,images:paths.length,attempts:attempts.length}};cleanupImagePaths=paths;
-  $("cleanupExamCount").textContent=exams.length;$("cleanupQuestionCount").textContent=questions.length;$("cleanupImageCount").textContent=paths.length;$("cleanupCodeArea").hidden=false;$("confirmCleanup").hidden=false;$("cleanupDownloaded").checked=false;$("cleanupCode").value="";cleanupProgress(65);cleanupSetStatus("تم تنزيل ملف HTML الشامل. افتحه وتأكد من حفظه، ثم أكد التنزيل وأدخل كود 123.","ok");
+  cleanupSnapshot={ids:exams.map(e=>e.id),counts:{exams:exams.length,questions:questions.length,images:paths.length,attempts:attempts.length}};cleanupImagePaths=paths;
+  $("cleanupExamCount").textContent=exams.length;$("cleanupQuestionCount").textContent=questions.length;$("cleanupImageCount").textContent=paths.length;$("cleanupCodeArea").hidden=false;$("confirmCleanup").hidden=false;$("cleanupDownloaded").checked=false;$("cleanupCode").value="";cleanupProgress(65);cleanupSetStatus("تم تنزيل ملف HTML الشامل. افتحه وتأكد من حفظه، ثم أكد التنزيل وأدخل كود 123."+(protectedCount?" تم استثناء "+protectedCount+" امتحان يحتوي على بنك أسئلة لحمايته.":""),"ok");
  }catch(e){console.error("Exam archive",e);cleanupSetStatus("توقف تجهيز النسخة الاحتياطية، ولم يتم حذف أي امتحان: "+e.message,"error");cleanupSnapshot=null;}
  finally{cleanupBusy=false;$("prepareCleanup").disabled=false;}
 }
