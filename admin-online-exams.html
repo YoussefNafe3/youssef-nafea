@@ -263,8 +263,64 @@ async function uploadImage(){
  }catch(e){message("qMsg","تعذر رفع الصورة: "+e.message,"err");return false;}finally{b.disabled=false;b.textContent="رفع الصورة";}
 }
 function optionRows(){return $("choices").value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean).map((text,i)=>({id:"opt-"+(i+1),text:text}));}
+function duplicateNormalize(value){
+ return String(value||"").toLocaleLowerCase("ar").normalize("NFKC")
+ .replace(/[\u064B-\u065F\u0670\u0640]/g,"")
+ .replace(/[أإآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه")
+ .replace(/[\u200B-\u200F\uFEFF]/g,"")
+ .replace(/[^\p{L}\p{N}]+/gu," ").trim().replace(/\s+/g," ");
+}
+function duplicateTokens(value){
+ const normalized=duplicateNormalize(value);return new Set(normalized.split(" ").filter(x=>x.length>1));
+}
+function duplicateSimilarity(a,b){
+ const A=duplicateTokens(a),B=duplicateTokens(b);if(!A.size||!B.size)return 0;
+ let common=0;A.forEach(x=>{if(B.has(x))common++;});
+ return common/Math.min(A.size,B.size);
+}
+async function detectQuestionDuplicates(candidate,editingId){
+ const [qr,gr]=await Promise.all([
+  db.from("online_exam_questions").select("id,form_id,group_id,prompt,question_type,choices,sort_order,image_url").eq("exam_id",chosen.id),
+  db.from("online_exam_question_groups").select("id,form_id,title").eq("exam_id",chosen.id)
+ ]);
+ if(qr.error)throw qr.error;if(gr.error)throw gr.error;
+ const groupMap={};(gr.data||[]).forEach(g=>groupMap[g.id]=g.title||"");
+ const candidates=(qr.data||[]).filter(q=>q.id!==editingId);
+ const currentHead=$( "questionGroup").value?groupMap[$("questionGroup").value]||"": "";
+ const currentText=[currentHead,candidate.prompt].filter(Boolean).join(" ");
+ const currentPrompt=duplicateNormalize(candidate.prompt);
+ const currentChoices=(candidate.choices||[]).map(c=>duplicateNormalize(c.text));
+ const matches=[];
+ for(const q of candidates){
+  const otherHead=q.group_id?groupMap[q.group_id]||"":"";
+  const otherText=[otherHead,q.prompt].filter(Boolean).join(" ");
+  const otherPrompt=duplicateNormalize(q.prompt);
+  const otherChoices=(q.choices||[]).map(c=>duplicateNormalize(c.text));
+  const sameChoices=currentChoices.length===otherChoices.length&&currentChoices.every((v,i)=>v===otherChoices[i]);
+  const exact= currentPrompt===otherPrompt&&duplicateNormalize(currentHead)===duplicateNormalize(otherHead)
+   &&candidate.question_type===q.question_type&&sameChoices
+   &&duplicateNormalize(candidate.image_url||"")===duplicateNormalize(q.image_url||"");
+  const promptScore=duplicateSimilarity(currentText,otherText);
+  const headScore=currentHead&&otherHead?duplicateSimilarity(currentHead,otherHead):0;
+  const choiceScore=sameChoices&&currentChoices.length?1:0;
+  const similar=!exact&&(promptScore>=0.72||headScore>=0.82||(promptScore>=0.58&&choiceScore===1));
+  if(exact||similar){
+   const position=candidates.filter(x=>x.form_id===q.form_id).sort((a,b)=>(a.sort_order??0)-(b.sort_order??0)).findIndex(x=>x.id===q.id)+1;
+   const f=forms.find(x=>x.id===q.form_id)||formMap[q.form_id]||{};
+   matches.push({exact,form:f.is_question_bank?"بنك الأسئلة":("نموذج "+(f.form_code||"—")),number:position||"—",score:Math.round(promptScore*100),question:q.prompt||""});
+  }
+ }
+ matches.sort((a,b)=>Number(b.exact)-Number(a.exact)||b.score-a.score);
+ return matches.slice(0,8);
+}
+async function warnAboutDuplicateQuestion(candidate,editingId){
+ const matches=await detectQuestionDuplicates(candidate,editingId);
+ if(!matches.length)return;
+ const lines=matches.map(m=>"• "+(m.exact?"تطابق شبه كامل":"تشابه محتمل")+" — "+m.form+"، السؤال رقم "+m.number+(m.exact?"":" (تشابه النص "+m.score+"%)")+"\n  "+String(m.question).replace(/\s+/g," ").slice(0,180));
+ alert("تنبيه مراجعة التكرار — لم يتم منع الحفظ\n\nتم العثور على أسئلة قد تكون مكررة أو متشابهة:\n\n"+lines.join("\n\n")+"\n\nيمكنك متابعة الحفظ إذا كان التكرار مقصودًا.");
+}
 async function saveQuestion(ev){ev.preventDefault();let type=$("type").value,prompt=$("prompt").value.trim(),points=Number($("points").value);if(!prompt||!Number.isFinite(points)||points<=0){message("qMsg","اكتب السؤال وحدد درجة صحيحة.","err");return;}const prior=await db.from("online_exam_attempts").select("id").eq("exam_id",chosen.id).limit(1);if(prior.error){message("qMsg","تعذر التحقق من محاولات الطلاب: "+prior.error.message,"err");return;}if(prior.data&&prior.data.length&&!confirm("تحذير عدالة التصحيح: يوجد طلاب بدأوا أو سلّموا هذا الامتحان. تعديل الأسئلة أو الإجابات النموذجية قد يؤثر في مقارنة الطلاب. ستظل الإجابات السابقة محفوظة، لكن التقرير سيعرض محتوى السؤال الحالي. هل تريد المتابعة؟"))return;if($("imageFile").files[0]){const uploaded=await uploadImage();if(!uploaded)return;}let choices=[],answer=null;if(type==="single_choice"||type==="multiple_select"){choices=optionRows();if(choices.length<2){message("qMsg","أضف اختيارين على الأقل.","err");return;}let nums=$("key").value.split(",").map(x=>Number(x.trim()));if(!nums.length||nums.some(n=>!Number.isInteger(n)||n<1||n>choices.length)||(type==="single_choice"&&nums.length!==1)){message("qMsg","راجع أرقام الإجابات الصحيحة.","err");return;}answer=type==="single_choice"?choices[nums[0]-1].id:nums.map(n=>choices[n-1].id);}else if(type==="true_false"){choices=[{id:"true",text:"صح"},{id:"false",text:"خطأ"}];let v=$("key").value.trim();if(!["صح","خطأ","true","false"].includes(v)){message("qMsg","اكتب صح أو خطأ.","err");return;}answer=(v==="صح"||v==="true")?"true":"false";}else if(type==="short_answer"||type==="essay"){answer=$("key").value.trim()||null;}
-let id=$("qid").value||null,old=questions.find(q=>q.id===id),p={exam_id:chosen.id,form_id:form.id,group_id:$("questionGroup").value||null,question_type:type,prompt:prompt,image_url:$("imageUrl").value.trim()||null,image_alt:$("imageAlt").value.trim(),points:points,choices:choices,sort_order:old?old.sort_order:questions.length,is_required:$("required").checked,updated_at:new Date().toISOString()},b=$("saveQ");b.disabled=true;message("qMsg","جاري الحفظ...");try{let r=id?await db.from("online_exam_questions").update(p).eq("id",id).select("*").single():await db.from("online_exam_questions").insert(p).select("*").single();if(r.error)throw r.error;let k=await db.from("online_exam_answer_keys").upsert({question_id:r.data.id,correct_answer:answer,explanation:$("explanation").value.trim(),updated_at:new Date().toISOString()},{onConflict:"question_id"});if(k.error)throw k.error;message("qMsg","تم حفظ السؤال ومفتاح الإجابة.","ok");resetQuestion();await loadQuestions();let c=await db.from("online_exam_questions").select("id");if(!c.error)$("sQuestions").textContent=(c.data||[]).length;}catch(e){message("qMsg","تعذر الحفظ: "+e.message,"err");}finally{b.disabled=false;}}
+let id=$("qid").value||null,old=questions.find(q=>q.id===id);try{await warnAboutDuplicateQuestion({prompt,question_type:type,choices,image_url:$("imageUrl").value.trim()||""},id);}catch(duplicateError){message("qMsg","تعذر فحص الأسئلة المتشابهة: "+duplicateError.message+" — يمكنك إعادة المحاولة قبل الحفظ.","err");return;}let p={exam_id:chosen.id,form_id:form.id,group_id:$("questionGroup").value||null,question_type:type,prompt:prompt,image_url:$("imageUrl").value.trim()||null,image_alt:$("imageAlt").value.trim(),points:points,choices:choices,sort_order:old?old.sort_order:questions.length,is_required:$("required").checked,updated_at:new Date().toISOString()},b=$("saveQ");b.disabled=true;message("qMsg","جاري الحفظ...");try{let r=id?await db.from("online_exam_questions").update(p).eq("id",id).select("*").single():await db.from("online_exam_questions").insert(p).select("*").single();if(r.error)throw r.error;let k=await db.from("online_exam_answer_keys").upsert({question_id:r.data.id,correct_answer:answer,explanation:$("explanation").value.trim(),updated_at:new Date().toISOString()},{onConflict:"question_id"});if(k.error)throw k.error;message("qMsg","تم حفظ السؤال ومفتاح الإجابة.","ok");resetQuestion();await loadQuestions();let c=await db.from("online_exam_questions").select("id");if(!c.error)$("sQuestions").textContent=(c.data||[]).length;}catch(e){message("qMsg","تعذر الحفظ: "+e.message,"err");}finally{b.disabled=false;}}
 async function editQuestion(id){let q=questions.find(x=>x.id===id);if(!q)return;let r=await db.from("online_exam_answer_keys").select("*").eq("question_id",id).maybeSingle();if(r.error){alert(r.error.message);return;}let k=r.data||{},a=k.correct_answer;$("qid").value=q.id;$("questionGroup").value=q.group_id||"";$("prompt").value=q.prompt;$("type").value=q.question_type;$("points").value=q.points;$("required").checked=q.is_required;$("imageUrl").value=q.image_url||"";$("imageAlt").value=q.image_alt||"";$("choices").value=(q.choices||[]).map(c=>c.text).join("\n");$("explanation").value=k.explanation||"";if(q.question_type==="true_false")$("key").value=a==="true"?"صح":a==="false"?"خطأ":"";else if(q.question_type==="single_choice")$("key").value=Math.max(0,(q.choices||[]).findIndex(c=>c.id===a)+1)||"";else if(q.question_type==="multiple_select")$("key").value=Array.isArray(a)?a.map(x=>(q.choices||[]).findIndex(c=>c.id===x)+1).filter(n=>n>0).join(","):"";else $("key").value=(q.question_type==="short_answer"||q.question_type==="essay")&&typeof a==="string"?a:"";$("builderTitle").textContent="تحرير السؤال";$("saveQ").textContent="حفظ التعديلات";typeFields();previewImage(q.image_url||"");$("prompt").focus();}
 async function createQuestionGroup(){
  if(!form||!chosen)return;
