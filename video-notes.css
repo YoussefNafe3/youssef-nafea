@@ -239,3 +239,16 @@ body.player-css-fullscreen{overflow:hidden!important;overscroll-behavior:none!im
 }
 @keyframes videoNoteBubbleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media(prefers-reduced-motion:reduce){.video-note-fab{animation:none!important;transition:none!important}.video-notes-onboarding{transition:none!important}}
+
+
+/* Expanded fullscreen notes: saved notes are visible in the same popover. */
+.playerCard:fullscreen .video-notes-fs-popover:not([hidden]),
+.playerCard:-webkit-full-screen .video-notes-fs-popover:not([hidden]){width:min(390px,calc(100vw - 24px))!important;max-height:min(82vh,760px)!important;overflow-y:auto!important;overscroll-behavior:contain}
+.video-notes-fs-list-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0 7px;padding-top:9px;border-top:1px solid rgba(255,255,255,.13);font:700 10px Cairo,sans-serif;color:#e8eef8}
+.video-notes-fs-list-head span{color:#9fb2ca;font-size:9px}
+.video-notes-fs-list{display:grid;gap:6px;overflow:visible;max-height:none}
+.video-notes-fs-list .video-note-item{grid-template-columns:auto minmax(0,1fr) auto;padding:8px;gap:7px;background:rgba(255,255,255,.065);border-color:rgba(255,255,255,.12)}
+.video-notes-fs-list .video-note-content{color:#f4f7fb}
+.video-notes-fs-list .video-note-label{color:#b9c6d8}
+.video-notes-fs-list .video-note-tool{color:#d3deed;border-color:rgba(255,255,255,.16)}
+.video-notes-fs-list .video-notes-empty{color:#c0ccdc;border-color:rgba(255,255,255,.2)}
