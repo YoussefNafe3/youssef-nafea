@@ -224,7 +224,7 @@ async function generateBankForms(){
  let sort=Math.max(-1,...forms.map(x=>Number(x.sort_order)||0))+1;
  for(let n=0;n<formCount;n++){
   const shuffled=[...qr.data].sort(()=>Math.random()-.5).slice(0,count);
-  const code="R"+String(n+1).padStart(2,"0");
+  const codeBase="G"+String(n+1).padStart(2,"0");let code=codeBase,suffix=1;while(forms.some(x=>x.form_code===code))code=codeBase+"-"+suffix++;
   const fr=await db.from("online_exam_forms").insert({exam_id:chosen.id,form_code:code,title:"نموذج مولّد "+(n+1),sort_order:sort+n,is_generated_from_bank:true}).select("*").single();
   if(fr.error){alert("تعذر إنشاء النموذج "+code+": "+fr.error.message);return;}
   forms.push(fr.data);formMap[fr.data.id]=fr.data;
