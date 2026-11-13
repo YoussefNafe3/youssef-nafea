@@ -290,17 +290,19 @@ function selectedQuestionIds(){return [...document.querySelectorAll("[data-selec
 function openTransferDialog(){
  if(!chosen||!form)return;
  const ids=selectedQuestionIds();if(!ids.length)return;
- const targets=forms.filter(f=>f.id!==form.id&&!f.is_question_bank);
- if(!targets.length){alert("أضف نموذجًا آخر أولًا لنقل الأسئلة إليه.");return;}
- $("transferTarget").innerHTML=targets.map(f=>'<option value="'+esc(f.id)+'">'+(f.is_generated_from_bank?"نموذج مولّد ":"نموذج ")+esc(f.form_code)+(f.title?" — "+esc(f.title):"")+'</option>').join("");
- $("transferSummary").textContent="سيتم نقل "+ids.length+" سؤالًا من "+(form.is_question_bank?"بنك الأسئلة":"نموذج "+form.form_code)+" إلى النموذج الذي تختاره. سيتم نقل رأس السؤال المشترك كاملًا مع أسئلته.";
+ const targets=forms.filter(f=>f.id!==form.id);
+ if(!targets.length){alert("لا يوجد نموذج آخر أو بنك أسئلة متاح داخل هذا الامتحان.");return;}
+ $("transferTarget").innerHTML=targets.map(f=>'<option value="'+esc(f.id)+'">'+(f.is_question_bank?"🧠 بنك الأسئلة":(f.is_generated_from_bank?"نموذج مولّد ":"نموذج ")+esc(f.form_code)+(f.title?" — "+esc(f.title):""))+'</option>').join("");
+ $("transferSummary").textContent="سيتم نقل "+ids.length+" سؤالًا من "+(form.is_question_bank?"بنك الأسئلة":"نموذج "+form.form_code)+" إلى الوجهة التي تختارها. سيتم الحفاظ على مفاتيح الإجابة والصور ورؤوس الأسئلة المشتركة.";
  message("transferMsg","");$("confirmTransfer").disabled=false;$("transferModal").classList.add("open");
 }
 async function confirmQuestionTransfer(){
  const ids=selectedQuestionIds(),targetId=$("transferTarget").value;
  if(!chosen||!form||!ids.length||!targetId||targetId===form.id)return;
  const source=form,target=forms.find(f=>f.id===targetId);if(!target)return;
- if(!confirm("تأكيد نقل "+ids.length+" سؤالًا من "+(source.is_question_bank?"بنك الأسئلة":"النموذج "+source.form_code)+" إلى "+(target.is_generated_from_bank?"النموذج المولّد ":"النموذج ")+target.form_code+"؟\nسيتم نقل مفاتيح الإجابة ورؤوس الأسئلة المشتركة تلقائيًا، ولن يتم نسخ الأسئلة."))return;
+ const sourceName=source.is_question_bank?"بنك الأسئلة":"النموذج "+source.form_code;
+ const targetName=target.is_question_bank?"بنك الأسئلة":(target.is_generated_from_bank?"النموذج المولّد ":"النموذج ")+target.form_code;
+ if(!confirm("تأكيد نقل "+ids.length+" سؤالًا من "+sourceName+" إلى "+targetName+"؟\nسيتم نقل الأسئلة فعليًا مع مفاتيح الإجابة والصور ورؤوس الأسئلة المشتركة، ولن يتم إنشاء نسخ مكررة."))return;
  const btn=$("confirmTransfer");btn.disabled=true;message("transferMsg","جاري التحقق والنقل بشكل آمن...");
  try{
   const result=await db.rpc("admin_move_online_exam_questions",{p_exam_id:chosen.id,p_source_form_id:source.id,p_target_form_id:target.id,p_question_ids:ids});
