@@ -437,4 +437,5 @@ $("prev").onclick=()=>go(current-1);$("next").onclick=()=>current===questions.le
 init().catch(e=>{console.error(e);$("cards").innerHTML='<div class="empty" style="grid-column:1/-1"><strong>تعذر فتح الامتحانات.</strong><br>'+esc(e.message||"حدث خطأ غير متوقع.")+'<br><button class="btn primary" style="margin-top:12px" onclick="location.reload()">إعادة المحاولة</button> <a class="btn" style="margin-top:12px" href="login.html">تسجيل الدخول</a></div>';});
 })();
 </script><script src="./ui-polish.js?v=1" defer></script>
+<script>(function(){try{var u=JSON.parse(localStorage.getItem("user")||"null");if(!u)return;var k="dashboard-card-seen:v1:"+String(u.id||u.phone||"student")+":exams";var old=JSON.parse(localStorage.getItem(k)||"null");var now=Date.now();if(!old||Number(old.timestamp)<now)localStorage.setItem(k,JSON.stringify({timestamp:now,id:""}));}catch(e){}})();</script>
 </body></html>
