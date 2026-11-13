@@ -252,3 +252,8 @@ body.player-css-fullscreen{overflow:hidden!important;overscroll-behavior:none!im
 .video-notes-fs-list .video-note-label{color:#b9c6d8}
 .video-notes-fs-list .video-note-tool{color:#d3deed;border-color:rgba(255,255,255,.16)}
 .video-notes-fs-list .video-notes-empty{color:#c0ccdc;border-color:rgba(255,255,255,.2)}
+
+/* Final override for both normal and fullscreen floating notes: avoid a clipped inner notes list. */
+.video-notes-fs-popover:not([hidden]){width:min(390px,calc(100% - 20px))!important;max-height:min(84vh,760px)!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important}
+.video-notes-fs-list{max-height:none!important;height:auto!important;overflow:visible!important}
+.video-notes-fs-list .video-note-item{min-height:0}
