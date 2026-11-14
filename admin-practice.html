@@ -133,6 +133,76 @@ async function loadStudentActivity(){
  $("studentActivityList").querySelectorAll("[data-student-activity]").forEach(b=>b.onclick=()=>{const d=$("student-activity-detail-"+b.dataset.studentActivity);d.hidden=!d.hidden;});
  $("activityUpdated").textContent="آخر تحديث: "+new Date().toLocaleTimeString("ar-EG");
 }
+
+let aiPracticeQuestions=[];
+const AI_PRACTICE_TYPES={single_choice:"اختيار واحد",multiple_select:"اختيارات متعددة",true_false:"صح أو خطأ",short_answer:"إجابة قصيرة",essay:"مقالي"};
+function aiPracticeMsg(s,bad=false){const e=$("aiPracticeStatus");e.textContent=s;e.style.color=bad?"var(--bad)":"var(--ok)";}
+function aiPracticeRender(){
+ $("aiPracticeCards").innerHTML=aiPracticeQuestions.map((q,i)=>'<article class="question ai-card" style="grid-template-columns:28px minmax(0,1fr)"><div><input class="ai-include" type="checkbox" checked></div><div><div class="actions" style="margin:0 0 8px"><b>السؤال '+(i+1)+'</b><span class="category-chip">ثقة '+q.confidence+'%</span>'+(q.needs_review?'<span class="category-chip">يحتاج مراجعة</span>':'')+'</div>'+(q.needs_review?'<div class="settings-note">'+esc(q.review_note||"راجع مفتاح الإجابة.")+'</div>':'')+'<div class="fields"><div class="field wide"><label>نص السؤال</label><textarea class="ai-prompt">'+esc(q.prompt)+'</textarea></div><div class="field"><label>النوع</label><select class="ai-type">'+Object.entries(AI_PRACTICE_TYPES).map(([k,v])=>'<option value="'+k+'" '+(q.type===k?'selected':'')+'>'+v+'</option>').join("")+'</select></div><div class="field"><label>الدرجة</label><input class="ai-points" type="number" min=".25" max="1000" step=".25" value="'+(Number(q.points)||Number($("aiPracticeDefaultPoints").value)||1)+'"></div><div class="field wide ai-choice-wrap"><label>الاختيارات (كل اختيار في سطر)</label><textarea class="ai-choices">'+esc((q.choices||[]).join("\n"))+'</textarea></div><div class="field wide"><label class="ai-key-label">مفتاح الإجابة</label><input class="ai-key" value="'+esc(["single_choice","multiple_select"].includes(q.type)?(q.correct_indices||[]).join(","):q.correct_answer||"")+'"></div><div class="field wide"><label>التفسير</label><textarea class="ai-explanation">'+esc(q.explanation||"")+'</textarea></div><div class="field"><label>تصنيف التدريب</label><select class="ai-category"><option value="lesson">تدريبات على الحصص</option><option value="curriculum">تدريبات عامة على المنهج</option><option value="skills">مهارات تقيس عليا</option><option value="speed">أسئلة السرعة</option></select></div><div class="field ai-speed-wrap" hidden><label>الزمن بالثواني</label><input class="ai-speed" type="number" min="1" max="120" value="6"></div></div></div></article>').join("");
+ $("aiPracticeCards").querySelectorAll(".ai-card").forEach(card=>{
+  const type=card.querySelector(".ai-type"),cat=card.querySelector(".ai-category");
+  cat.value=$("aiPracticeCategory").value;
+  const sync=()=>{const choice=["single_choice","multiple_select"].includes(type.value);card.querySelector(".ai-choice-wrap").hidden=!choice;card.querySelector(".ai-key-label").textContent=choice?"أرقام الاختيارات الصحيحة (1,3)":type.value==="true_false"?"الإجابة الصحيحة: صح أو خطأ":"الإجابة النموذجية";card.querySelector(".ai-speed-wrap").hidden=cat.value!=="speed";};
+  type.onchange=sync;cat.onchange=sync;sync();
+ });
+ $("aiPracticeReviewCount").textContent=aiPracticeQuestions.length+" سؤال";
+ $("aiPracticeSummary").textContent="راجع صياغة كل سؤال ومفتاح إجابته. الأسئلة التي تحمل تنبيهًا تحتاج مراجعة قبل الاستيراد.";
+ $("aiPracticePreview").hidden=false;
+}
+async function aiPracticeAnalyze(){
+ if(!selected)return aiPracticeMsg("احفظ التدريب أولًا قبل الاستيراد.",true);
+ const raw=$("aiPracticeSource").value.trim();if(raw.length<30)return aiPracticeMsg("ألصق نص الأسئلة والإجابات أولًا.",true);
+ const b=$("aiPracticeAnalyze");b.disabled=true;b.textContent="جاري التحليل بواسطة Gemini…";aiPracticeMsg("يتم استخراج الأسئلة والاختيارات والإجابات…");$("aiPracticePreview").hidden=true;
+ try{
+  const {data,error}=await db.functions.invoke("ai-practice-import",{body:{raw_text:raw,instructions:$("aiPracticeInstructions").value.trim()}});
+  if(error)throw new Error(data?.message||error.message||"تعذر الاتصال بـ Gemini.");
+  if(!data?.success||!Array.isArray(data.questions)||!data.questions.length)throw new Error(data?.message||"لم يتم استخراج أسئلة صالحة.");
+  aiPracticeQuestions=data.questions.map(q=>({...q,points:Number($("aiPracticeDefaultPoints").value)||1}));
+  aiPracticeRender();aiPracticeMsg("تم استخراج "+aiPracticeQuestions.length+" سؤالًا. راجعها قبل الاستيراد.");
+ }catch(e){aiPracticeMsg(e.message||"حدث خطأ أثناء التحليل.",true);}
+ finally{b.disabled=false;b.textContent="✦ تحليل وتنظيم الأسئلة";}
+}
+async function aiPracticeSave(){
+ if(!selected)return aiPracticeMsg("اختر تدريبًا واحفظه أولًا.",true);
+ const cards=[...$("aiPracticeCards").querySelectorAll(".ai-card")].filter(x=>x.querySelector(".ai-include").checked);
+ if(!cards.length)return aiPracticeMsg("حدد سؤالًا واحدًا على الأقل.",true);
+ const history=await db.from("practice_attempts").select("id").eq("set_id",selected.id).limit(1);
+ if(history.error)return aiPracticeMsg(history.error.message,true);
+ if(history.data?.length&&!confirm("لدى التدريب محاولات محفوظة. ستضاف الأسئلة الجديدة دون تعديل المحاولات السابقة. هل تريد المتابعة؟"))return;
+ const prepared=[];
+ for(let i=0;i<cards.length;i++){
+  const card=cards[i],type=card.querySelector(".ai-type").value,prompt=card.querySelector(".ai-prompt").value.trim(),points=Number(card.querySelector(".ai-points").value),category=card.querySelector(".ai-category").value;
+  if(!prompt||!Number.isFinite(points)||points<=0||points>1000)return aiPracticeMsg("راجع نص السؤال والدرجة في السؤال رقم "+(i+1)+".",true);
+  let choices=[],key=null;
+  if(type==="single_choice"||type==="multiple_select"){
+   choices=card.querySelector(".ai-choices").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map((text,j)=>({id:"opt-"+(j+1),text}));
+   const nums=card.querySelector(".ai-key").value.split(",").map(x=>Number(x.trim())).filter(Number.isInteger);
+   if(choices.length<2||choices.length>8||!nums.length||nums.some(n=>n<1||n>choices.length)||(type==="single_choice"&&nums.length!==1))return aiPracticeMsg("راجع الاختيارات ومفتاح الإجابة للسؤال "+(i+1)+".",true);
+   key=type==="single_choice"?choices[nums[0]-1].id:nums.map(n=>choices[n-1].id).sort();
+  }else if(type==="true_false"){
+   const v=card.querySelector(".ai-key").value.trim();if(!["صح","خطأ","true","false"].includes(v))return aiPracticeMsg("حدد إجابة صح أو خطأ للسؤال "+(i+1)+".",true);
+   choices=[{id:"true",text:"صح"},{id:"false",text:"خطأ"}];key=["صح","true"].includes(v)?"true":"false";
+  }else{key=card.querySelector(".ai-key").value.trim();if(!key)return aiPracticeMsg("الإجابة النموذجية ناقصة في السؤال "+(i+1)+".",true);}
+  prepared.push({set_id:selected.id,group_id:null,category,time_limit_seconds:category==="speed"?Math.max(1,Math.min(120,Number(card.querySelector(".ai-speed").value)||6)):null,question_type:type,prompt,image_url:null,image_alt:"",points,choices,sort_order:questions.length+i,is_required:true,updated_at:new Date().toISOString(),_key:key,_explanation:card.querySelector(".ai-explanation").value.trim()});
+ }
+ $("aiPracticeSave").disabled=true;aiPracticeMsg("جاري حفظ الأسئلة ومفاتيح الإجابة…");
+ const inserted=[];
+ try{
+  for(const item of prepared){
+   const {_key,_explanation,...question}=item;
+   const q=await db.from("practice_questions").insert(question).select("id").single();if(q.error)throw q.error;inserted.push(q.data.id);
+   const k=await db.from("practice_answer_keys").insert({question_id:q.data.id,correct_answer:_key,explanation:_explanation,updated_at:new Date().toISOString()});if(k.error)throw k.error;
+  }
+  const enabled=[...new Set([...(selected.enabled_categories||[]),...prepared.map(x=>x.category)])];
+  const cfg=await db.from("practice_sets").update({enabled_categories:enabled,updated_at:new Date().toISOString()}).eq("id",selected.id);if(cfg.error)throw cfg.error;
+  aiPracticeMsg("تم استيراد "+inserted.length+" سؤالًا بنجاح.");
+  $("aiPracticePreview").hidden=true;$("aiPracticeSource").value="";$("aiPracticeCharCount").textContent="0 حرف";aiPracticeQuestions=[];await selectSet(selected.id);
+ }catch(e){
+  if(inserted.length)await db.from("practice_questions").delete().in("id",inserted);
+  aiPracticeMsg("تعذر إكمال الاستيراد، وتمت محاولة التراجع عن الأسئلة المضافة: "+(e.message||"خطأ غير معروف"),true);
+ }finally{$("aiPracticeSave").disabled=false;}
+}
+
 async function loadSets(){const r=await db.from("practice_sets").select("*").order("updated_at",{ascending:false});if(r.error){$("sets").textContent=r.error.message;return;}sets=r.data||[];renderSets();}
 function resetQ(){$("qForm").reset();$("qid").value="";$("group").value="";$("type").value="single_choice";$("points").value=1;$("required").checked=true;$("questionCategory").value=activeCategory;$("speedTime").value=6;$("speedTimeWrap").hidden=activeCategory!=="speed";$("imageUrl").value="";$("imageFile").value="";$("preview").hidden=true;$("preview").removeAttribute("src");$("saveQ").textContent="حفظ السؤال";typeChange();msg("qStatus","");}
 function resetSet(){selected=null;activeCategory="lesson";$("setForm").reset();setSelectedCategories(["lesson","curriculum","skills","speed"]);$("setId").value="";$("attempts").value=0;$("shuffle").checked=true;$("explain").checked=true;$("setHeading").textContent="إنشاء تدريب جديد";$("deleteSet").hidden=true;questions=[];groups=[];$("group").innerHTML='<option value="">سؤال مستقل</option>';renderSets();renderQuestions();resetQ();msg("setStatus","");}
@@ -149,7 +219,7 @@ function renderQuestions(){const visible=questions.filter(q=>(q.category||"lesso
 async function editQ(id){const q=questions.find(x=>x.id===id);if(!q)return;const r=await db.from("practice_answer_keys").select("*").eq("question_id",id).maybeSingle();if(r.error)return msg("qStatus",r.error.message,true);const a=r.data?.correct_answer;$("qid").value=id;$("group").value=q.group_id||"";$("questionCategory").value=q.category||"lesson";activeCategory=q.category||"lesson";$("speedTime").value=q.time_limit_seconds||6;$("prompt").value=q.prompt;$("type").value=q.question_type;$("points").value=q.points;$("choices").value=(q.choices||[]).map(x=>x.text).join("\n");$("key").value=q.question_type==="true_false"?(a==="true"?"صح":"خطأ"):q.question_type==="single_choice"?Math.max(0,(q.choices||[]).findIndex(x=>x.id===a)+1):q.question_type==="multiple_select"&&Array.isArray(a)?a.map(x=>(q.choices||[]).findIndex(c=>c.id===x)+1).filter(n=>n>0).join(","):typeof a==="string"?a:"";$("explanation").value=r.data?.explanation||"";$("imageUrl").value=q.image_url||"";$("imageAlt").value=q.image_alt||"";$("preview").src=q.image_url||"";$("preview").hidden=!q.image_url;$("required").checked=q.is_required;typeChange();renderQuestions();$("saveQ").textContent="حفظ التعديلات";$("prompt").focus();}
 async function addGroup(){if(!selected)return msg("qStatus","احفظ التدريب أولًا.",true);const title=prompt("اكتب رأس السؤال المشترك:");if(!title?.trim())return;const r=await db.from("practice_question_groups").insert({set_id:selected.id,title:title.trim(),sort_order:groups.length}).select("*").single();if(r.error)return msg("qStatus",r.error.message,true);groups.push(r.data);$("group").innerHTML='<option value="">سؤال مستقل</option>'+groups.map(g=>'<option value="'+g.id+'">'+esc(g.title.slice(0,90))+'</option>').join("");$("group").value=r.data.id;}
 function pasteImage(ev){const item=Array.from(ev.clipboardData?.items||[]).find(x=>x.kind==="file"&&/^image\/(png|jpeg|webp|gif)$/.test(x.type));if(!item)return;ev.preventDefault();const f=item.getAsFile(),dt=new DataTransfer();dt.items.add(new File([f],"practice-image."+f.type.split("/")[1],{type:f.type}));$("imageFile").files=dt.files;msg("qStatus","تم التقاط الصورة. اضغط رفع الصورة لحفظها.");}
-$("refreshAttempts").onclick=loadAttempts;$("refreshStudentActivity").onclick=loadStudentActivity;$("newSet").onclick=resetSet;$("clearSet").onclick=resetSet;$("deleteSet").onclick=removeSet;$("setForm").onsubmit=saveSet;$("qForm").onsubmit=saveQ;$("type").onchange=typeChange;$("questionCategory").onchange=()=>{$("speedTimeWrap").hidden=activeCategory!=="speed";};document.querySelectorAll("#practiceCategoryTabs [data-category]").forEach(b=>b.addEventListener("click",()=>{if(activeCategory===b.dataset.category)return;if($("prompt").value.trim()&&!confirm("تغيير القسم سيبدأ نموذج سؤال جديد. هل تريد المتابعة؟"))return;activeCategory=b.dataset.category;resetQ();renderQuestions();const d={lesson:"أسئلة مرتبطة بشرح الحصص والدروس. أضف الأسئلة هنا، وستظهر للطلاب داخل هذا القسم فقط.",curriculum:"أسئلة مراجعة شاملة تربط أجزاء المنهج. كل سؤال تضيفه هنا يُصنّف تلقائيًا ضمن التدريبات العامة.",skills:"أسئلة تطبيق وتحليل واستنتاج وتفكير أعلى لقياس المهارات. خصّص هذا القسم للأسئلة التي تتطلب فهمًا أعمق.",speed:"تحديات سريعة بمؤقت مستقل لكل سؤال. حدّد زمن كل سؤال بالثواني من إعداداته؛ لا يوجد مؤقت عام للتدريب."};$("categoryWorkspaceDetail").innerHTML="<strong>"+CATEGORY_META[activeCategory][0]+" "+CATEGORY_META[activeCategory][1]+"</strong><p>"+d[activeCategory]+"</p>";}));document.querySelectorAll("input[name=enabledCategory]").forEach(x=>x.addEventListener("change",updateCategorySummary));$("clearQ").onclick=resetQ;$("newGroup").onclick=addGroup;$("paste").onclick=()=>$("imageFile").click();$("paste").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("imageFile").click();}};$("paste").addEventListener("paste",pasteImage);$("qForm").addEventListener("paste",pasteImage);$("upload").onclick=upload;$("logout").onclick=async()=>{await db.auth.signOut({scope:"local"});localStorage.removeItem("user");localStorage.removeItem("platform_session_id");location.replace("login.html");};
+$("aiPracticeAnalyze").onclick=aiPracticeAnalyze;$("aiPracticeSave").onclick=aiPracticeSave;$("aiPracticeClear").onclick=()=>{$("aiPracticeSource").value="";$("aiPracticePreview").hidden=true;aiPracticeQuestions=[];aiPracticeMsg("تم مسح النص.");$("aiPracticeCharCount").textContent="0 حرف";};$("aiPracticeSource").oninput=()=>{$("aiPracticeCharCount").textContent=$("aiPracticeSource").value.length.toLocaleString("ar-EG")+" حرف";};$("aiPracticeSelectAll").onclick=()=>$("aiPracticeCards").querySelectorAll(".ai-include").forEach(x=>x.checked=true);$("aiPracticeSelectNone").onclick=()=>$("aiPracticeCards").querySelectorAll(".ai-include").forEach(x=>x.checked=false);$("aiPracticeCategory").onchange=()=>{$("aiPracticeCards").querySelectorAll(".ai-category").forEach(x=>{x.value=$("aiPracticeCategory").value;x.dispatchEvent(new Event("change"));});};$("refreshAttempts").onclick=loadAttempts;$("refreshStudentActivity").onclick=loadStudentActivity;$("newSet").onclick=resetSet;$("clearSet").onclick=resetSet;$("deleteSet").onclick=removeSet;$("setForm").onsubmit=saveSet;$("qForm").onsubmit=saveQ;$("type").onchange=typeChange;$("questionCategory").onchange=()=>{$("speedTimeWrap").hidden=activeCategory!=="speed";};document.querySelectorAll("#practiceCategoryTabs [data-category]").forEach(b=>b.addEventListener("click",()=>{if(activeCategory===b.dataset.category)return;if($("prompt").value.trim()&&!confirm("تغيير القسم سيبدأ نموذج سؤال جديد. هل تريد المتابعة؟"))return;activeCategory=b.dataset.category;resetQ();renderQuestions();const d={lesson:"أسئلة مرتبطة بشرح الحصص والدروس. أضف الأسئلة هنا، وستظهر للطلاب داخل هذا القسم فقط.",curriculum:"أسئلة مراجعة شاملة تربط أجزاء المنهج. كل سؤال تضيفه هنا يُصنّف تلقائيًا ضمن التدريبات العامة.",skills:"أسئلة تطبيق وتحليل واستنتاج وتفكير أعلى لقياس المهارات. خصّص هذا القسم للأسئلة التي تتطلب فهمًا أعمق.",speed:"تحديات سريعة بمؤقت مستقل لكل سؤال. حدّد زمن كل سؤال بالثواني من إعداداته؛ لا يوجد مؤقت عام للتدريب."};$("categoryWorkspaceDetail").innerHTML="<strong>"+CATEGORY_META[activeCategory][0]+" "+CATEGORY_META[activeCategory][1]+"</strong><p>"+d[activeCategory]+"</p>";}));document.querySelectorAll("input[name=enabledCategory]").forEach(x=>x.addEventListener("change",updateCategorySummary));$("clearQ").onclick=resetQ;$("newGroup").onclick=addGroup;$("paste").onclick=()=>$("imageFile").click();$("paste").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("imageFile").click();}};$("paste").addEventListener("paste",pasteImage);$("qForm").addEventListener("paste",pasteImage);$("upload").onclick=upload;$("logout").onclick=async()=>{await db.auth.signOut({scope:"local"});localStorage.removeItem("user");localStorage.removeItem("platform_session_id");location.replace("login.html");};
 (async()=>{if(!await gate())return;await loadSets();resetSet();await loadAttempts();})();
 })();
 </script></body></html>
