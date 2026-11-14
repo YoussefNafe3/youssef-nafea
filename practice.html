@@ -48,7 +48,85 @@ html[data-theme=light] .navigator{border-color:#d9e3f0}
 .progress-legend{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--m)}.legend-dot{width:9px;height:9px;border-radius:50%;display:inline-block}.partial-review{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.partial-review .btn{flex:1;min-width:150px}.answer-key{margin-top:7px;padding:9px 11px;border-radius:10px;background:rgba(16,185,129,.09);border:1px solid rgba(16,185,129,.22);font-size:12px}.review-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}.review-stat{padding:10px;border:1px solid var(--line);border-radius:12px;text-align:center}.review-stat b{display:block;font-size:20px}.review-stat small{color:var(--m)}@media(max-width:560px){.review-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* Premium elapsed-time display, adaptive neon question map and review marker */
 .timer-caption{font-size:10px;font-weight:800;letter-spacing:.04em;color:var(--m);margin-bottom:1px}.timer{font-size:21px;font-weight:900;letter-spacing:.055em;font-variant-numeric:tabular-nums;color:#a78bfa;text-shadow:0 0 13px #8b5cf655}.timer.urgent{color:var(--bad);animation:pulse 1s infinite}.map-caption{margin-top:5px}.qnav button{position:relative;isolation:isolate;min-height:38px;overflow:visible;transition:background .22s,border-color .22s,box-shadow .22s,transform .18s}.qnav button.answered{color:#fff;border-color:var(--map-color);background:color-mix(in srgb,var(--map-color) 20%,#101b30);box-shadow:inset 0 0 12px color-mix(in srgb,var(--map-color) 20%,transparent),0 0 8px color-mix(in srgb,var(--map-color) 30%,transparent)}.qnav button.answered.stage-0{--map-color:#8b5cf6}.qnav button.answered.stage-1{--map-color:#22d3ee}.qnav button.answered.stage-2{--map-color:#34d399}.qnav button.answered.stage-3{--map-color:#a3e635}.qnav button.answered.stage-4{--map-color:#4ade80}.qnav button.current{outline:2px solid #a78bfa;outline-offset:2px;z-index:1;transform:translateY(-1px);box-shadow:0 0 0 3px #8b5cf633,0 0 16px #8b5cf655}.qnav button.flagged{background:linear-gradient(145deg,#fff2a6,#ffd84d 58%,#f4b82d)!important;border:1px solid #fff0a3!important;color:#342400!important;font-weight:1000;box-shadow:0 0 0 1px #ffd84d88,0 0 13px #ffd84d88,inset 0 1px 0 #fff9c8!important;z-index:2}.qnav button.flagged:after{content:"★";position:absolute;top:-7px;right:-5px;width:16px;height:16px;display:grid;place-items:center;border-radius:50%;font-size:9px;color:#4b3500;background:#fff0a6;border:1px solid #e9b82e;box-shadow:0 0 8px #ffd84d}.btn.review-flag-active{background:linear-gradient(120deg,#fff0a6,#ffd84d)!important;color:#392900!important;border-color:#ffe98a!important;box-shadow:0 0 14px #ffd84d55}.btn#flag{border-color:#e9bd4c88}.progress-legend{display:flex;flex-wrap:wrap;gap:8px 12px;margin-top:12px}.legend-item{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:var(--m)}.legend-dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px}.quiz-head .timer-caption,.quiz-head #timer{direction:ltr;text-align:left}@media(max-width:560px){.timer{font-size:18px}.qnav{grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.qnav button{min-height:36px}}
-.question-update-notice{display:flex;gap:10px;align-items:center;padding:12px 14px;margin-bottom:13px;border:1px solid #f4c64a88;border-radius:13px;background:linear-gradient(120deg,#f4c64a20,#e8a62a0d);color:#ffe08a}.question-update-notice>span{width:32px;height:32px;flex:none;display:grid;place-items:center;border-radius:10px;background:#f4c64a24;color:#ffd54a;font-size:19px}.question-update-notice b{display:block;font-size:12px}.question-update-notice small{display:block;color:var(--muted,#b7c3d4);font-size:11px;line-height:1.7;margin-top:2px}@media(prefers-reduced-motion:no-preference){.question-update-notice>span{animation:questionNoticePulse 2.4s ease-in-out infinite}@keyframes questionNoticePulse{50%{box-shadow:0 0 15px #f4c64a55}}}.quiz-head{align-items:center}.elapsed-card{min-width:178px;padding:11px 15px;border:1px solid #8b7cf644;border-radius:13px;background:linear-gradient(145deg,#171f36,#202943);box-shadow:0 4px 16px #080d1d24;text-align:left}.elapsed-heading{display:flex;align-items:center;gap:8px}.stopwatch-tag{margin-inline-start:auto;padding:3px 6px;border:1px solid #8b7cf644;border-radius:6px;color:#b9a5ff;font-size:8px;font-weight:800;letter-spacing:.08em}.elapsed-running-dot{display:inline-block;width:6px;height:6px;margin-inline-end:5px;border-radius:50%;background:#4adea5;box-shadow:0 0 8px #4adea5;vertical-align:middle}.elapsed-icon{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#8b5cf620;color:#b9a5ff;font-size:19px}.timer{display:block;margin:7px 0 2px;font-size:clamp(24px,3.4vw,30px);font-weight:850;letter-spacing:.055em;line-height:1.2;color:#e6ddff;font-variant-numeric:tabular-nums}.elapsed-subtitle{font-size:10px;color:#aab6ce;margin-bottom:5px}.elapsed-card #saveState{font-size:9px;color:#9ba9c2;border-top:1px solid #ffffff12;padding-top:5px}.progress{height:9px;margin-top:11px;background:#ffffff13;border:1px solid #ffffff12}.progress>i{background:linear-gradient(90deg,#8b5cf6 0%,#22d3ee 45%,#34d399 78%,#a3e635 100%);box-shadow:0 0 10px #22d3ee66;border-radius:inherit;transition:width .35s cubic-bezier(.2,.8,.2,1)}@media(max-width:560px){.elapsed-card{min-width:150px;padding:9px 11px}.elapsed-icon{width:25px;height:25px}.timer{font-size:23px}}</style></head><body><div class="wrap">
+.question-update-notice{display:flex;gap:10px;align-items:center;padding:12px 14px;margin-bottom:13px;border:1px solid #f4c64a88;border-radius:13px;background:linear-gradient(120deg,#f4c64a20,#e8a62a0d);color:#ffe08a}.question-update-notice>span{width:32px;height:32px;flex:none;display:grid;place-items:center;border-radius:10px;background:#f4c64a24;color:#ffd54a;font-size:19px}.question-update-notice b{display:block;font-size:12px}.question-update-notice small{display:block;color:var(--muted,#b7c3d4);font-size:11px;line-height:1.7;margin-top:2px}@media(prefers-reduced-motion:no-preference){.question-update-notice>span{animation:questionNoticePulse 2.4s ease-in-out infinite}@keyframes questionNoticePulse{50%{box-shadow:0 0 15px #f4c64a55}}}.quiz-head{align-items:center}.elapsed-card{min-width:178px;padding:11px 15px;border:1px solid #8b7cf644;border-radius:13px;background:linear-gradient(145deg,#171f36,#202943);box-shadow:0 4px 16px #080d1d24;text-align:left}.elapsed-heading{display:flex;align-items:center;gap:8px}.stopwatch-tag{margin-inline-start:auto;padding:3px 6px;border:1px solid #8b7cf644;border-radius:6px;color:#b9a5ff;font-size:8px;font-weight:800;letter-spacing:.08em}.elapsed-running-dot{display:inline-block;width:6px;height:6px;margin-inline-end:5px;border-radius:50%;background:#4adea5;box-shadow:0 0 8px #4adea5;vertical-align:middle}.elapsed-icon{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#8b5cf620;color:#b9a5ff;font-size:19px}.timer{display:block;margin:7px 0 2px;font-size:clamp(24px,3.4vw,30px);font-weight:850;letter-spacing:.055em;line-height:1.2;color:#e6ddff;font-variant-numeric:tabular-nums}.elapsed-subtitle{font-size:10px;color:#aab6ce;margin-bottom:5px}.elapsed-card #saveState{font-size:9px;color:#9ba9c2;border-top:1px solid #ffffff12;padding-top:5px}.progress{height:9px;margin-top:11px;background:#ffffff13;border:1px solid #ffffff12}.progress>i{background:linear-gradient(90deg,#8b5cf6 0%,#22d3ee 45%,#34d399 78%,#a3e635 100%);box-shadow:0 0 10px #22d3ee66;border-radius:inherit;transition:width .35s cubic-bezier(.2,.8,.2,1)}@media(max-width:560px){.elapsed-card{min-width:150px;padding:9px 11px}.elapsed-icon{width:25px;height:25px}.timer{font-size:23px}}
+/* Final visual refinement — quiet depth, clear hierarchy, and accessible interactions */
+:root{--accent:#887cf6;--accent-soft:#887cf61c;--mint:#55d6b5}
+body{letter-spacing:.01em;-webkit-font-smoothing:antialiased}
+.top,.hero,.panel,.card{backdrop-filter:blur(10px)}
+.top{position:relative;overflow:hidden}
+.top:after{content:"";position:absolute;inset-inline-start:0;top:0;width:34%;height:1px;background:linear-gradient(90deg,transparent,#8b7cf699,transparent);pointer-events:none}
+.brand-icon{box-shadow:0 7px 20px #6559dc45;border:1px solid #ffffff20}
+.hero{position:relative;isolation:isolate;overflow:hidden;border-color:#8b7cf633;box-shadow:0 22px 55px #050d1d35}
+.hero:before,.hero:after{content:"";position:absolute;z-index:-1;border-radius:50%;pointer-events:none}
+.hero:before{width:270px;height:270px;inset-inline-end:10%;top:-190px;border:1px solid #b9b0ff20;box-shadow:0 0 0 24px #b9b0ff08,0 0 0 50px #b9b0ff05}
+.hero:after{width:190px;height:190px;inset-inline-start:-100px;bottom:-135px;background:radial-gradient(circle,#58d9c51c,transparent 70%)}
+.hero>div:first-child{position:relative;z-index:1}
+.hero h1{letter-spacing:-.035em;text-shadow:0 2px 18px #0002}
+.hero p{max-width:690px}
+.hero-mark{filter:drop-shadow(0 0 22px #9d91ff55);transform:rotate(-8deg);user-select:none}
+.filters{gap:9px}
+.filters button{transition:transform .18s,border-color .18s,box-shadow .18s,background .18s}
+.filters button.active{box-shadow:0 5px 16px #6559dc35}
+.card{transition:transform .22s,border-color .22s,box-shadow .22s}
+.card:after{content:"";position:absolute;inset:0;background:linear-gradient(125deg,#ffffff08,transparent 45%);opacity:0;pointer-events:none;transition:opacity .22s}
+.card h3{letter-spacing:-.015em;line-height:1.65}
+.tag{letter-spacing:.025em}
+.category-caption{box-shadow:0 5px 18px #00000008}
+.quiz-head{border-color:#8b7cf633;box-shadow:0 12px 32px #00000018}
+.quiz-head>div:first-child{min-width:min(100%,260px);flex:1}
+#quizTitle{font-size:15px;letter-spacing:-.015em}
+.elapsed-card{position:relative;min-width:185px;padding:11px 15px;border:1px solid #8b7cf655;border-radius:16px;background:radial-gradient(circle at 90% 0%,#8b7cf622,transparent 58%),linear-gradient(145deg,color-mix(in srgb,var(--p) 90%,#4e4a8c),var(--p));box-shadow:inset 0 1px #ffffff0c,0 8px 24px #00000016}
+.elapsed-icon{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#8b7cf622;color:#b8aaff}
+.timer{font-size:clamp(22px,3vw,27px);line-height:1.35;letter-spacing:.055em;text-shadow:0 0 18px #eacb7540}
+.elapsed-subtitle{font-size:10px;line-height:1.7;color:var(--m)}
+#saveState{margin-top:4px;font-size:9px}
+.qpanel,.navigator{box-shadow:0 14px 36px #00000014}
+.qcounter{display:flex;align-items:center;gap:8px}
+.qcounter:before{content:"";width:4px;height:17px;border-radius:5px;background:linear-gradient(#8b7cf6,#55d6b5)}
+.stem{box-shadow:inset 0 1px #ffffff08}
+.prompt{letter-spacing:-.012em}
+.option{box-shadow:0 2px 8px #00000008}
+.option.selected{box-shadow:inset 0 0 0 1px #8b7cf655,0 7px 20px #7869e522}
+.qnav button{min-height:36px;font-weight:800;transition:transform .16s,background .16s,border-color .16s,box-shadow .16s}
+.qnav button.answered{background:linear-gradient(145deg,#159b7950,#159b7915);border-color:#38c99b;color:var(--t)}
+.qnav button.current{box-shadow:0 0 0 3px #8b7cf629,0 4px 12px #6559dc35}
+.qnav button.flagged{border-color:#f5c94c;box-shadow:inset 0 -3px #f5c94c,0 0 10px #f5c94c18}
+.navigator>strong{font-size:14px;letter-spacing:-.01em}
+.actions .btn{min-height:42px;transition:transform .16s,box-shadow .16s,filter .16s}
+.btn.primary{box-shadow:0 6px 16px #6559dc30}
+.btn.gold{box-shadow:0 6px 16px #d8a94e20}
+.result-time-card{box-shadow:0 8px 24px #6559dc14}
+.review-row{background:color-mix(in srgb,var(--p) 92%,#6b68a8)}
+button:focus-visible,a:focus-visible,.option:focus-within{outline:3px solid #9a8cff;outline-offset:3px}
+@media(hover:hover){
+ .card:hover{transform:translateY(-4px);border-color:#8b7cf666;box-shadow:0 22px 48px #00000025}
+ .card:hover:after{opacity:1}
+ .filters button:hover{transform:translateY(-2px);border-color:#8b7cf688}
+ .option:hover:not(.selected){border-color:#8b7cf677;background:color-mix(in srgb,var(--p) 82%,#7568d8)}
+ .qnav button:hover{transform:translateY(-2px);border-color:#8b7cf6}
+ .actions .btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px #00000020}
+}
+html[data-theme=light] .elapsed-card{background:radial-gradient(circle at 90% 0%,#8b7cf61a,transparent 58%),linear-gradient(145deg,#fff,#f5f6ff);border-color:#d9d4ff;box-shadow:0 8px 24px #33415510}
+html[data-theme=light] .elapsed-icon{background:#8b7cf615;color:#6559dc}
+html[data-theme=light] .timer{color:#5145b5;text-shadow:none}
+html[data-theme=light] .qpanel,html[data-theme=light] .navigator{box-shadow:0 12px 32px #263d5b0c}
+html[data-theme=light] .qnav button.answered{background:linear-gradient(145deg,#e2f8ef,#f3fcf8);color:#087653;border-color:#8bd8bd}
+html[data-theme=light] .review-row{background:#fbfcff}
+@media(max-width:560px){
+ .quiz-head{gap:10px}
+ .elapsed-card{width:100%;min-width:0;display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px}
+ .elapsed-heading{grid-column:1;grid-row:1}
+ #timer{grid-column:2;grid-row:1/3;text-align:left;font-size:23px}
+ .elapsed-subtitle{grid-column:1;grid-row:2}
+ #saveState{grid-column:1/-1}
+ .hero{border-radius:17px}
+ .option{min-height:56px;padding:10px 11px;grid-template-columns:36px minmax(0,1fr);gap:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+</style></head><body><div class="wrap">
 <header class="top"><a class="brand" href="dashboard.html"><span class="brand-icon">✦</span><span>مساحة التدريب والممارسة</span></a><div style="display:flex;gap:7px;align-items:center"><a class="btn" href="dashboard.html">لوحة الطالب</a><button class="btn" id="theme">☀</button></div></header>
 <section id="library"><div class="hero"><div><h1>تدرّب بذكاء… وتقدّم بثقة</h1><p>مساحة تفاعلية لممارسة حل الأسئلة، تثبيت المفاهيم، وقياس مستواك خطوة بخطوة.<br>اختَر تدريبك، وحدد نمط الممارسة، وابدأ رحلتك نحو إتقان الحل.</p></div><div class="hero-mark">✧</div></div>
 <div class="filters" id="filters" aria-label="تصنيفات التدريبات"><button class="active" data-filter="lesson" aria-pressed="true">📚 تدريبات على الحصص</button><button data-filter="curriculum" aria-pressed="false">🧠 تدريبات عامة على المنهج</button><button data-filter="skills" aria-pressed="false">🎯 أسئلة مهارات تقيس عليا</button><button data-filter="speed" aria-pressed="false">⚡ أسئلة السرعة</button></div><div class="category-caption" id="categoryCaption" aria-live="polite">اختر تدريبًا من الحصص، وابدأ الممارسة خطوة بخطوة.</div>
