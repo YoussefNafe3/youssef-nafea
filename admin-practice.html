@@ -168,6 +168,8 @@ async function aiPracticeCall(body){
   const ex=new Error(payload?.message||error.message||"تعذر الاتصال بخدمة Gemini.");
   ex.retryable=payload?.retryable!==false;
   ex.providerStatus=payload?.provider_status||null;
+  ex.providerCode=payload?.provider_code||null;
+  ex.fallbackModel=payload?.fallback_model||null;
   ex.code=payload?.error||"transport_error";
   throw ex;
  }
@@ -175,6 +177,8 @@ async function aiPracticeCall(body){
   const ex=new Error(data.message||"تعذر إكمال طلب Gemini.");
   ex.retryable=data.retryable===true;
   ex.providerStatus=data.provider_status||null;
+  ex.providerCode=data.provider_code||null;
+  ex.fallbackModel=data.fallback_model||null;
   ex.code=data.error;
   throw ex;
  }
@@ -187,7 +191,7 @@ async function aiPracticeAnalyze(){
  try{
   let data=await aiPracticeCall({raw_text:raw,instructions:$("aiPracticeInstructions").value.trim()});
   if(data.pending&&data.interaction_id){
-   const jobId=data.interaction_id;
+   let jobId=data.interaction_id;
    sessionStorage.setItem("practice_ai_job_"+selected.id,jobId);
    let completed=false,lastPollError=null,startedAt=Date.now(),consecutivePollErrors=0;
    for(let attempt=0;attempt<240;attempt++){
@@ -204,6 +208,17 @@ async function aiPracticeAnalyze(){
      completed=true;break;
     }catch(pollError){
      lastPollError=pollError;
+     if(pollError.providerCode==="RESOURCE_EXHAUSTED" && pollError.fallbackModel){
+      aiPracticeMsg("الحصة المتاحة للنموذج الأساسي غير كافية حاليًا. جاري إعادة إرسال نفس النص تلقائيًا إلى نموذج Gemini بديل…");
+      data=await aiPracticeCall({raw_text:raw,instructions:$("aiPracticeInstructions").value.trim(),model:pollError.fallbackModel});
+      if(data.pending&&data.interaction_id){
+       jobId=data.interaction_id;
+       lastPollError=null;consecutivePollErrors=0;startedAt=Date.now();
+       aiPracticeMsg("تم تحويل الطلب إلى النموذج البديل؛ جاري تحليل الأسئلة…");
+       continue;
+      }
+      completed=true;break;
+     }
      if(pollError.retryable===false)throw pollError;
      consecutivePollErrors++;
      if(consecutivePollErrors>=8)throw new Error("تعذر الاتصال بخدمة متابعة Gemini بعد 8 محاولات. آخر خطأ: "+pollError.message+" — لم يتم استيراد أي سؤال.");
