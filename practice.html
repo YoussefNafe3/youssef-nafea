@@ -105,7 +105,7 @@ async function saveAnswer(q,val){
   if(!r.error&&r.data?.success){
    $("saveState").textContent="تم حفظ الإجابة";saveFailed=false;
    const nav=$("qnav").querySelector('[data-q="'+questions.findIndex(x=>x.id===q.id)+'"]');if(nav&&val!==""&&val!=null)nav.classList.add("answered");
-   $("answeredCount").textContent=questions.filter(x=>answers[x.id]!=null&&answers[x.id]!=="").length+" من "+questions.length+" تمت الإجابة";return;
+   updateAnsweredProgress();return;
   }
   if(r.data?.error==="question_time_expired"){ $("saveState").textContent="انتهى وقت السؤال";return; }
   throw (r.error||Error(r.data?.error||"save_failed"));
