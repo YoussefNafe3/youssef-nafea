@@ -188,10 +188,18 @@ async function aiPracticeSave(){
  $("aiPracticeSave").disabled=true;aiPracticeMsg("جاري حفظ الأسئلة ومفاتيح الإجابة…");
  const inserted=[];
  try{
-  for(const item of prepared){
-   const {_key,_explanation,...question}=item;
-   const q=await db.from("practice_questions").insert(question).select("id").single();if(q.error)throw q.error;inserted.push(q.data.id);
-   const k=await db.from("practice_answer_keys").insert({question_id:q.data.id,correct_answer:_key,explanation:_explanation,updated_at:new Date().toISOString()});if(k.error)throw k.error;
+  for(let start=0;start<prepared.length;start+=5){
+   const batch=prepared.slice(start,start+5);
+   const outcomes=await Promise.allSettled(batch.map(async item=>{
+    const {_key,_explanation,...question}=item;
+    const q=await db.from("practice_questions").insert(question).select("id").single();
+    if(q.error)throw q.error;
+    inserted.push(q.data.id);
+    const k=await db.from("practice_answer_keys").insert({question_id:q.data.id,correct_answer:_key,explanation:_explanation,updated_at:new Date().toISOString()});
+    if(k.error)throw k.error;
+   }));
+   const failed=outcomes.find(x=>x.status==="rejected");
+   if(failed)throw failed.reason;
   }
   const enabled=[...new Set([...(selected.enabled_categories||[]),...prepared.map(x=>x.category)])];
   const cfg=await db.from("practice_sets").update({enabled_categories:enabled,updated_at:new Date().toISOString()}).eq("id",selected.id);if(cfg.error)throw cfg.error;
