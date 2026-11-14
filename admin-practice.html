@@ -155,7 +155,7 @@ async function aiPracticeAnalyze(){
  const b=$("aiPracticeAnalyze");b.disabled=true;b.textContent="جاري التحليل بواسطة Gemini…";aiPracticeMsg("يتم استخراج الأسئلة والاختيارات والإجابات…");$("aiPracticePreview").hidden=true;
  try{
   const {data,error}=await db.functions.invoke("ai-practice-import",{body:{raw_text:raw,instructions:$("aiPracticeInstructions").value.trim()}});
-  if(error)throw new Error(data?.message||error.message||"تعذر الاتصال بـ Gemini.");
+  if(error){let detail=data?.message||"";try{if(!detail&&error.context&&typeof error.context.json==="function"){const body=await error.context.json();detail=body?.message||body?.error||"";}}catch(_){}throw new Error(detail||"تعذر الاتصال بخدمة Gemini. افتح تفاصيل الخطأ أو أعد المحاولة بعد قليل.");}
   if(!data?.success||!Array.isArray(data.questions)||!data.questions.length)throw new Error(data?.message||"لم يتم استخراج أسئلة صالحة.");
   aiPracticeQuestions=data.questions.map(q=>({...q,points:Number($("aiPracticeDefaultPoints").value)||1}));
   aiPracticeRender();aiPracticeMsg("تم استخراج "+aiPracticeQuestions.length+" سؤالًا. راجعها قبل الاستيراد.");
