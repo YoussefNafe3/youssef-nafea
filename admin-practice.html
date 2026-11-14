@@ -149,16 +149,53 @@ function aiPracticeRender(){
  $("aiPracticeSummary").textContent="راجع صياغة كل سؤال ومفتاح إجابته. الأسئلة التي تحمل تنبيهًا تحتاج مراجعة قبل الاستيراد.";
  $("aiPracticePreview").hidden=false;
 }
+async function aiPracticeCall(body){
+ const {data,error}=await db.functions.invoke("ai-practice-import",{body});
+ if(error){
+  let detail=data?.message||"";
+  try{if(!detail&&error.context&&typeof error.context.clone==="function"){const payload=await error.context.clone().json();detail=payload?.message||payload?.error||"";}}catch(_){}
+  throw new Error(detail||error.message||"تعذر الاتصال بخدمة Gemini.");
+ }
+ if(data?.error)throw new Error(data.message||"تعذر إكمال طلب Gemini.");
+ return data;
+}
 async function aiPracticeAnalyze(){
  if(!selected)return aiPracticeMsg("احفظ التدريب أولًا قبل الاستيراد.",true);
  const raw=$("aiPracticeSource").value.trim();if(raw.length<30)return aiPracticeMsg("ألصق نص الأسئلة والإجابات أولًا.",true);
- const b=$("aiPracticeAnalyze");b.disabled=true;b.textContent="جاري التحليل بواسطة Gemini…";aiPracticeMsg("يتم استخراج الأسئلة والاختيارات والإجابات…");$("aiPracticePreview").hidden=true;
+ const b=$("aiPracticeAnalyze");b.disabled=true;b.textContent="جاري بدء التحليل…";aiPracticeMsg("يتم إرسال الأسئلة إلى Gemini…");$("aiPracticePreview").hidden=true;
  try{
-  const {data,error}=await db.functions.invoke("ai-practice-import",{body:{raw_text:raw,instructions:$("aiPracticeInstructions").value.trim()}});
-  if(error){let detail=data?.message||"";try{if(!detail&&error.context&&typeof error.context.json==="function"){const body=await error.context.json();detail=body?.message||body?.error||"";}}catch(_){}throw new Error(detail||"تعذر الاتصال بخدمة Gemini. افتح تفاصيل الخطأ أو أعد المحاولة بعد قليل.");}
+  let data=await aiPracticeCall({raw_text:raw,instructions:$("aiPracticeInstructions").value.trim()});
+  if(data.pending&&data.interaction_id){
+   const jobId=data.interaction_id;
+   sessionStorage.setItem("practice_ai_job_"+selected.id,jobId);
+   let completed=false,lastPollError=null;
+   for(let attempt=0;attempt<180;attempt++){
+    await new Promise(resolve=>setTimeout(resolve,2500));
+    try{
+     data=await aiPracticeCall({action:"poll",interaction_id:jobId});
+     lastPollError=null;
+     if(data.pending){
+      const elapsed=Math.round((attempt+1)*2.5);
+      aiPracticeMsg("Gemini يعالج الأسئلة في الخلفية… ("+elapsed+" ثانية)");
+      b.textContent="جاري التحليل…";
+      continue;
+     }
+     completed=true;break;
+    }catch(pollError){
+     lastPollError=pollError;
+     aiPracticeMsg("الاتصال بنتيجة Gemini متقطع؛ جاري إعادة التحقق تلقائيًا…");
+     if(attempt%4===3)await new Promise(resolve=>setTimeout(resolve,2500));
+    }
+   }
+   if(!completed){
+    if(lastPollError)throw new Error("بدأ Gemini المهمة، لكن تعذر استرجاع النتيجة: "+lastPollError.message+" يمكنك إعادة المحاولة.");
+    throw new Error("ما زالت مهمة Gemini قيد التنفيذ. أعد المحاولة بعد قليل؛ لم يتم حفظ أي سؤال حتى الآن.");
+   }
+   sessionStorage.removeItem("practice_ai_job_"+selected.id);
+  }
   if(!data?.success||!Array.isArray(data.questions)||!data.questions.length)throw new Error(data?.message||"لم يتم استخراج أسئلة صالحة.");
   aiPracticeQuestions=data.questions.map(q=>({...q,points:Number($("aiPracticeDefaultPoints").value)||1}));
-  aiPracticeRender();aiPracticeMsg("تم استخراج "+aiPracticeQuestions.length+" سؤالًا. راجعها قبل الاستيراد.");
+  aiPracticeRender();aiPracticeMsg("تم استخراج "+aiPracticeQuestions.length+" سؤالًا بنجاح. راجعها قبل الاستيراد.");
  }catch(e){aiPracticeMsg(e.message||"حدث خطأ أثناء التحليل.",true);}
  finally{b.disabled=false;b.textContent="✦ تحليل وتنظيم الأسئلة";}
 }
