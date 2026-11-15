@@ -1652,7 +1652,6 @@ if ("serviceWorker" in navigator) {
   if (!section || !viewport || !track || !group || !button) return;
   let paused = false, frameId = 0, previousTime = 0, offset = 0, groupWidth = 0;
   const speed = 38;
-  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   track.style.setProperty('animation', 'none', 'important');
   track.style.setProperty('will-change', 'transform');
   function measure(){
@@ -1711,9 +1710,10 @@ if ("serviceWorker" in navigator) {
     if(!document.hidden && !paused && !frameId) start();
   });
   measure();
-  if(reduceMotion) paused = true;
+  // The honors carousel is a core visual feature: keep it moving on desktop and mobile.
+  // The pause button remains the explicit user control for stopping the motion.
   updateButton();
-  if(!reduceMotion) start();
+  start();
 })();
 </script>
 
