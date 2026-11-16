@@ -237,8 +237,13 @@ async function auth(){
 async function load(){
  // The exam library is the primary view: load and render it before requesting
  // optional student/analytics metadata so a secondary 401 cannot hide exams.
- const e=await db.from("online_exams").select("*").order("created_at",{ascending:false});
- if(e.error)throw e.error;
+ const e=await db.rpc("admin_list_online_exams");
+ if(e.error){
+  console.error("Admin exam library RPC failed:",e.error);
+  const list=$("examList");
+  if(list)list.innerHTML='<div class="empty" role="alert">تعذر تحميل مكتبة الامتحانات: '+esc(e.error.message||"خطأ غير معروف")+'<br><button class="btn" type="button" onclick="location.reload()">إعادة المحاولة</button></div>';
+  throw e.error;
+ }
  exams=Array.isArray(e.data)?e.data:[];
  attempts=[];
  examMap={};exams.forEach(x=>examMap[x.id]=x);
