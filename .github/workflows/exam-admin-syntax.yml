@@ -1,0 +1,44 @@
+name: Exam admin JavaScript syntax check
+on:
+  push:
+    paths:
+      - 'admin-online-exams*.html'
+      - '.github/workflows/exam-admin-syntax.yml'
+  workflow_dispatch:
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Parse inline JavaScript in exam admin pages
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const cp = require('child_process');
+          const files = fs.readdirSync('.').filter(x => /^admin-online-exams.*\\.html$/.test(x));
+          let failed = false;
+          for (const file of files) {
+            const html = fs.readFileSync(file, 'utf8');
+            const re = /<script\\b(?![^>]*\\bsrc=)[^>]*>([\\s\\S]*?)<\\/script>/gi;
+            let m, index = 0;
+            while ((m = re.exec(html))) {
+              const before = html.slice(0, m.index);
+              const startLine = before.split('\\n').length;
+              const tmp = '/tmp/exam-admin-' + file.replace(/[^a-z0-9]/gi, '-') + '-' + index++ + '.js';
+              fs.writeFileSync(tmp, m[1], 'utf8');
+              const result = cp.spawnSync(process.execPath, ['--check', tmp], { encoding: 'utf8' });
+              if (result.status !== 0) {
+                failed = true;
+                console.error('\\nSYNTAX ERROR:', file, 'inline script starts at HTML line', startLine);
+                process.stderr.write(result.stderr || result.stdout);
+              } else {
+                console.log('OK:', file, 'inline script', index);
+              }
+            }
+          }
+          if (failed) process.exit(1);
+          NODE
