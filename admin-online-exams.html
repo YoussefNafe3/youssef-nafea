@@ -234,7 +234,33 @@ async function auth(){
  }
  window.adminAccess=access;
 }
-async function load(){const [e,s]=await Promise.all([db.from("online_exams").select("*").order("created_at",{ascending:false}),db.from("students").select("id,full_name,phone,class_group")]);if(e.error)throw e.error;if(s.error)throw s.error;exams=e.data||[];attempts=[];const allForms=await db.from("online_exam_forms").select("id,exam_id,form_code,title,sort_order");if(allForms.error)throw allForms.error;formMap={};(allForms.data||[]).forEach(x=>formMap[x.id]=x);students={};(s.data||[]).forEach(x=>students[x.id]=x);examMap={};exams.forEach(x=>examMap[x.id]=x);$("sExams").textContent=exams.length;$("sPublished").textContent=exams.filter(x=>x.status==="published").length;$("sReview").textContent="—";let q=await db.from("online_exam_questions").select("id");if(!q.error)$("sQuestions").textContent=(q.data||[]).length;renderExams();if(chosen&&exams.some(x=>x.id===chosen.id))await selectExam(chosen.id,false);else{if(chosen){chosen=null;form=null;emptyWorkspace();}hideAttemptsPanel();}}
+async function load(){
+ // The exam library is the primary view: load and render it before requesting
+ // optional student/analytics metadata so a secondary 401 cannot hide exams.
+ const e=await db.from("online_exams").select("*").order("created_at",{ascending:false});
+ if(e.error)throw e.error;
+ exams=Array.isArray(e.data)?e.data:[];
+ attempts=[];
+ examMap={};exams.forEach(x=>examMap[x.id]=x);
+ $("sExams").textContent=exams.length;
+ $("sPublished").textContent=exams.filter(x=>x.status==="published").length;
+ $("sReview").textContent="—";
+ renderExams();
+
+ // These datasets enrich the workspace but must never block the exam library.
+ const [s,allForms,q]=await Promise.all([
+  db.from("students").select("id,full_name,phone,class_group"),
+  db.from("online_exam_forms").select("id,exam_id,form_code,title,sort_order"),
+  db.from("online_exam_questions").select("id")
+ ]);
+ if(s.error){console.warn("Exam admin: student metadata unavailable; library remains available.",s.error);}
+ else{students={};(s.data||[]).forEach(x=>students[x.id]=x);}
+ if(allForms.error){console.warn("Exam admin: form metadata unavailable; library remains available.",allForms.error);}
+ else{formMap={};(allForms.data||[]).forEach(x=>formMap[x.id]=x);}
+ if(!q.error)$("sQuestions").textContent=(q.data||[]).length;
+ if(chosen&&exams.some(x=>x.id===chosen.id))await selectExam(chosen.id,false);
+ else{if(chosen){chosen=null;form=null;emptyWorkspace();}hideAttemptsPanel();}
+}
 function renderExams(){const filter=$("examFilter")?$("examFilter").value:"active";const visible=exams.filter(e=>filter==="all"||(filter==="archived"?e.status==="archived":e.status!=="archived"));if(!visible.length){$("examList").innerHTML='<div class="empty">'+(filter==="archived"?"لا توجد امتحانات مؤرشفة.":"لا توجد امتحانات في هذا العرض.")+'</div>';return;}$("examList").innerHTML=visible.map(e=>'<div class="eitem-wrap"><button class="eitem '+(chosen&&chosen.id===e.id?"active":"")+'" data-e="'+e.id+'" type="button"><span class="ehead"><b>'+esc(e.title)+'</b><span class="pill '+esc(e.status)+'">'+esc(st(e.status))+'</span></span><span class="pills"><span class="pill">'+esc(e.subject)+'</span><span class="pill">'+esc(e.duration_minutes)+' دقيقة</span></span><span class="eitem-hint">اضغط هنا لفتح الإعدادات والتعديل</span></button><div class="eitem-actions"><button class="btn" type="button" data-edit-exam="'+e.id+'">✏️ تعديل</button><button class="btn danger" type="button" data-delete-exam="'+e.id+'">🗑 حذف / أرشفة</button></div></div>').join("");document.querySelectorAll("[data-e],[data-edit-exam]").forEach(b=>b.addEventListener("click",()=>selectExam(b.dataset.e||b.dataset.editExam)));document.querySelectorAll("[data-delete-exam]").forEach(b=>b.addEventListener("click",()=>deleteExam(b.dataset.deleteExam)));}
 async function deleteExam(id){
  const target=exams.find(e=>e.id===id);if(!target)return;
