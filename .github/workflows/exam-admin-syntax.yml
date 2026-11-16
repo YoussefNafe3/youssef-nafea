@@ -19,25 +19,38 @@ jobs:
           node <<'NODE'
           const fs = require('fs');
           const cp = require('child_process');
-          const files = fs.readdirSync('.').filter(x => x.startsWith('admin-online-exams') && x.endsWith('.html'));
+          const expected = ['admin-online-exams.html', 'admin-online-exams-v3.html'];
+          const re = new RegExp('<script\\b(?![^>]*\\bsrc=)[^>]*>([\\s\\S]*?)<\\/script>', 'gi');
           let failed = false;
-          for (const file of files) {
+
+          for (const file of expected) {
+            if (!fs.existsSync(file)) {
+              failed = true;
+              console.error('MISSING REQUIRED PAGE:', file);
+              continue;
+            }
             const html = fs.readFileSync(file, 'utf8');
-            const re = new RegExp('<script\\b(?![^>]*\\bsrc=)[^>]*>([\\s\\S]*?)<\\/script>', 'gi');
-            let m, index = 0;
-            while ((m = re.exec(html))) {
-              const startLine = html.slice(0, m.index).split(String.fromCharCode(10)).length;
-              const tmp = '/tmp/exam-admin-' + file.replace(/[^a-z0-9]/gi, '-') + '-' + index++ + '.js';
-              fs.writeFileSync(tmp, m[1], 'utf8');
+            let match;
+            let count = 0;
+            while ((match = re.exec(html))) {
+              count++;
+              const line = html.slice(0, match.index).split(String.fromCharCode(10)).length;
+              const tmp = '/tmp/exam-admin-' + file.replace(/[^a-z0-9]/gi, '-') + '-' + count + '.js';
+              fs.writeFileSync(tmp, match[1], 'utf8');
               const result = cp.spawnSync(process.execPath, ['--check', tmp], { encoding: 'utf8' });
               if (result.status !== 0) {
                 failed = true;
-                console.error('SYNTAX ERROR:', file, 'inline script starts at HTML line', startLine);
+                console.error('SYNTAX ERROR:', file, 'inline script starts at HTML line', line);
                 process.stderr.write(result.stderr || result.stdout);
               } else {
-                console.log('OK:', file, 'inline script', index);
+                console.log('PASS:', file, 'inline script', count);
               }
+            }
+            if (count === 0) {
+              failed = true;
+              console.error('NO INLINE SCRIPT FOUND:', file);
             }
           }
           if (failed) process.exit(1);
+          console.log('All required exam admin pages passed JavaScript syntax validation.');
           NODE
