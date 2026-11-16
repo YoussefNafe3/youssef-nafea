@@ -198,7 +198,83 @@ html[data-theme="light"] .exam.active .floating-nav{
 @media(prefers-reduced-motion:reduce){
  .option,.option-letter,.nav-flag{transition:none}
 }
-</style></head><body><div class="wrap">
+</style>
+<style id="exam-review-star-minimal">
+/* Compact, accessible review marker: keep the question map clean and uncluttered. */
+.exam.active .floating-nav{
+  width:52px;
+  padding:7px 5px;
+}
+.exam.active .navigator{width:100%;padding:3px 2px;gap:7px}
+.exam.active .nav-item{
+  min-height:38px;
+  height:38px;
+  overflow:visible;
+}
+.exam.active .navq{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+}
+.exam.active .nav-flag{
+  position:absolute;
+  top:-4px;
+  right:-4px;
+  display:grid;
+  place-items:center;
+  width:17px;
+  min-width:17px;
+  height:17px;
+  padding:0;
+  border-radius:50%;
+  border:1px solid #d99b19;
+  background:var(--p);
+  color:#eab308;
+  font-size:10px;
+  line-height:1;
+  box-shadow:0 2px 6px #0002;
+}
+.exam.active .nav-flag .nav-flag-label{display:none}
+.exam.active .nav-flag[aria-pressed="true"]{
+  background:#fbbf24;
+  color:#422006;
+  border-color:#f59e0b;
+  box-shadow:0 0 0 2px #fbbf2430,0 2px 7px #0002;
+  transform:scale(1.04);
+}
+.exam.active .nav-flag:hover{background:#fef3c7;color:#92400e;border-color:#eab308}
+.exam.active .nav-flag:focus-visible{outline:2px solid var(--b);outline-offset:2px}
+html[data-theme="light"] .exam.active .nav-flag{
+  background:#fffdf6;
+  color:#c58a12;
+  border-color:#e8bd59;
+}
+html[data-theme="light"] .exam.active .nav-flag[aria-pressed="true"]{
+  background:#f5cf78;
+  color:#553b0b;
+  border-color:#dcae45;
+}
+@media(max-width:700px){
+  .exam.active{padding-left:48px}
+  .exam.active .floating-nav{
+    left:3px;
+    top:82px;
+    width:42px;
+    padding:5px 3px;
+    gap:5px;
+    border-radius:12px;
+  }
+  .exam.active .floating-nav-title{font-size:8px}
+  .exam.active .navq{width:29px;height:29px;border-radius:8px}
+  .exam.active .nav-item{min-height:36px;height:36px}
+  .exam.active .nav-flag{top:-3px;right:-3px;width:16px;min-width:16px;height:16px;font-size:9px}
+  .exam.active .floating-nav-legend{font-size:7px;gap:4px}
+}
+@media(prefers-reduced-motion:reduce){
+  .exam.active .nav-flag{transition:none}
+}
+</style>
+</head><body><div class="wrap">
 <header class="top"><div class="brand"><div class="ico">✦</div><div><h1>الامتحانات الأونلاين</h1><p>اختباراتك ووقتك وتقدمك في مكان واحد</p></div></div><div class="actions"><a class="btn" href="dashboard.html">← لوحة الطالب</a><button class="btn" id="theme">☼ الوضع الفاتح</button></div></header>
 <section id="listing"><div class="hero"><h2>جاهز تختبر مستواك؟</h2><p>اقرأ التعليمات قبل البدء، وتابع الوقت المتبقي أثناء الحل. تُحفظ الإجابات تلقائيًا، ويمكنك التنقل بين الأسئلة والعودة إليها قبل التسليم.</p><div class="features"><span>◷ مؤقت دقيق</span><span>✓ حفظ تلقائي</span><span>▦ خريطة الأسئلة</span><span>▣ أسئلة مصورة</span></div></div><div class="sectionhead"><div><h2>الامتحانات المتاحة لك</h2><p>تظهر الاختبارات المنشورة والمخصصة لصفك.</p></div><button class="btn" id="reload">↻ تحديث</button></div><div id="cards" class="cards"><div class="empty">جاري تحميل الامتحانات...</div></div></section>
 <section id="exam" class="exam"><aside class="floating-nav" aria-label="خريطة الأسئلة"><div class="floating-nav-title">الأسئلة</div><div id="nav" class="navigator"></div><div class="floating-nav-legend"><span class="legend-key"><i class="legend-dot done"></i> مجاب</span><span class="legend-key"><i class="legend-dot seen"></i> معروض</span><span class="legend-key"><i class="legend-dot new"></i> جديد</span></div></aside><header class="examhead"><div><div class="examtitle" id="examTitle">الامتحان</div><div class="muted" id="examMeta">جارٍ تحميل الأسئلة</div></div><div class="timer" id="timerBox"><span>◷</span><div><small>الوقت المتبقي</small><strong id="timer">--:--</strong></div></div></header><div class="examgrid"><main class="qpanel"><div class="qmeta"><strong id="qCount">السؤال 1</strong><span id="qPoints">درجة السؤال: 1</span></div><div class="progress"><span id="bar"></span></div><div id="qContent"></div><div class="qfoot"><button class="btn" id="prev">→ السابق</button><span id="saveState" class="save">الحفظ التلقائي مفعّل</span><button class="btn primary" id="next">التالي ←</button></div></main><div class="submitrow"><div id="answered" class="answered">تمت الإجابة عن 0 من 0</div><p class="note">تُحفظ إجاباتك تلقائيًا، وينتهي الاختبار عند انتهاء الوقت.</p><button class="btn gold submit" id="submit">تسليم الامتحان</button></div></div></section>
