@@ -441,9 +441,9 @@ async function detectQuestionDuplicates(candidate,editingId){
   const otherText=[otherHead,q.prompt].filter(Boolean).join(" ");
   const otherPrompt=duplicateNormalize(q.prompt);
   const otherChoices=(q.choices||[]).map(c=>duplicateNormalize(c.text));
-  const sameChoices=currentChoices.length===otherChoices.length&&currentChoices.every((v,i)=>v===otherChoices[i]);
+  const sameChoices=currentChoices.length===otherChoices.length&&[...currentChoices].sort().every((v,i)=>v===[...otherChoices].sort()[i]);
   const oldKey=keyMap[q.id]||{};
-  const exact= currentPrompt===otherPrompt&&duplicateNormalize(currentHead)===duplicateNormalize(otherHead)
+  const exact= currentPrompt===otherPrompt
    &&candidate.question_type===q.question_type&&sameChoices
    &&answerSignature(candidate.answer)===answerSignature(oldKey.correct_answer);
   const promptScore=duplicateSimilarity(currentText,otherText);
