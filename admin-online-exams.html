@@ -120,7 +120,7 @@ async function saveAiExam(){
   for(let qi=0;qi<f.questions.length;qi++){
    const q=f.questions[qi],type=q.type,prompt=duplicateNormalize(q.prompt);
    const choices=(q.choices||[]).map(x=>duplicateNormalize(x)).sort();
-   const answer=type==="single_choice"?["opt-"+q.correct_indices[0]]:type==="multiple_select"?(q.correct_indices||[]).map(i=>"opt-"+i).sort():type==="true_false"?[(q.correct_answer==="true"||q.correct_answer==="صح")?"true":"false"]:[q.correct_answer||""];
+   const draftChoices=(q.type==="single_choice"||q.type==="multiple_select")?(q.choices||[]):q.type==="true_false"?["صح","خطأ"]:[];\n   const answer=type==="single_choice"?[duplicateNormalize(draftChoices[q.correct_indices[0]])]:type==="multiple_select"?(q.correct_indices||[]).map(i=>duplicateNormalize(draftChoices[i])).sort():type==="true_false"?[(q.correct_answer==="true"||q.correct_answer==="صح")?"صح":"خطأ"]:[duplicateNormalize(q.correct_answer||"")];
    const signature=JSON.stringify([prompt,type,choices,answer]);
    if(draftSeen.has(signature))draftDuplicates.push("النموذج "+f.form_code+" — السؤال "+(qi+1)+" يكرر سؤالًا في "+draftSeen.get(signature));
    else draftSeen.set(signature,"النموذج "+f.form_code+" — السؤال "+(qi+1));
@@ -429,7 +429,7 @@ async function detectQuestionDuplicates(candidate,editingId){
  if(qr.error)throw qr.error;if(gr.error)throw gr.error;if(kr.error)throw kr.error;
  const groupMap={};(gr.data||[]).forEach(g=>groupMap[g.id]=g.title||"");
  const keyMap={};(kr.data||[]).forEach(k=>keyMap[k.question_id]=k);
- const answerSignature=value=>JSON.stringify(Array.isArray(value)?[...value].map(String).sort():value==null?null:value);
+ const answerSignature=(value,choices=[])=>{const ids=Array.isArray(value)?value:(value==null?[]:[value]);return JSON.stringify(ids.map(id=>{const choice=(choices||[]).find(c=>String(c.id)===String(id));return duplicateNormalize(choice?.text??id);}).sort());};
  const candidates=(qr.data||[]).filter(q=>q.id!==editingId);
  const currentHead=$( "questionGroup").value?groupMap[$("questionGroup").value]||"": "";
  const currentText=[currentHead,candidate.prompt].filter(Boolean).join(" ");
@@ -445,7 +445,7 @@ async function detectQuestionDuplicates(candidate,editingId){
   const oldKey=keyMap[q.id]||{};
   const exact= currentPrompt===otherPrompt
    &&candidate.question_type===q.question_type&&sameChoices
-   &&answerSignature(candidate.answer)===answerSignature(oldKey.correct_answer);
+   &&answerSignature(candidate.answer,candidate.choices)===answerSignature(oldKey.correct_answer,q.choices);
   const promptScore=duplicateSimilarity(currentText,otherText);
   const headScore=currentHead&&otherHead?duplicateSimilarity(currentHead,otherHead):0;
   const choiceScore=sameChoices&&currentChoices.length?1:0;
