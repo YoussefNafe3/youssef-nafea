@@ -115,6 +115,18 @@ async function saveAiExam(){
  if(!aiDraft||aiBusy)return;
  document.querySelectorAll("[data-ai-prompt]").forEach(el=>{const [fi,qi]=el.dataset.aiPrompt.split(":").map(Number);if(aiDraft.forms[fi]?.questions[qi])aiDraft.forms[fi].questions[qi].prompt=el.value.trim();});
  for(const f of aiDraft.forms){for(const q of f.questions){if(!q.prompt){aiStatus("لا يمكن حفظ سؤال بنص فارغ.","err");return;}}}
+ const draftSeen=new Map(),draftDuplicates=[];
+ for(const f of aiDraft.forms){
+  for(let qi=0;qi<f.questions.length;qi++){
+   const q=f.questions[qi],type=q.type,prompt=duplicateNormalize(q.prompt);
+   const choices=(q.choices||[]).map(x=>duplicateNormalize(x)).sort();
+   const answer=type==="single_choice"?["opt-"+q.correct_indices[0]]:type==="multiple_select"?(q.correct_indices||[]).map(i=>"opt-"+i).sort():type==="true_false"?[(q.correct_answer==="true"||q.correct_answer==="صح")?"true":"false"]:[q.correct_answer||""];
+   const signature=JSON.stringify([prompt,type,choices,answer]);
+   if(draftSeen.has(signature))draftDuplicates.push("النموذج "+f.form_code+" — السؤال "+(qi+1)+" يكرر سؤالًا في "+draftSeen.get(signature));
+   else draftSeen.set(signature,"النموذج "+f.form_code+" — السؤال "+(qi+1));
+  }
+ }
+ if(draftDuplicates.length&&!confirm("⚠️ تم اكتشاف أسئلة متكررة داخل النماذج التي ستُنشأ:\n\n"+draftDuplicates.slice(0,12).join("\n")+"\n\nهل تريد حفظ الامتحان رغم التكرار؟"))return;
  if(!confirm("سيتم إنشاء امتحان جديد بحالة «مسودة» وإضافة النماذج والأسئلة ومفاتيح الإجابة. لن يتم نشره أو تعديل أي امتحان موجود. هل تريد المتابعة؟"))return;
  aiBusy=true;$("aiSave").disabled=true;$("aiGenerate").disabled=true;aiStatus("جاري حفظ المسودة والنماذج والأسئلة...");
  let createdExamId=null,completed=false;
@@ -433,11 +445,7 @@ async function detectQuestionDuplicates(candidate,editingId){
   const oldKey=keyMap[q.id]||{};
   const exact= currentPrompt===otherPrompt&&duplicateNormalize(currentHead)===duplicateNormalize(otherHead)
    &&candidate.question_type===q.question_type&&sameChoices
-   &&duplicateNormalize(candidate.image_url||"")===duplicateNormalize(q.image_url||"")
-   &&duplicateNormalize(candidate.image_alt||"")===duplicateNormalize(q.image_alt||"")
-   &&Number(candidate.points)===Number(q.points)&&!!candidate.is_required===!!q.is_required
-   &&answerSignature(candidate.answer)===answerSignature(oldKey.correct_answer)
-   &&duplicateNormalize(candidate.explanation||"")===duplicateNormalize(oldKey.explanation||"");
+   &&answerSignature(candidate.answer)===answerSignature(oldKey.correct_answer);
   const promptScore=duplicateSimilarity(currentText,otherText);
   const headScore=currentHead&&otherHead?duplicateSimilarity(currentHead,otherHead):0;
   const choiceScore=sameChoices&&currentChoices.length?1:0;
@@ -504,6 +512,15 @@ async function saveIndependentQuestion(ev){
  if($("prompt").value.trim()){try{current=collectQuestionDraft();}catch(e){message("qMsg",e.message,"err");return;}}
  if(!current&&!pendingSubquestions.length){message("qMsg","أضف سؤالًا فرعيًا واحدًا على الأقل قبل الحفظ.","err");return;}
  const all=[...pendingSubquestions,...(current?[current]:[])];
+ const seen=new Map(),dups=[];
+ for(let i=0;i<all.length;i++){
+  const q=all[i],signature=JSON.stringify([duplicateNormalize(q.prompt),q.question_type,(q.choices||[]).map(c=>duplicateNormalize(c.text)).sort(),JSON.stringify(Array.isArray(q.answer)?[...q.answer].sort():q.answer)]);
+  if(seen.has(signature))dups.push("السؤال الفرعي "+(i+1)+" يكرر السؤال الفرعي "+(seen.get(signature)+1));
+  else seen.set(signature,i);
+ }
+ try{for(let i=0;i<all.length;i++){const q=all[i];const matches=await detectQuestionDuplicates({...q,answer:q.answer},null);if(matches.some(m=>m.exact))dups.push("السؤال الفرعي "+(i+1)+" — موجود مسبقًا في "+matches.filter(m=>m.exact).map(m=>m.form+" رقم "+m.number).join("، "));}}
+ catch(e){message("qMsg","تعذر فحص الأسئلة المتكررة: "+e.message+" — لم يتم الحفظ.", "err");return;}
+ if(dups.length&&!confirm("⚠️ تم اكتشاف أسئلة متكررة:\n\n"+[...new Set(dups)].join("\n")+"\n\nهل تريد الحفظ رغم التكرار؟"))return;
  if(!confirm("سيتم حفظ رأس مستقل واحد وتحته "+all.length+" سؤال فرعي. هل تريد المتابعة؟"))return;
  const prior=await db.from("online_exam_attempts").select("id").eq("exam_id",chosen.id).limit(1);
  if(prior.error){message("qMsg","تعذر التحقق من محاولات الطلاب: "+prior.error.message,"err");return;}
