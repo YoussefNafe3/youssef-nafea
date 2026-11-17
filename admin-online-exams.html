@@ -120,7 +120,8 @@ async function saveAiExam(){
   for(let qi=0;qi<f.questions.length;qi++){
    const q=f.questions[qi],type=q.type,prompt=duplicateNormalize(q.prompt);
    const choices=(q.choices||[]).map(x=>duplicateNormalize(x)).sort();
-   const draftChoices=(q.type==="single_choice"||q.type==="multiple_select")?(q.choices||[]):q.type==="true_false"?["صح","خطأ"]:[];\n   const answer=type==="single_choice"?[duplicateNormalize(draftChoices[q.correct_indices[0]])]:type==="multiple_select"?(q.correct_indices||[]).map(i=>duplicateNormalize(draftChoices[i])).sort():type==="true_false"?[(q.correct_answer==="true"||q.correct_answer==="صح")?"صح":"خطأ"]:[duplicateNormalize(q.correct_answer||"")];
+   const draftChoices=(q.type==="single_choice"||q.type==="multiple_select")?(q.choices||[]):q.type==="true_false"?["صح","خطأ"]:[];
+   const answer=type==="single_choice"?[duplicateNormalize(draftChoices[q.correct_indices[0]])]:type==="multiple_select"?(q.correct_indices||[]).map(i=>duplicateNormalize(draftChoices[i])).sort():type==="true_false"?[(q.correct_answer==="true"||q.correct_answer==="صح")?"صح":"خطأ"]:[duplicateNormalize(q.correct_answer||"")];
    const signature=JSON.stringify([prompt,type,choices,answer]);
    if(draftSeen.has(signature))draftDuplicates.push("النموذج "+f.form_code+" — السؤال "+(qi+1)+" يكرر سؤالًا في "+draftSeen.get(signature));
    else draftSeen.set(signature,"النموذج "+f.form_code+" — السؤال "+(qi+1));
