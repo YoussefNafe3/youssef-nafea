@@ -288,7 +288,8 @@ async function aiPracticeSave(){
   }else{key=card.querySelector(".ai-key").value.trim();if(!key)return aiPracticeMsg("الإجابة النموذجية ناقصة في السؤال "+(i+1)+".",true);}
   prepared.push({set_id:selected.id,group_id:null,category,time_limit_seconds:category==="speed"?Math.max(1,Math.min(120,Number(card.querySelector(".ai-speed").value)||6)):null,question_type:type,prompt,image_url:null,image_alt:"",points,choices,sort_order:questions.length+i,is_required:true,updated_at:new Date().toISOString(),_key:key,_explanation:card.querySelector(".ai-explanation").value.trim(),_group_key:qGroupKey(card),_group_title:card.querySelector(".ai-group-title")?.value.trim()||"",_head_image_index:Number(card.querySelector(".ai-head-image")?.value)||0,_question_image_index:Number(card.querySelector(".ai-question-image")?.value)||0});
  }
- try{const duplicateCandidates=prepared.map(x=>({...x,answer:x._key}));if(!await confirmPracticeDuplicateCandidates(duplicateCandidates))return;}catch(duplicateError){aiPracticeMsg("تعذر فحص الأسئلة المتكررة: "+duplicateError.message+" — لم يتم استيراد أي سؤال.",true);return;}\n $("aiPracticeSave").disabled=true;aiPracticeMsg("جاري رفع الصور وتجهيز رؤوس الأسئلة…");
+ try{const duplicateCandidates=prepared.map(x=>({...x,answer:x._key}));if(!await confirmPracticeDuplicateCandidates(duplicateCandidates))return;}catch(duplicateError){aiPracticeMsg("تعذر فحص الأسئلة المتكررة: "+duplicateError.message+" — لم يتم استيراد أي سؤال.",true);return;}
+ $("aiPracticeSave").disabled=true;aiPracticeMsg("جاري رفع الصور وتجهيز رؤوس الأسئلة…");
  const inserted=[],createdGroups=[];
  try{
   const imageIndexes=[...new Set(prepared.flatMap(x=>[x._head_image_index,x._question_image_index]).filter(Boolean))],imageUrls={};
