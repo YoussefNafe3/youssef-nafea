@@ -5155,6 +5155,22 @@ async function saveSession(){
   }
 }
 
+
+/* Live-watch heartbeat: reuses the existing save_video_session RPC; no schema or RLS changes. */
+let liveWatchHeartbeatInFlight = false;
+window.setInterval(async () => {
+  if (!videoSessionAlive || !state.currentVideoId || !state.currentVideo) return;
+  let playing = false;
+  if (state.currentVideo.is_youtube) {
+    try { playing = Number(state.yt?.getPlayerState?.()) === Number(window.YT?.PlayerState?.PLAYING); } catch {}
+  } else {
+    playing = !video.paused && !video.ended && state.nativePlaying === true;
+  }
+  if (!playing || liveWatchHeartbeatInFlight) return;
+  liveWatchHeartbeatInFlight = true;
+  try { await saveSession(); } finally { liveWatchHeartbeatInFlight = false; }
+}, 8000);
+
 /* =========================================================
    YOUTUBE
 ========================================================= */
