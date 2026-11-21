@@ -944,9 +944,18 @@ function renderVideoCards() {
 
 function isWatchingNow(record) {
   if (!record || !record.updated_at) return false;
-  const stamp = new Date(record.updated_at).getTime();
+
+  // Supabase may return timestamp-without-time-zone values without a Z suffix.
+  // video_sessions.updated_at is stored in UTC, so parse those values explicitly as UTC
+  // instead of letting browsers interpret them as the viewer's local time.
+  const raw = String(record.updated_at).trim();
+  const hasTimezone = /(?:Z|[+-]\\d{2}:?\\d{2})$/i.test(raw);
+  const normalized = hasTimezone ? raw : raw.replace(" ", "T") + "Z";
+  const stamp = Date.parse(normalized);
   const age = Date.now() - stamp;
-  return Number.isFinite(stamp) && age >= -5000 && age <= 18000;
+
+  // Heartbeat runs every 8 seconds; allow a little network / background-tab delay.
+  return Number.isFinite(stamp) && age >= -5000 && age <= 25000;
 }
 function liveWatchBadge(record) {
   return isWatchingNow(record) ? '<span class="live-watch-badge" title="الطالب يشغّل هذا الفيديو الآن"><span class="live-watch-dot" aria-hidden="true"></span>يشاهد الآن</span>' : '';
