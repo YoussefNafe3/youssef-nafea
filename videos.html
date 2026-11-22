@@ -1197,24 +1197,13 @@ html[data-theme="light"] .playerUtilityBtn.active{background:linear-gradient(135
     position:fixed;
     top:0;
     right:-330px;
-    width:min(320px,88vw);
+    width:320px;
     transition:right .25s;
-    height:100vh;
-    z-index:1000;
-    pointer-events:auto;
-    -webkit-overflow-scrolling:touch;
-    overscroll-behavior:contain
+    height:100vh
   }
 
   .sidebar.open{
-    right:0;
-    pointer-events:auto
-  }
-  .player-toolbar .mobileMenu{
-    position:relative;
-    z-index:1001;
-    touch-action:manipulation;
-    -webkit-tap-highlight-color:transparent
+    right:0
   }
 
   .mobileMenu{
@@ -3949,9 +3938,6 @@ const user = {
 
 };
 
-let studentIdentityVerified = false;
-let studentIdentityError = false;
-
 
 /* =========================================================
    ACTIVE PLATFORM SESSION
@@ -4310,20 +4296,15 @@ window.closeSecurityWarning =
 ========================================================= */
 
 function updateUserUI(){
-  const nameNode=$("studentName");
-  const idNode=$("studentId");
-  if(!nameNode||!idNode)return;
 
-  if(!studentIdentityVerified){
-    nameNode.textContent=studentIdentityError
-      ? "تعذر التحقق من الحساب"
-      : "جاري التحقق من الحساب...";
-    idNode.textContent=studentIdentityError ? "ID: غير متاح" : "ID: —";
-    return;
-  }
+  $("studentName").textContent =
+    user.name ||
+    "الطالب";
 
-  nameNode.textContent=user.name||user.full_name||user.phone||"حساب الطالب";
-  idNode.textContent="ID: "+String(user.id);
+  $("studentId").textContent =
+    "ID: " +
+    (user.id || "000");
+
 }
 
 
@@ -4430,14 +4411,9 @@ async function getCurrentUser(){
         user.email;
 
 
-      // Phone-based student accounts use <phone>@phone.com.
-      // Auth user.phone is commonly null, so derive the phone from email
-      // instead of querying students with a stale/empty cached value.
-      const authEmail=String(authUser.email||"");
-      const authPhone=authEmail.toLowerCase().endsWith("@phone.com")
-        ? authEmail.slice(0,-10)
-        : "";
-      user.phone = authUser.phone || authPhone || user.phone;
+      user.phone =
+        authUser.phone ||
+        user.phone;
 
 
       try{
@@ -4447,7 +4423,7 @@ async function getCurrentUser(){
         } =
           await client
             .from("students")
-            .select("id,full_name,phone,role,class_group")
+            .select("*")
             .eq(
               "phone",
               user.phone
@@ -4457,14 +4433,12 @@ async function getCurrentUser(){
 
         if(studentData){
 
-          user.id=studentData.id||user.id;
           user.name =
             studentData.full_name ||
             studentData.name ||
             studentData.phone ||
             user.name;
-          user.full_name=user.name;
-          user.role=studentData.role||user.role;
+
           user.phone =
             studentData.phone ||
             user.phone;
@@ -4539,11 +4513,8 @@ async function getCurrentUser(){
 
 
   updateUserUI();
+
   updateWatermark();
-  try{
-    const cached=JSON.parse(localStorage.getItem("user")||"{}");
-    localStorage.setItem("user",JSON.stringify({...cached,id:user.id,name:user.name,full_name:user.name,phone:user.phone,class_group:user.class_group,role:user.role}));
-  }catch(e){}
 
 }
 
@@ -5769,12 +5740,6 @@ setCaptionsButton(false, true);
             },
 
 
-          onPlaybackRateChange:
-            e=>{
-              const rate = Number(e.data);
-              if ([1, 1.5, 2].includes(rate)) void recordCurrentPlaybackSpeed(rate);
-            },
-
           onStateChange:
             e=>{
 
@@ -5785,7 +5750,6 @@ setCaptionsButton(false, true);
 
                 // Keep the gear accessible only after playback has actually begun.
                 document.querySelector(".stage")?.classList.remove("yt-preplay");
-                void recordCurrentPlaybackSpeed();
                 startYouTubeProgress();
 }
 
@@ -6224,73 +6188,19 @@ function prepareNativeVideo(
 ========================================================= */
 
 async function resolveVideoStudentClass(){
-  studentIdentityVerified=false;
-  studentIdentityError=false;
-  updateUserUI();
-
-  const {data:authData,error:authError}=await client.auth.getUser();
-  const authUser=authData?.user;
-  if(authError||!authUser) throw new Error("لا توجد جلسة دخول موثقة. سجّل الدخول مرة أخرى.");
-
-  const authEmail=String(authUser.email||"").trim().toLowerCase();
-  const authPhone=authEmail.endsWith("@phone.com")?authEmail.slice(0,-10):"";
-  let profile=null;
-
-  const {data:studentId,error:rpcError}=await client.rpc("current_student_id");
-  if(studentId){
-    const result=await client.from("students")
-      .select("id,full_name,phone,role,class_group")
-      .eq("id",studentId).maybeSingle();
-    if(!result.error&&result.data) profile=result.data;
-    else if(result.error) console.warn("[Videos] Student profile by verified ID:",result.error);
-  }
-
-  // Fallback uses only the phone embedded in the authenticated JWT email.
-  if(!profile&&authPhone){
-    const result=await client.from("students")
-      .select("id,full_name,phone,role,class_group")
-      .eq("phone",authPhone).maybeSingle();
-    if(!result.error&&result.data) profile=result.data;
-    else if(result.error) console.warn("[Videos] Student profile by Auth phone:",result.error);
-  }
-
-  if(!profile){
-    console.error("[Videos] Authenticated student identity could not be resolved.",rpcError);
-    throw new Error("تعذر مطابقة حساب الدخول ببيانات الطالب. سجّل الخروج ثم الدخول مرة أخرى.");
-  }
-
-  const role=String(profile.role||"student").trim().toLowerCase();
+  const {data:studentId,error:idError}=await client.rpc("current_student_id");
+  if(idError||!studentId)throw new Error("تعذر التحقق من حساب الطالب قبل تحميل الفيديوهات.");
+  const {data:profile,error:profileError}=await client.from("students").select("id,role,class_group").eq("id",studentId).maybeSingle();
+  if(profileError||!profile)throw new Error("تعذر قراءة الصف الدراسي المسجل لهذا الحساب.");
+  if(String(profile.role||"student").toLowerCase()==="admin")return {isAdmin:true,allowed:["all","first_science","first_sat_tue","first_sun_wed","first_mon_thu","third_biology","third_geology","third_secondary"]};
   const group=String(profile.class_group||"").trim();
   const first=["first_science","first_sat_tue","first_sun_wed","first_mon_thu"];
   const third=["third_biology","third_geology","third_secondary"];
-  const isAdmin=["admin","owner"].includes(role);
-  const allowed=isAdmin
-    ? ["all","first_science","first_sat_tue","first_sun_wed","first_mon_thu","third_biology","third_geology","third_secondary"]
-    : ["all",...(first.includes(group)?first:third.includes(group)?third:group?[group]:[])];
-
-  user.id=profile.id;
-  user.name=profile.full_name||profile.phone||"حساب الطالب";
-  user.full_name=user.name;
-  user.phone=profile.phone||authPhone||"غير مسجل";
-  user.email=authUser.email||"";
+  const allowed=first.includes(group)?first:third.includes(group)?third:group? [group]:[];
   user.class_group=group;
-  user.role=role;
-
-  studentIdentityVerified=true;
-  studentIdentityError=false;
-  try{
-    const cached=JSON.parse(localStorage.getItem("user")||"{}");
-    localStorage.setItem("user",JSON.stringify({
-      ...cached,id:profile.id,name:user.name,full_name:user.name,
-      phone:user.phone,email:user.email,class_group:group,role
-    }));
-  }catch(cacheError){
-    console.warn("[Videos] Could not refresh cached identity:",cacheError);
-  }
-
-  updateUserUI();
-  updateWatermark();
-  return {isAdmin,allowed};
+  user.id=profile.id;
+  try{const cached=JSON.parse(localStorage.getItem("user")||"{}");localStorage.setItem("user",JSON.stringify({...cached,id:profile.id,class_group:group,role:profile.role}));}catch(e){}
+  return {isAdmin:false,allowed:["all",...allowed]};
 }
 async function loadVideos(){
 
@@ -6299,12 +6209,9 @@ async function loadVideos(){
   try{
     videoAccess=await resolveVideoStudentClass();
   }catch(accessError){
-    studentIdentityVerified=false;
-    studentIdentityError=true;
-    updateUserUI();
-    console.error("[Videos] Student identity/access verification failed:",accessError);
-    explanationVideoList.innerHTML='<div class="emptyItem">تعذر التحقق من حسابك حاليًا. حدّث الصفحة، وإذا استمرت المشكلة سجّل الخروج ثم الدخول مرة أخرى.</div>';
-    homeworkVideoList.innerHTML='<div class="emptyItem">تعذر التحقق من حسابك حاليًا. حدّث الصفحة، وإذا استمرت المشكلة سجّل الخروج ثم الدخول مرة أخرى.</div>';
+    console.error("[Videos] Student class verification failed:",accessError);
+    explanationVideoList.innerHTML='<div class="emptyItem">تعذر التحقق من الصف الدراسي. سجّل الدخول مجددًا أو تواصل مع الإدارة.</div>';
+    homeworkVideoList.innerHTML='<div class="emptyItem">تعذر التحقق من الصف الدراسي. سجّل الدخول مجددًا أو تواصل مع الإدارة.</div>';
     return;
   }
   if(!videoAccess.allowed.length){
@@ -6542,10 +6449,8 @@ if (closeVideoListButton) {
   closeVideoListButton.addEventListener("click", () => {
     if (window.innerWidth <= 1000) {
       sidebar.classList.remove("open");
-      $("mobileMenu")?.setAttribute("aria-expanded","false");
     } else {
       sidebar.classList.add("closed");
-      $("mobileMenu")?.setAttribute("aria-expanded","false");
     }
     const menuButton = $("mobileMenu");
     if (menuButton) menuButton.focus({ preventScroll: true });
@@ -6587,7 +6492,6 @@ video.addEventListener(
     state.nativeLastWall =
       performance.now();
 
-    void recordCurrentPlaybackSpeed();
   }
 );
 
@@ -6771,70 +6675,9 @@ video.addEventListener(
             ) ===
             video.playbackRate
           )
-      );
+      )
+);
 
-video.addEventListener("ratechange", () => {
-  if (state.currentVideo && !state.currentVideo.is_youtube) {
-    void recordCurrentPlaybackSpeed(video.playbackRate);
-  }
-});
-
-
-/* =========================================================
-   PLAYBACK SPEED HISTORY
-   Record only verified player rates for this student + current video.
-   Uses a narrowly scoped RPC; never changes watch progress or session timers.
-========================================================= */
-const recordedPlaybackSpeedKeys = new Set();
-const pendingPlaybackSpeedKeys = new Set();
-
-function getCurrentPlaybackSpeed(){
-  let rate = 1;
-  try {
-    rate = state.currentVideo?.is_youtube
-      ? Number(state.yt?.getPlaybackRate?.()) || 1
-      : Number(video.playbackRate) || 1;
-  } catch {}
-  return [1, 1.5, 2].includes(rate) ? rate : null;
-}
-
-async function recordCurrentPlaybackSpeed(requestedRate){
-  if (!videoSessionAlive || !state.currentVideoId || !state.currentVideo) return;
-  const rate = requestedRate == null ? getCurrentPlaybackSpeed() : Number(requestedRate);
-  if (![1, 1.5, 2].includes(rate)) return;
-
-  const videoId = String(state.currentVideoId);
-  const key = videoId + ":" + String(rate);
-  if (recordedPlaybackSpeedKeys.has(key) || pendingPlaybackSpeedKeys.has(key)) return;
-  pendingPlaybackSpeedKeys.add(key);
-
-  try {
-    // A speed change can happen before the first progress heartbeat creates
-    // the video_sessions row. Retry briefly instead of silently losing the rate.
-    for (let attempt = 0; attempt < 4; attempt++) {
-      await saveSession();
-      const { data, error } = await client.rpc("record_video_playback_speed", {
-        p_session_id: platformSessionId,
-        p_video_id: videoId,
-        p_speed: rate
-      });
-      if (error) throw error;
-      if (data?.success === true && data?.recorded === true) {
-        recordedPlaybackSpeedKeys.add(key);
-        return;
-      }
-      if (attempt < 3) {
-        await new Promise(resolve => setTimeout(resolve, 900));
-      } else {
-        console.warn("[Playback speed] Rate was not attached to a saved video session:", data);
-      }
-    }
-  } catch (error) {
-    console.warn("[Playback speed] Could not record rate:", error);
-  } finally {
-    pendingPlaybackSpeedKeys.delete(key);
-  }
-}
 
 /* =========================================================
    SPEED
@@ -6888,7 +6731,6 @@ document
                 )
             );
 
-          void recordCurrentPlaybackSpeed(r);
         }
       )
   );
@@ -6913,27 +6755,15 @@ $("searchInput")
   );
 
 
-const mobileMenuButton=$("mobileMenu");
-function toggleVideoLibrary(){
-  if(!sidebar||!mobileMenuButton)return;
-  if(window.innerWidth<=1000){
-    const shouldOpen=!sidebar.classList.contains("open");
-    sidebar.classList.remove("closed");
-    sidebar.classList.toggle("open",shouldOpen);
-    mobileMenuButton.setAttribute("aria-expanded",String(shouldOpen));
-  }else{
-    const shouldOpen=sidebar.classList.contains("closed");
-    sidebar.classList.toggle("closed",shouldOpen);
-    mobileMenuButton.setAttribute("aria-expanded",String(shouldOpen));
-  }
-}
-if(mobileMenuButton){
-  mobileMenuButton.setAttribute("aria-expanded","false");
-  mobileMenuButton.style.touchAction="manipulation";
-  // A single click handles mouse, touch, stylus and keyboard activation.
-  // Avoid pointerup + synthetic click double toggling on touchscreens.
-  mobileMenuButton.addEventListener("click",toggleVideoLibrary);
-}
+$("mobileMenu")
+  .addEventListener("click", () => {
+    if (window.innerWidth <= 1000) {
+      sidebar.classList.remove("closed");
+      sidebar.classList.toggle("open");
+    } else {
+      sidebar.classList.toggle("closed");
+    }
+  });
 
 
 /* =========================================================
@@ -7990,8 +7820,7 @@ window.addEventListener(
     console.warn("[Videos] Resume request could not be completed:",resumeError);
   }
 
-  // Identity is resolved once before the library is rendered.
-  // Avoid a second profiles/phone lookup racing and overwriting the verified row.
+  getCurrentUser();
 
   updateFullscreenButton();
 
