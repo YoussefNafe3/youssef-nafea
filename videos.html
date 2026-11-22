@@ -5750,6 +5750,7 @@ setCaptionsButton(false, true);
 
                 // Keep the gear accessible only after playback has actually begun.
                 document.querySelector(".stage")?.classList.remove("yt-preplay");
+                void recordCurrentPlaybackSpeed();
                 startYouTubeProgress();
 }
 
@@ -6492,6 +6493,7 @@ video.addEventListener(
     state.nativeLastWall =
       performance.now();
 
+    void recordCurrentPlaybackSpeed();
   }
 );
 
@@ -6680,6 +6682,49 @@ video.addEventListener(
 
 
 /* =========================================================
+   PLAYBACK SPEED HISTORY
+   Record only verified player rates for this student + current video.
+   Uses a narrowly scoped RPC; never changes watch progress or session timers.
+========================================================= */
+const recordedPlaybackSpeedKeys = new Set();
+let playbackSpeedWriteInFlight = false;
+
+function getCurrentPlaybackSpeed(){
+  let rate = 1;
+  try {
+    rate = state.currentVideo?.is_youtube
+      ? Number(state.yt?.getPlaybackRate?.()) || 1
+      : Number(video.playbackRate) || 1;
+  } catch {}
+  return [1, 1.5, 2].includes(rate) ? rate : null;
+}
+
+async function recordCurrentPlaybackSpeed(){
+  if (!videoSessionAlive || !state.currentVideoId || !state.currentVideo) return;
+  const rate = getCurrentPlaybackSpeed();
+  if (rate === null) return;
+  const key = String(state.currentVideoId) + ":" + String(rate);
+  if (recordedPlaybackSpeedKeys.has(key) || playbackSpeedWriteInFlight) return;
+
+  playbackSpeedWriteInFlight = true;
+  try {
+    // Ensure the existing session row has been created before appending its speed.
+    await saveSession();
+    const { data, error } = await client.rpc("record_video_playback_speed", {
+      p_session_id: platformSessionId,
+      p_video_id: String(state.currentVideoId),
+      p_speed: rate
+    });
+    if (error) throw error;
+    if (data?.success === true) recordedPlaybackSpeedKeys.add(key);
+  } catch (error) {
+    console.warn("[Playback speed] Could not record rate:", error);
+  } finally {
+    playbackSpeedWriteInFlight = false;
+  }
+}
+
+/* =========================================================
    SPEED
 ========================================================= */
 
@@ -6731,6 +6776,7 @@ document
                 )
             );
 
+          void recordCurrentPlaybackSpeed();
         }
       )
   );
