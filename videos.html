@@ -1197,13 +1197,25 @@ html[data-theme="light"] .playerUtilityBtn.active{background:linear-gradient(135
     position:fixed;
     top:0;
     right:-330px;
-    width:320px;
+    width:min(320px,88vw);
     transition:right .25s;
-    height:100vh
+    height:100vh;
+    z-index:1000;
+    pointer-events:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain
   }
 
   .sidebar.open{
-    right:0
+    right:0;
+    visibility:visible;
+    pointer-events:auto
+  }
+  .player-toolbar .mobileMenu{
+    position:relative;
+    z-index:1001;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent
   }
 
   .mobileMenu{
@@ -4411,9 +4423,14 @@ async function getCurrentUser(){
         user.email;
 
 
-      user.phone =
-        authUser.phone ||
-        user.phone;
+      // Phone-based student accounts use <phone>@phone.com.
+      // Auth user.phone is commonly null, so derive the phone from email
+      // instead of querying students with a stale/empty cached value.
+      const authEmail=String(authUser.email||"");
+      const authPhone=authEmail.toLowerCase().endsWith("@phone.com")
+        ? authEmail.slice(0,-10)
+        : "";
+      user.phone = authUser.phone || authPhone || user.phone;
 
 
       try{
@@ -4423,7 +4440,7 @@ async function getCurrentUser(){
         } =
           await client
             .from("students")
-            .select("*")
+            .select("id,full_name,phone,role,class_group")
             .eq(
               "phone",
               user.phone
@@ -4433,12 +4450,14 @@ async function getCurrentUser(){
 
         if(studentData){
 
+          user.id=studentData.id||user.id;
           user.name =
             studentData.full_name ||
             studentData.name ||
             studentData.phone ||
             user.name;
-
+          user.full_name=user.name;
+          user.role=studentData.role||user.role;
           user.phone =
             studentData.phone ||
             user.phone;
@@ -4513,8 +4532,11 @@ async function getCurrentUser(){
 
 
   updateUserUI();
-
   updateWatermark();
+  try{
+    const cached=JSON.parse(localStorage.getItem("user")||"{}");
+    localStorage.setItem("user",JSON.stringify({...cached,id:user.id,name:user.name,full_name:user.name,phone:user.phone,class_group:user.class_group,role:user.role}));
+  }catch(e){}
 
 }
 
@@ -6197,16 +6219,46 @@ function prepareNativeVideo(
 async function resolveVideoStudentClass(){
   const {data:studentId,error:idError}=await client.rpc("current_student_id");
   if(idError||!studentId)throw new Error("تعذر التحقق من حساب الطالب قبل تحميل الفيديوهات.");
-  const {data:profile,error:profileError}=await client.from("students").select("id,role,class_group").eq("id",studentId).maybeSingle();
-  if(profileError||!profile)throw new Error("تعذر قراءة الصف الدراسي المسجل لهذا الحساب.");
-  if(String(profile.role||"student").toLowerCase()==="admin")return {isAdmin:true,allowed:["all","first_science","first_sat_tue","first_sun_wed","first_mon_thu","third_biology","third_geology","third_secondary"]};
+  const {data:profile,error:profileError}=await client
+    .from("students")
+    .select("id,full_name,phone,role,class_group")
+    .eq("id",studentId)
+    .maybeSingle();
+  if(profileError||!profile)throw new Error("تعذر قراءة بيانات الطالب المسجل لهذا الحساب.");
+
+  const role=String(profile.role||"student").trim().toLowerCase();
+  if(role==="admin"||role==="owner"){
+    user.id=profile.id;
+    user.name=profile.full_name||user.name;
+    user.phone=profile.phone||user.phone;
+    user.role=role;
+    updateUserUI();
+    updateWatermark();
+    return {isAdmin:true,allowed:["all","first_science","first_sat_tue","first_sun_wed","first_mon_thu","third_biology","third_geology","third_secondary"]};
+  }
+
   const group=String(profile.class_group||"").trim();
   const first=["first_science","first_sat_tue","first_sun_wed","first_mon_thu"];
   const third=["third_biology","third_geology","third_secondary"];
-  const allowed=first.includes(group)?first:third.includes(group)?third:group? [group]:[];
-  user.class_group=group;
+  const allowed=first.includes(group)?first:third.includes(group)?third:group?[group]:[];
+
+  // The authenticated database profile is the source of truth. Resolve and
+  // render identity before any video-library interaction, even with stale cache.
   user.id=profile.id;
-  try{const cached=JSON.parse(localStorage.getItem("user")||"{}");localStorage.setItem("user",JSON.stringify({...cached,id:profile.id,class_group:group,role:profile.role}));}catch(e){}
+  user.name=profile.full_name||profile.name||"الطالب";
+  user.full_name=user.name;
+  user.phone=profile.phone||user.phone;
+  user.class_group=group;
+  user.role=role;
+  user.email=user.email||"";
+
+  try{
+    const cached=JSON.parse(localStorage.getItem("user")||"{}");
+    localStorage.setItem("user",JSON.stringify({...cached,id:profile.id,name:user.name,full_name:user.name,phone:user.phone,class_group:group,role}));
+  }catch(e){console.warn("[Videos] Could not refresh cached student identity:",e);}
+
+  updateUserUI();
+  updateWatermark();
   return {isAdmin:false,allowed:["all",...allowed]};
 }
 async function loadVideos(){
@@ -6456,8 +6508,10 @@ if (closeVideoListButton) {
   closeVideoListButton.addEventListener("click", () => {
     if (window.innerWidth <= 1000) {
       sidebar.classList.remove("open");
+      $("mobileMenu")?.setAttribute("aria-expanded","false");
     } else {
       sidebar.classList.add("closed");
+      $("mobileMenu")?.setAttribute("aria-expanded","false");
     }
     const menuButton = $("mobileMenu");
     if (menuButton) menuButton.focus({ preventScroll: true });
@@ -6825,15 +6879,44 @@ $("searchInput")
   );
 
 
-$("mobileMenu")
-  .addEventListener("click", () => {
-    if (window.innerWidth <= 1000) {
-      sidebar.classList.remove("closed");
-      sidebar.classList.toggle("open");
-    } else {
-      sidebar.classList.toggle("closed");
+const mobileMenuButton=$("mobileMenu");
+function toggleVideoLibrary(){
+  if(!sidebar||!mobileMenuButton)return;
+  if(window.innerWidth<=1000){
+    const shouldOpen=!sidebar.classList.contains("open");
+    sidebar.classList.remove("closed");
+    sidebar.classList.toggle("open",shouldOpen);
+    mobileMenuButton.setAttribute("aria-expanded",String(shouldOpen));
+    if(shouldOpen){
+      sidebar.style.visibility="visible";
+      sidebar.style.pointerEvents="auto";
+      sidebar.style.zIndex="1000";
     }
-  });
+  }else{
+    sidebar.classList.toggle("closed");
+    mobileMenuButton.setAttribute("aria-expanded",String(!sidebar.classList.contains("closed")));
+  }
+}
+if(mobileMenuButton){
+  mobileMenuButton.setAttribute("aria-expanded","false");
+  mobileMenuButton.style.touchAction="manipulation";
+  if(window.PointerEvent){
+    mobileMenuButton.addEventListener("pointerup",event=>{
+      if(event.pointerType==="touch"||event.pointerType==="pen"){
+        event.preventDefault();
+        toggleVideoLibrary();
+      }
+    });
+    mobileMenuButton.addEventListener("click",event=>{
+      // Pointer-based touch activation was already handled above.
+      if(event.detail===0||!window.matchMedia("(pointer: coarse)").matches){
+        toggleVideoLibrary();
+      }
+    });
+  }else{
+    mobileMenuButton.addEventListener("click",toggleVideoLibrary);
+  }
+}
 
 
 /* =========================================================
