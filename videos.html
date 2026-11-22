@@ -1208,7 +1208,6 @@ html[data-theme="light"] .playerUtilityBtn.active{background:linear-gradient(135
 
   .sidebar.open{
     right:0;
-    visibility:visible;
     pointer-events:auto
   }
   .player-toolbar .mobileMenu{
@@ -3950,6 +3949,9 @@ const user = {
 
 };
 
+let studentIdentityVerified = false;
+let studentIdentityError = false;
+
 
 /* =========================================================
    ACTIVE PLATFORM SESSION
@@ -4308,15 +4310,20 @@ window.closeSecurityWarning =
 ========================================================= */
 
 function updateUserUI(){
+  const nameNode=$("studentName");
+  const idNode=$("studentId");
+  if(!nameNode||!idNode)return;
 
-  $("studentName").textContent =
-    user.name ||
-    "الطالب";
+  if(!studentIdentityVerified){
+    nameNode.textContent=studentIdentityError
+      ? "تعذر التحقق من الحساب"
+      : "جاري التحقق من الحساب...";
+    idNode.textContent=studentIdentityError ? "ID: غير متاح" : "ID: —";
+    return;
+  }
 
-  $("studentId").textContent =
-    "ID: " +
-    (user.id || "000");
-
+  nameNode.textContent=user.name||user.full_name||user.phone||"حساب الطالب";
+  idNode.textContent="ID: "+String(user.id);
 }
 
 
@@ -6217,49 +6224,73 @@ function prepareNativeVideo(
 ========================================================= */
 
 async function resolveVideoStudentClass(){
-  const {data:studentId,error:idError}=await client.rpc("current_student_id");
-  if(idError||!studentId)throw new Error("تعذر التحقق من حساب الطالب قبل تحميل الفيديوهات.");
-  const {data:profile,error:profileError}=await client
-    .from("students")
-    .select("id,full_name,phone,role,class_group")
-    .eq("id",studentId)
-    .maybeSingle();
-  if(profileError||!profile)throw new Error("تعذر قراءة بيانات الطالب المسجل لهذا الحساب.");
+  studentIdentityVerified=false;
+  studentIdentityError=false;
+  updateUserUI();
 
-  const role=String(profile.role||"student").trim().toLowerCase();
-  if(role==="admin"||role==="owner"){
-    user.id=profile.id;
-    user.name=profile.full_name||user.name;
-    user.phone=profile.phone||user.phone;
-    user.role=role;
-    updateUserUI();
-    updateWatermark();
-    return {isAdmin:true,allowed:["all","first_science","first_sat_tue","first_sun_wed","first_mon_thu","third_biology","third_geology","third_secondary"]};
+  const {data:authData,error:authError}=await client.auth.getUser();
+  const authUser=authData?.user;
+  if(authError||!authUser) throw new Error("لا توجد جلسة دخول موثقة. سجّل الدخول مرة أخرى.");
+
+  const authEmail=String(authUser.email||"").trim().toLowerCase();
+  const authPhone=authEmail.endsWith("@phone.com")?authEmail.slice(0,-10):"";
+  let profile=null;
+
+  const {data:studentId,error:rpcError}=await client.rpc("current_student_id");
+  if(studentId){
+    const result=await client.from("students")
+      .select("id,full_name,phone,role,class_group")
+      .eq("id",studentId).maybeSingle();
+    if(!result.error&&result.data) profile=result.data;
+    else if(result.error) console.warn("[Videos] Student profile by verified ID:",result.error);
   }
 
+  // Fallback uses only the phone embedded in the authenticated JWT email.
+  if(!profile&&authPhone){
+    const result=await client.from("students")
+      .select("id,full_name,phone,role,class_group")
+      .eq("phone",authPhone).maybeSingle();
+    if(!result.error&&result.data) profile=result.data;
+    else if(result.error) console.warn("[Videos] Student profile by Auth phone:",result.error);
+  }
+
+  if(!profile){
+    console.error("[Videos] Authenticated student identity could not be resolved.",rpcError);
+    throw new Error("تعذر مطابقة حساب الدخول ببيانات الطالب. سجّل الخروج ثم الدخول مرة أخرى.");
+  }
+
+  const role=String(profile.role||"student").trim().toLowerCase();
   const group=String(profile.class_group||"").trim();
   const first=["first_science","first_sat_tue","first_sun_wed","first_mon_thu"];
   const third=["third_biology","third_geology","third_secondary"];
-  const allowed=first.includes(group)?first:third.includes(group)?third:group?[group]:[];
+  const isAdmin=["admin","owner"].includes(role);
+  const allowed=isAdmin
+    ? ["all","first_science","first_sat_tue","first_sun_wed","first_mon_thu","third_biology","third_geology","third_secondary"]
+    : ["all",...(first.includes(group)?first:third.includes(group)?third:group?[group]:[])];
 
-  // The authenticated database profile is the source of truth. Resolve and
-  // render identity before any video-library interaction, even with stale cache.
   user.id=profile.id;
-  user.name=profile.full_name||profile.name||"الطالب";
+  user.name=profile.full_name||profile.phone||"حساب الطالب";
   user.full_name=user.name;
-  user.phone=profile.phone||user.phone;
+  user.phone=profile.phone||authPhone||"غير مسجل";
+  user.email=authUser.email||"";
   user.class_group=group;
   user.role=role;
-  user.email=user.email||"";
 
+  studentIdentityVerified=true;
+  studentIdentityError=false;
   try{
     const cached=JSON.parse(localStorage.getItem("user")||"{}");
-    localStorage.setItem("user",JSON.stringify({...cached,id:profile.id,name:user.name,full_name:user.name,phone:user.phone,class_group:group,role}));
-  }catch(e){console.warn("[Videos] Could not refresh cached student identity:",e);}
+    localStorage.setItem("user",JSON.stringify({
+      ...cached,id:profile.id,name:user.name,full_name:user.name,
+      phone:user.phone,email:user.email,class_group:group,role
+    }));
+  }catch(cacheError){
+    console.warn("[Videos] Could not refresh cached identity:",cacheError);
+  }
 
   updateUserUI();
   updateWatermark();
-  return {isAdmin:false,allowed:["all",...allowed]};
+  return {isAdmin,allowed};
 }
 async function loadVideos(){
 
@@ -6268,9 +6299,12 @@ async function loadVideos(){
   try{
     videoAccess=await resolveVideoStudentClass();
   }catch(accessError){
-    console.error("[Videos] Student class verification failed:",accessError);
-    explanationVideoList.innerHTML='<div class="emptyItem">تعذر التحقق من الصف الدراسي. سجّل الدخول مجددًا أو تواصل مع الإدارة.</div>';
-    homeworkVideoList.innerHTML='<div class="emptyItem">تعذر التحقق من الصف الدراسي. سجّل الدخول مجددًا أو تواصل مع الإدارة.</div>';
+    studentIdentityVerified=false;
+    studentIdentityError=true;
+    updateUserUI();
+    console.error("[Videos] Student identity/access verification failed:",accessError);
+    explanationVideoList.innerHTML='<div class="emptyItem">تعذر التحقق من حسابك حاليًا. حدّث الصفحة، وإذا استمرت المشكلة سجّل الخروج ثم الدخول مرة أخرى.</div>';
+    homeworkVideoList.innerHTML='<div class="emptyItem">تعذر التحقق من حسابك حاليًا. حدّث الصفحة، وإذا استمرت المشكلة سجّل الخروج ثم الدخول مرة أخرى.</div>';
     return;
   }
   if(!videoAccess.allowed.length){
@@ -6887,35 +6921,18 @@ function toggleVideoLibrary(){
     sidebar.classList.remove("closed");
     sidebar.classList.toggle("open",shouldOpen);
     mobileMenuButton.setAttribute("aria-expanded",String(shouldOpen));
-    if(shouldOpen){
-      sidebar.style.visibility="visible";
-      sidebar.style.pointerEvents="auto";
-      sidebar.style.zIndex="1000";
-    }
   }else{
-    sidebar.classList.toggle("closed");
-    mobileMenuButton.setAttribute("aria-expanded",String(!sidebar.classList.contains("closed")));
+    const shouldOpen=sidebar.classList.contains("closed");
+    sidebar.classList.toggle("closed",shouldOpen);
+    mobileMenuButton.setAttribute("aria-expanded",String(shouldOpen));
   }
 }
 if(mobileMenuButton){
   mobileMenuButton.setAttribute("aria-expanded","false");
   mobileMenuButton.style.touchAction="manipulation";
-  if(window.PointerEvent){
-    mobileMenuButton.addEventListener("pointerup",event=>{
-      if(event.pointerType==="touch"||event.pointerType==="pen"){
-        event.preventDefault();
-        toggleVideoLibrary();
-      }
-    });
-    mobileMenuButton.addEventListener("click",event=>{
-      // Pointer-based touch activation was already handled above.
-      if(event.detail===0||!window.matchMedia("(pointer: coarse)").matches){
-        toggleVideoLibrary();
-      }
-    });
-  }else{
-    mobileMenuButton.addEventListener("click",toggleVideoLibrary);
-  }
+  // A single click handles mouse, touch, stylus and keyboard activation.
+  // Avoid pointerup + synthetic click double toggling on touchscreens.
+  mobileMenuButton.addEventListener("click",toggleVideoLibrary);
 }
 
 
@@ -7973,7 +7990,8 @@ window.addEventListener(
     console.warn("[Videos] Resume request could not be completed:",resumeError);
   }
 
-  getCurrentUser();
+  // Identity is resolved once before the library is rendered.
+  // Avoid a second profiles/phone lookup racing and overwriting the verified row.
 
   updateFullscreenButton();
 
