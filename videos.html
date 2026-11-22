@@ -5740,6 +5740,12 @@ setCaptionsButton(false, true);
             },
 
 
+          onPlaybackRateChange:
+            e=>{
+              const rate = Number(e.data);
+              if ([1, 1.5, 2].includes(rate)) void recordCurrentPlaybackSpeed(rate);
+            },
+
           onStateChange:
             e=>{
 
@@ -6677,8 +6683,13 @@ video.addEventListener(
             ) ===
             video.playbackRate
           )
-      )
-);
+      );
+
+video.addEventListener("ratechange", () => {
+  if (state.currentVideo && !state.currentVideo.is_youtube) {
+    void recordCurrentPlaybackSpeed(video.playbackRate);
+  }
+});
 
 
 /* =========================================================
@@ -6699,9 +6710,9 @@ function getCurrentPlaybackSpeed(){
   return [1, 1.5, 2].includes(rate) ? rate : null;
 }
 
-async function recordCurrentPlaybackSpeed(){
+async function recordCurrentPlaybackSpeed(requestedRate){
   if (!videoSessionAlive || !state.currentVideoId || !state.currentVideo) return;
-  const rate = getCurrentPlaybackSpeed();
+  const rate = requestedRate == null ? getCurrentPlaybackSpeed() : Number(requestedRate);
   if (rate === null) return;
   const key = String(state.currentVideoId) + ":" + String(rate);
   if (recordedPlaybackSpeedKeys.has(key) || pendingPlaybackSpeedKeys.has(key)) return;
@@ -6776,7 +6787,7 @@ document
                 )
             );
 
-          void recordCurrentPlaybackSpeed();
+          void recordCurrentPlaybackSpeed(r);
         }
       )
   );
