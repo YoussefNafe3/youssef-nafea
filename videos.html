@@ -6713,21 +6713,34 @@ function getCurrentPlaybackSpeed(){
 async function recordCurrentPlaybackSpeed(requestedRate){
   if (!videoSessionAlive || !state.currentVideoId || !state.currentVideo) return;
   const rate = requestedRate == null ? getCurrentPlaybackSpeed() : Number(requestedRate);
-  if (rate === null) return;
-  const key = String(state.currentVideoId) + ":" + String(rate);
-  if (recordedPlaybackSpeedKeys.has(key) || pendingPlaybackSpeedKeys.has(key)) return;
+  if (![1, 1.5, 2].includes(rate)) return;
 
+  const videoId = String(state.currentVideoId);
+  const key = videoId + ":" + String(rate);
+  if (recordedPlaybackSpeedKeys.has(key) || pendingPlaybackSpeedKeys.has(key)) return;
   pendingPlaybackSpeedKeys.add(key);
+
   try {
-    // Ensure the existing session row has been created before appending its speed.
-    await saveSession();
-    const { data, error } = await client.rpc("record_video_playback_speed", {
-      p_session_id: platformSessionId,
-      p_video_id: String(state.currentVideoId),
-      p_speed: rate
-    });
-    if (error) throw error;
-    if (data?.success === true) recordedPlaybackSpeedKeys.add(key);
+    // A speed change can happen before the first progress heartbeat creates
+    // the video_sessions row. Retry briefly instead of silently losing the rate.
+    for (let attempt = 0; attempt < 4; attempt++) {
+      await saveSession();
+      const { data, error } = await client.rpc("record_video_playback_speed", {
+        p_session_id: platformSessionId,
+        p_video_id: videoId,
+        p_speed: rate
+      });
+      if (error) throw error;
+      if (data?.success === true && data?.recorded === true) {
+        recordedPlaybackSpeedKeys.add(key);
+        return;
+      }
+      if (attempt < 3) {
+        await new Promise(resolve => setTimeout(resolve, 900));
+      } else {
+        console.warn("[Playback speed] Rate was not attached to a saved video session:", data);
+      }
+    }
   } catch (error) {
     console.warn("[Playback speed] Could not record rate:", error);
   } finally {
