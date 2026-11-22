@@ -6687,7 +6687,7 @@ video.addEventListener(
    Uses a narrowly scoped RPC; never changes watch progress or session timers.
 ========================================================= */
 const recordedPlaybackSpeedKeys = new Set();
-let playbackSpeedWriteInFlight = false;
+const pendingPlaybackSpeedKeys = new Set();
 
 function getCurrentPlaybackSpeed(){
   let rate = 1;
@@ -6704,9 +6704,9 @@ async function recordCurrentPlaybackSpeed(){
   const rate = getCurrentPlaybackSpeed();
   if (rate === null) return;
   const key = String(state.currentVideoId) + ":" + String(rate);
-  if (recordedPlaybackSpeedKeys.has(key) || playbackSpeedWriteInFlight) return;
+  if (recordedPlaybackSpeedKeys.has(key) || pendingPlaybackSpeedKeys.has(key)) return;
 
-  playbackSpeedWriteInFlight = true;
+  pendingPlaybackSpeedKeys.add(key);
   try {
     // Ensure the existing session row has been created before appending its speed.
     await saveSession();
@@ -6720,7 +6720,7 @@ async function recordCurrentPlaybackSpeed(){
   } catch (error) {
     console.warn("[Playback speed] Could not record rate:", error);
   } finally {
-    playbackSpeedWriteInFlight = false;
+    pendingPlaybackSpeedKeys.delete(key);
   }
 }
 
