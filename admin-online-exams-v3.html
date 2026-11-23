@@ -323,6 +323,31 @@ async function openQuestionBank(){
  }
  form=bank;renderWorkspace();
 }
+function shuffleBankQuestions(items){
+ const a=[...items];
+ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+ return a;
+}
+function allocateBankQuestionsAcrossForms(pool,formCount,perForm){
+ const shuffled=shuffleBankQuestions(pool);
+ const allocations=Array.from({length:formCount},()=>[]);
+ let cursor=0;
+ // First distribute every available question exactly once across forms.
+ for(let round=0;round<perForm&&cursor<shuffled.length;round++){
+  for(let f=0;f<formCount&&cursor<shuffled.length;f++){
+   allocations[f].push(shuffled[cursor++]);
+  }
+ }
+ // Only after the entire pool has been used, reuse questions to fill remaining slots.
+ for(let f=0;f<formCount;f++){
+  let scan=0;
+  while(allocations[f].length<perForm){
+   const candidate=shuffled[scan++%shuffled.length];
+   if(!allocations[f].some(q=>q.id===candidate.id))allocations[f].push(candidate);
+  }
+ }
+ return allocations;
+}
 async function generateBankForms(){
  if(!chosen||!$("bankEnabled").checked){alert("فعّل بنك الأسئلة واحفظ إعدادات الامتحان أولًا.");return;}
  const bank=forms.find(x=>x.is_question_bank);
@@ -358,15 +383,21 @@ async function generateBankForms(){
   (gr.data||[]).forEach(g=>groupMap[g.id]=g);
   if(groupIds.some(id=>!groupMap[id])){alert("يوجد سؤال مرتبط برأس مشترك غير موجود في بنك الأسئلة. أصلح الارتباط قبل التوليد.");return;}
  }
- const fixedSummary=fixed.length?"\nالأسئلة الثابتة التي ستظهر في جميع النماذج: "+fixed.length:"";
- if(!confirm("سيتم إنشاء "+formCount+" نماذج، يحتوي كل منها على "+count+" سؤالًا: "+fixed.length+" ثابتًا"+(randomNeeded?" و"+randomNeeded+" عشوائيًا":" دون أسئلة عشوائية")+". سيتم استبدال النماذج المولّدة السابقة."+fixedSummary+"\nمتابعة؟"))return;
+ const randomAllocations=allocateBankQuestionsAcrossForms(randomPool,formCount,randomNeeded);
+ const totalRandomSlots=formCount*randomNeeded;
+ const reusedRandomSlots=Math.max(0,totalRandomSlots-randomPool.length);
+ const fixedSummary=fixed.length?"\nالأسئلة المحددة كـ«ثابتة» ستظل موجودة في جميع النماذج: "+fixed.length:"";
+ const distributionSummary=reusedRandomSlots===0
+  ?"\nتم ضمان عدم تكرار أي سؤال عشوائي بين النماذج؛ كل سؤال سيوزّع مرة واحدة فقط."
+  :"\nعدد الأسئلة العشوائية المتاحة لا يكفي لكل الخانات ("+randomPool.length+" سؤالًا مقابل "+totalRandomSlots+" خانة). سيتم توزيع كل الأسئلة دون تكرار أولًا، ثم السماح بالتكرار بين النماذج فقط لاستكمال العجز ("+reusedRandomSlots+" خانة)، دون تكرار السؤال داخل النموذج الواحد.";
+ if(!confirm("سيتم إنشاء "+formCount+" نماذج، يحتوي كل منها على "+count+" سؤالًا: "+fixed.length+" ثابتًا"+(randomNeeded?" و"+randomNeeded+" عشوائيًا":" دون أسئلة عشوائية")+". سيتم استبدال النماذج المولّدة السابقة."+fixedSummary+distributionSummary+"\nمتابعة؟"))return;
  const generated=forms.filter(x=>x.is_generated_from_bank);
  for(const old of generated){const d=await db.from("online_exam_forms").delete().eq("id",old.id);if(d.error){alert("تعذر حذف نموذج مولّد سابق: "+d.error.message);return;}}
  forms=forms.filter(x=>!x.is_generated_from_bank);
  let sort=Math.max(-1,...forms.map(x=>Number(x.sort_order)||0))+1;
  for(let n=0;n<formCount;n++){
-  const random=[...randomPool].sort(()=>Math.random()-.5).slice(0,randomNeeded);
-  const selected=[...fixed,...random].sort(()=>Math.random()-.5);
+  const random=randomAllocations[n];
+  const selected=shuffleBankQuestions([...fixed,...random]);
   const codeBase="G"+String(n+1).padStart(2,"0");let code=codeBase,suffix=1;while(forms.some(x=>x.form_code===code))code=codeBase+"-"+suffix++;
   const fr=await db.from("online_exam_forms").insert({exam_id:chosen.id,form_code:code,title:"نموذج مولّد "+(n+1),sort_order:sort+n,is_generated_from_bank:true}).select("*").single();
   if(fr.error){alert("تعذر إنشاء النموذج "+code+": "+fr.error.message);return;}
