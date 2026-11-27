@@ -564,7 +564,7 @@ async function showSubmittedAnswerKey(attemptId){
      return '<div class="'+cls+'"><span class="post-answer-letter">'+(["أ","ب","ج","د","هـ","و","ز","ح","ط","ي"][index]||String(index+1))+'</span><span style="flex:1;min-width:0">'+safe(choice.text||choice.label||choice.id)+'</span><span class="post-answer-tags">'+tags+'</span></div>';
     }).join("");
     answerView='<div class="post-answer-options">'+options+'</div>';
-    if(!studentValues.length)answerView+='<p class="post-answer-unanswered">لم تختر أي إجابة في هذا السؤال.</p>';
+    if(!studentValues.length)answerView+='<p class="post-answer-unanswered">لم تتم الإجابة عن هذا السؤال.</p>';
    }else{
     answerView='<div class="post-answer-summary"><div class="student '+(q.is_correct===true?"correct":"")+'"><strong>إجابة الطالب:</strong><br>'+(studentValues.length?safe(studentText):'<span class="post-answer-unanswered">لم تتم الإجابة</span>')+'</div><div class="model"><strong>الإجابة النموذجية:</strong><br>'+safe(correctText)+'</div></div>';
    }
